@@ -118,43 +118,25 @@
 
     <!-- Bottom: filtered restaurantList list -->
     <div class="flex-1 overflow-y-auto">
-      <div class="px-6 py-4">
-        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-widest">景點列表</h2>
-      </div>
-      <div class="px-6 pb-6 flex flex-col gap-3">
-        <UPageCard
-          v-for="restaurant in filteredRestaurantList"
-          :key="restaurant.id"
-          :title="restaurant.name"
-          :description="restaurant.summary"
-          :class="{ 'ring-2 ring-teal-500': selectedRestaurantId === restaurant.id }"
-          class="cursor-pointer"
-          @click="selectedRestaurantId = restaurant.id"
-        >
-          <template #headline>
-            <div class="flex items-center gap-2">
-              <span
-                class="w-2 h-2 rounded-full flex-shrink-0"
-                :style="{ background: restaurant.categoryColor }"
-              />
-              <span class="text-xs text-gray-400 uppercase tracking-wide">
-                {{ restaurant.area }} · {{ restaurant.categoryName }}
-              </span>
-            </div>
-          </template>
-          <template v-if="restaurant.recommendations?.length" #footer>
-            <div class="flex flex-wrap items-center gap-1">
-              <span class="text-xs text-gray-500">★ 推薦：</span>
-              <UBadge
-                v-for="rec in restaurant.recommendations"
-                :key="rec"
-                color="neutral"
-                variant="subtle"
-                size="sm"
-              >{{ rec }}</UBadge>
-            </div>
-          </template>
-        </UPageCard>
+      <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
+
+        <!-- Selected restaurant pinned at top -->
+        <RestaurantCard
+          v-if="selectedRestaurant"
+          :restaurant="selectedRestaurant"
+          :selected="true"
+          @unpin="selectedRestaurantId = null"
+        />
+
+        <!-- Rest of the list -->
+        <template v-for="restaurant in filteredRestaurantList" :key="restaurant.id">
+          <RestaurantCard
+            v-if="restaurant.id !== selectedRestaurantId"
+            :restaurant="restaurant"
+            @select="selectedRestaurantId = restaurant.id"
+          />
+        </template>
+
       </div>
     </div>
   </div>
@@ -168,6 +150,7 @@ const selectedRestaurantId = ref<string | null>(null)
 const isMapReady = ref(false)
 const filterModalOpen = ref(false)
 const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
+const selectedRestaurant = computed(() => filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null)
 
 const {
   categories,
