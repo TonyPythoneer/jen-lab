@@ -1,7 +1,13 @@
 <template>
-  <div class="map-wrapper">
-    <div ref="mapEl" class="map" />
-    <button class="tile-toggle" :class="{ active: tileQuality === 'high' }" @click="toggleTileQuality">
+  <div class="relative w-full h-full">
+    <div ref="mapEl" class="w-full h-full" />
+    <button
+      class="absolute bottom-6 right-2.5 z-[1000] w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
+      :class="tileQuality === 'high'
+        ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
+        : 'bg-white border-gray-300 text-gray-400 shadow hover:border-gray-400 hover:text-gray-500'"
+      @click="toggleTileQuality"
+    >
       HD
     </button>
   </div>
@@ -119,45 +125,3 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-.map-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.map {
-  width: 100%;
-  height: 100%;
-}
-.tile-toggle {
-  position: absolute;
-  bottom: 24px;
-  right: 10px;
-  z-index: 1000;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid #ccc;
-  background: white;
-  color: #999;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-.tile-toggle:hover {
-  border-color: #aaa;
-  color: #666;
-}
-.tile-toggle.active {
-  background: #1a1a1a;
-  border-color: #1a1a1a;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-}
-</style>
