@@ -37,8 +37,7 @@
 
     <template #footer>
       <div v-if="restaurant.recommendations?.length" class="flex flex-wrap items-center gap-1">
-        <span class="text-xs text-gray-400">★ 推薦：</span>
-        <UBadge v-for="rec in restaurant.recommendations" :key="rec" color="neutral" variant="subtle" size="sm">{{ rec }}</UBadge>
+        <UBadge v-for="rec in restaurant.recommendations" :key="rec" text-gray-400 color="neutral" variant="subtle" size="sm" :style="{ backgroundColor: restaurant.categoryColor }">★ {{ rec }}</UBadge>
       </div>
     </template>
   </UPageCard>
