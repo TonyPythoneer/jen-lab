@@ -30,6 +30,8 @@ const emit = defineEmits<{
   select: [restaurant: EnrichedRestaurant]
 }>()
 
+const isReady = defineModel<boolean>('ready', { default: false })
+
 const mapEl = ref<HTMLDivElement | null>(null)
 let map: LeafletMap | null = null
 let L: LeafletInstance | null = null
@@ -48,19 +50,6 @@ function makeIcon(color: string, selected: boolean): DivIcon {
   }
   const iconOptions = iconCache.get(color);
   return selected ? iconOptions!.pin : iconOptions!.dot
-}
-
-
-
-async function initMap() {
-  if (!mapEl.value) return
-  L = (await import('leaflet')).default
-  await import('leaflet/dist/leaflet.css')
-
-  map = L.map(mapEl.value, mapOptions)
-
-  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
-  renderMarkers()
 }
 
 function toggleTileQuality() {
@@ -116,7 +105,16 @@ watch(
   },
 )
 
-onMounted(() => initMap())
+onMounted(async function initMap() {
+  if (!mapEl.value) return
+  L = (await import('leaflet')).default
+  await import('leaflet/dist/leaflet.css')
+
+  map = L.map(mapEl.value, mapOptions)
+  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
+  renderMarkers()
+  isReady.value = true
+})
 
 onUnmounted(() => {
   map?.remove()
