@@ -115,6 +115,7 @@
           :selected-restaurant="selectedRestaurant"
           v-model:ready="isMapReady"
           @select="(r) => (selectedRestaurantId = r.id)"
+          @unpin="selectedRestaurantId = null"
         />
       </ClientOnly>
 

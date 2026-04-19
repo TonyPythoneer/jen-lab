@@ -2,17 +2,29 @@
   <div class="relative w-full h-full">
     <div ref="mapEl" class="w-full h-full" />
 
-    <a
-      v-if="selectedRestaurant?.googleMapsLink"
-      :href="selectedRestaurant.googleMapsLink"
-      target="_blank"
-      rel="noopener"
-      :style="{ backgroundColor: selectedRestaurant.categoryColor }"
-      class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow text-xs font-medium text-white hover:opacity-80 transition-opacity"
+    <div
+      v-if="selectedRestaurant"
+      class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-1"
     >
-      <UIcon name="i-simple-icons-googlemaps" class="w-3.5 h-3.5" />
-      Go to<b>Google Maps</b>
-    </a>
+      <a
+        v-if="selectedRestaurant.googleMapsLink"
+        :href="selectedRestaurant.googleMapsLink"
+        target="_blank"
+        rel="noopener"
+        :style="{ backgroundColor: selectedRestaurant.categoryColor }"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow text-xs font-medium text-white hover:opacity-80 transition-opacity"
+      >
+        <UIcon name="i-simple-icons-googlemaps" class="w-3.5 h-3.5" />
+        Go to <b>Google Maps</b>
+      </a>
+      <button
+        :style="{ backgroundColor: selectedRestaurant.categoryColor }"
+        class="w-6 h-6 rounded-full shadow flex items-center justify-center text-white hover:opacity-80 transition-opacity cursor-pointer"
+        @click="emit('unpin')"
+      >
+        <UIcon name="i-lucide-x" class="w-3 h-3" />
+      </button>
+    </div>
 
     <button
       class="absolute bottom-6 right-2.5 z-[1000] w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
@@ -41,6 +53,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   select: [restaurant: EnrichedRestaurant]
+  unpin: []
 }>()
 
 const isReady = defineModel<boolean>('ready', { default: false })
@@ -81,7 +94,8 @@ function renderMarkers() {
 
   for (const restaurant of props.restaurants) {
     const selected = props.selectedRestaurant?.id === restaurant.id
-    const marker = L.marker([restaurant.coordinates.lat, restaurant.coordinates.lng], {
+    const {lat, lng} = restaurant.coordinates
+    const marker = L.marker([lat, lng], {
       icon: makeIcon(restaurant.categoryColor, selected),
     }).addTo(map!)
 
