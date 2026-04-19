@@ -149,8 +149,7 @@
         <RestaurantCard
           v-if="selectedRestaurant"
           :restaurant="selectedRestaurant"
-          :selected="true"
-          @unpin="selectedRestaurantId = null"
+          class="relative ring-2 ring-teal-500"
         />
 
         <!-- Rest of the list -->
