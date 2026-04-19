@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm hover:bg-gray-50 transition text-left w-full"
+    class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm cursor-pointer hover:bg-gray-50 transition text-left w-full"
     :class="active ? 'font-semibold text-teal-600' : 'text-muted'"
     @click="$emit('click')"
   >
