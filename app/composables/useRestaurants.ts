@@ -1,18 +1,15 @@
 import { categories, restaurants } from '@/assets/data/restaurants'
 
 type Category = typeof categories[number]
-type CategoryId = Category['id']
+export type CategoryId = Category['id']
 type Restaurant = typeof restaurants[number]
-type restaurantArea = Restaurant['area']
+export type RestaurantArea = Restaurant['area']
 
-const categoryIdSet = new Set<CategoryId>()
-const categoryDict = Object.fromEntries(categories.map(cat => {
-  categoryIdSet.add(cat.id)
-  return [cat.id, cat]
-})
-) as Record<Category['id'], Category>
+const categoryDict = Object.fromEntries(
+  categories.map(cat => [cat.id, cat])
+) as Record<CategoryId, Category>
 
-const restaurantAreaSet = new Set<restaurantArea>()
+const restaurantAreaSet = new Set<RestaurantArea>()
 const enrichedRestaurants = restaurants.map(restaurant => {
   const category = categoryDict[restaurant.categoryId]
   restaurantAreaSet.add(restaurant.area)
@@ -26,9 +23,10 @@ const enrichedRestaurants = restaurants.map(restaurant => {
 export type EnrichedRestaurant = (typeof enrichedRestaurants)[number]
 
 export function useRestaurants() {
-  const selectedArea = ref<restaurantArea | null>(null)
+  const selectedArea = ref<RestaurantArea | null>(null)
   const selectedCategoryId = ref<CategoryId | null>(null)
   const searchedName = ref('')
+  const selectedRestaurantId = ref<string | null>(null)
 
   const filteredRestaurantList = computed<EnrichedRestaurant[]>(() =>
     enrichedRestaurants
@@ -37,12 +35,14 @@ export function useRestaurants() {
       .filter((r) => !searchedName.value || r.name.toLowerCase().includes(searchedName.value.toLowerCase()))
   )
 
-  function setAreaFilter(area: string | null) {
-    selectedArea.value = area as restaurantArea | null
+  const selectedRestaurant = computed(() => filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null)
+
+  function setAreaFilter(area: RestaurantArea | null) {
+    selectedArea.value = area
   }
 
-  function setCategoryIdFilter(categoryId: string | null) {
-    selectedCategoryId.value = categoryId as CategoryId | null
+  function setCategoryIdFilter(categoryId: CategoryId | null) {
+    selectedCategoryId.value = categoryId
   }
 
   function setNameFilter(name: string) {
@@ -62,10 +62,12 @@ export function useRestaurants() {
     restaurantAreaSet,
     // computes
     filteredRestaurantList,
+    selectedRestaurant,
     // refs
     selectedArea,
     selectedCategoryId,
     searchedName,
+    selectedRestaurantId,
     // setters
     setAreaFilter,
     setCategoryIdFilter,

@@ -145,31 +145,38 @@
 </template>
 
 <script setup lang="ts">
-type FilterOption = Record<string, { displayName: string; dotColor?: string }>
+import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
 
-const selectedRestaurantId = ref<string | null>(null)
+type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
+
 const isMapReady = ref(false)
 const filterModalOpen = ref(false)
 const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
-const selectedRestaurant = computed(() => filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null)
 
 const {
-  categories,
-  restaurantAreaSet,
-  filteredRestaurantList,
-  selectedArea,
-  selectedCategoryId,
-  searchedName,
-  setAreaFilter,
-  setCategoryIdFilter,
-  clearFilters,
+    // consts
+    categories,
+    restaurantAreaSet,
+    // computes
+    filteredRestaurantList,
+    selectedRestaurant,
+    // refs
+    selectedArea,
+    selectedCategoryId,
+    searchedName,
+    selectedRestaurantId,
+    // setters
+    setAreaFilter,
+    setCategoryIdFilter,
+    setNameFilter,
+    clearFilters,
 } = useRestaurants()
 
-const areaOptions = computed<FilterOption>(() =>
-  Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }]))
+const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
+  Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }])) as FilterOption<RestaurantArea>
 )
 
-const categoryOptions = computed<FilterOption>(() =>
-  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, dotColor: c.color }]))
+const categoryOptions = computed<FilterOption<CategoryId>>(() =>
+  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, dotColor: c.color }])) as FilterOption<CategoryId>
 )
 </script>
