@@ -1,12 +1,19 @@
 <template>
-  <div ref="mapEl" class="map" />
+  <div class="map-wrapper">
+    <div ref="mapEl" class="map" />
+    <button class="tile-toggle" :class="{ active: tileQuality === 'high' }" @click="toggleTileQuality">
+      HD
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { Map as LeafletMap, Marker, DivIcon } from 'leaflet'
+import type { EnrichedRestaurant } from '@/composables/useRestaurants'
+import { mapOptions, tileLayers, tileLayerOptions } from '@/assets/data/map'
+import { makeDotIcon, makePinIcon } from '@/utils/map'
 
 type LeafletInstance = typeof import('leaflet')
-import type { EnrichedRestaurant } from '@/composables/useRestaurants'
 
 const props = defineProps<{
   restaurants: EnrichedRestaurant[]
@@ -20,56 +27,41 @@ const emit = defineEmits<{
 const mapEl = ref<HTMLDivElement | null>(null)
 let map: LeafletMap | null = null
 let L: LeafletInstance | null = null
+let activeTileLayer: ReturnType<LeafletInstance['tileLayer']> | null = null
+const tileQuality = ref<'low' | 'high'>('low')
 const markerMap = new Map<string, Marker>()
+const iconCache = new Map<string, { dot: DivIcon; pin: DivIcon }>()
 
 function makeIcon(color: string, selected: boolean): DivIcon {
   if (!L) throw new Error('Leaflet not initialized')
-
-  const dotIcon = L.divIcon({
-    className: '',
-    html: `<div style="
-      width:12px;height:12px;
-      background:${color};
-      border:2px solid white;
-      border-radius:50%;
-      box-shadow:0 2px 6px rgba(0,0,0,0.25);
-    "></div>`,
-    iconSize: [12, 12],
-    iconAnchor: [6, 6],
-  })
-
-  const pinIcon = L.divIcon({
-    className: '',
-    html: `<div style="
-      width:28px;height:28px;
-      background:${color};
-      border:3px solid white;
-      border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);
-      box-shadow:0 4px 12px rgba(0,0,0,0.3);
-    "></div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-  })
-
-  return selected ? pinIcon : dotIcon
+  if (!iconCache.has(color)) {
+    iconCache.set(color, {
+      dot: makeDotIcon(L, { color }),
+      pin: makePinIcon(L, { color }),
+    })
+  }
+  const iconOptions = iconCache.get(color);
+  return selected ? iconOptions!.pin : iconOptions!.dot
 }
+
+
 
 async function initMap() {
   if (!mapEl.value) return
   L = (await import('leaflet')).default
   await import('leaflet/dist/leaflet.css')
 
-  map = L.map(mapEl.value, { center: [-33.871, 151.206], zoom: 15, zoomControl: true })
+  map = L.map(mapEl.value, mapOptions)
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20,
-  }).addTo(map)
-
+  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
   renderMarkers()
+}
+
+function toggleTileQuality() {
+  if (!map || !L) return
+  tileQuality.value = tileQuality.value === 'low' ? 'high' : 'low'
+  activeTileLayer?.remove()
+  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
 }
 
 function renderMarkers() {
@@ -123,12 +115,49 @@ onMounted(() => initMap())
 onUnmounted(() => {
   map?.remove()
   map = null
+  iconCache.clear()
 })
 </script>
 
 <style scoped>
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 .map {
   width: 100%;
   height: 100%;
+}
+.tile-toggle {
+  position: absolute;
+  bottom: 24px;
+  right: 10px;
+  z-index: 1000;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #ccc;
+  background: white;
+  color: #999;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tile-toggle:hover {
+  border-color: #aaa;
+  color: #666;
+}
+.tile-toggle.active {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 </style>
