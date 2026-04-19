@@ -3,31 +3,23 @@
 </template>
 
 <script setup lang="ts">
-import type { Map, Marker, DivIcon } from 'leaflet'
+import type { Map as LeafletMap, Marker, DivIcon } from 'leaflet'
 
-import type data from '@/assets/data/landmarks.json'
+type LeafletInstance = typeof import('leaflet')
+import type { EnrichedRestaurant } from '@/composables/useRestaurants'
 
 const props = defineProps<{
-  landmarks: typeof data.landmarks
-  categories: typeof data.categories
+  restaurants: EnrichedRestaurant[]
   selectedId: string | null
 }>()
 
 const emit = defineEmits<{
-  select: [landmark: typeof data.landmarks[number]]
+  select: [restaurant: EnrichedRestaurant]
 }>()
 
 const mapEl = ref<HTMLDivElement | null>(null)
-let map: Map | null = null
-const markerMap = new Map<number, Marker>()
-
-function getCategoryColor(categoryId: string): string {
-  return props.categories.find((c) => c.id === categoryId)?.color ?? '#666'
-}
-
-function getCategoryName(categoryId: string): string {
-  return props.categories.find((c) => c.id === categoryId)?.name ?? categoryId
-}
+let map: LeafletMap | null = null
+const markerMap = new Map<string, Marker>()
 
 function makeIcon(color: string, selected: boolean): DivIcon {
   const L = window.L as typeof import('leaflet')
@@ -49,17 +41,15 @@ function makeIcon(color: string, selected: boolean): DivIcon {
   })
 }
 
-function makePopup(landmark: typeof data.landmarks[number]): string {
-  const color = getCategoryColor(landmark.category)
-  const catName = getCategoryName(landmark.category)
+function makePopup(restaurant: EnrichedRestaurant): string {
   return `
     <div style="padding:12px;min-width:200px;font-family:-apple-system,sans-serif">
-      <div stydescriptionle="font-size:10px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">
-        ${landmark.area.toUpperCase()} • ${catName}
+      <div style="font-size:10px;font-weight:700;color:${restaurant.categoryColor};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">
+        ${restaurant.area.toUpperCase()} • ${restaurant.categoryName}
       </div>
-      <div style="font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:6px">${landmark.name}</div>
-      <div style="font-size:12px;color:#777;font-style:italic;margin-bottom:8px">${landmark.description}</div>
-      <a href="${landmark.googleMapsLink}" target="_blank" rel="noopener noreferrer" class="w-full text-white text-[12px] font-bold py-2.5 flex items-center justify-center gap-2 rounded-lg transition-all no-underline shadow-sm mt-2" style="background-color: rgb(47, 79, 79); color: rgb(255, 255, 255);">
+      <div style="font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:6px">${restaurant.name}</div>
+      <div style="font-size:12px;color:#777;font-style:italic;margin-bottom:8px">${restaurant.description}</div>
+      <a href="${restaurant.googleMapsLink}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;background-color:rgb(47,79,79);color:white;font-size:12px;font-weight:700;padding:10px;border-radius:8px;text-decoration:none;margin-top:8px;">
         開啟 Google Maps 導覽
       </a>
     </div>
@@ -69,7 +59,7 @@ function makePopup(landmark: typeof data.landmarks[number]): string {
 async function initMap() {
   if (!mapEl.value) return
   const L = (await import('leaflet')).default
-  ;(window as any).L = L
+;(window as any).L = L
 
   await import('leaflet/dist/leaflet.css')
 
@@ -89,31 +79,27 @@ async function initMap() {
   renderMarkers(L)
 }
 
-function renderMarkers(L: typeof import('leaflet').default) {
+function renderMarkers(L: LeafletInstance) {
   if (!map) return
 
   markerMap.forEach((m) => m.remove())
   markerMap.clear()
 
-  for (const landmark of props.landmarks) {
-    const color = getCategoryColor(landmark.category)
-    const selected = props.selectedId === landmark.id
-    const marker = L.marker([landmark.coordinates.lat, landmark.coordinates.lng], {
-      icon: makeIcon(color, selected),
+  for (const restaurant of props.restaurants) {
+    const selected = props.selectedId === restaurant.id
+    const marker = L.marker([restaurant.coordinates.lat, restaurant.coordinates.lng], {
+      icon: makeIcon(restaurant.categoryColor, selected),
     })
       .addTo(map!)
-      .bindPopup(makePopup(landmark), { maxWidth: 260 })
+      .bindPopup(makePopup(restaurant), { maxWidth: 260 })
 
-    marker.on('click', () => {
-      emit('select', landmark)
-    })
-
-    markerMap.set(landmark.id, marker)
+    marker.on('click', () => emit('select', restaurant))
+    markerMap.set(restaurant.id, marker)
   }
 }
 
 watch(
-  () => props.landmarks,
+  () => props.restaurants,
   async () => {
     if (!map) return
     const L = (await import('leaflet')).default
@@ -129,31 +115,23 @@ watch(
 
     if (oldId !== null) {
       const old = markerMap.get(oldId)
-      if (old) {
-        const landmark = props.landmarks.find((l) => l.id === oldId)
-        if (landmark) {
-          old.setIcon(makeIcon(getCategoryColor(landmark.category), false))
-        }
-      }
+      const restaurant = props.restaurants.find((r) => r.id === oldId)
+      if (old && restaurant) old.setIcon(makeIcon(restaurant.categoryColor, false))
     }
 
     if (newId !== null) {
       const marker = markerMap.get(newId)
-      if (marker) {
-        const landmark = props.landmarks.find((l) => l.id === newId)
-        if (landmark) {
-          marker.setIcon(makeIcon(getCategoryColor(landmark.category), true))
-          marker.openPopup()
-          map.panTo([landmark.coordinates.lat, landmark.coordinates.lng])
-        }
+      const restaurant = props.restaurants.find((r) => r.id === newId)
+      if (marker && restaurant) {
+        marker.setIcon(makeIcon(restaurant.categoryColor, true))
+        marker.openPopup()
+        map.panTo([restaurant.coordinates.lat, restaurant.coordinates.lng])
       }
     }
   },
 )
 
-onMounted(() => {
-  initMap()
-})
+onMounted(() => initMap())
 
 onUnmounted(() => {
   map?.remove()
