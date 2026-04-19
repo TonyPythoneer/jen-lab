@@ -29,10 +29,11 @@ export function useRestaurants() {
   const selectedRestaurantId = ref<string | null>(null)
 
   const filteredRestaurantList = computed<EnrichedRestaurant[]>(() =>
-    enrichedRestaurants
-      .filter((r) => !selectedArea.value || r.area === selectedArea.value)
-      .filter((r) => !selectedCategoryId.value || r.categoryId === selectedCategoryId.value)
-      .filter((r) => !searchedName.value || r.name.toLowerCase().includes(searchedName.value.toLowerCase()))
+    enrichedRestaurants.filter((r) =>
+      (!selectedArea.value || r.area === selectedArea.value) &&
+      (!selectedCategoryId.value || r.categoryId === selectedCategoryId.value) &&
+      (!searchedName.value || r.name.toLowerCase().includes(searchedName.value.toLowerCase()))
+    )
   )
 
   const selectedRestaurant = computed(() => filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null)
