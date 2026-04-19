@@ -23,38 +23,45 @@ const markerMap = new Map<string, Marker>()
 
 function makeIcon(color: string, selected: boolean): DivIcon {
   const L = window.L as typeof import('leaflet')
-  const size = selected ? 32 : 24
-  const border = selected ? 4 : 3
+
+  if (!selected) {
+    return L.divIcon({
+      className: '',
+      html: `<div style="
+        width:12px;height:12px;
+        background:${color};
+        border:2px solid white;
+        border-radius:50%;
+        box-shadow:0 2px 6px rgba(0,0,0,0.25);
+      "></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
+    })
+  }
+
   return L.divIcon({
     className: '',
-    html: `<div style="
-      background:${color};
-      width:${size}px;
-      height:${size}px;
-      border:${border}px solid white;
-      border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);
-      box-shadow:0 4px 12px rgba(0,0,0,0.3);
-    "></div>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size],
+    html: `<div style="display:flex;flex-direction:column;align-items:center;">
+      <div style="
+        width:28px;height:28px;
+        background:${color};
+        border:3px solid white;
+        border-radius:50%;
+        box-shadow:0 4px 12px rgba(0,0,0,0.3);
+      "></div>
+      <div style="
+        width:0;height:0;
+        border-left:7px solid transparent;
+        border-right:7px solid transparent;
+        border-top:12px solid ${color};
+        margin-top:-2px;
+      "></div>
+    </div>`,
+    iconSize: [28, 40],
+    iconAnchor: [14, 40],
   })
 }
 
-function makePopup(restaurant: EnrichedRestaurant): string {
-  return `
-    <div style="padding:12px;min-width:200px;font-family:-apple-system,sans-serif">
-      <div style="font-size:10px;font-weight:700;color:${restaurant.categoryColor};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">
-        ${restaurant.area.toUpperCase()} • ${restaurant.categoryName}
-      </div>
-      <div style="font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:6px">${restaurant.name}</div>
-      <div style="font-size:12px;color:#777;font-style:italic;margin-bottom:8px">${restaurant.description}</div>
-      <a href="${restaurant.googleMapsLink}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;background-color:rgb(47,79,79);color:white;font-size:12px;font-weight:700;padding:10px;border-radius:8px;text-decoration:none;margin-top:8px;">
-        開啟 Google Maps 導覽
-      </a>
-    </div>
-  `
-}
 
 async function initMap() {
   if (!mapEl.value) return
@@ -91,7 +98,6 @@ function renderMarkers(L: LeafletInstance) {
       icon: makeIcon(restaurant.categoryColor, selected),
     })
       .addTo(map!)
-      .bindPopup(makePopup(restaurant), { maxWidth: 260 })
 
     marker.on('click', () => emit('select', restaurant))
     markerMap.set(restaurant.id, marker)
@@ -124,7 +130,6 @@ watch(
       const restaurant = props.restaurants.find((r) => r.id === newId)
       if (marker && restaurant) {
         marker.setIcon(makeIcon(restaurant.categoryColor, true))
-        marker.openPopup()
         map.panTo([restaurant.coordinates.lat, restaurant.coordinates.lng])
       }
     }
