@@ -38,19 +38,20 @@
 
     <template #footer>
       <div class="flex flex-col gap-2">
-        <button
-          v-if="restaurant.description"
-          class="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 cursor-pointer transition-colors w-fit"
-          @click.stop="expanded = !expanded"
-        >
-          <UIcon
-            name="i-lucide-chevron-right"
-            class="w-3 h-3 transition-transform"
-            :class="expanded ? 'rotate-90' : ''"
+        <UCollapsible v-if="restaurant.description" @click.stop>
+          <UButton
+            class="group"
+            label="詳細介紹"
+            color="neutral"
+            variant="ghost"
+            size="xs"
+            trailing-icon="i-lucide-chevron-right"
+            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200' }"
           />
-          <span>詳細介紹</span>
-        </button>
-        <p v-if="expanded" class="text-sm text-gray-500">{{ restaurant.description }}</p>
+          <template #content>
+            <p class="text-sm text-gray-500 pt-1">{{ restaurant.description }}</p>
+          </template>
+        </UCollapsible>
         <div v-if="restaurant.recommendations?.length" class="flex flex-wrap items-center gap-1">
           <span class="text-xs text-gray-500">★ 推薦：</span>
           <UBadge v-for="rec in restaurant.recommendations" :key="rec" color="neutral" variant="subtle" size="sm">{{ rec }}</UBadge>
@@ -73,5 +74,4 @@ const emit = defineEmits<{
   unpin: []
 }>()
 
-const expanded = ref(false)
 </script>
