@@ -19,62 +19,48 @@ const emit = defineEmits<{
 
 const mapEl = ref<HTMLDivElement | null>(null)
 let map: LeafletMap | null = null
+let L: LeafletInstance | null = null
 const markerMap = new Map<string, Marker>()
 
 function makeIcon(color: string, selected: boolean): DivIcon {
-  const L = window.L as typeof import('leaflet')
+  if (!L) throw new Error('Leaflet not initialized')
 
-  if (!selected) {
-    return L.divIcon({
-      className: '',
-      html: `<div style="
-        width:12px;height:12px;
-        background:${color};
-        border:2px solid white;
-        border-radius:50%;
-        box-shadow:0 2px 6px rgba(0,0,0,0.25);
-      "></div>`,
-      iconSize: [12, 12],
-      iconAnchor: [6, 6],
-    })
-  }
-
-  return L.divIcon({
+  const dotIcon = L.divIcon({
     className: '',
-    html: `<div style="display:flex;flex-direction:column;align-items:center;">
-      <div style="
-        width:28px;height:28px;
-        background:${color};
-        border:3px solid white;
-        border-radius:50%;
-        box-shadow:0 4px 12px rgba(0,0,0,0.3);
-      "></div>
-      <div style="
-        width:0;height:0;
-        border-left:7px solid transparent;
-        border-right:7px solid transparent;
-        border-top:12px solid ${color};
-        margin-top:-2px;
-      "></div>
-    </div>`,
-    iconSize: [28, 40],
-    iconAnchor: [14, 40],
+    html: `<div style="
+      width:12px;height:12px;
+      background:${color};
+      border:2px solid white;
+      border-radius:50%;
+      box-shadow:0 2px 6px rgba(0,0,0,0.25);
+    "></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
   })
-}
 
+  const pinIcon = L.divIcon({
+    className: '',
+    html: `<div style="
+      width:28px;height:28px;
+      background:${color};
+      border:3px solid white;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+  })
+
+  return selected ? pinIcon : dotIcon
+}
 
 async function initMap() {
   if (!mapEl.value) return
-  const L = (await import('leaflet')).default
-;(window as any).L = L
-
+  L = (await import('leaflet')).default
   await import('leaflet/dist/leaflet.css')
 
-  map = L.map(mapEl.value, {
-    center: [-33.871, 151.206],
-    zoom: 15,
-    zoomControl: true,
-  })
+  map = L.map(mapEl.value, { center: [-33.871, 151.206], zoom: 15, zoomControl: true })
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution:
@@ -83,11 +69,11 @@ async function initMap() {
     maxZoom: 20,
   }).addTo(map)
 
-  renderMarkers(L)
+  renderMarkers()
 }
 
-function renderMarkers(L: LeafletInstance) {
-  if (!map) return
+function renderMarkers() {
+  if (!map || !L) return
 
   markerMap.forEach((m) => m.remove())
   markerMap.clear()
@@ -96,8 +82,7 @@ function renderMarkers(L: LeafletInstance) {
     const selected = props.selectedId === restaurant.id
     const marker = L.marker([restaurant.coordinates.lat, restaurant.coordinates.lng], {
       icon: makeIcon(restaurant.categoryColor, selected),
-    })
-      .addTo(map!)
+    }).addTo(map!)
 
     marker.on('click', () => emit('select', restaurant))
     markerMap.set(restaurant.id, marker)
@@ -106,18 +91,15 @@ function renderMarkers(L: LeafletInstance) {
 
 watch(
   () => props.restaurants,
-  async () => {
-    if (!map) return
-    const L = (await import('leaflet')).default
-    renderMarkers(L)
+  () => {
+    renderMarkers()
   },
 )
 
 watch(
   () => props.selectedId,
-  async (newId, oldId) => {
-    if (!map) return
-    const L = (await import('leaflet')).default
+  (newId, oldId) => {
+    if (!map || !L) return
 
     if (oldId !== null) {
       const old = markerMap.get(oldId)
