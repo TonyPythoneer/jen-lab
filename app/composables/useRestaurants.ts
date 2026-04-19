@@ -38,18 +38,6 @@ export function useRestaurants() {
 
   const selectedRestaurant = computed(() => filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null)
 
-  function setAreaFilter(area: RestaurantArea | null) {
-    selectedArea.value = area
-  }
-
-  function setCategoryIdFilter(categoryId: CategoryId | null) {
-    selectedCategoryId.value = categoryId
-  }
-
-  function setNameFilter(name: string) {
-    searchedName.value = name
-  }
-
   function clearFilters() {
     selectedArea.value = null
     selectedCategoryId.value = null
@@ -57,22 +45,15 @@ export function useRestaurants() {
   }
 
   return {
-    // consts
     categories,
     categoryDict,
     restaurantAreaSet,
-    // computes
     filteredRestaurantList,
     selectedRestaurant,
-    // refs
     selectedArea,
     selectedCategoryId,
     searchedName,
     selectedRestaurantId,
-    // setters
-    setAreaFilter,
-    setCategoryIdFilter,
-    setNameFilter,
     clearFilters,
   }
 }

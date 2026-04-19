@@ -61,21 +61,21 @@
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">地區</p>
               <div class="grid grid-cols-4 gap-1">
-                <FilterItem :active="!selectedArea" label="全部" @click="setAreaFilter(null)" />
+                <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
                 <div /><div /><div />
                 <FilterItem
                   v-for="(option, id) in areaOptions"
                   :key="id"
                   :active="selectedArea === id"
                   :label="option.displayName"
-                  @click="setAreaFilter(id)"
+                  @click="selectedArea = id"
                 />
               </div>
             </div>
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">類別</p>
               <div class="grid grid-cols-4 gap-1">
-                <FilterItem :active="!selectedCategoryId" label="全部" @click="setCategoryIdFilter(null)" />
+                <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
                 <div /><div /><div />
                 <FilterItem
                   v-for="(option, id) in categoryOptions"
@@ -83,7 +83,7 @@
                   :active="selectedCategoryId === id"
                   :label="option.displayName"
                   :dot-color="option.dotColor"
-                  @click="setCategoryIdFilter(id)"
+                  @click="selectedCategoryId = id"
                 />
               </div>
             </div>
@@ -154,22 +154,15 @@ const filterModalOpen = ref(false)
 const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
 
 const {
-    // consts
-    categories,
-    restaurantAreaSet,
-    // computes
-    filteredRestaurantList,
-    selectedRestaurant,
-    // refs
-    selectedArea,
-    selectedCategoryId,
-    searchedName,
-    selectedRestaurantId,
-    // setters
-    setAreaFilter,
-    setCategoryIdFilter,
-    setNameFilter,
-    clearFilters,
+  categories,
+  restaurantAreaSet,
+  filteredRestaurantList,
+  selectedRestaurant,
+  selectedArea,
+  selectedCategoryId,
+  searchedName,
+  selectedRestaurantId,
+  clearFilters,
 } = useRestaurants()
 
 const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
