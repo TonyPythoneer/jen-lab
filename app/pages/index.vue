@@ -4,30 +4,40 @@
     <!-- Top: search/input + filters -->
     <div class="px-6 py-5 space-y-3 flex-shrink-0">
       <div class="flex items-center gap-2">
-        <div class="relative flex-1 border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-teal-500">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
-            <button v-if="searchedName" class="cursor-pointer" @click="searchedName = ''">✕</button>
-            <span v-else>🔍</span>
-          </span>
-          <input
-            v-model="searchedName"
-            type="text"
-            placeholder="榛知雪梨美食地圖，歡迎搜尋找餐廳"
-            class="w-full pl-8 pr-4 py-2 text-sm focus:outline-none bg-transparent"
-          />
-        </div>
-        <button
-          class="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border cursor-pointer hover:bg-gray-50"
-          :class="activeFilterCount ? 'text-teal-600 font-bold border-teal-500' : 'text-gray-500 border-gray-300'"
-          @click="filterModalOpen = true"
+        <UInput
+          v-model="searchedName"
+          class="flex-1"
+          placeholder="榛知雪梨美食地圖，歡迎搜尋找餐廳"
+          icon="i-lucide-search"
+          :ui="{ trailing: 'pe-1' }"
         >
-          <span>⊞</span>
-          <span
-            v-if="activeFilterCount"
-            class="w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
-          >{{ activeFilterCount }}</span>
-          <span>Filters</span>
-        </button>
+          <template v-if="searchedName" #trailing>
+            <UButton
+              color="neutral"
+              variant="link"
+              size="sm"
+              icon="i-lucide-circle-x"
+              aria-label="Clear input"
+              @click="searchedName = ''"
+            />
+          </template>
+        </UInput>
+
+        <UChip
+          :text="activeFilterCount"
+          :show="activeFilterCount > 0"
+          color="error"
+          size="lg"
+        >
+          <UButton
+            icon="i-lucide-sliders-horizontal"
+            label="Filters"
+            color="neutral"
+            variant="outline"
+            :class="activeFilterCount ? 'text-teal-600 font-bold' : ''"
+            @click="filterModalOpen = true"
+          />
+        </UChip>
       </div>
 
       <UModal v-model:open="filterModalOpen" class="max-w-2xl">
