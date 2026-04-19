@@ -1,6 +1,19 @@
 <template>
   <div class="relative w-full h-full">
     <div ref="mapEl" class="w-full h-full" />
+
+    <a
+      v-if="selectedRestaurant?.googleMapsLink"
+      :href="selectedRestaurant.googleMapsLink"
+      target="_blank"
+      rel="noopener"
+      :style="{ backgroundColor: selectedRestaurant.categoryColor }"
+      class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow text-xs font-medium text-white hover:opacity-80 transition-opacity"
+    >
+      <UIcon name="i-simple-icons-googlemaps" class="w-3.5 h-3.5" />
+      Go to<b>Google Maps</b>
+    </a>
+
     <button
       class="absolute bottom-6 right-2.5 z-[1000] w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
       :class="tileQuality === 'high'
@@ -23,7 +36,7 @@ type LeafletInstance = typeof import('leaflet')
 
 const props = defineProps<{
   restaurants: EnrichedRestaurant[]
-  selectedId: string | null
+  selectedRestaurant: EnrichedRestaurant | null
 }>()
 
 const emit = defineEmits<{
@@ -31,6 +44,7 @@ const emit = defineEmits<{
 }>()
 
 const isReady = defineModel<boolean>('ready', { default: false })
+
 
 const mapEl = ref<HTMLDivElement | null>(null)
 let map: LeafletMap | null = null
@@ -66,7 +80,7 @@ function renderMarkers() {
   markerMap.clear()
 
   for (const restaurant of props.restaurants) {
-    const selected = props.selectedId === restaurant.id
+    const selected = props.selectedRestaurant?.id === restaurant.id
     const marker = L.marker([restaurant.coordinates.lat, restaurant.coordinates.lng], {
       icon: makeIcon(restaurant.categoryColor, selected),
     }).addTo(map!)
@@ -84,23 +98,15 @@ watch(
 )
 
 watch(
-  () => props.selectedId,
-  (newId, oldId) => {
+  () => props.selectedRestaurant,
+  (newR, oldR) => {
     if (!map || !L) return
 
-    if (oldId !== null) {
-      const old = markerMap.get(oldId)
-      const restaurant = props.restaurants.find((r) => r.id === oldId)
-      if (old && restaurant) old.setIcon(makeIcon(restaurant.categoryColor, false))
-    }
+    if (oldR) markerMap.get(oldR.id)?.setIcon(makeIcon(oldR.categoryColor, false))
 
-    if (newId !== null) {
-      const marker = markerMap.get(newId)
-      const restaurant = props.restaurants.find((r) => r.id === newId)
-      if (marker && restaurant) {
-        marker.setIcon(makeIcon(restaurant.categoryColor, true))
-        map.panTo([restaurant.coordinates.lat, restaurant.coordinates.lng])
-      }
+    if (newR) {
+      markerMap.get(newR.id)?.setIcon(makeIcon(newR.categoryColor, true))
+      map.panTo([newR.coordinates.lat, newR.coordinates.lng])
     }
   },
 )

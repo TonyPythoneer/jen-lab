@@ -112,7 +112,7 @@
       <ClientOnly>
         <MapView
           :restaurants="filteredRestaurantList"
-          :selected-id="selectedRestaurantId"
+          :selected-restaurant="selectedRestaurant"
           v-model:ready="isMapReady"
           @select="(r) => (selectedRestaurantId = r.id)"
         />
