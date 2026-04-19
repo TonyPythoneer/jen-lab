@@ -117,40 +117,44 @@
     </div>
 
     <!-- Bottom: filtered restaurantList list -->
-    <div class="flex-1 overflow-y-auto divide-y divide-gray-200">
+    <div class="flex-1 overflow-y-auto">
       <div class="px-6 py-4">
         <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-widest">景點列表</h2>
       </div>
-      <div
-        v-for="restaurant in filteredRestaurantList"
-        :key="restaurant.id"
-        class="px-6 py-4 cursor-pointer hover:bg-gray-50 transition"
-        :class="{ 'bg-teal-50': selectedRestaurantId === restaurant.id }"
-        @click="selectedRestaurantId = restaurant.id"
-      >
-        <div class="flex items-center gap-2">
-          <span
-            class="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-            :style="{ background: restaurant.categoryColor }"
-          />
-          <span class="text-xs text-gray-400 uppercase tracking-wide">
-            {{ restaurant.area }} · {{ restaurant.categoryName }}
-          </span>
-        </div>
-        <div class="font-semibold text-gray-500 mt-1">{{ restaurant.name }}</div>
-        <div class="text-sm text-gray-500 mt-0.5">{{ restaurant.summary }}</div>
-        <div v-if="restaurant.recommendations?.length" class="flex flex-wrap items-center gap-1 mt-2">
-          <span class="text-xs text-gray-500">★ 推薦：</span>
-          <UBadge
-            v-for="rec in restaurant.recommendations"
-            :key="rec"
-            color="neutral"
-            variant="subtle"
-            size="sm"
-          >
-            {{ rec }}
-          </UBadge>
-        </div>
+      <div class="px-6 pb-6 flex flex-col gap-3">
+        <UPageCard
+          v-for="restaurant in filteredRestaurantList"
+          :key="restaurant.id"
+          :title="restaurant.name"
+          :description="restaurant.summary"
+          :class="{ 'ring-2 ring-teal-500': selectedRestaurantId === restaurant.id }"
+          class="cursor-pointer"
+          @click="selectedRestaurantId = restaurant.id"
+        >
+          <template #headline>
+            <div class="flex items-center gap-2">
+              <span
+                class="w-2 h-2 rounded-full flex-shrink-0"
+                :style="{ background: restaurant.categoryColor }"
+              />
+              <span class="text-xs text-gray-400 uppercase tracking-wide">
+                {{ restaurant.area }} · {{ restaurant.categoryName }}
+              </span>
+            </div>
+          </template>
+          <template v-if="restaurant.recommendations?.length" #footer>
+            <div class="flex flex-wrap items-center gap-1">
+              <span class="text-xs text-gray-500">★ 推薦：</span>
+              <UBadge
+                v-for="rec in restaurant.recommendations"
+                :key="rec"
+                color="neutral"
+                variant="subtle"
+                size="sm"
+              >{{ rec }}</UBadge>
+            </div>
+          </template>
+        </UPageCard>
       </div>
     </div>
   </div>
