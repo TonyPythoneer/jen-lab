@@ -1,5 +1,6 @@
 <template>
-  <UPage class="h-dvh flex flex-col">
+  <UPage>
+  <div class="h-dvh flex flex-col overflow-hidden">
     <!-- Top: search/input + filters -->
     <div class="px-6 py-5 space-y-3 flex-shrink-0">
       <div class="flex items-center gap-2">
@@ -142,6 +143,7 @@
         </div>
       </div>
     </div>
+  </div>
   </UPage>
 </template>
 
