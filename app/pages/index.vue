@@ -97,7 +97,7 @@ const areaOptions = computed<FilterOption>(() =>
 )
 
 const categoryOptions = computed<FilterOption>(() =>
-  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, color: c.color }]))
+  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, dotColor: c.color }]))
 )
 
 </script>

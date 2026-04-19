@@ -11,25 +11,15 @@
     <UModal v-model:open="open" :title="`選擇${label}`">
       <template #body>
         <div class="flex flex-col gap-1 pb-2 max-h-[60vh] overflow-y-auto">
-          <button
-            class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm hover:bg-gray-50 transition text-left"
-            :class="!modelValue ? 'font-semibold text-teal-600' : 'text-gray-700'"
-            @click="select(null)"
-          >
-            <RadioDot :active="!modelValue" />
-            全部
-          </button>
-          <button
+          <FilterItem :active="!modelValue" label="全部" @click="select(null)" />
+          <FilterItem
             v-for="(option, id) in options"
             :key="id"
-            class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm hover:bg-gray-50 transition text-left"
-            :class="modelValue === id ? 'font-semibold text-teal-600' : 'text-gray-700'"
+            :active="modelValue === id"
+            :label="option.displayName"
+            :dotColor="option.dotColor"
             @click="select(id)"
-          >
-            <RadioDot :active="modelValue === id" />
-            <span v-if="option.color" class="w-2.5 h-2.5 rounded-full flex-shrink-0" :style="{ background: option.color }" />
-            {{ option.displayName }}
-          </button>
+          />
         </div>
       </template>
     </UModal>
@@ -37,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-export type FilterOption = Record<string, { displayName: string; color?: string }>
+export type FilterOption = Record<string, { displayName: string; dotColor?: string }>
 
 const props = defineProps<{
   label: string
