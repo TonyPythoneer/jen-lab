@@ -7,7 +7,7 @@
         <UInput
           v-model="searchedName"
           class="flex-1"
-          placeholder="榛知雪梨美食地圖，歡迎搜尋找餐廳"
+          placeholder="榛知雪梨美食地圖搜尋引擎"
           icon="i-lucide-search"
           :ui="{ trailing: 'pe-1' }"
         >
@@ -27,7 +27,8 @@
           :text="activeFilterCount"
           :show="activeFilterCount > 0"
           color="error"
-          size="lg"
+          size="3xl"
+          :ui="{ base: 'text-gray-300 font-bold' }"
         >
           <UButton
             icon="i-lucide-sliders-horizontal"
