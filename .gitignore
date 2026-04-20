@@ -30,3 +30,6 @@ logs
 
 # git
 .hypothesis
+
+# claude
+.claude/settings.local.json
