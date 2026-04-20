@@ -1,6 +1,6 @@
 <template>
   <UPage>
-  <div class="h-dvh flex flex-col overflow-hidden">
+  <div class="h-dvh flex flex-col overflow-hidden relative">
     <!--
       ████████╗ ██████╗ ██████╗
       ╚══██╔══╝██╔═══██╗██╔══██╗
@@ -108,7 +108,7 @@
       ██║ ╚═╝ ██║██║██████╔╝██████╔╝███████╗███████╗
       ╚═╝     ╚═╝╚═╝╚═════╝ ╚═════╝ ╚══════╝╚══════╝
     -->
-    <div class="relative h-96 flex-shrink-0">
+    <div class="relative h-72 flex-shrink-0">
       <ClientOnly>
         <MapView
           :restaurants="filteredRestaurantList"
@@ -142,7 +142,7 @@
       ╚═════╝  ╚═════╝    ╚═╝      ╚═╝    ╚═════╝ ╚═╝     ╚═╝
     -->
     <!-- filtered restaurant list -->
-    <div class="flex-1 overflow-y-auto">
+    <div ref="listEl" class="flex-1 overflow-y-auto">
       <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
 
         <!-- Selected restaurant pinned at top -->
@@ -163,6 +163,34 @@
 
       </div>
     </div>
+
+    <!-- Footer -->
+    <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
+      <div class="flex items-center gap-3">
+        <a href="https://www.facebook.com/jenliuau/" aria-label="Facebook" class="text-gray-400 hover:text-blue-600 transition-colors">
+          <UIcon name="i-simple-icons-facebook" class="w-4 h-4" />
+        </a>
+        <a href="https://www.instagram.com/jenknowsau/" aria-label="Instagram" class="text-gray-400 hover:text-pink-500 transition-colors">
+          <UIcon name="i-simple-icons-instagram" class="w-4 h-4" />
+        </a>
+        <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
+          <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
+        </a>
+      </div>
+      <p class="text-[10px] text-gray-400">
+        © {{ new Date().getFullYear() }} Jen Knows · Made by <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a>
+      </p>
+    </div>
+
+    <!-- Dark mode toggle -->
+    <UButton
+      :icon="colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
+      color="neutral"
+      variant="soft"
+      size="sm"
+      class="fixed bottom-4 right-4 z-[9999]"
+      @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
+    />
   </div>
   </UPage>
 </template>
@@ -172,7 +200,9 @@ import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
 
 type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
 
+const colorMode = useColorMode()
 const isMapReady = ref(false)
+const listEl = ref<HTMLDivElement | null>(null)
 const filterModalOpen = ref(false)
 const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
 
@@ -187,6 +217,10 @@ const {
   selectedRestaurantId,
   clearFilters,
 } = useRestaurants()
+
+watch(selectedRestaurantId, (id) => {
+  if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: 'smooth' }))
+})
 
 const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
   Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }])) as FilterOption<RestaurantArea>

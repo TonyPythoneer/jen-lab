@@ -6,17 +6,34 @@
       v-if="selectedRestaurant"
       class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-1"
     >
-      <a
-        v-if="selectedRestaurant.googleMapsLink"
-        :href="selectedRestaurant.googleMapsLink"
-        target="_blank"
-        rel="noopener"
-        :style="{ backgroundColor: selectedRestaurant.categoryColor }"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow text-xs font-medium text-white hover:opacity-80 transition-opacity"
-      >
-        <UIcon name="i-simple-icons-googlemaps" class="w-3.5 h-3.5" />
-        Go to <b>Google Maps</b>
-      </a>
+      <div v-if="selectedRestaurant.googleMapsLink" :key="selectedRestaurant.googleMapsLink" class="burst-wrap relative">
+        <!-- Ring halo -->
+        <span
+          class="burst-ring absolute inset-0 rounded-full pointer-events-none"
+          :style="{ borderColor: selectedRestaurant.categoryColor }"
+        />
+        <!-- Sparks: 8 dots at different angles -->
+        <span
+          v-for="i in 8"
+          :key="i"
+          class="spark absolute pointer-events-none"
+          :style="{
+            '--angle': `${(i - 1) * 45}deg`,
+            '--color': selectedRestaurant.categoryColor,
+            animationDelay: `${(i - 1) * 0.03}s`,
+          }"
+        />
+        <a
+          :href="selectedRestaurant.googleMapsLink"
+          target="_blank"
+          rel="noopener"
+          :style="{ backgroundColor: selectedRestaurant.categoryColor }"
+          class="relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow text-xs font-medium text-white hover:opacity-80 transition-opacity"
+        >
+          <UIcon name="i-simple-icons-googlemaps" class="w-3.5 h-3.5" />
+          Go to <b>Google Maps</b>
+        </a>
+      </div>
       <button
         :style="{ backgroundColor: selectedRestaurant.categoryColor }"
         class="w-6 h-6 rounded-full shadow flex items-center justify-center text-white hover:opacity-80 transition-opacity cursor-pointer"
@@ -143,3 +160,43 @@ onUnmounted(() => {
 })
 </script>
 
+<style scoped>
+/* ── Wrapper ── */
+.burst-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Ring: expands outward and fades ── */
+.burst-ring {
+  border: 2px solid;
+  animation: ring-burst 0.7s ease-out forwards;
+}
+
+@keyframes ring-burst {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── Sparks: each dot shoots outward at its angle ── */
+.spark {
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color);
+  animation: spark-shoot 0.7s ease-out forwards;
+}
+
+@keyframes spark-shoot {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(35px);
+    opacity: 0;
+  }
+}
+</style>
