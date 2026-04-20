@@ -108,7 +108,7 @@
       ██║ ╚═╝ ██║██║██████╔╝██████╔╝███████╗███████╗
       ╚═╝     ╚═╝╚═╝╚═════╝ ╚═════╝ ╚══════╝╚══════╝
     -->
-    <div class="relative h-96 flex-shrink-0">
+    <div class="relative h-72 flex-shrink-0">
       <ClientOnly>
         <MapView
           :restaurants="filteredRestaurantList"

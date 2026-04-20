@@ -1,5 +1,6 @@
 import type { MapOptions, TileLayerOptions } from 'leaflet'
 
+const extendBound = 0.0002
 export const mapOptions = {
   center: [-33.871, 151.206] as [number, number],
   zoom: 15,           // 10=city, 13=district, 15=street, 18=building
@@ -7,8 +8,8 @@ export const mapOptions = {
   maxZoom: 18,
   zoomControl: true,
   maxBounds: [
-    [-33.8955, 151.1825] as [number, number], // SW
-    [-33.8220, 151.2265] as [number, number], // NE
+    [-33.8955-extendBound, 151.1825-extendBound] as [number, number], // SW
+    [-33.8220+extendBound, 151.2265+extendBound] as [number, number], // NE
   ] as [[number, number], [number, number]],
   maxBoundsViscosity: 1.0,
 } satisfies MapOptions
