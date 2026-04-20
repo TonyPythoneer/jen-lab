@@ -162,25 +162,35 @@
         </template>
 
       </div>
-
-      <!-- Footer -->
-      <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
-        <div class="flex items-center gap-3">
-          <a href="https://www.facebook.com/jenliuau/" aria-label="Facebook" class="text-gray-400 hover:text-blue-600 transition-colors">
-            <UIcon name="i-simple-icons-facebook" class="w-4 h-4" />
-          </a>
-          <a href="https://www.instagram.com/jenknowsau/" aria-label="Instagram" class="text-gray-400 hover:text-pink-500 transition-colors">
-            <UIcon name="i-simple-icons-instagram" class="w-4 h-4" />
-          </a>
-          <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
-            <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
-          </a>
-        </div>
-        <p class="text-[10px] text-gray-400">
-          © {{ new Date().getFullYear() }} Jen Knows · Made by <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a>
-        </p>
-      </div>
     </div>
+
+    <!-- Footer -->
+    <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
+      <div class="flex items-center gap-3">
+        <a href="https://www.facebook.com/jenliuau/" aria-label="Facebook" class="text-gray-400 hover:text-blue-600 transition-colors">
+          <UIcon name="i-simple-icons-facebook" class="w-4 h-4" />
+        </a>
+        <a href="https://www.instagram.com/jenknowsau/" aria-label="Instagram" class="text-gray-400 hover:text-pink-500 transition-colors">
+          <UIcon name="i-simple-icons-instagram" class="w-4 h-4" />
+        </a>
+        <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
+          <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
+        </a>
+      </div>
+      <p class="text-[10px] text-gray-400">
+        © {{ new Date().getFullYear() }} Jen Knows · Made by <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a>
+      </p>
+    </div>
+
+    <!-- Dark mode toggle -->
+    <UButton
+      :icon="colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
+      color="neutral"
+      variant="soft"
+      size="sm"
+      class="fixed bottom-4 right-4 z-[9999]"
+      @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
+    />
   </div>
   </UPage>
 </template>
