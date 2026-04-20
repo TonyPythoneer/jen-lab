@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "nuxt": {
+      "source": "onmax/nuxt-skills",
+      "sourceType": "github",
+      "computedHash": "571d9ea31a6f18b94168894814f20df361773e16de4a6dc675b526aaf6d55a45"
+    },
+    "nuxt-ui": {
+      "source": "nuxt/ui",
+      "sourceType": "github",
+      "computedHash": "73c6af534e1efcdfac6f3ac009ad5afe5aa67e12d90c60ee80f686573967ffe6"
+    },
+    "pnpm": {
+      "source": "onmax/nuxt-skills",
+      "sourceType": "github",
+      "computedHash": "0e72c2b2563556bc027cd025d0b3e11bf7147f362f4815ac9ad083ccbac55750"
+    },
+    "vue": {
+      "source": "onmax/nuxt-skills",
+      "sourceType": "github",
+      "computedHash": "cb120821c275a351b6e3c154d82cf62a9277b6260c2c30b3101f688928a3428b"
+    }
+  }
+}

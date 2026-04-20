@@ -1,75 +1,22 @@
-# Nuxt Minimal Starter
+# jen-lab
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Practice project. Build frontend things with Vue + AI-assisted coding.
 
-## Setup
+## What
 
-Make sure to install dependencies:
+Personal restaurant map — "榛知雪梨". Browse and filter food spots on an interactive map.
 
-```bash
-# npm
-npm install
+## Stack
 
-# pnpm
-pnpm install
+- **Nuxt 4** + **Vue 3**
+- **@nuxt/ui v4** + **Tailwind CSS v4**
+- **Leaflet** for map
+- Deploys to **Cloudflare Pages**
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Run
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+pnpm dev      # http://localhost:3000
+pnpm build    # production build
+pnpm deploy   # deploy to Cloudflare Pages
 ```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
