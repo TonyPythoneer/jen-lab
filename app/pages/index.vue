@@ -143,6 +143,7 @@
     -->
     <!-- filtered restaurant list -->
     <div class="flex-1 overflow-y-auto">
+    <div ref="listEl" class="flex-1 overflow-y-auto">
       <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
 
         <!-- Selected restaurant pinned at top -->
@@ -201,6 +202,7 @@ import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
 type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
 
 const isMapReady = ref(false)
+const listEl = ref<HTMLDivElement | null>(null)
 const filterModalOpen = ref(false)
 const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
 
@@ -215,6 +217,10 @@ const {
   selectedRestaurantId,
   clearFilters,
 } = useRestaurants()
+
+watch(selectedRestaurantId, (id) => {
+  if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: 'smooth' }))
+})
 
 const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
   Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }])) as FilterOption<RestaurantArea>
