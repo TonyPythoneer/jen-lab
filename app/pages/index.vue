@@ -1,6 +1,6 @@
 <template>
   <UPage>
-  <div class="h-dvh flex flex-col overflow-hidden">
+  <div class="h-dvh flex flex-col overflow-hidden relative">
     <!--
       ████████╗ ██████╗ ██████╗
       ╚══██╔══╝██╔═══██╗██╔══██╗
@@ -142,7 +142,6 @@
       ╚═════╝  ╚═════╝    ╚═╝      ╚═╝    ╚═════╝ ╚═╝     ╚═╝
     -->
     <!-- filtered restaurant list -->
-    <div class="flex-1 overflow-y-auto">
     <div ref="listEl" class="flex-1 overflow-y-auto">
       <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
 
@@ -201,6 +200,7 @@ import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
 
 type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
 
+const colorMode = useColorMode()
 const isMapReady = ref(false)
 const listEl = ref<HTMLDivElement | null>(null)
 const filterModalOpen = ref(false)
