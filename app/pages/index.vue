@@ -198,6 +198,10 @@
 <script setup lang="ts">
 import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
 
+useHead({
+  title: '知雪梨美食地圖'
+})
+
 type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
 
 const colorMode = useColorMode()
