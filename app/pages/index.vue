@@ -1,233 +1,144 @@
 <template>
   <UPage>
-  <div class="h-dvh flex flex-col overflow-hidden relative">
-    <!--
-      ████████╗ ██████╗ ██████╗
-      ╚══██╔══╝██╔═══██╗██╔══██╗
-         ██║   ██║   ██║██████╔╝
-         ██║   ██║   ██║██╔═══╝
-         ██║   ╚██████╔╝██║
-         ╚═╝    ╚═════╝ ╚═╝
-    -->
-    <!-- search engine -->
-    <div class="px-6 py-5 space-y-3 flex-shrink-0">
-      <div class="flex items-center gap-2">
-        <UInput
-          v-model="searchedName"
-          class="flex-1"
-          placeholder="榛知雪梨美食地圖搜尋引擎"
-          icon="i-lucide-search"
-          :ui="{ trailing: 'pe-1' }"
-        >
-          <template v-if="searchedName" #trailing>
-            <UButton
-              color="neutral"
-              variant="link"
-              size="sm"
-              icon="i-lucide-circle-x"
-              aria-label="Clear input"
-              @click="searchedName = ''"
-            />
-          </template>
-        </UInput>
+    <UContainer class="max-w-lg py-10 px-6 flex flex-col gap-5">
 
-        <UChip
-          :text="activeFilterCount"
-          :show="activeFilterCount > 0"
-          color="error"
-          size="3xl"
-          :ui="{ base: 'text-gray-300 font-bold' }"
-        >
-          <UButton
-            icon="i-lucide-sliders-horizontal"
-            label="Filters"
-            color="neutral"
-            variant="outline"
-            :class="activeFilterCount ? 'text-teal-600 font-bold' : ''"
-            @click="filterModalOpen = true"
-          />
-        </UChip>
-      </div>
-
-      <UModal v-model:open="filterModalOpen" class="max-w-2xl">
-        <template #header>
-          <div class="flex items-center justify-between w-full">
-            <p class="font-semibold text-gray-300">篩選</p>
-            <div class="flex items-center gap-2">
-              <button
-                :disabled="!activeFilterCount"
-                class="text-sm transition-colors"
-                :class="activeFilterCount ? 'text-gray-300 hover:text-red-500 cursor-pointer' : 'text-gray-500 cursor-not-allowed'"
-                @click="clearFilters"
-              >↺ 重置</button>
-              <UButton color="neutral" variant="ghost" icon="i-lucide-x" size="sm" @click="filterModalOpen = false" />
-            </div>
-          </div>
-        </template>
-        <template #body>
-          <div class="space-y-4 pb-2">
-            <div>
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">地區</p>
-              <div class="grid grid-cols-4 gap-1">
-                <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
-                <div /><div /><div />
-                <FilterItem
-                  v-for="(option, id) in areaOptions"
-                  :key="id"
-                  :active="selectedArea === id"
-                  :label="option.displayName"
-                  @click="selectedArea = id"
-                />
-              </div>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">類別</p>
-              <div class="grid grid-cols-4 gap-1">
-                <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
-                <div /><div /><div />
-                <FilterItem
-                  v-for="(option, id) in categoryOptions"
-                  :key="id"
-                  :active="selectedCategoryId === id"
-                  :label="option.displayName"
-                  :dot-color="option.dotColor"
-                  @click="selectedCategoryId = id"
-                />
-              </div>
-            </div>
-          </div>
-        </template>
-      </UModal>
-    </div>
-
-    <!--
-      ███╗   ███╗██╗██████╗ ██████╗ ██╗     ███████╗
-      ████╗ ████║██║██╔══██╗██╔══██╗██║     ██╔════╝
-      ██╔████╔██║██║██║  ██║██║  ██║██║     █████╗
-      ██║╚██╔╝██║██║██║  ██║██║  ██║██║     ██╔══╝
-      ██║ ╚═╝ ██║██║██████╔╝██████╔╝███████╗███████╗
-      ╚═╝     ╚═╝╚═╝╚═════╝ ╚═════╝ ╚══════╝╚══════╝
-    -->
-    <div class="relative h-72 flex-shrink-0">
-      <ClientOnly>
-        <MapView
-          :restaurants="filteredRestaurantList"
-          :selected-restaurant="selectedRestaurant"
-          v-model:ready="isMapReady"
-          @select="(r) => (selectedRestaurantId = r.id)"
-          @unpin="selectedRestaurantId = null"
-        />
-      </ClientOnly>
-
-      <!-- 放在 MapView 後面，absolute inset-0 自然蓋住地圖 -->
-      <Transition
-        leave-active-class="transition-opacity duration-300 delay-[1000ms] ease-in-out"
-        leave-to-class="opacity-0"
-      >
-        <div
-          v-if="!isMapReady"
-          class="absolute inset-0 flex items-center justify-center bg-gray-50"
-        >
-          <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-500 animate-spin" />
+      <!-- Profile -->
+      <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
+      <div class="flex flex-col items-center gap-3 text-center">
+        <!-- Card-style banner: rectangular top color block, avatar overlapping the boundary -->
+        <div class="relative w-full flex flex-col items-center">
+          <div class="w-full h-20 rounded-t-xl" style="background-color: rgb(107, 187, 224);" />
+          <img src="/home/avatar.webp" alt="榛知" class="absolute top-6 w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
+          <div class="mt-16" />
         </div>
-      </Transition>
-    </div>
-
-    <!--
-      ██████╗  ██████╗ ████████╗████████╗ ██████╗ ███╗   ███╗
-      ██╔══██╗██╔═══██╗╚══██╔══╝╚══██╔══╝██╔═══██╗████╗ ████║
-      ██████╔╝██║   ██║   ██║      ██║   ██║   ██║██╔████╔██║
-      ██╔══██╗██║   ██║   ██║      ██║   ██║   ██║██║╚██╔╝██║
-      ██████╔╝╚██████╔╝   ██║      ██║   ╚██████╔╝██║ ╚═╝ ██║
-      ╚═════╝  ╚═════╝    ╚═╝      ╚═╝    ╚═════╝ ╚═╝     ╚═╝
-    -->
-    <!-- filtered restaurant list -->
-    <div ref="listEl" class="flex-1 overflow-y-auto">
-      <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
-
-        <!-- Selected restaurant pinned at top -->
-        <RestaurantCard
-          v-if="selectedRestaurant"
-          :restaurant="selectedRestaurant"
-          class="relative ring-2 ring-teal-500"
+        <h1 class="text-xl font-bold text-gray-800">榛知</h1>
+        <UTabs
+          v-model="activeTab"
+          :items="tabItems"
+          variant="link"
+          size="sm"
+          class="w-full"
         />
-
-        <!-- Rest of the list -->
-        <template v-for="restaurant in filteredRestaurantList" :key="restaurant.id">
-          <RestaurantCard
-            v-if="restaurant.id !== selectedRestaurantId"
-            :restaurant="restaurant"
-            @select="selectedRestaurantId = restaurant.id"
-          />
-        </template>
-
+        <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[tabItems[activeTab]?.label ?? tabItems[0]!.label] }}</p>
+        <UButton
+          color="neutral"
+          variant="outline"
+          size="sm"
+          class="rounded-full border-teal-400 text-teal-600 hover:bg-teal-50"
+        >
+          訂閱電子報
+        </UButton>
       </div>
-    </div>
 
-    <!-- Footer -->
-    <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
-      <div class="flex items-center gap-3">
+      <!-- Social Links -->
+      <div class="flex justify-center gap-4">
         <a
           v-for="contact in contacts"
           :key="contact.label"
           :href="contact.url"
           :aria-label="contact.label"
           v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
-          :class="`text-gray-400 ${contact.hoverClass} transition-colors`"
+          :class="`text-gray-500 ${contact.hoverClass} transition-colors`"
         >
-          <UIcon :name="contact.icon" class="w-4 h-4" />
+          <UIcon :name="contact.icon" class="w-5 h-5" />
         </a>
       </div>
-      <p class="text-[10px] text-gray-400">
-        © {{ new Date().getFullYear() }} <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a> · Data powered by Jen Knows
-      </p>
-    </div>
 
-    <!-- Dark mode toggle -->
-    <UColorModeButton
-      class="fixed bottom-4 right-4 z-[9999]"
-    />
-  </div>
+      <USeparator />
+
+      <!-- Featured Product -->
+      <UCard class="bg-teal-400 text-white overflow-hidden">
+        <div class="flex flex-col gap-3">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider opacity-80">精選商品</p>
+            <h2 class="text-lg font-bold mt-1">澳洲職場指南 2.0</h2>
+            <p class="text-sm opacity-90 mt-1">48 章節 · 7 大主題，全面解析澳洲職場文化</p>
+          </div>
+          <p class="text-2xl font-bold">NT$ 1,590</p>
+          <div class="flex gap-2">
+            <button class="flex-1 rounded-full bg-white text-teal-700 font-semibold text-sm py-1.5 px-4 hover:bg-teal-50 transition-colors">
+              立即購買
+            </button>
+            <button class="flex-1 rounded-full border border-white text-white text-sm py-1.5 px-4 hover:bg-white/20 transition-colors">
+              已購買？登入
+            </button>
+          </div>
+        </div>
+      </UCard>
+
+      <!-- CTA Cards -->
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <UIcon name="i-lucide-calendar" class="w-5 h-5 text-teal-600" />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-800 text-sm">職涯諮詢預約</p>
+            <p class="text-xs text-gray-500 mt-0.5">一對一職涯規劃，找到在澳洲的方向</p>
+          </div>
+          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
+        </div>
+      </UCard>
+
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <UIcon name="i-lucide-sparkles" class="w-5 h-5 text-teal-600" />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-800 text-sm">AI 職涯探索工具 <UBadge color="info" variant="subtle" size="xs" class="ml-1">免費 Beta</UBadge></p>
+            <p class="text-xs text-gray-500 mt-0.5">限時免費，探索最適合你的澳洲職涯路線</p>
+          </div>
+          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
+        </div>
+      </UCard>
+
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <UIcon name="i-lucide-newspaper" class="w-5 h-5 text-teal-600" />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-800 text-sm">部落格文章</p>
+            <p class="text-xs text-gray-500 mt-0.5">澳洲生活、移民、職場第一手資訊</p>
+          </div>
+          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
+        </div>
+      </UCard>
+
+      <!-- Food Map Link -->
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer" @click="$router.push('/my-best-restaurants-search-in-sydney')">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-teal-600" />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-800 text-sm">榛知雪梨美食地圖</p>
+            <p class="text-xs text-gray-500 mt-0.5">精選雪梨餐廳，找到你的下一頓好飯</p>
+          </div>
+          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
+        </div>
+      </UCard>
+
+    </UContainer>
   </UPage>
 </template>
 
 <script setup lang="ts">
-import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
-
 const { contacts } = useAppConfig()
 
-useHead({
-  title: '知雪梨美食地圖'
-})
+const tabItems = [{ label: 'NextSteps Academy' }, { label: 'Jen Knows' }]
+const activeTab = ref(0)
 
-type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
+const bios: Record<string, string> = {
+  'NextSteps Academy': `陪你找到職涯的下一步
+🇦🇺 澳洲求職培訓 | 資源 | 職場人脈
+✍️ 澳洲企業商模分析系列，每週四於 Facebook, IG, Instragram 更新
+📅 預約職涯諮詢 📒購買澳洲職場指南`,
+  'Jen Knows': `Hi 我是Jen，一個15歲隻身來到澳洲求學，之後走過技術移民、求職、轉職道路，跌跌撞撞也沒放棄的女子
 
-const isMapReady = ref(false)
-const listEl = ref<HTMLDivElement | null>(null)
-const filterModalOpen = ref(false)
-const activeFilterCount = computed(() => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length)
+因為知道路途的艱辛，在職涯穩定後，開始分享澳洲知識、職場經驗，致力於幫助更多人在澳洲順利求職、快速融入澳洲生活。`,
+}
 
-const {
-  categories,
-  restaurantAreaSet,
-  filteredRestaurantList,
-  selectedRestaurant,
-  selectedArea,
-  selectedCategoryId,
-  searchedName,
-  selectedRestaurantId,
-  clearFilters,
-} = useRestaurants()
-
-watch(selectedRestaurantId, (id) => {
-  if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: 'smooth' }))
-})
-
-const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
-  Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }])) as FilterOption<RestaurantArea>
-)
-
-const categoryOptions = computed<FilterOption<CategoryId>>(() =>
-  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, dotColor: c.color }])) as FilterOption<CategoryId>
-)
+useHead({ title: '榛知 — 澳洲生活・職場・移民' })
 </script>
