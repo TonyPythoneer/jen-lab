@@ -9,6 +9,11 @@ export default defineNuxtConfig({
     }
   },
 
+  colorMode: {
+    preference: 'light',
+    fallback: 'light',
+  },
+
   css: ['~/assets/css/main.css'],
 
   nitro: {
