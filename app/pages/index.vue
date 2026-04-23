@@ -179,7 +179,7 @@
         </a>
       </div>
       <p class="text-[10px] text-gray-400">
-        © {{ new Date().getFullYear() }} Jen Knows · Made by <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a>
+        © {{ new Date().getFullYear() }} <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a> · Data powered by Jen Knows
       </p>
     </div>
 
