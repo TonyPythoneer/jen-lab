@@ -4,11 +4,11 @@
 
       <!-- Profile -->
       <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
-      <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-white">
         <!-- Banner + avatar + button -->
         <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
         <div class="relative w-full">
-          <div class="absolute top-0 left-0 w-full h-28 rounded-t-xl" style="background-color: rgb(107, 187, 224);" />
+          <div class="absolute top-0 left-0 w-full h-28" style="background-color: rgb(107, 187, 224);" />
           <div class="relative flex items-end justify-between px-6 pt-14 pb-0">
             <div class="flex items-end gap-3">
               <img :src="home.avatarLink" :alt="home.name"
@@ -29,24 +29,22 @@
             class="w-full"
           />
           <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[activeTab] }}</p>
+          <!-- Social Links -->
+          <div class="flex justify-center gap-4 py-2">
+            <a
+              v-for="contact in contacts"
+              :key="contact.label"
+              :href="contact.url"
+              :aria-label="contact.label"
+              v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
+              :class="`text-gray-500 ${contact.hoverClass} transition-colors`"
+            >
+              <UIcon :name="contact.icon" class="w-5 h-5" />
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- Social Links -->
-      <div class="flex justify-center gap-4">
-        <a
-          v-for="contact in contacts"
-          :key="contact.label"
-          :href="contact.url"
-          :aria-label="contact.label"
-          v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
-          :class="`text-gray-500 ${contact.hoverClass} transition-colors`"
-        >
-          <UIcon :name="contact.icon" class="w-5 h-5" />
-        </a>
-      </div>
-
-      <USeparator />
 
       <!-- Featured Product -->
       <UCard class="bg-teal-400 text-white overflow-hidden">
