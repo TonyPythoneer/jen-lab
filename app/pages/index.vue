@@ -4,28 +4,32 @@
 
       <!-- Profile -->
       <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
-      <div class="flex flex-col items-center gap-3 text-center">
+      <div class="flex flex-col gap-3">
         <!-- Banner + avatar + button -->
         <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
         <div class="relative w-full">
           <div class="absolute top-0 left-0 w-full h-28 rounded-t-xl" style="background-color: rgb(107, 187, 224);" />
-          <div class="relative flex items-end justify-between px-4 pt-14 pb-0">
-            <img :src="home.avatarLink" :alt="home.name"
-              class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
-            <UButton color="neutral" variant="outline" size="sm" class="rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 mb-0">
+          <div class="relative flex items-end justify-between px-6 pt-14 pb-0">
+            <div class="flex items-end gap-3">
+              <img :src="home.avatarLink" :alt="home.name"
+                class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
+              <h1 class="text-xl font-bold text-gray-800 pl-2">{{ home.name }}</h1>
+            </div>
+            <UButton color="neutral" variant="outline" size="sm" class="border-gray-300 text-gray-700 hover:bg-gray-50 mb-0">
               ☆ 訂閱電子報
             </UButton>
           </div>
         </div>
-        <h1 class="text-xl font-bold text-gray-800">{{ home.name }}</h1>
-        <UTabs
-          v-model="activeTab"
-          :items="tabItems"
-          variant="link"
-          size="sm"
-          class="w-full"
-        />
-        <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[tabItems[activeTab]?.label ?? tabItems[0]!.label] }}</p>
+        <div class="px-6 flex flex-col gap-3">
+          <UTabs
+            v-model="activeTab"
+            :items="tabItems"
+            variant="link"
+            size="sm"
+            class="w-full"
+          />
+          <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[activeTab] }}</p>
+        </div>
       </div>
 
       <!-- Social Links -->
@@ -126,8 +130,8 @@
 const { contacts, pages } = useAppConfig()
 const home = pages.home
 
-const tabItems = home.tabs.map(t => ({ label: t.label }))
-const activeTab = ref(0)
+const tabItems = home.tabs.map(t => ({ label: t.label, value: t.label }))
+const activeTab = ref(tabItems[0]!.value)
 
 const bios = Object.fromEntries(home.tabs.map(t => [t.label, t.bio]))
 
