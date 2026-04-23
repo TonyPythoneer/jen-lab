@@ -5,13 +5,19 @@
       <!-- Profile -->
       <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
       <div class="flex flex-col items-center gap-3 text-center">
-        <!-- Card-style banner: rectangular top color block, avatar overlapping the boundary -->
-        <div class="relative w-full flex flex-col items-center">
-          <div class="w-full h-20 rounded-t-xl" style="background-color: rgb(107, 187, 224);" />
-          <img src="/home/avatar.webp" alt="榛知" class="absolute top-6 w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
-          <div class="mt-16" />
+        <!-- Banner + avatar + button -->
+        <!-- TODO: move avatarBannerColor (rgb(107, 187, 224)) to app.config.ts -->
+        <div class="relative w-full">
+          <div class="absolute top-0 left-0 w-full h-28 rounded-t-xl" style="background-color: rgb(107, 187, 224);" />
+          <div class="relative flex items-end justify-between px-4 pt-14 pb-0">
+            <img :src="home.avatarLink" :alt="home.name"
+              class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
+            <UButton color="neutral" variant="outline" size="sm" class="rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 mb-0">
+              ☆ 訂閱電子報
+            </UButton>
+          </div>
         </div>
-        <h1 class="text-xl font-bold text-gray-800">榛知</h1>
+        <h1 class="text-xl font-bold text-gray-800">{{ home.name }}</h1>
         <UTabs
           v-model="activeTab"
           :items="tabItems"
@@ -20,14 +26,6 @@
           class="w-full"
         />
         <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[tabItems[activeTab]?.label ?? tabItems[0]!.label] }}</p>
-        <UButton
-          color="neutral"
-          variant="outline"
-          size="sm"
-          class="rounded-full border-teal-400 text-teal-600 hover:bg-teal-50"
-        >
-          訂閱電子報
-        </UButton>
       </div>
 
       <!-- Social Links -->
@@ -125,20 +123,13 @@
 </template>
 
 <script setup lang="ts">
-const { contacts } = useAppConfig()
+const { contacts, pages } = useAppConfig()
+const home = pages.home
 
-const tabItems = [{ label: 'NextSteps Academy' }, { label: 'Jen Knows' }]
+const tabItems = home.tabs.map(t => ({ label: t.label }))
 const activeTab = ref(0)
 
-const bios: Record<string, string> = {
-  'NextSteps Academy': `陪你找到職涯的下一步
-🇦🇺 澳洲求職培訓 | 資源 | 職場人脈
-✍️ 澳洲企業商模分析系列，每週四於 Facebook, IG, Instragram 更新
-📅 預約職涯諮詢 📒購買澳洲職場指南`,
-  'Jen Knows': `Hi 我是Jen，一個15歲隻身來到澳洲求學，之後走過技術移民、求職、轉職道路，跌跌撞撞也沒放棄的女子
-
-因為知道路途的艱辛，在職涯穩定後，開始分享澳洲知識、職場經驗，致力於幫助更多人在澳洲順利求職、快速融入澳洲生活。`,
-}
+const bios = Object.fromEntries(home.tabs.map(t => [t.label, t.bio]))
 
 useHead({ title: '榛知 — 澳洲生活・職場・移民' })
 </script>
