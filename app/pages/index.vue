@@ -176,6 +176,9 @@
         <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
           <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
         </a>
+        <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
+          <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
+        </a>
       </div>
       <p class="text-[10px] text-gray-400">
         © {{ new Date().getFullYear() }} Jen Knows · Made by <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a>
@@ -183,13 +186,8 @@
     </div>
 
     <!-- Dark mode toggle -->
-    <UButton
-      :icon="colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
-      color="neutral"
-      variant="soft"
-      size="sm"
+    <UColorModeButton
       class="fixed bottom-4 right-4 z-[9999]"
-      @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
     />
   </div>
   </UPage>
@@ -204,7 +202,6 @@ useHead({
 
 type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
 
-const colorMode = useColorMode()
 const isMapReady = ref(false)
 const listEl = ref<HTMLDivElement | null>(null)
 const filterModalOpen = ref(false)
