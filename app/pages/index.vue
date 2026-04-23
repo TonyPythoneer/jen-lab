@@ -167,17 +167,15 @@
     <!-- Footer -->
     <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
       <div class="flex items-center gap-3">
-        <a href="https://www.facebook.com/jenliuau/" aria-label="Facebook" class="text-gray-400 hover:text-blue-600 transition-colors">
-          <UIcon name="i-simple-icons-facebook" class="w-4 h-4" />
-        </a>
-        <a href="https://www.instagram.com/jenknowsau/" aria-label="Instagram" class="text-gray-400 hover:text-pink-500 transition-colors">
-          <UIcon name="i-simple-icons-instagram" class="w-4 h-4" />
-        </a>
-        <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
-          <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
-        </a>
-        <a href="https://www.threads.com/@jenknowsau" aria-label="Threads" class="text-gray-400 hover:text-gray-800 transition-colors">
-          <UIcon name="i-simple-icons-threads" class="w-4 h-4" />
+        <a
+          v-for="contact in contacts"
+          :key="contact.label"
+          :href="contact.url"
+          :aria-label="contact.label"
+          v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
+          :class="`text-gray-400 ${contact.hoverClass} transition-colors`"
+        >
+          <UIcon :name="contact.icon" class="w-4 h-4" />
         </a>
       </div>
       <p class="text-[10px] text-gray-400">
@@ -195,6 +193,8 @@
 
 <script setup lang="ts">
 import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
+
+const { contacts } = useAppConfig()
 
 useHead({
   title: '知雪梨美食地圖'
