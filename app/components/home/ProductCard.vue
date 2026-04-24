@@ -2,11 +2,11 @@
   <!-- Featured Product -->
   <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-white">
     <!-- Banner -->
-    <div class="relative h-56 bg-teal-400">
+    <div class="relative h-40 sm:h-56 bg-teal-400">
       <img
         v-if="product.bannerImage"
         :src="product.bannerImage"
-        class="absolute inset-0 w-full h-full object-cover"
+        class="absolute inset-0 w-full h-full"
         loading="lazy"
       />
     </div>
