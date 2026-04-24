@@ -4,13 +4,15 @@
 
       <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
 
+      <!-- Portals -->
+      <USeparator label="Protals" class="px-6" />
       <HomeItem
         v-for="item in pages.home.items"
         :key="item.to"
         v-bind="item"
       />
 
-      <!-- YouTube Carousel -->
+      <!-- Videos -->
       <USeparator label="Videos" class="px-6" />
       <HomeYoutubeCarousel :videos="pages.home.videos" />
 
