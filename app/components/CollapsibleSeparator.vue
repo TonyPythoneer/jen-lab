@@ -4,7 +4,7 @@
       <button class="flex items-center justify-center gap-2 w-full">
         <div class="flex-1 h-px bg-gray-200" />
         <span class="text-sm text-gray-500 shrink-0">{{ label }}</span>
-        <UIcon :name="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="w-4 h-4 text-gray-400 shrink-0" />
+        <UIcon :name="open ? 'i-lucide-chevron-down' : 'i-lucide-chevron-right'" class="w-4 h-4 text-gray-400 shrink-0" />
         <div class="flex-1 h-px bg-gray-200" />
       </button>
     </template>
