@@ -7,19 +7,19 @@
       <HomeItem
         v-for="item in pages.home.items"
         :key="item.to"
-        :to="item.to"
-        :icon="item.icon"
-        :title="item.title"
-        :description="item.description"
+        v-bind="item"
       />
 
       <!-- YouTube Carousel -->
+      <USeparator label="Videos" class="px-6" />
       <HomeYoutubeCarousel :videos="pages.home.videos" />
 
+      <!-- Product -->
       <USeparator label="Products" class="px-6" />
-
       <HomeProductCard :product="pages.home.product" />
+      <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
 
+      <!-- Else -->
       <Transition name="fade">
         <button
           v-if="showScrollTop"

@@ -44,6 +44,29 @@ export default defineAppConfig({
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
         purchaseLabel: '真棒，我要這個！',
       },
+      productTaiwanTravelProduct: {
+        bannerImage: '/home/taiwan-travel-guide.webp',
+        title: '海外遊子回台手冊',
+        brief: '給「熟悉又陌生」的你，重新連上台灣的一份生活指南。',
+        description: `📘這本手冊包含：
+* 回台前需準備事項（恢復戶籍、申辦自然人憑證等）
+* 美食景點依地區整理、實用伴手禮清單
+* 雙重國籍注意事項
+* 遠距工作辦公地點推薦
+---
+
+購買這份 Notion 手冊，你將獲得:
+✓ 完整16章節中英雙語手冊
+✓ 終身免費更新
+✓ 可參與「共創章節」補充推薦地點
+
+---
+
+使用澳幣付款，請至以下連結
+https://buy.stripe.com/aFa5kD3gidfZ8743awbwk00`,
+        purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
+        purchaseLabel: '立刻下單',
+      },
       items: [
       {
         to: 'https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715',
