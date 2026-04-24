@@ -18,7 +18,6 @@
         <HomeYoutubeCarousel :videos="pages.home.videos" />
       </CollapsibleSeparator>
 
-
       <!-- Product -->
       <CollapsibleSeparator label="Products" :default-open="true">
         <HomeProductCard :product="pages.home.product" />
@@ -56,16 +55,4 @@ useHead({ title: '榛知' })
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-/* :deep([data-state=open][data-slot=content]) { animation: collapsible-down 0.2s ease-out; }
-:deep([data-state=closed][data-slot=content]) { animation: collapsible-up 0.2s ease-out; }
-
-@keyframes collapsible-down {
-  from { height: 0; opacity: 0; }
-  to { height: var(--reka-collapsible-content-height); opacity: 1; }
-}
-@keyframes collapsible-up {
-  from { height: var(--reka-collapsible-content-height); opacity: 1; }
-  to { height: 0; opacity: 0; }
-} */
 </style>
