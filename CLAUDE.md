@@ -33,3 +33,7 @@ pnpm deploy       # Build + deploy to Cloudflare Pages
 ### Data flow
 
 `restaurants.ts` → `useRestaurants` (enriches + exposes filters) → `index.vue` (filter UI + list) + `MapView` (markers filtered by same list).
+
+## Code Style
+
+- Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.

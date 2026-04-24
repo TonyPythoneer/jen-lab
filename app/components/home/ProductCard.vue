@@ -4,15 +4,15 @@
     <!-- Banner -->
     <div class="relative h-56 bg-teal-400">
       <img
-        v-if="bannerImage"
-        :src="bannerImage"
+        v-if="product.bannerImage"
+        :src="product.bannerImage"
         class="absolute inset-0 w-full h-full object-cover"
         loading="lazy"
       />
     </div>
     <!-- Body -->
     <div class="flex flex-col gap-3 p-5">
-      <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
+      <h2 class="text-lg font-bold text-gray-900">{{ product.title }}</h2>
       <!-- Collapsible description -->
       <UCollapsible class="group">
         <div class="flex items-center gap-1 -ml-1">
@@ -24,7 +24,7 @@
             :ui="{ leadingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200', base: 'hover:bg-transparent' }"
           />
           <!-- Brief -->
-          <span class="text-sm text-gray-500">{{ brief }}</span>
+          <span class="text-sm text-gray-500">{{ product.brief }}</span>
         </div>
         <!-- description -->
         <template #content>
@@ -36,7 +36,7 @@
       </UCollapsible>
       <!-- CTA -->
       <UButton
-        :to="purchaseUrl"
+        :to="product.purchaseUrl"
         target="_blank"
         rel="noopener"
         color="primary"
@@ -44,7 +44,7 @@
         block
         class="rounded-full font-semibold mt-1"
       >
-        {{ purchaseLabel }}
+        {{ product.purchaseLabel }}
       </UButton>
     </div>
   </div>
@@ -54,15 +54,17 @@
 import { marked } from 'marked'
 
 const props = defineProps<{
-  bannerImage?: string
-  title: string
-  brief: string
-  description: string
-  purchaseUrl: string
-  purchaseLabel: string
+  product: {
+    bannerImage?: string
+    title: string
+    brief: string
+    description: string
+    purchaseUrl: string
+    purchaseLabel: string
+  }
 }>()
 
-const parsedDescription = computed(() => marked(props.description))
+const parsedDescription = computed(() => marked(props.product.description))
 </script>
 
 <style scoped>

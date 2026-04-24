@@ -2,10 +2,10 @@
   <UPage>
     <UContainer class="max-w-lg py-10 px-6 flex flex-col gap-5">
 
-      <HomeProfile :profile="home.profile" :contacts="contacts" />
+      <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
 
       <HomeItem
-        v-for="item in home.items"
+        v-for="item in pages.home.items"
         :key="item.to"
         :to="item.to"
         :icon="item.icon"
@@ -14,18 +14,11 @@
       />
 
       <!-- YouTube Carousel -->
-      <HomeYoutubeCarousel :videos="home.videos" />
+      <HomeYoutubeCarousel :videos="pages.home.videos" />
 
       <USeparator label="Products" class="px-6" />
 
-      <HomeProductCard
-        :banner-image="home.product.bannerImage"
-        :title="home.product.title"
-        :brief="home.product.brief"
-        :description="home.product.description"
-        :purchase-url="home.product.purchaseUrl"
-        :purchase-label="home.product.purchaseLabel"
-      />
+      <HomeProductCard :product="pages.home.product" />
 
       <Transition name="fade">
         <button
@@ -43,7 +36,6 @@
 
 <script setup lang="ts">
 const { contacts, pages } = useAppConfig()
-const home = pages.home
 
 const showScrollTop = ref(false)
 const onScroll = () => { showScrollTop.value = window.scrollY > 200 }
