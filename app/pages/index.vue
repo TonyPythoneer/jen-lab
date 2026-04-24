@@ -58,16 +58,4 @@ useHead({ title: '榛知' })
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-.product-description :deep(a) {
-  color: var(--color-primary-500);
-  text-decoration: underline;
-}
-.product-description :deep(ul) {
-  list-style: disc;
-  padding-left: 1.25rem;
-}
-.product-description :deep(p) {
-  margin-bottom: 0.5rem;
-}
 </style>
