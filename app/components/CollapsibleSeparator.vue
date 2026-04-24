@@ -1,5 +1,5 @@
 <template>
-  <UCollapsible class="flex flex-col gap-5" :default-open="defaultOpen">
+  <UCollapsible :id="id" class="flex flex-col gap-5" :default-open="defaultOpen">
     <template #default="{ open }">
       <button class="flex items-center justify-center gap-2 w-full">
         <div class="flex-1 h-px bg-gray-200" />
@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 defineProps<{
+  id?: string
   label: string
   defaultOpen?: boolean
 }>()
