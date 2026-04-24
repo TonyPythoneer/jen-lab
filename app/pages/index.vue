@@ -46,6 +46,9 @@
         </div>
       </div>
 
+      <!-- YouTube Carousel -->
+      <HomeYoutubeCarousel />
+
       <!-- Featured Product -->
       <UCard class="bg-teal-400 text-white overflow-hidden">
         <div class="flex flex-col gap-3">
