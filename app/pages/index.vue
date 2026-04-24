@@ -11,11 +11,11 @@
           <div class="absolute top-0 left-0 w-full h-28" style="background-color: rgb(107, 187, 224);" />
           <div class="relative flex items-end justify-between px-6 pt-14 pb-0">
             <div class="flex items-end gap-3">
-              <img :src="home.avatarLink" :alt="home.name"
+              <img :src="home.avatarLink" :alt="home.name" loading="lazy"
                 class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
               <h1 class="text-xl font-bold text-gray-800 pl-2">{{ home.name }}</h1>
             </div>
-            <UButton color="neutral" variant="outline" size="sm" class="border-gray-300 text-gray-700 hover:bg-gray-50 mb-0">
+            <UButton color="neutral" variant="outline" size="sm" class="border-gray-300 text-gray-700 hover:bg-gray-50 mb-0" as="a" href="https://jen-nextsteps.kit.com/60463af80d" target="_blank" rel="noopener">
               <UIcon name="i-heroicons-sparkles" /> 訂閱電子報
             </UButton>
           </div>
@@ -66,59 +66,14 @@
         </div>
       </UCard>
 
-      <!-- CTA Cards -->
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-calendar" class="w-5 h-5 text-teal-600" />
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">NextSteps 職涯諮詢預約</p>
-            <p class="text-xs text-gray-500 mt-0.5">一對一職涯規劃，找到在澳洲的方向</p>
-          </div>
-          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
-        </div>
-      </UCard>
-
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer" @click="$router.push('https://app--next-steps-careers-9b4e7067.base44.app/landing')">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-sparkles" class="w-5 h-5 text-teal-600" />
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">AI 職涯探索工具</p>
-            <p class="text-xs text-gray-500 mt-0.5">限時免費，探索最適合你的澳洲職涯路線</p>
-          </div>
-          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
-        </div>
-      </UCard>
-
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-newspaper" class="w-5 h-5 text-teal-600" />
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">部落格文章</p>
-            <p class="text-xs text-gray-500 mt-0.5">澳洲生活、移民、職場第一手資訊</p>
-          </div>
-          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
-        </div>
-      </UCard>
-
-      <!-- Food Map Link -->
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)]" @click="$router.push('/my-best-restaurants-search-in-sydney')">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-teal-600" />
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">榛知雪梨美食地圖</p>
-            <p class="text-xs text-gray-500 mt-0.5">精選雪梨餐廳，找到你的下一頓好飯</p>
-          </div>
-          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
-        </div>
-      </UCard>
+      <HomeItem
+        v-for="item in home.items"
+        :key="item.to"
+        :to="item.to"
+        :icon="item.icon"
+        :title="item.title"
+        :description="item.description"
+      />
 
     </UContainer>
   </UPage>

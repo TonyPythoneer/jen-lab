@@ -18,6 +18,32 @@ export default defineAppConfig({
 因為知道路途的艱辛，在職涯穩定後，開始分享澳洲知識、職場經驗，致力於幫助更多人在澳洲順利求職、快速融入澳洲生活。`,
         },
       ],
+      items: [
+      {
+        to: 'https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715',
+        icon: 'i-lucide-calendar',
+        title: 'NextSteps 職涯諮詢預約',
+        description: '一對一職涯規劃，找到在求職方向',
+      },
+      {
+        to: 'https://app--next-steps-careers-9b4e7067.base44.app/landing',
+        icon: 'i-lucide-sparkles',
+        title: 'NextSteps 一站式職涯探索與管理工具',
+        description: '解析職缺、找出技能缺口，獲得具體職涯建議',
+      },
+      {
+        to: '/my-best-restaurants-search-in-sydney',
+        icon: 'i-lucide-map-pin',
+        title: '榛知雪梨美食地圖',
+        description: '精選私藏雪梨餐廳，找到你的下一頓好飯',
+      },
+      {
+        to: 'https://jen-nextsteps.kit.com/60463af80d',
+        icon: 'i-lucide-heart',
+        title: '買杯奶茶，支持我繼續創造',
+        description: '有你的支持，創作才能長長久久',
+      },
+      ],
     },
   },
   contacts: [
