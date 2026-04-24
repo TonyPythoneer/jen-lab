@@ -1,6 +1,12 @@
 export default defineAppConfig({
   pages: {
     home: {
+      videos: [
+        { id: 'J7AWXUoq9ck', title: 'Breaking Into the Australian Tech Industry: What No One Tells You' },
+        { id: 'b2k3oprSEOI', title: '華人在澳洲職場如何升職加薪？實用職涯規劃經驗分享' },
+        { id: 'qCT8OUpRO6k', title: '【榛知】澳洲第二大科技公司 Canva 總部開箱 | 超浮誇早午餐 | 調酒啤酒喝到飽 | 紀念品隨便拿... 拜託現在就收下我的履歷吧！' },
+        { id: 'VEG9qwcEvco', title: '【榛知】澳洲最大科技公司 Atlassian 福利有多好?! 雪梨總部開箱+員工訪問' },
+      ],
       profile: {
         avatarLink: '/home/avatar.webp',
         name: '榛知',
@@ -19,6 +25,24 @@ export default defineAppConfig({
 因為知道路途的艱辛，在職涯穩定後，開始分享澳洲知識、職場經驗，致力於幫助更多人在澳洲順利求職、快速融入澳洲生活。`,
           },
         ],
+      },
+      product: {
+        bannerImage: '/home/aus-workplace-guide.webp',
+        title: '澳洲職場指南 2.0',
+        brief: '從面試、入職到升職，系統性掌握澳洲職場文化',
+        description: `* **基礎知識篇** - 稅務、Super、勞工權益等基本制度
+* **求職篇** - 英文履歷、面試準備
+* **入職篇** - 澳洲職場文化適應（請假、離職禮儀等）
+* **職涯規劃篇** - 跟主管 1:1聊什麼、如何準備升遷與績效考核
+* **留學生專區** - Grad Program 如何申請、面試官主要考核什麼？
+* **科技業專區** - 科技業小眾職位、薪資組成、求職管道
+* **模板專區** - 談薪對話範本、履歷範本
+
+2.0版本新增職涯探索及技能證據庫模板，專為澳洲求職者打造的工具包，可直接套用在履歷、面試準備中
+---
+使用澳幣付款，請至以下連結 https://buy.stripe.com/4gM3cvbMO5Nx73026sbwk03`,
+        purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
+        purchaseLabel: '真棒，我要這個！',
       },
       items: [
       {

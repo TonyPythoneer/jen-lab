@@ -44,12 +44,9 @@
 </template>
 
 <script setup lang="ts">
-const videos = [
-  { id: 'J7AWXUoq9ck', title: 'Breaking Into the Australian Tech Industry: What No One Tells You' },
-  { id: 'b2k3oprSEOI', title: '華人在澳洲職場如何升職加薪？實用職涯規劃經驗分享' },
-  { id: 'qCT8OUpRO6k', title: '【榛知】澳洲第二大科技公司 Canva 總部開箱 | 超浮誇早午餐 | 調酒啤酒喝到飽 | 紀念品隨便拿... 拜託現在就收下我的履歷吧！' },
-  { id: 'VEG9qwcEvco', title: '【榛知】澳洲最大科技公司 Atlassian 福利有多好?! 雪梨總部開箱+員工訪問' },
-]
+const props = defineProps<{
+  videos: { id: string; title: string }[]
+}>()
 
 const isOpen = ref(false)
 const activeVideoId = ref<string | null>(null)

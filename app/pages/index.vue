@@ -46,29 +46,6 @@
         </div>
       </div>
 
-      <!-- YouTube Carousel -->
-      <HomeYoutubeCarousel />
-
-      <!-- Featured Product -->
-      <UCard class="bg-teal-400 text-white overflow-hidden">
-        <div class="flex flex-col gap-3">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-wider opacity-80">精選商品</p>
-            <h2 class="text-lg font-bold mt-1">澳洲職場指南 2.0</h2>
-            <p class="text-sm opacity-90 mt-1">48 章節 · 7 大主題，全面解析澳洲職場文化</p>
-          </div>
-          <p class="text-2xl font-bold">NT$ 1,590</p>
-          <div class="flex gap-2">
-            <button class="flex-1 rounded-full bg-white text-teal-700 font-semibold text-sm py-1.5 px-4 hover:bg-teal-50 transition-colors">
-              立即購買
-            </button>
-            <button class="flex-1 rounded-full border border-white text-white text-sm py-1.5 px-4 hover:bg-white/20 transition-colors">
-              已購買？登入
-            </button>
-          </div>
-        </div>
-      </UCard>
-
       <HomeItem
         v-for="item in home.items"
         :key="item.to"
@@ -76,6 +53,20 @@
         :icon="item.icon"
         :title="item.title"
         :description="item.description"
+      />
+
+      <!-- YouTube Carousel -->
+      <HomeYoutubeCarousel :videos="home.videos" />
+
+      <USeparator label="Products" class="px-6" />
+
+      <HomeProductCard
+        :banner-image="home.product.bannerImage"
+        :title="home.product.title"
+        :brief="home.product.brief"
+        :description="home.product.description"
+        :purchase-url="home.product.purchaseUrl"
+        :purchase-label="home.product.purchaseLabel"
       />
 
     </UContainer>
@@ -100,5 +91,16 @@ useHead({ title: '榛知' })
 .tabs-profile :deep([data-state="active"] [data-slot="label"]) {
   font-size: 14px;
   font-weight: bold;
+}
+.product-description :deep(a) {
+  color: var(--color-primary-500);
+  text-decoration: underline;
+}
+.product-description :deep(ul) {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.product-description :deep(p) {
+  margin-bottom: 0.5rem;
 }
 </style>
