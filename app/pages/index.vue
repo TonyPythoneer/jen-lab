@@ -16,7 +16,7 @@
               <h1 class="text-xl font-bold text-gray-800 pl-2">{{ home.name }}</h1>
             </div>
             <UButton color="neutral" variant="outline" size="sm" class="border-gray-300 text-gray-700 hover:bg-gray-50 mb-0">
-              ☆ 訂閱電子報
+              <UIcon name="i-heroicons-sparkles" /> 訂閱電子報
             </UButton>
           </div>
         </div>
@@ -26,10 +26,11 @@
             :items="tabItems"
             variant="link"
             size="sm"
-            class="w-full"
+            class="w-full tabs-profile"
           />
           <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[activeTab] }}</p>
           <!-- Social Links -->
+          <USeparator label="Contacts" class="px-6" />
           <div class="flex justify-center gap-4 py-2">
             <a
               v-for="contact in contacts"
@@ -44,7 +45,6 @@
           </div>
         </div>
       </div>
-
 
       <!-- Featured Product -->
       <UCard class="bg-teal-400 text-white overflow-hidden">
@@ -73,20 +73,20 @@
             <UIcon name="i-lucide-calendar" class="w-5 h-5 text-teal-600" />
           </div>
           <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">職涯諮詢預約</p>
+            <p class="font-semibold text-gray-800 text-sm">NextSteps 職涯諮詢預約</p>
             <p class="text-xs text-gray-500 mt-0.5">一對一職涯規劃，找到在澳洲的方向</p>
           </div>
           <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
         </div>
       </UCard>
 
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer">
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer" @click="$router.push('https://app--next-steps-careers-9b4e7067.base44.app/landing')">
         <div class="flex items-center gap-4">
           <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
             <UIcon name="i-lucide-sparkles" class="w-5 h-5 text-teal-600" />
           </div>
           <div class="flex-1">
-            <p class="font-semibold text-gray-800 text-sm">AI 職涯探索工具 <UBadge color="info" variant="subtle" size="xs" class="ml-1">免費 Beta</UBadge></p>
+            <p class="font-semibold text-gray-800 text-sm">AI 職涯探索工具</p>
             <p class="text-xs text-gray-500 mt-0.5">限時免費，探索最適合你的澳洲職涯路線</p>
           </div>
           <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-gray-400" />
@@ -107,7 +107,7 @@
       </UCard>
 
       <!-- Food Map Link -->
-      <UCard class="hover:shadow-md transition-shadow cursor-pointer" @click="$router.push('/my-best-restaurants-search-in-sydney')">
+      <UCard class="hover:shadow-md transition-shadow cursor-pointer rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)]" @click="$router.push('/my-best-restaurants-search-in-sydney')">
         <div class="flex items-center gap-4">
           <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
             <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-teal-600" />
@@ -135,3 +135,13 @@ const bios = Object.fromEntries(home.tabs.map(t => [t.label, t.bio]))
 
 useHead({ title: '榛知 — 澳洲生活・職場・移民' })
 </script>
+
+<style scoped>
+.tabs-profile :deep([data-slot="indicator"]) {
+  height: 4px;
+}
+.tabs-profile :deep([data-state="active"] [data-slot="label"]) {
+  font-size: 14px;
+  font-weight: bold;
+}
+</style>
