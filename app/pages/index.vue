@@ -3,54 +3,56 @@
     <div class="flex min-h-screen">
 
       <!-- Nav: top on mobile, left sidebar on sm+ -->
-      <aside
-        class="fixed z-40 transition-all duration-200"
-        :class="[
-          // mobile: top bar full width
-          'top-0 left-0 w-full sm:w-auto',
-          // desktop: left sidebar full height
-          'sm:h-full sm:flex-col sm:pt-4',
-          // desktop width
-          navOpen ? 'sm:w-36' : 'sm:w-10',
-          // layout direction
-          'flex sm:flex-col',
-          'bg-background sm:bg-transparent'
-        ]"
-      >
-        <!-- Hamburger -->
-        <UButton
-          :icon="navOpen ? 'i-lucide-x' : 'i-lucide-menu'"
-          variant="ghost"
-          color="neutral"
-          class="sm:mb-4 px-4.5 self-start shrink-0 mt-2 sm:mt-0 ml-1 sm:ml-0"
-          @click="navOpen = !navOpen"
-        />
+      <ClientOnly>
+        <aside
+          class="fixed z-40 transition-all duration-200"
+          :class="[
+            // mobile: top bar full width
+            'top-0 left-0 w-full sm:w-auto',
+            // desktop: left sidebar full height
+            'sm:h-full sm:flex-col sm:pt-4',
+            // desktop width
+            navOpen ? 'sm:w-36' : 'sm:w-10',
+            // layout direction
+            'flex sm:flex-col',
+            'bg-background sm:bg-transparent'
+          ]"
+        >
+          <!-- Hamburger -->
+          <UButton
+            :icon="navOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+            variant="ghost"
+            color="neutral"
+            class="sm:mb-4 px-4.5 self-start shrink-0 mt-2 sm:mt-0 ml-1 sm:ml-0"
+            @click="navOpen = !navOpen"
+          />
 
-        <!-- Tree: dropdown on mobile, sidebar on desktop -->
-        <Transition name="fade">
-          <div
-            v-if="navOpen"
-            class="
-              absolute top-full left-0 w-48 shadow-lg rounded-md p-2 bg-white border border-muted
-              sm:static sm:shadow-none sm:rounded-none sm:border-none sm:bg-transparent sm:w-auto sm:p-0
-            "
-          >
-            <UTree
-              v-model="activeSection"
-              :items="navItems"
-              class="px-2"
-              @update:model-value="onNavSelect"
-            />
-          </div>
-        </Transition>
-      </aside>
+          <!-- Tree: dropdown on mobile, sidebar on desktop -->
+          <Transition name="fade">
+            <div
+              v-if="navOpen"
+              class="
+                absolute top-full left-0 w-48 shadow-lg rounded-md p-2 bg-white
+                sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
+              "
+            >
+              <UTree
+                v-model="activeSection"
+                :items="navItems"
+                class="px-2"
+                @update:model-value="onNavSelect"
+              />
+            </div>
+          </Transition>
+        </aside>
+      </ClientOnly>
 
       <!-- Main content: offset top on mobile, offset left on desktop -->
       <div
         class="flex-1 flex justify-center pt-12 sm:pt-0"
         :class="navOpen ? 'sm:pl-36' : 'sm:pl-10'"
       >
-        <UContainer class="max-w-lg py-10 px-6 flex flex-col gap-5 w-full">
+        <UContainer class="max-w-lg px-6 flex flex-col gap-5 w-full">
 
           <div id="section-profile" />
           <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
