@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-:root {
-  --ui-container: var(--container-4xl);
+body {
+  background-color: rgb(248, 248, 248);
 }
+
