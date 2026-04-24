@@ -5,21 +5,25 @@
       <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
 
       <!-- Portals -->
-      <USeparator label="Protals" class="px-6" />
-      <HomeItem
-        v-for="item in pages.home.items"
-        :key="item.to"
-        v-bind="item"
-      />
+      <CollapsibleSeparator label="Portals" :default-open="true">
+        <HomeItem
+          v-for="item in pages.home.items"
+          :key="item.to"
+          v-bind="item"
+        />
+      </CollapsibleSeparator>
 
       <!-- Videos -->
-      <USeparator label="Videos" class="px-6" />
-      <HomeYoutubeCarousel :videos="pages.home.videos" />
+      <CollapsibleSeparator label="Videos" :default-open="true">
+        <HomeYoutubeCarousel :videos="pages.home.videos" />
+      </CollapsibleSeparator>
+
 
       <!-- Product -->
-      <USeparator label="Products" class="px-6" />
-      <HomeProductCard :product="pages.home.product" />
-      <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
+      <CollapsibleSeparator label="Products" :default-open="true">
+        <HomeProductCard :product="pages.home.product" />
+        <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
+      </CollapsibleSeparator>
 
       <!-- Else -->
       <Transition name="fade">
@@ -52,4 +56,16 @@ useHead({ title: '榛知' })
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* :deep([data-state=open][data-slot=content]) { animation: collapsible-down 0.2s ease-out; }
+:deep([data-state=closed][data-slot=content]) { animation: collapsible-up 0.2s ease-out; }
+
+@keyframes collapsible-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--reka-collapsible-content-height); opacity: 1; }
+}
+@keyframes collapsible-up {
+  from { height: var(--reka-collapsible-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
+} */
 </style>
