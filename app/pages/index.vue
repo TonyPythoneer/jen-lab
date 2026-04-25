@@ -54,10 +54,10 @@
       >
         <div class="max-w-lg px-0 sm:px-8 flex flex-col gap-5">
 
-          <div id="section-profile" />
+          <div :id="profileSection.id" />
           <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
 
-          <CollapsibleSeparator id="section-portals" label="Portals" :default-open="true">
+          <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
             <HomeItem
               v-for="item in pages.home.items"
               :key="item.to"
@@ -65,11 +65,11 @@
             />
           </CollapsibleSeparator>
 
-          <CollapsibleSeparator id="section-videos" label="Videos" :default-open="true">
+          <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
             <HomeYoutubeCarousel :videos="pages.home.videos" />
           </CollapsibleSeparator>
 
-          <CollapsibleSeparator id="section-products" label="Products" :default-open="true">
+          <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
             <HomeProductCard :product="pages.home.product" />
             <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
           </CollapsibleSeparator>
@@ -93,15 +93,17 @@
 <script setup lang="ts">
 const { contacts, pages } = useAppConfig()
 
-const navOpen = ref(false)
-const activeSection = ref<{ label: string; value: string } | undefined>(undefined)
+const NAV_SECTIONS = [
+  { id: 'profile',  display: 'Profile' },
+  { id: 'portals',  display: 'Portals' },
+  { id: 'videos',   display: 'Videos' },
+  { id: 'products', display: 'Products' },
+] as const
+const [profileSection, portalsSection, videosSection, productsSection] = NAV_SECTIONS
+const navItems = NAV_SECTIONS.map(({ id, display }) => ({ value: id, label: display }))
 
-const navItems = [
-  { label: 'Profile', value: 'section-profile' },
-  { label: 'Portals', value: 'section-portals' },
-  { label: 'Videos', value: 'section-videos' },
-  { label: 'Products', value: 'section-products' },
-]
+const navOpen = ref(false)
+const activeSection = ref<typeof navItems[number] | undefined>(undefined)
 
 function onNavSelect(item: { label: string; value: string } | undefined) {
   if (!item) return
@@ -122,15 +124,15 @@ onMounted(() => {
     { threshold: 0.3 }
   )
 
-  for (const item of navItems) {
-    const el = document.getElementById(item.value)
+  for (const item of NAV_SECTIONS) {
+    const el = document.getElementById(item.id)
     if (el) observer.observe(el)
   }
 
   onUnmounted(() => observer.disconnect())
 })
 
-const showScrollTop = computed(() => activeSection.value?.value !== 'section-profile')
+const showScrollTop = computed(() => activeSection.value?.value !== profileSection.id)
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
 useHead({ title: '榛知' })
