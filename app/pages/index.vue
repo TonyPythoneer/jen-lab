@@ -15,7 +15,8 @@
             navOpen ? 'sm:w-36' : 'sm:w-10',
             // layout direction
             'flex sm:flex-col',
-            'bg-background sm:bg-transparent'
+            'border-b border-gray-200 sm:border-none',
+            'bg-[rgb(248,248,248)] sm:bg-transparent'
           ]"
         >
           <!-- Hamburger -->
