@@ -8,10 +8,10 @@
         <div class="flex items-end gap-3">
           <img :src="profile.avatarLink" :alt="profile.name" loading="lazy"
             class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
-          <h1 class="text-xl font-bold text-gray-800 pl-2">{{ profile.name }}</h1>
+          <h1 class="text-xl font-bold text-gray-800">{{ profile.name }}</h1>
         </div>
         <UButton color="neutral" variant="outline" size="sm" class="border-gray-300 text-gray-700 hover:bg-gray-50 mb-0" as="a" href="https://jen-nextsteps.kit.com/60463af80d" target="_blank" rel="noopener">
-          <UIcon name="i-heroicons-sparkles" /> 訂閱電子報
+          <UIcon name="i-lucide-rss" /> 訂閱電子報
         </UButton>
       </div>
     </div>
@@ -24,7 +24,7 @@
         class="w-full tabs-profile"
       />
       <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line">{{ bios[activeTab] }}</p>
-      <!-- Social Links -->
+      <!-- Contacts Links -->
       <USeparator label="Contacts" class="px-6" />
       <div class="flex justify-center gap-4 py-2">
         <a
