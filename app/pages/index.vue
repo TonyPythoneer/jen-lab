@@ -127,16 +127,10 @@ onMounted(() => {
     if (el) observer.observe(el)
   }
 
-  window.addEventListener('scroll', onScroll)
-
-  onUnmounted(() => {
-    observer.disconnect()
-    window.removeEventListener('scroll', onScroll)
-  })
+  onUnmounted(() => observer.disconnect())
 })
 
-const showScrollTop = ref(false)
-const onScroll = () => { showScrollTop.value = window.scrollY > 200 }
+const showScrollTop = computed(() => activeSection.value?.value !== 'section-profile')
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
 useHead({ title: '榛知' })
