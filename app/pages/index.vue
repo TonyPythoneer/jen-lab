@@ -38,7 +38,7 @@
             "
           >
             <UTree
-              v-model="activeSection"
+              :model-value="activeSection"
               :items="navItems"
               class="px-2"
               @update:model-value="onNavSelect"
@@ -114,6 +114,7 @@ function onNavSelect(item: { label: string; value: string } | undefined) {
 onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
+      console.log(entries)
       for (const entry of entries) {
         if (entry.isIntersecting) {
           const found = navItems.find(i => i.value === entry.target.id)
