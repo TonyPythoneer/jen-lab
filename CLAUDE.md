@@ -37,3 +37,4 @@ pnpm deploy       # Build + deploy to Cloudflare Pages
 ## Code Style
 
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
+- No hardcoded strings in Vue templates. Define constants (IDs, labels, keys) in `<script setup>` and bind via `:id`, `:label`, etc. Single source of truth in JS layer.

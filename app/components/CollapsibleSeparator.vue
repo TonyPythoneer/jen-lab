@@ -1,5 +1,5 @@
 <template>
-  <UCollapsible :id="id" class="flex flex-col gap-5" :default-open="defaultOpen">
+  <UCollapsible :id="id" class="flex flex-col gap-5 [&>div]:overflow-visible" :default-open="defaultOpen">
     <template #default="{ open }">
       <button class="flex items-center justify-center gap-2 w-full">
         <div class="flex-1 h-px bg-gray-200" />
@@ -9,7 +9,7 @@
       </button>
     </template>
     <template #content>
-      <div class="flex flex-col gap-5 overflow-visible pt-1 pb-2 px-2">
+      <div class="flex flex-col gap-5 overflow-visible pt-1 pb-2">
         <slot />
       </div>
     </template>
