@@ -1,11 +1,11 @@
 <template>
   <UPage>
-    <div class="flex min-h-screen">
+    <div class="flex flex-col sm:flex-row min-h-screen">
 
       <!-- Nav: top on mobile, left sidebar on sm+ -->
       <ClientOnly>
         <aside
-          class="fixed z-40 transition-all duration-200"
+          class="sticky top-0 sm:fixed z-40 transition-all duration-200"
           :class="[
             // mobile: top bar full width
             'top-0 left-0 w-full sm:w-auto',
@@ -49,10 +49,10 @@
 
       <!-- Main content: offset top on mobile, offset left on desktop -->
       <div
-        class="flex-1 flex justify-center pt-12 sm:pt-0"
+        class="flex-1 flex justify-center sm:pt-0"
         :class="navOpen ? 'sm:pl-36' : 'sm:pl-10'"
       >
-        <UContainer class="max-w-lg px-6 flex flex-col gap-5 w-full">
+        <div class="max-w-lg px-0 sm:px-8 flex flex-col gap-5">
 
           <div id="section-profile" />
           <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
@@ -73,10 +73,8 @@
             <HomeProductCard :product="pages.home.product" />
             <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
           </CollapsibleSeparator>
-
-        </UContainer>
+        </div>
       </div>
-
     </div>
 
     <!-- Scroll to top -->
