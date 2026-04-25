@@ -9,7 +9,7 @@
       </button>
     </template>
     <template #content>
-      <div class="flex flex-col gap-5 overflow-visible pt-1 pb-2 px-2">
+      <div class="flex flex-col gap-5 overflow-visible pt-1 pb-2">
         <slot />
       </div>
     </template>

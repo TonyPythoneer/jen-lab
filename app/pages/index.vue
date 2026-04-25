@@ -53,7 +53,7 @@
         class="flex-1 flex justify-center sm:pt-0"
         :class="navOpen ? 'sm:pl-36' : 'sm:pl-10'"
       >
-        <div class="max-w-lg px-0 sm:px-8 flex flex-col gap-5">
+        <div class="max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
           <div :id="profileSection.id" />
           <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
