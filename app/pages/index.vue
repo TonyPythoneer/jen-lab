@@ -33,7 +33,7 @@
           <div
             v-if="navOpen"
             class="
-              absolute top-full left-0 w-48 shadow-lg rounded-md p-2 bg-white
+              absolute top-full left-0 w-full shadow-lg rounded-md p-2 bg-white
               sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
             "
           >
