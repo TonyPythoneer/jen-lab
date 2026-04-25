@@ -1,6 +1,7 @@
 <template>
   <UPage>
     <div class="flex flex-col sm:flex-row min-h-screen">
+      <!-- flex-col = mobile vertical stack | sm:flex-row = desktop horizontal row -->
 
       <!-- Nav: top on mobile, left sidebar on sm+ -->
       <ClientOnly>
@@ -19,7 +20,7 @@
             'bg-[rgb(248,248,248)] sm:bg-transparent'
           ]"
         >
-          <!-- Hamburger -->
+          <!-- Hamburger: mobile top-left, desktop top of sidebar -->
           <UButton
             :icon="navOpen ? 'i-lucide-x' : 'i-lucide-menu'"
             variant="ghost"
