@@ -83,10 +83,10 @@
     <Transition name="fade">
       <button
         v-if="showScrollTop"
-        class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-teal-500 text-white shadow-lg flex items-center justify-center hover:bg-teal-600 transition-colors"
+        class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-white text-black border-2 border-black shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
         @click="scrollToTop"
       >
-        <UIcon name="i-lucide-chevron-up" class="w-5 h-5" />
+        <UIcon name="i-lucide-chevron-up" class="w-7 h-7" />
       </button>
     </Transition>
   </UPage>
