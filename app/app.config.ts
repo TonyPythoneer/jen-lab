@@ -16,7 +16,8 @@ export default defineAppConfig({
             bio: `陪你找到職涯的下一步
 🇦🇺 澳洲求職培訓 | 資源 | 職場人脈
 ✍️ 澳洲企業商模分析系列，每週四於 Facebook, IG, Instragram 更新
-📅 預約職涯諮詢 📒購買澳洲職場指南`,
+📅 預約職涯諮詢
+📒 購買澳洲職場指南`,
           },
           {
             label: 'Jen Knows',
