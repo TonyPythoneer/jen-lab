@@ -1,6 +1,6 @@
 <template>
   <!-- Featured Product -->
-  <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-white">
+  <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-[#f7f7f7]">
     <!-- Banner -->
     <div class="relative h-40 sm:h-56 bg-teal-400">
       <img

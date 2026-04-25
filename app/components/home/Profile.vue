@@ -1,6 +1,6 @@
 <template>
   <!-- Profile -->
-  <div class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-white">
+  <div class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-[#f7f7f7]">
     <!-- Banner + avatar + button -->
     <div class="relative w-full">
       <div class="absolute top-0 left-0 w-full h-28" style="background-color: rgb(107, 187, 224);" />
