@@ -20,13 +20,17 @@ jobs:
       pull-requests: write # 允許回覆 PR 留言
 
     steps:
-      # issue_comment 的 github.sha 是 main 的 SHA，不是 PR branch 的
-      # 所以要額外呼叫 GitHub API 取得 PR head commit SHA
-      - name: Get PR head SHA
+      # workflow_dispatch：直接用 github.sha（觸發時選的 branch）
+      # issue_comment：github.sha 是 main，需呼叫 API 取 PR head SHA
+      - name: Set commit SHA
         id: pr
         run: |
-          SHA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }} --jq '.head.sha')
-          echo "sha=$SHA" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          else
+            SHA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }} --jq '.head.sha')
+            echo "sha=$SHA" >> $GITHUB_OUTPUT
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
