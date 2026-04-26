@@ -4,14 +4,16 @@ name: Analyze Bundle
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch: # 手動觸發，用於測試
 
 jobs:
   analyze:
-    # 條件一：留言必須在 PR（不是 Issue）
-    # 條件二：留言內容完全符合 "/analyze"
+    # issue_comment：留言必須在 PR 且內容為 "/analyze"
+    # workflow_dispatch：直接放行（手動測試用）
     if: |
-      github.event.issue.pull_request != null &&
-      github.event.comment.body == '/analyze'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request != null &&
+       github.event.comment.body == '/analyze')
     runs-on: ubuntu-latest
     permissions:
       contents: read       # 允許 checkout 程式碼
