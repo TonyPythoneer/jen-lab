@@ -1,4 +1,4 @@
-name: Analyze Bundle
+name: Command - Analyze Bundle
 
 # 觸發條件：任何人在 PR 留言，內容為 "/analyze"
 on:
@@ -76,8 +76,9 @@ jobs:
             node_modules/.cache/nuxt/.nuxt/dist/client/stats.json \
             | tee bundle-report.txt
 
-      # 讀 bundle-report.txt 內容，貼進 PR 留言的 code block
+      # issue_comment 才有 PR 可以留言；workflow_dispatch 直接看 CI log
       - name: Comment result on PR
+        if: github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
           script: |
