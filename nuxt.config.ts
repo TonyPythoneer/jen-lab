@@ -10,6 +10,7 @@ const setupSettings: NuxtConfig = {
   colorMode: {
     preference: 'light',
     fallback: 'light',
+    storage: 'cookie',
   },
 }
 
