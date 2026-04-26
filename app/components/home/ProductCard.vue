@@ -51,8 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked'
-
 const props = defineProps<{
   product: {
     bannerImage?: string
@@ -64,7 +62,11 @@ const props = defineProps<{
   }
 }>()
 
-const parsedDescription = computed(() => marked(props.product.description))
+let parsedDescription: globalThis.ComputedRef<string | Promise<string>> | null = null
+onMounted(async () => {
+  const { marked } = (await import('marked'))
+  parsedDescription = computed(() => marked(props.product.description))
+})
 </script>
 
 <style scoped>

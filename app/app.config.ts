@@ -55,14 +55,11 @@ export default defineAppConfig({
 * 雙重國籍注意事項
 * 遠距工作辦公地點推薦
 ---
-
 購買這份 Notion 手冊，你將獲得:
 ✓ 完整16章節中英雙語手冊
 ✓ 終身免費更新
 ✓ 可參與「共創章節」補充推薦地點
-
 ---
-
 使用澳幣付款，請至以下連結
 https://buy.stripe.com/aFa5kD3gidfZ8743awbwk00`,
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
@@ -100,7 +97,7 @@ https://buy.stripe.com/aFa5kD3gidfZ8743awbwk00`,
           description: '澳洲觀點專欄，刊載於《Crossing》',
         },
         {
-          to: 'https://jen-nextsteps.kit.com/60463af80d',
+          to: 'https://portaly.cc/jenknowsau/support',
           icon: 'i-lucide-heart',
           title: '買杯奶茶，支持我繼續創造',
           description: '有你的支持，創作才能長長久久',

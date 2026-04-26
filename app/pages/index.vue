@@ -12,7 +12,7 @@
           // desktop: left sidebar full height
           'sm:h-full sm:flex-col sm:pt-4',
           // desktop width
-          navOpen ? 'sm:w-36' : 'sm:w-10',
+          'sm:w-36',
           // layout direction
           'flex sm:flex-col',
           'border-b border-gray-200 sm:border-none',
@@ -24,17 +24,18 @@
           :icon="navOpen ? 'i-lucide-x' : 'i-lucide-menu'"
           variant="ghost"
           color="neutral"
-          class="sm:mb-4 px-4.5 self-start shrink-0 mt-2 sm:mt-0 ml-1 sm:ml-0"
+          class="sm:hidden px-4.5 self-center shrink-0 mt-2 ml-1"
           @click="navOpen = !navOpen"
         />
 
         <!-- Tree: dropdown on mobile, sidebar on desktop -->
-        <Transition name="fade">
+        <Transition name="menu">
           <div
-            v-if="navOpen"
+            v-show="navOpen"
             class="
               absolute top-full left-0 w-full shadow-lg rounded-md p-2 bg-white
-              sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
+              sm:flex! sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
+              sm:flex-1 sm:flex-col sm:justify-center
             "
           >
             <UTree
@@ -49,33 +50,36 @@
     </ClientOnly>
 
     <!-- Main content: offset top on mobile, offset left on desktop -->
-    <div
-      class="flex-1 flex justify-center sm:pt-0"
-      :class="navOpen ? 'sm:pl-36' : 'sm:pl-10'"
-    >
-      <div class="max-w-lg px-4 sm:px-8 flex flex-col gap-5">
+      <div
+        class="flex-1 flex justify-center sm:pt-0 sm:pl-36"
+      >
+        <div class="max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
-        <div :id="profileSection.id" />
-        <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
+          <div :id="profileSection.id" />
+          <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
 
-        <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
-          <HomeItem
-            v-for="item in pages.home.items"
-            :key="item.to"
-            v-bind="item"
-          />
-        </CollapsibleSeparator>
+          <Transition name="content-body" @after-enter="installObserver">
+            <div v-if="isReady" class="flex flex-col gap-5">
+              <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
+                <HomeItem
+                  v-for="item in pages.home.items"
+                  :key="item.to"
+                  v-bind="item"
+                />
+              </CollapsibleSeparator>
 
-        <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
-          <HomeYoutubeCarousel :videos="pages.home.videos" />
-        </CollapsibleSeparator>
+              <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
+                <HomeYoutubeCarousel :videos="pages.home.videos" />
+              </CollapsibleSeparator>
 
-        <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
-          <HomeProductCard :product="pages.home.product" />
-          <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
-        </CollapsibleSeparator>
+              <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
+                <HomeProductCard :product="pages.home.product" />
+                <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
+              </CollapsibleSeparator>
+            </div>
+          </Transition>
+        </div>
       </div>
-    </div>
   </div>
 
   <!-- Scroll to top -->
@@ -91,6 +95,8 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: '榛知' })
+
 const { contacts, pages } = useAppConfig()
 
 const NAV_SECTIONS = [
@@ -103,18 +109,20 @@ const [profileSection, portalsSection, videosSection, productsSection] = NAV_SEC
 const navItems = NAV_SECTIONS.map(({ id, display }) => ({ value: id, label: display }))
 
 const navOpen = ref(false)
-const activeSection = ref<typeof navItems[number] | undefined>(undefined)
+const activeSection = ref<typeof navItems[number]>(navItems[0]!)
+
+const isReady = ref(false)
 
 function onNavSelect(item: { label: string; value: string } | undefined) {
   if (!item) return
   document.getElementById(item.value)?.scrollIntoView({ behavior: 'smooth' })
 }
 
-// IntersectionObserver to highlight active section
-onMounted(() => {
-  const observer = new IntersectionObserver(
+let observer: IntersectionObserver | null = null
+
+function installObserver() {
+  observer = new IntersectionObserver(
     (entries) => {
-      console.log(entries)
       for (const entry of entries) {
         if (entry.isIntersecting) {
           const found = navItems.find(i => i.value === entry.target.id)
@@ -124,22 +132,23 @@ onMounted(() => {
     },
     { threshold: 0.3 }
   )
-
   for (const item of NAV_SECTIONS) {
     const el = document.getElementById(item.id)
     if (el) observer.observe(el)
   }
+}
 
-  onUnmounted(() => observer.disconnect())
-})
+onMounted(() => { isReady.value = true })
+onUnmounted(() => observer?.disconnect())
 
 const showScrollTop = computed(() => activeSection.value?.value !== profileSection.id)
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-
-useHead({ title: '榛知' })
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.menu-enter-active, .menu-leave-active { transition: opacity 0.2s; }
+.menu-enter-from, .menu-leave-to { opacity: 0; }
+
+.content-body-enter-active { transition: opacity 0.5s ease, transform 0.5s ease; }
+.content-body-enter-from { opacity: 0; transform: translateY(24px); }
 </style>
