@@ -33,3 +33,6 @@ logs
 
 # claude
 .claude/settings.local.json
+
+# ci/cd
+analyze.client.*.json
