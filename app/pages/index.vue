@@ -69,11 +69,6 @@
         <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
           <HomeYoutubeCarousel :videos="pages.home.videos" />
         </CollapsibleSeparator>
-
-        <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
-          <HomeProductCard :product="pages.home.product" />
-          <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
-        </CollapsibleSeparator>
       </div>
     </div>
   </div>
