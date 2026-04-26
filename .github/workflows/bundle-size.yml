@@ -1,0 +1,60 @@
+name: Bundle Size
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  bundle-size:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          NITRO_PRESET: cloudflare-pages
+
+      - name: Generate bundle report
+        run: node --experimental-strip-types scripts/bundle-report.ts node_modules/.cache/nuxt/.nuxt/dist/client/stats.json bundle-report.json
+
+      - name: Upload bundle report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-report-${{ github.sha }}
+          path: bundle-report.json
+
+      # Compare against main branch baseline (PRs only)
+      - name: Download main branch baseline
+        if: github.event_name == 'pull_request'
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: bundle-size.yml
+          branch: main
+          name: bundle-report-${{ github.event.pull_request.base.sha }}
+          path: baseline
+        continue-on-error: true
+
+      - name: Compare with baseline
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -f baseline/bundle-report.json ]; then
+            node --experimental-strip-types scripts/bundle-report.ts node_modules/.cache/nuxt/.nuxt/dist/client/stats.json bundle-report.json baseline/bundle-report.json
+          else
+            echo "No baseline found — skipping comparison"
+          fi

@@ -1,0 +1,145 @@
+{
+  "summary": {
+    "total_chunks": 12,
+    "total_parsed_size": 826612,
+    "total_gzip_size": 273949
+  },
+  "chunks": [
+    {
+      "filename": "_nuxt/Crbhwfr8.js",
+      "category": "Vendor",
+      "parsed_size": 369993,
+      "gzip_size": 155856,
+      "top_packages": [
+        {
+          "name": "@vue/runtime-core",
+          "gzip_size": 23690,
+          "parsed_size": 58027
+        },
+        {
+          "name": "nuxt/dist",
+          "gzip_size": 19199,
+          "parsed_size": 39202
+        },
+        {
+          "name": "reka-ui/dist",
+          "gzip_size": 15768,
+          "parsed_size": 30112
+        },
+        {
+          "name": "vue-router/dist",
+          "gzip_size": 10649,
+          "parsed_size": 25636
+        },
+        {
+          "name": "tailwind-merge/dist",
+          "gzip_size": 8527,
+          "parsed_size": 27426
+        }
+      ]
+    },
+    {
+      "filename": "_nuxt/CjPBq9Bq.js",
+      "category": "Vendor",
+      "parsed_size": 149421,
+      "gzip_size": 43237,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/DYwHDiNu.js",
+      "category": "Vendor",
+      "parsed_size": 97550,
+      "gzip_size": 37890,
+      "top_packages": [
+        {
+          "name": "assets",
+          "gzip_size": 10008,
+          "parsed_size": 28266
+        },
+        {
+          "name": "reka-ui/dist",
+          "gzip_size": 8160,
+          "parsed_size": 15088
+        },
+        {
+          "name": "composables",
+          "gzip_size": 6333,
+          "parsed_size": 15691
+        },
+        {
+          "name": "utils",
+          "gzip_size": 2130,
+          "parsed_size": 4849
+        },
+        {
+          "name": "aria-hidden/dist",
+          "gzip_size": 738,
+          "parsed_size": 1480
+        }
+      ]
+    },
+    {
+      "filename": "_nuxt/entry.CGcEzjfX.css",
+      "category": "CSS",
+      "parsed_size": 181616,
+      "gzip_size": 24808,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/leaflet.9UJSYqx2.css",
+      "category": "CSS",
+      "parsed_size": 15037,
+      "gzip_size": 6375,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/BMpAIejm.js",
+      "category": "Vendor",
+      "parsed_size": 3774,
+      "gzip_size": 1717,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/C4reHOHz.js",
+      "category": "Vendor",
+      "parsed_size": 2835,
+      "gzip_size": 1254,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/error-404.C4uRjqB7.css",
+      "category": "CSS",
+      "parsed_size": 2430,
+      "gzip_size": 857,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/CjXwmi8e.js",
+      "category": "Vendor",
+      "parsed_size": 1260,
+      "gzip_size": 816,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/error-500.DV_oH0JH.css",
+      "category": "CSS",
+      "parsed_size": 1907,
+      "gzip_size": 726,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/my-best-restaurants-search-in-sydney.C7mc-qwI.css",
+      "category": "CSS",
+      "parsed_size": 617,
+      "gzip_size": 303,
+      "top_packages": []
+    },
+    {
+      "filename": "_nuxt/index.CPfkGERX.css",
+      "category": "CSS",
+      "parsed_size": 172,
+      "gzip_size": 110,
+      "top_packages": []
+    }
+  ]
+}

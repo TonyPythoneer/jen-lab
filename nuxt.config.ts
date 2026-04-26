@@ -1,3 +1,5 @@
+import { analyzer } from 'vite-bundle-analyzer'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -23,6 +25,12 @@ export default defineNuxtConfig({
       deployConfig: true,
       nodeCompat: true
     }
+  },
+
+  vite: {
+    plugins: [
+      analyzer({ analyzerMode: 'json', fileName: 'stats' }) as any
+    ]
   },
 
   modules: [

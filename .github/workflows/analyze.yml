@@ -1,0 +1,85 @@
+name: Analyze Bundle
+
+# 觸發條件：任何人在 PR 留言，內容為 "/analyze"
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  analyze:
+    # 條件一：留言必須在 PR（不是 Issue）
+    # 條件二：留言內容完全符合 "/analyze"
+    if: |
+      github.event.issue.pull_request != null &&
+      github.event.comment.body == '/analyze'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read       # 允許 checkout 程式碼
+      pull-requests: write # 允許回覆 PR 留言
+
+    steps:
+      # issue_comment 的 github.sha 是 main 的 SHA，不是 PR branch 的
+      # 所以要額外呼叫 GitHub API 取得 PR head commit SHA
+      - name: Get PR head SHA
+        id: pr
+        run: |
+          SHA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }} --jq '.head.sha')
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Checkout PR branch（用上一步拿到的 SHA，確保不是 main）
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.sha }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 執行 nuxt analyze，輸出 analyze.client.<sha>.json
+      # COMMIT_SHA 傳入讓 script 用正確 SHA 命名檔案
+      # NITRO_PRESET 確保 build 設定與 production 一致
+      - name: Run analyze
+        run: pnpm run analyze
+        env:
+          COMMIT_SHA: ${{ steps.pr.outputs.sha }}
+          NITRO_PRESET: cloudflare-pages
+
+      # 把產出的 analyze.client.<sha>.json 存進 GitHub Actions Cache
+      # key 是 analyze-<sha>，之後其他 workflow 可用相同 key 還原
+      - name: Cache analyze result
+        uses: actions/cache/save@v4
+        with:
+          path: analyze.client.${{ steps.pr.outputs.sha }}.json
+          key: analyze-${{ steps.pr.outputs.sha }}
+
+      # 跑 bundle-report.ts，把 stdout 存進 bundle-report.txt
+      # tee 同時印到 CI log 也寫入檔案
+      - name: Generate bundle report text
+        run: |
+          node --experimental-strip-types scripts/bundle-report.ts \
+            node_modules/.cache/nuxt/.nuxt/dist/client/stats.json \
+            | tee bundle-report.txt
+
+      # 讀 bundle-report.txt 內容，貼進 PR 留言的 code block
+      - name: Comment result on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const report = fs.readFileSync('bundle-report.txt', 'utf8')
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Bundle Report (\`${{ steps.pr.outputs.sha }}\`)\n\`\`\`\n${report}\n\`\`\``
+            })
