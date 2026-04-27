@@ -1,3 +1,9 @@
+import { markRaw } from 'vue'
+import AusWorkplaceGuideDescriptionRaw from '~/settings/app/aus-workplace-guide-description.md'
+import TaiwanTravelGuideDescriptionRaw from '~/settings/app/taiwan-travel-guide.description.md'
+const AusWorkplaceGuideDescription = markRaw(AusWorkplaceGuideDescriptionRaw)
+const TaiwanTravelGuideDescription = markRaw(TaiwanTravelGuideDescriptionRaw)
+
 export default defineAppConfig({
   pages: {
     home: {
@@ -31,17 +37,7 @@ export default defineAppConfig({
         bannerImage: '/home/aus-workplace-guide.webp',
         title: '澳洲職場指南 2.0',
         brief: '從面試、入職到升職，系統性掌握澳洲職場文化',
-        description: `* **基礎知識篇** - 稅務、Super、勞工權益等基本制度
-* **求職篇** - 英文履歷、面試準備
-* **入職篇** - 澳洲職場文化適應（請假、離職禮儀等）
-* **職涯規劃篇** - 跟主管 1:1聊什麼、如何準備升遷與績效考核
-* **留學生專區** - Grad Program 如何申請、面試官主要考核什麼？
-* **科技業專區** - 科技業小眾職位、薪資組成、求職管道
-* **模板專區** - 談薪對話範本、履歷範本
-
-2.0版本新增職涯探索及技能證據庫模板，專為澳洲求職者打造的工具包，可直接套用在履歷、面試準備中
----
-使用澳幣付款，請至以下連結 https://buy.stripe.com/4gM3cvbMO5Nx73026sbwk03`,
+        descriptionMDComponent: AusWorkplaceGuideDescription,
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
         purchaseLabel: '真棒，我要這個！',
       },
@@ -49,19 +45,7 @@ export default defineAppConfig({
         bannerImage: '/home/taiwan-travel-guide.webp',
         title: '海外遊子回台手冊',
         brief: '給「熟悉又陌生」的你，重新連上台灣的一份生活指南。',
-        description: `📘這本手冊包含：
-* 回台前需準備事項（恢復戶籍、申辦自然人憑證等）
-* 美食景點依地區整理、實用伴手禮清單
-* 雙重國籍注意事項
-* 遠距工作辦公地點推薦
----
-購買這份 Notion 手冊，你將獲得:
-✓ 完整16章節中英雙語手冊
-✓ 終身免費更新
-✓ 可參與「共創章節」補充推薦地點
----
-使用澳幣付款，請至以下連結
-https://buy.stripe.com/aFa5kD3gidfZ8743awbwk00`,
+        descriptionMDComponent: TaiwanTravelGuideDescription,
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
         purchaseLabel: '立刻下單',
       },

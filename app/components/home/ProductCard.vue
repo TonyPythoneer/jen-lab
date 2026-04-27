@@ -30,8 +30,9 @@
         <template #content>
           <div
             class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
-            v-html="parsedDescription"
-          />
+          >
+            <product.descriptionMDComponent />
+          </div>
         </template>
       </UCollapsible>
       <!-- CTA -->
@@ -51,22 +52,17 @@
 </template>
 
 <script setup lang="ts">
+import type { ComponentOptions } from 'vue'
 const props = defineProps<{
   product: {
     bannerImage?: string
     title: string
     brief: string
-    description: string
+    descriptionMDComponent: ComponentOptions
     purchaseUrl: string
     purchaseLabel: string
   }
 }>()
-
-let parsedDescription: globalThis.ComputedRef<string | Promise<string>> | null = null
-onMounted(async () => {
-  const { marked } = (await import('marked'))
-  parsedDescription = computed(() => marked(props.product.description))
-})
 </script>
 
 <style scoped>

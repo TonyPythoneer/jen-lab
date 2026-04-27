@@ -1,5 +1,7 @@
-import { analyzer } from 'vite-bundle-analyzer'
+import Vue from '@vitejs/plugin-vue'
 import type { NuxtConfig } from 'nuxt/schema'
+import Markdown from 'unplugin-vue-markdown/vite'
+import { analyzer } from 'vite-bundle-analyzer'
 
 const setupSettings: NuxtConfig = {
   modules: [
@@ -36,8 +38,12 @@ const devSettings: NuxtConfig = {
     port: 3500,
   },
   vite: {
+    vue: {
+      include: [/\.vue$/, /\.md$/],
+    },
     plugins: [
       analyzer({ analyzerMode: 'json', fileName: 'stats' }) as any,
+      Markdown({}),
     ],
   },
 }
