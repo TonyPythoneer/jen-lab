@@ -1,9 +1,3 @@
-import { markRaw } from 'vue'
-import AusWorkplaceGuideDescriptionRaw from '~/settings/app/aus-workplace-guide-description.md'
-import TaiwanTravelGuideDescriptionRaw from '~/settings/app/taiwan-travel-guide.description.md'
-const AusWorkplaceGuideDescription = markRaw(AusWorkplaceGuideDescriptionRaw)
-const TaiwanTravelGuideDescription = markRaw(TaiwanTravelGuideDescriptionRaw)
-
 export default defineAppConfig({
   pages: {
     home: {
@@ -37,7 +31,7 @@ export default defineAppConfig({
         bannerImage: '/home/aus-workplace-guide.webp',
         title: '澳洲職場指南 2.0',
         brief: '從面試、入職到升職，系統性掌握澳洲職場文化',
-        descriptionMDComponent: AusWorkplaceGuideDescription,
+        descriptionContentPath: '/home/products/aus-workplace-guide',
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
         purchaseLabel: '真棒，我要這個！',
       },
@@ -45,7 +39,7 @@ export default defineAppConfig({
         bannerImage: '/home/taiwan-travel-guide.webp',
         title: '海外遊子回台手冊',
         brief: '給「熟悉又陌生」的你，重新連上台灣的一份生活指南。',
-        descriptionMDComponent: TaiwanTravelGuideDescription,
+        descriptionContentPath: '/home/products/taiwan-travel-guide',
         purchaseUrl: 'https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8',
         purchaseLabel: '立刻下單',
       },
