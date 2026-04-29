@@ -50,36 +50,37 @@
     </ClientOnly>
 
     <!-- Main content: offset top on mobile, offset left on desktop -->
-      <div
-        class="flex-1 flex justify-center sm:pt-0 sm:pl-36"
-      >
-        <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
+    <div class="flex-1 flex justify-center sm:pt-0 sm:pl-36">
+      <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
-          <div :id="profileSection.id" />
-          <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
+        <div :id="profileSection.id" />
+        <HomeProfile v-if="page" :profile="page.profile" :contacts="contacts" />
 
-          <Transition name="content-body" @after-enter="installObserver">
-            <div v-if="isReady" class="flex flex-col gap-5">
-              <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
-                <HomeItem
-                  v-for="item in pages.home.items"
-                  :key="item.to"
-                  v-bind="item"
-                />
-              </CollapsibleSeparator>
+        <Transition name="content-body" @after-enter="installObserver">
+          <div v-if="isReady && page" class="flex flex-col gap-5">
+            <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
+              <HomeItem
+                v-for="item in page.items"
+                :key="item.to"
+                v-bind="item"
+              />
+            </CollapsibleSeparator>
 
-              <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
-                <HomeYoutubeCarousel :videos="pages.home.videos" />
-              </CollapsibleSeparator>
+            <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
+              <HomeYoutubeCarousel :videos="page.videos" />
+            </CollapsibleSeparator>
 
-              <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
-                <HomeProductCard :product="pages.home.product" />
-                <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
-              </CollapsibleSeparator>
-            </div>
-          </Transition>
-        </div>
+            <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
+              <HomeProductCard
+                v-for="product in page.products"
+                :key="product.descriptionContentPath"
+                :product="product"
+              />
+            </CollapsibleSeparator>
+          </div>
+        </Transition>
       </div>
+    </div>
   </div>
 
   <!-- Scroll to top -->
@@ -97,7 +98,12 @@
 <script setup lang="ts">
 useHead({ title: '榛知' })
 
-const { contacts, pages } = useAppConfig()
+const { contacts } = useAppConfig()
+
+const { data: page } = await useAsyncData(
+  'home-jen-knows',
+  () => queryCollection('home').path('/home/jen-knows').first()
+)
 
 const NAV_SECTIONS = [
   { id: 'profile',  display: 'Profile' },
@@ -110,7 +116,6 @@ const navItems = NAV_SECTIONS.map(({ id, display }) => ({ value: id, label: disp
 
 const navOpen = ref(false)
 const activeSection = ref<typeof navItems[number]>(navItems[0]!)
-
 const isReady = ref(false)
 
 function onNavSelect(item: { label: string; value: string } | undefined) {

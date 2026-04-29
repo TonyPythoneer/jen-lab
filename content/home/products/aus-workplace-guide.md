@@ -1,3 +1,11 @@
+---
+title: 澳洲職場指南 2.0
+bannerImage: /home/aus-workplace-guide.webp
+brief: 從面試、入職到升職，系統性掌握澳洲職場文化
+purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
+purchaseLabel: 真棒，我要這個！
+---
+
 * **基礎知識篇** - 稅務、Super、勞工權益等基本制度
 * **求職篇** - 英文履歷、面試準備
 * **入職篇** - 澳洲職場文化適應（請假、離職禮儀等）

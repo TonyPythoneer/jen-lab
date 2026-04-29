@@ -1,3 +1,11 @@
+---
+title: 海外遊子回台手冊
+bannerImage: /home/taiwan-travel-guide.webp
+brief: 給「熟悉又陌生」的你，重新連上台灣的一份生活指南。
+purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
+purchaseLabel: 立刻下單
+---
+
 📘這本手冊包含：
 * 回台前需準備事項（恢復戶籍、申辦自然人憑證等）
 * 美食景點依地區整理、實用伴手禮清單
