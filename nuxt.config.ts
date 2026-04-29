@@ -1,9 +1,10 @@
 import type { NuxtConfig } from 'nuxt/schema'
-import Markdown from 'unplugin-vue-markdown/vite'
 import { analyzer } from 'vite-bundle-analyzer'
 
 const setupSettings: NuxtConfig = {
   modules: [
+    '@nuxtjs/mdc',
+    '@nuxt/content',
     'nitro-cloudflare-dev',
     '@nuxt/ui',
   ],
@@ -42,12 +43,8 @@ const devSettings: NuxtConfig = {
         'leaflet', // CJS
       ]
     },
-    vue: {
-      include: [/\.vue$/, /\.md$/],
-    },
     plugins: [
       analyzer({ analyzerMode: 'json', fileName: 'stats' }) as any,
-      Markdown({}),
     ],
   },
 }
