@@ -5,7 +5,7 @@
     @click="$emit('click')"
   >
     <!-- ui: radio dot for selection display -->
-    <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+    <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
       :class="active ? 'border-teal-500' : 'border-gray-300'">
       <span
         v-if="active"
@@ -15,7 +15,7 @@
     <!-- ui: dotColored circle mark -->
     <span
       v-if="dotColor"
-      class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+      class="w-2.5 h-2.5 rounded-full shrink-0"
       :style="{ background: dotColor }"
     />
     {{ label }}

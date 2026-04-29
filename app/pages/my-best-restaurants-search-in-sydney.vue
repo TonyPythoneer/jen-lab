@@ -10,7 +10,7 @@
          ╚═╝    ╚═════╝ ╚═╝
     -->
     <!-- search engine -->
-    <div class="px-6 py-5 space-y-3 flex-shrink-0">
+    <div class="px-6 py-5 space-y-3 shrink-0">
       <div class="flex items-center gap-2">
         <UInput
           v-model="searchedName"
@@ -109,7 +109,7 @@
       ██║ ╚═╝ ██║██║██████╔╝██████╔╝███████╗███████╗
       ╚═╝     ╚═╝╚═╝╚═════╝ ╚═════╝ ╚══════╝╚══════╝
     -->
-    <div class="relative h-72 flex-shrink-0">
+    <div class="relative h-72 shrink-0">
       <ClientOnly>
         <MapView
           :restaurants="filteredRestaurantList"
@@ -166,7 +166,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="flex-shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
+    <div class="shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
       <div class="flex items-center gap-3">
         <a
           v-for="contact in contacts"
@@ -186,7 +186,7 @@
 
     <!-- Dark mode toggle -->
     <UColorModeButton
-      class="fixed bottom-4 right-4 z-[9999]"
+      class="fixed bottom-4 right-4 z-9999"
     />
   </div>
   </UPage>

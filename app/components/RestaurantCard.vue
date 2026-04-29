@@ -9,7 +9,7 @@
 
     <template #header>
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full flex-shrink-0" :style="{ background: restaurant.categoryColor }" />
+        <span class="w-2 h-2 rounded-full shrink-0" :style="{ background: restaurant.categoryColor }" />
         <span class="text-xs text-gray-400 uppercase tracking-wide">{{ restaurant.area }} · {{ restaurant.categoryName }}</span>
       </div>
     </template>
@@ -31,7 +31,6 @@
             <p class="text-sm text-gray-400 pt-1 pl-6">{{ restaurant.description }}</p>
           </template>
         </UCollapsible>
-        <span v-else class="text-sm text-gray-400">{{ restaurant.summary ?? '' }}</span>
       </div>
     </template>
 
