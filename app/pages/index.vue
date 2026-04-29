@@ -53,30 +53,34 @@
     <div class="flex-1 flex justify-center sm:pt-0 sm:pl-36">
       <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
-        <div :id="profileSection.id" />
+        <div id="profile" />
         <HomeProfile v-if="page" :profile="page.profile" :contacts="contacts" />
 
         <Transition name="content-body" @after-enter="installObserver">
           <div v-if="isReady && page" class="flex flex-col gap-5">
-            <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
-              <HomeItem
-                v-for="item in page.items"
-                :key="item.to"
-                v-bind="item"
-              />
-            </CollapsibleSeparator>
 
-            <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
-              <HomeYoutubeCarousel :videos="page.videos" />
-            </CollapsibleSeparator>
+            <template v-for="section in page.sections" :key="section.id">
+              <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
 
-            <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
-              <HomeProductCard
-                v-for="product in page.products"
-                :key="product.descriptionContentPath"
-                :product="product"
-              />
-            </CollapsibleSeparator>
+                <template v-if="section.id === 'portals'">
+                  <HomeItem v-for="item in page.items" :key="item.to" v-bind="item" />
+                </template>
+
+                <template v-else-if="section.id === 'videos'">
+                  <HomeYoutubeCarousel :videos="page.videos" />
+                </template>
+
+                <template v-else-if="section.id === 'products'">
+                  <HomeProductCard
+                    v-for="product in page.products"
+                    :key="product.descriptionContentPath"
+                    :product="product"
+                  />
+                </template>
+
+              </CollapsibleSeparator>
+            </template>
+
           </div>
         </Transition>
       </div>
@@ -105,17 +109,13 @@ const { data: page } = await useAsyncData(
   () => queryCollection('home').path('/home/jen-knows').first()
 )
 
-const NAV_SECTIONS = [
-  { id: 'profile',  display: 'Profile' },
-  { id: 'portals',  display: 'Portals' },
-  { id: 'videos',   display: 'Videos' },
-  { id: 'products', display: 'Products' },
-] as const
-const [profileSection, portalsSection, videosSection, productsSection] = NAV_SECTIONS
-const navItems = NAV_SECTIONS.map(({ id, display }) => ({ value: id, label: display }))
+const navItems = computed(() => [
+  { value: 'profile', label: 'Profile' },
+  ...(page.value?.sections ?? []).map(s => ({ value: s.id, label: s.label })),
+])
 
 const navOpen = ref(false)
-const activeSection = ref<typeof navItems[number]>(navItems[0]!)
+const activeSection = ref(navItems.value[0]!)
 const isReady = ref(false)
 
 function onNavSelect(item: { label: string; value: string } | undefined) {
@@ -130,15 +130,15 @@ function installObserver() {
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          const found = navItems.find(i => i.value === entry.target.id)
+          const found = navItems.value.find(i => i.value === entry.target.id)
           if (found) activeSection.value = found
         }
       }
     },
     { threshold: 0.3 }
   )
-  for (const item of NAV_SECTIONS) {
-    const el = document.getElementById(item.id)
+  for (const item of navItems.value) {
+    const el = document.getElementById(item.value)
     if (el) observer.observe(el)
   }
 }
@@ -146,7 +146,7 @@ function installObserver() {
 onMounted(() => { isReady.value = true })
 onUnmounted(() => observer?.disconnect())
 
-const showScrollTop = computed(() => activeSection.value?.value !== profileSection.id)
+const showScrollTop = computed(() => activeSection.value?.value !== 'profile')
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 </script>
 

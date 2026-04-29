@@ -2,6 +2,10 @@ import { defineCollection, defineContentConfig } from '@nuxt/content'
 import { z } from 'zod'
 
 const homeSchema = z.object({
+  sections: z.array(z.object({
+    id: z.string(),
+    label: z.string(),
+  })),
   profile: z.object({
     avatarLink: z.string(),
     name: z.string(),

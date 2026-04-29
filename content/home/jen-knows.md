@@ -40,6 +40,14 @@ products:
     purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
     purchaseLabel: 立刻下單
 
+sections:
+  - id: portals
+    label: Portals
+  - id: videos
+    label: Videos
+  - id: products
+    label: Products
+
 items:
   - to: https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715
     icon: i-lucide-calendar
