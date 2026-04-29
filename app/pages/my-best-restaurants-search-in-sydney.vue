@@ -50,7 +50,7 @@
         </UChip>
       </div>
 
-      <UModal v-model:open="filterModalOpen" class="max-w-2xl">
+      <UModal v-model:open="filterModalOpen" :ui="{ content: 'sm:max-w-2xl max-h-[70dvh] overflow-y-auto' }"  >
         <template #header>
           <div class="flex items-center justify-between w-full">
             <p class="font-semibold text-gray-300">篩選</p>
@@ -69,7 +69,7 @@
           <div class="space-y-4 pb-2">
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">地區</p>
-              <div class="grid grid-cols-4 gap-1">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
                 <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
                 <div /><div /><div />
                 <FilterItem
@@ -83,7 +83,7 @@
             </div>
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">類別</p>
-              <div class="grid grid-cols-4 gap-1">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
                 <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
                 <div /><div /><div />
                 <FilterItem
