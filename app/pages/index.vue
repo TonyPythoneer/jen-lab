@@ -56,33 +56,12 @@
         <div id="profile" />
         <HomeProfile v-if="page" :profile="page.profile" :contacts="contacts" />
 
-        <Transition name="content-body" @after-enter="installObserver">
-          <div v-if="isReady && page" class="flex flex-col gap-5">
-
-            <template v-for="section in page.sections" :key="section.id">
-              <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
-
-                <template v-if="section.id === 'portals'">
-                  <HomeItem v-for="item in page.items" :key="item.to" v-bind="item" />
-                </template>
-
-                <template v-else-if="section.id === 'videos'">
-                  <HomeYoutubeCarousel :videos="page.videos" />
-                </template>
-
-                <template v-else-if="section.id === 'products'">
-                  <HomeProductCard
-                    v-for="product in page.products"
-                    :key="product.descriptionContentPath"
-                    :product="product"
-                  />
-                </template>
-
-              </CollapsibleSeparator>
-            </template>
-
-          </div>
-        </Transition>
+        <HomeContentBody
+          v-if="page"
+          :page="page"
+          :show="isReady"
+          @after-enter="installObserver"
+        />
       </div>
     </div>
   </div>
@@ -153,7 +132,4 @@ const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 <style scoped>
 .menu-enter-active, .menu-leave-active { transition: opacity 0.2s; }
 .menu-enter-from, .menu-leave-to { opacity: 0; }
-
-.content-body-enter-active { transition: opacity 0.5s ease, transform 0.5s ease; }
-.content-body-enter-from { opacity: 0; transform: translateY(24px); }
 </style>
