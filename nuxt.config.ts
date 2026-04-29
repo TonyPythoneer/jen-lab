@@ -1,4 +1,3 @@
-import Vue from '@vitejs/plugin-vue'
 import type { NuxtConfig } from 'nuxt/schema'
 import Markdown from 'unplugin-vue-markdown/vite'
 import { analyzer } from 'vite-bundle-analyzer'
@@ -38,6 +37,11 @@ const devSettings: NuxtConfig = {
     port: 3500,
   },
   vite: {
+    optimizeDeps: {
+      include: [
+        'leaflet', // CJS
+      ]
+    },
     vue: {
       include: [/\.vue$/, /\.md$/],
     },

@@ -43,6 +43,7 @@
             label="Filters"
             color="neutral"
             variant="outline"
+            :disabled="!isDataReady"
             :class="activeFilterCount ? 'text-teal-600 font-bold' : ''"
             @click="filterModalOpen = true"
           />
@@ -72,11 +73,11 @@
                 <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
                 <div /><div /><div />
                 <FilterItem
-                  v-for="(option, id) in areaOptions"
-                  :key="id"
-                  :active="selectedArea === id"
-                  :label="option.displayName"
-                  @click="selectedArea = id"
+                  v-for="area in restaurantAreaSet"
+                  :key="area"
+                  :active="selectedArea === area"
+                  :label="area"
+                  @click="selectedArea = area"
                 />
               </div>
             </div>
@@ -86,12 +87,12 @@
                 <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
                 <div /><div /><div />
                 <FilterItem
-                  v-for="(option, id) in categoryOptions"
-                  :key="id"
-                  :active="selectedCategoryId === id"
-                  :label="option.displayName"
-                  :dot-color="option.dotColor"
-                  @click="selectedCategoryId = id"
+                  v-for="category in categories"
+                  :key="category.id"
+                  :active="selectedCategoryId === category.id"
+                  :label="category.name"
+                  :dot-color="category.color"
+                  @click="selectedCategoryId = category.id"
                 />
               </div>
             </div>
@@ -119,13 +120,13 @@
         />
       </ClientOnly>
 
-      <!-- 放在 MapView 後面，absolute inset-0 自然蓋住地圖 -->
+      <!-- 一層地圖加載中的畫面 -->
       <Transition
         leave-active-class="transition-opacity duration-300 delay-[1000ms] ease-in-out"
         leave-to-class="opacity-0"
       >
         <div
-          v-if="!isMapReady"
+          v-if="!isMapReady && !isDataReady"
           class="absolute inset-0 flex items-center justify-center bg-gray-50"
         >
           <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-500 animate-spin" />
@@ -192,15 +193,11 @@
 </template>
 
 <script setup lang="ts">
-import type { CategoryId, RestaurantArea } from '@/composables/useRestaurants'
-
-const { contacts } = useAppConfig()
-
 useHead({
   title: '知雪梨美食地圖'
 })
 
-type FilterOption<T extends keyof any> = Record<T, { displayName: string; dotColor?: string }>
+const { contacts } = useAppConfig()
 
 const isMapReady = ref(false)
 const listEl = ref<HTMLDivElement | null>(null)
@@ -216,18 +213,11 @@ const {
   selectedCategoryId,
   searchedName,
   selectedRestaurantId,
+  isReady: isDataReady,
   clearFilters,
 } = useRestaurants()
 
 watch(selectedRestaurantId, (id) => {
   if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: 'smooth' }))
 })
-
-const areaOptions = computed<FilterOption<RestaurantArea>>(() =>
-  Object.fromEntries([...restaurantAreaSet].map((a) => [a, { displayName: a }])) as FilterOption<RestaurantArea>
-)
-
-const categoryOptions = computed<FilterOption<CategoryId>>(() =>
-  Object.fromEntries(categories.map((c) => [c.id, { displayName: c.name, dotColor: c.color }])) as FilterOption<CategoryId>
-)
 </script>
