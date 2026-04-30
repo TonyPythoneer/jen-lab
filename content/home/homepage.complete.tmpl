@@ -35,7 +35,7 @@ public/home/<分頁名字>/
 
 ```yaml
 profile:
-  avatarLink: /home/jen-liu/avatar.webp
+  avatar: /home/jen-liu/avatar.webp
   name: 顯示名稱
   tabs:
     - label: 身分一
@@ -74,11 +74,11 @@ profile:
     - to: https://example.com
       icon: i-lucide-link
       title: 卡片標題
-      description: 簡短描述
+      brief: 簡短描述
     - to: https://another.com
       icon: i-simple-icons-wordpress
       title: 另一張卡
-      description: 描述
+      brief: 描述
 ```
 
 `icon` 是圖示名稱,最簡單的方式是從現有檔案複製貼上,或請工程師幫你找。
@@ -116,11 +116,11 @@ profile:
   carousels:
     - id: trip-photos
       label: 旅遊紀錄          # 可選
-      items:
+      images:
         - /home/jen-liu/galleries/trip-photos/a.webp
         - /home/jen-liu/galleries/trip-photos/b.webp
     - id: food-photos
-      items:
+      images:
         - /home/jen-liu/galleries/food-photos/x.webp
 ```
 
@@ -133,7 +133,7 @@ profile:
   label: Products
   component: product-list
   products:
-    - bannerImage: /home/jen-liu/products/foo.webp
+    - banner: /home/jen-liu/products/foo.webp
       title: 商品名
       brief: 一句話簡介 (折疊前看得到)
       description: |
@@ -153,7 +153,7 @@ profile:
 ```yaml
 ---
 profile:
-  avatarLink: /home/my-tab/avatar.webp
+  avatar: /home/my-tab/avatar.webp
   name: 我的名字
   tabs:
     - label: 身分
@@ -168,21 +168,21 @@ sections:                          # ← 順序決定顯示順序
       - to: https://example.com
         icon: i-lucide-link
         title: 範例
-        description: 描述
+        brief: 描述
 
   - id: galleries                  # ← 第 2 個出現
     label: 相簿
     component: image-carousel
     carousels:
       - id: photos
-        items:
+        images:
           - /home/my-tab/galleries/photos/a.webp
 
   - id: products                   # ← 第 3 個出現
     label: 商品
     component: product-list
     products:
-      - bannerImage: /home/my-tab/products/foo.webp
+      - banner: /home/my-tab/products/foo.webp
         title: 商品 A
         brief: 簡介
         description: |

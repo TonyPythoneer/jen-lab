@@ -1,6 +1,6 @@
 ---
 profile:
-  avatarLink: /home/jen-knows/avatar.webp
+  avatar: /home/jen-knows/avatar.webp
   name: 榛知
   tabs:
     - label: NextSteps Academy
@@ -24,27 +24,27 @@ sections:
       - to: https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715
         icon: i-lucide-calendar
         title: NextSteps 職涯諮詢預約
-        description: 一對一職涯規劃，找到求職方向
+        brief: 一對一職涯規劃，找到求職方向
       - to: https://app--next-steps-careers-9b4e7067.base44.app/landing
         icon: i-lucide-sparkles
         title: NextSteps 一站式職涯探索與管理工具
-        description: 解析職缺、找出技能缺口，獲得具體職涯建議
+        brief: 解析職缺、找出技能缺口，獲得具體職涯建議
       - to: /my-best-restaurants-search-in-sydney
         icon: i-lucide-map-pin
         title: 榛知雪梨美食地圖
-        description: 精選私藏雪梨餐廳，找到你的下一頓好飯
+        brief: 精選私藏雪梨餐廳，找到你的下一頓好飯
       - to: https://jenliu.com.au/
         icon: i-simple-icons-wordpress
         title: 榛知部落格
-        description: 深入淺出的中文澳洲知識庫
+        brief: 深入淺出的中文澳洲知識庫
       - to: https://crossing.cw.com.tw/author/1204
         icon: i-tdesign-copyright-filled
         title: 榛知專欄
-        description: 澳洲觀點專欄，刊載於《Crossing》
+        brief: 澳洲觀點專欄，刊載於《Crossing》
       - to: https://portaly.cc/jenknowsau/support
         icon: i-lucide-heart
         title: 買杯奶茶，支持我繼續創造
-        description: 有你的支持，創作才能長長久久
+        brief: 有你的支持，創作才能長長久久
 
   - id: videos
     label: Videos
@@ -65,7 +65,7 @@ sections:
     label: Products
     component: product-list
     products:
-      - bannerImage: /home/jen-knows/products/aus-workplace-guide.webp
+      - banner: /home/jen-knows/products/aus-workplace-guide.webp
         title: 澳洲職場指南 2.0
         brief: 從面試、入職到升職，系統性掌握澳洲職場文化
         description: |
@@ -84,7 +84,7 @@ sections:
           使用澳幣付款，請至以下連結 https://buy.stripe.com/4gM3cvbMO5Nx73026sbwk03
         purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
         purchaseLabel: 真棒，我要這個！
-      - bannerImage: /home/jen-knows/products/taiwan-travel-guide.webp
+      - banner: /home/jen-knows/products/taiwan-travel-guide.webp
         title: 海外遊子回台手冊
         brief: 給「熟悉又陌生」的你，重新連上台灣的一份生活指南。
         description: |

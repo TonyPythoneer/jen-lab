@@ -4,8 +4,8 @@
     <!-- Banner -->
     <div class="relative h-40 sm:h-56 bg-teal-400">
       <img
-        v-if="product.bannerImage"
-        :src="product.bannerImage"
+        v-if="product.banner"
+        :src="product.banner"
         class="absolute inset-0 w-full h-full"
         loading="lazy"
       />
@@ -52,7 +52,7 @@
 <script setup lang="ts">
 defineProps<{
   product: {
-    bannerImage?: string
+    banner?: string
     title: string
     brief: string
     description: string

@@ -9,7 +9,7 @@ const portalListSection = z.object({
     to: z.string(),
     icon: z.string(),
     title: z.string(),
-    description: z.string(),
+    brief: z.string(),
   })),
 })
 
@@ -34,7 +34,7 @@ const imageCarouselSection = z.object({
   carousels: z.array(z.object({
     id: z.string(),
     label: z.string().optional(),
-    items: z.array(z.string()),
+    images: z.array(z.string()),
   })),
 })
 
@@ -43,7 +43,7 @@ const productListSection = z.object({
   label: z.string(),
   component: z.literal('product-list'),
   products: z.array(z.object({
-    bannerImage: z.string(),
+    banner: z.string(),
     title: z.string(),
     brief: z.string(),
     description: z.string(),
@@ -54,7 +54,7 @@ const productListSection = z.object({
 
 const homeSchema = z.object({
   profile: z.object({
-    avatarLink: z.string(),
+    avatar: z.string(),
     name: z.string(),
     tabs: z.array(z.object({
       label: z.string(),

@@ -19,7 +19,7 @@
           <template v-else-if="section.component === 'image-carousel'">
             <div v-for="c in section.carousels" :key="c.id" class="flex flex-col gap-2">
               <h3 v-if="c.label" class="text-sm font-semibold text-gray-700">{{ c.label }}</h3>
-              <HomeImageCarousel :images="c.items" />
+              <HomeImageCarousel :images="c.images" />
             </div>
           </template>
 
