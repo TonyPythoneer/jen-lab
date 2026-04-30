@@ -1,6 +1,6 @@
 ---
 profile:
-  avatarLink: /home/jen-knows-avatar.webp
+  avatarLink: /home/jen-knows/avatar.webp
   name: 榛知
   tabs:
     - label: NextSteps Academy
@@ -65,7 +65,7 @@ sections:
     label: Products
     component: product-list
     products:
-      - bannerImage: /home/aus-workplace-guide.webp
+      - bannerImage: /home/jen-knows/products/aus-workplace-guide.webp
         title: 澳洲職場指南 2.0
         brief: 從面試、入職到升職，系統性掌握澳洲職場文化
         description: |
@@ -84,7 +84,7 @@ sections:
           使用澳幣付款，請至以下連結 https://buy.stripe.com/4gM3cvbMO5Nx73026sbwk03
         purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
         purchaseLabel: 真棒，我要這個！
-      - bannerImage: /home/taiwan-travel-guide.webp
+      - bannerImage: /home/jen-knows/products/taiwan-travel-guide.webp
         title: 海外遊子回台手冊
         brief: 給「熟悉又陌生」的你，重新連上台灣的一份生活指南。
         description: |
