@@ -9,9 +9,9 @@
     "analyze": "nuxt analyze --no-serve --logLevel=silent",
     "analyze:web": "nuxt analyze --serve --logLevel=silent",
     "analyze:ci": "pnpm analyze && cp ./node_modules/.cache/nuxt/.nuxt/dist/client/stats.json \"./analyze.client.${COMMIT_SHA:-$(git rev-parse HEAD)}.json\"",
-    "preview": "npm run build && wrangler pages dev",
+    "preview": "NUXT_CONTENT_DB=d1 npm run build && NUXT_CONTENT_DB=d1 wrangler pages dev",
     "postinstall": "nuxt prepare",
-    "deploy": "npm run build && wrangler pages deploy",
+    "deploy": "NUXT_CONTENT_DB=d1 npm run build && wrangler pages deploy",
     "bundle-report": "node --experimental-strip-types scripts/bundle-report.ts"
   },
   "dependencies": {
