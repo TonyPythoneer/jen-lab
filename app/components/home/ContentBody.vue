@@ -20,7 +20,7 @@
           <template v-else-if="section.component === 'product-list'">
             <HomeProductCard
               v-for="product in page.products"
-              :key="product.descriptionContentPath"
+              :key="product.title"
               :product="product"
             />
           </template>

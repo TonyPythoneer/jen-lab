@@ -23,7 +23,7 @@ const homeSchema = z.object({
     bannerImage: z.string(),
     title: z.string(),
     brief: z.string(),
-    descriptionContentPath: z.string(),
+    description: z.string(),
     purchaseUrl: z.string(),
     purchaseLabel: z.string(),
   })),
@@ -36,25 +36,12 @@ const homeSchema = z.object({
   galleries: z.array(z.string()).optional(),
 })
 
-const homeProductSchema = z.object({
-  title: z.string(),
-  bannerImage: z.string(),
-  brief: z.string(),
-  purchaseUrl: z.string(),
-  purchaseLabel: z.string(),
-})
-
 export default defineContentConfig({
   collections: {
     home: defineCollection({
       type: 'page',
       source: 'home/*.md',
       schema: homeSchema,
-    }),
-    homeProducts: defineCollection({
-      type: 'page',
-      source: 'home/products/*.md',
-      schema: homeProductSchema,
     }),
   },
 })

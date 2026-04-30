@@ -29,7 +29,7 @@
         <!-- description -->
         <template #content>
           <div class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description">
-            <ContentRenderer v-if="description" :value="description" />
+            <MDC v-if="product.description" :value="product.description" />
           </div>
         </template>
       </UCollapsible>
@@ -50,21 +50,16 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   product: {
     bannerImage?: string
     title: string
     brief: string
-    descriptionContentPath: string
+    description: string
     purchaseUrl: string
     purchaseLabel: string
   }
 }>()
-
-const { data: description } = await useAsyncData(
-  props.product.descriptionContentPath,
-  () => queryCollection('homeProducts').path(props.product.descriptionContentPath).first()
-)
 </script>
 
 <style scoped>
