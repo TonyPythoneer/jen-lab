@@ -6,20 +6,26 @@
         <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
 
           <template v-if="section.component === 'portal-list'">
-            <HomeItem v-for="item in page.items" :key="item.to" v-bind="item" />
+            <HomeItem v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
           </template>
 
           <template v-else-if="section.component === 'youtube-carousel'">
-            <HomeYoutubeCarousel :videos="page.videos" />
+            <div v-for="c in section.carousels" :key="c.id" class="flex flex-col gap-2">
+              <h3 v-if="c.label" class="text-sm font-semibold text-gray-700">{{ c.label }}</h3>
+              <HomeYoutubeCarousel :videos="c.videos" />
+            </div>
           </template>
 
           <template v-else-if="section.component === 'image-carousel'">
-            <HomeImageCarousel :images="page.galleries ?? []" />
+            <div v-for="c in section.carousels" :key="c.id" class="flex flex-col gap-2">
+              <h3 v-if="c.label" class="text-sm font-semibold text-gray-700">{{ c.label }}</h3>
+              <HomeImageCarousel :images="c.items" />
+            </div>
           </template>
 
           <template v-else-if="section.component === 'product-list'">
             <HomeProductCard
-              v-for="product in page.products"
+              v-for="product in section.products"
               :key="product.title"
               :product="product"
             />
