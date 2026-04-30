@@ -26,7 +26,11 @@ sections:
     label: Galleries
     component: image-carousel
     carousels:
-      - id: sydney-food
+      - id: traveling-in-nsw-towns
+        items:
+          - /home/nsw-travel-map.webp
+          - /home/southern-nsw-travel-map.webp
+      - id: food-in-greater-sydney
         items:
           - /home/sydney-drinks-and-desserts.webp
           - /home/sydney-taiwan-restaurants.webp
