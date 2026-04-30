@@ -28,7 +28,7 @@
           @click="navOpen = !navOpen"
         />
 
-        <!-- Tree: dropdown on mobile, sidebar on desktop -->
+        <!-- Toc: dropdown on mobile, sidebar on desktop -->
         <Transition name="menu">
           <div
             v-show="navOpen"
@@ -38,11 +38,11 @@
               sm:flex-1 sm:flex-col sm:justify-center
             "
           >
-            <UTree
-              :model-value="activeSection"
-              :items="navItems"
-              class="px-2"
-              @update:model-value="onNavSelect"
+            <UContentToc
+              highlight
+              :links="navLinks"
+              :title="currentProfileLabel"
+              :ui="{ content: 'flex! px-2' }"
             />
           </div>
         </Transition>
@@ -68,7 +68,6 @@
           v-if="page"
           :page="page"
           :show="isReady"
-          @after-enter="installObserver"
         />
       </div>
     </div>
@@ -111,55 +110,34 @@ const { data: page } = await useAsyncData(
   { watch: [currentProfile] }
 )
 
-const navItems = computed(() => [
-  { value: 'profile', label: 'Profile' },
-  ...(page.value?.sections ?? []).map(s => ({ value: s.id, label: s.label })),
+const currentProfileLabel = computed(
+  () => profileTabs.find(t => t.value === currentProfile.value)?.label ?? ''
+)
+
+import type { ContentTocLink } from '@nuxt/ui'
+
+const navLinks = computed<ContentTocLink[]>(() => [
+  { id: 'profile', text: 'Profile', depth: 2 },
+  ...(page.value?.sections ?? []).map(s => ({ id: s.id, text: s.label, depth: 1 })),
 ])
 
 const navOpen = ref(false)
-const activeSection = ref(navItems.value[0]!)
 const isReady = ref(false)
 
-watch(navItems, (items) => {
-  const stillExists = items.find(i => i.value === activeSection.value?.value)
-  if (!stillExists) activeSection.value = items[0]!
-})
-
-function onNavSelect(item: { label: string; value: string } | undefined) {
-  if (!item) return
-  document.getElementById(item.value)?.scrollIntoView({ behavior: 'smooth' })
-}
-
-let observer: IntersectionObserver | null = null
-
-function installObserver() {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const found = navItems.value.find(i => i.value === entry.target.id)
-          if (found) activeSection.value = found
-        }
-      }
-    },
-    { threshold: 0.3 }
-  )
-  for (const item of navItems.value) {
-    const el = document.getElementById(item.value)
-    if (el) observer.observe(el)
-  }
-}
-
-watch(currentProfile, async () => {
-  observer?.disconnect()
-  await nextTick()
-  installObserver()
-})
-
 onMounted(() => { isReady.value = true })
-onUnmounted(() => observer?.disconnect())
 
-const showScrollTop = computed(() => activeSection.value?.value !== 'profile')
+const nuxtApp = useNuxtApp()
+watch(navLinks, async () => {
+  await nextTick()
+  await nuxtApp.callHook('page:transition:finish')
+})
+
+const scrollY = ref(0)
+const onScroll = () => { scrollY.value = window.scrollY }
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
+
+const showScrollTop = computed(() => scrollY.value > 200)
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 </script>
 
