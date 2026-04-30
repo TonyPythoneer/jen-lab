@@ -1,7 +1,9 @@
 <template>
+  <!--
+    flex-col = mobile vertical stack
+    sm:flex-row = desktop horizontal row
+  -->
   <div class="flex flex-col sm:flex-row min-h-screen">
-    <!-- flex-col = mobile vertical stack | sm:flex-row = desktop horizontal row -->
-
     <!-- Nav: top on mobile, left sidebar on sm+ -->
     <ClientOnly>
       <aside
@@ -28,7 +30,7 @@
           @click="navOpen = !navOpen"
         />
 
-        <!-- Tree: dropdown on mobile, sidebar on desktop -->
+        <!-- Toc: dropdown on mobile, sidebar on desktop -->
         <Transition name="menu">
           <div
             v-show="navOpen"
@@ -38,11 +40,11 @@
               sm:flex-1 sm:flex-col sm:justify-center
             "
           >
-            <UTree
-              :model-value="activeSection"
-              :items="navItems"
-              class="px-2"
-              @update:model-value="onNavSelect"
+            <UContentToc
+              highlight
+              :links="navLinks"
+              :title="currentProfileLabel"
+              :ui="{ content: 'flex! px-2' }"
             />
           </div>
         </Transition>
@@ -50,36 +52,27 @@
     </ClientOnly>
 
     <!-- Main content: offset top on mobile, offset left on desktop -->
-      <div
-        class="flex-1 flex justify-center sm:pt-0 sm:pl-36"
-      >
-        <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
+    <div class="flex-1 flex justify-center sm:pt-0 sm:pl-36">
+      <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
-          <div :id="profileSection.id" />
-          <HomeProfile :profile="pages.home.profile" :contacts="contacts" />
+        <div id="profile" />
 
-          <Transition name="content-body" @after-enter="installObserver">
-            <div v-if="isReady" class="flex flex-col gap-5">
-              <CollapsibleSeparator :id="portalsSection.id" :label="portalsSection.display" :default-open="true">
-                <HomeItem
-                  v-for="item in pages.home.items"
-                  :key="item.to"
-                  v-bind="item"
-                />
-              </CollapsibleSeparator>
+        <UTabs
+          v-model="currentProfile"
+          :items="profileTabs"
+          size="sm"
+          class="pt-2"
+        />
 
-              <CollapsibleSeparator :id="videosSection.id" :label="videosSection.display" :default-open="true">
-                <HomeYoutubeCarousel :videos="pages.home.videos" />
-              </CollapsibleSeparator>
+        <HomeProfile v-if="page" id="profile" :profile="page.profile" :contacts="contacts" />
 
-              <CollapsibleSeparator :id="productsSection.id" :label="productsSection.display" :default-open="true">
-                <HomeProductCard :product="pages.home.product" />
-                <HomeProductCard :product="pages.home.productTaiwanTravelProduct" />
-              </CollapsibleSeparator>
-            </div>
-          </Transition>
-        </div>
+        <HomeContentBody
+          v-if="page"
+          :page="page"
+          :show="isReady"
+        />
       </div>
+    </div>
   </div>
 
   <!-- Scroll to top -->
@@ -95,60 +88,59 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: '榛知' })
+const titleByProfile = {
+  'jen-knows': '榛知 | NextSteps Academy',
+  'jen-liu': '榛知 | 澳洲旅遊作家',
+} as const
+type ProfileKey = keyof typeof titleByProfile
+const currentProfile = ref<ProfileKey>('jen-knows')
+useHead({ title: () => titleByProfile[currentProfile.value] })
 
-const { contacts, pages } = useAppConfig()
+const profileTabs: { label: string; value: ProfileKey }[] = [
+  { label: 'Jen Knows', value: 'jen-knows' },
+  { label: 'Jen Liu', value: 'jen-liu' },
+]
 
-const NAV_SECTIONS = [
-  { id: 'profile',  display: 'Profile' },
-  { id: 'portals',  display: 'Portals' },
-  { id: 'videos',   display: 'Videos' },
-  { id: 'products', display: 'Products' },
-] as const
-const [profileSection, portalsSection, videosSection, productsSection] = NAV_SECTIONS
-const navItems = NAV_SECTIONS.map(({ id, display }) => ({ value: id, label: display }))
+const { contacts } = useAppConfig()
+
+const { data: page } = await useAsyncData(
+  'home',
+  () => queryCollection('home').path(`/home/${currentProfile.value}`).first(),
+  { watch: [currentProfile] }
+)
+
+const currentProfileLabel = computed(
+  () => profileTabs.find(t => t.value === currentProfile.value)?.label ?? ''
+)
+
+import type { ContentTocLink } from '@nuxt/ui'
+
+const navLinks = computed<ContentTocLink[]>(() => [
+  { id: 'profile', text: 'Profile', depth: 2 },
+  ...(page.value?.sections ?? []).map(s => ({ id: s.id, text: s.label, depth: 1 })),
+])
 
 const navOpen = ref(false)
-const activeSection = ref<typeof navItems[number]>(navItems[0]!)
-
 const isReady = ref(false)
 
-function onNavSelect(item: { label: string; value: string } | undefined) {
-  if (!item) return
-  document.getElementById(item.value)?.scrollIntoView({ behavior: 'smooth' })
-}
-
-let observer: IntersectionObserver | null = null
-
-function installObserver() {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const found = navItems.find(i => i.value === entry.target.id)
-          if (found) activeSection.value = found
-        }
-      }
-    },
-    { threshold: 0.3 }
-  )
-  for (const item of NAV_SECTIONS) {
-    const el = document.getElementById(item.id)
-    if (el) observer.observe(el)
-  }
-}
-
 onMounted(() => { isReady.value = true })
-onUnmounted(() => observer?.disconnect())
 
-const showScrollTop = computed(() => activeSection.value?.value !== profileSection.id)
+const nuxtApp = useNuxtApp()
+watch(navLinks, async () => {
+  await nextTick()
+  await nuxtApp.callHook('page:transition:finish')
+})
+
+const scrollY = ref(0)
+const onScroll = () => { scrollY.value = window.scrollY }
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
+
+const showScrollTop = computed(() => scrollY.value > 200)
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 </script>
 
 <style scoped>
 .menu-enter-active, .menu-leave-active { transition: opacity 0.2s; }
 .menu-enter-from, .menu-leave-to { opacity: 0; }
-
-.content-body-enter-active { transition: opacity 0.5s ease, transform 0.5s ease; }
-.content-body-enter-from { opacity: 0; transform: translateY(24px); }
 </style>

@@ -28,10 +28,8 @@
         </div>
         <!-- description -->
         <template #content>
-          <div
-            class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
-          >
-            <product.descriptionMDComponent />
+          <div class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description">
+            <ContentRenderer v-if="description" :value="description" />
           </div>
         </template>
       </UCollapsible>
@@ -52,17 +50,21 @@
 </template>
 
 <script setup lang="ts">
-import type { ComponentOptions } from 'vue'
 const props = defineProps<{
   product: {
     bannerImage?: string
     title: string
     brief: string
-    descriptionMDComponent: ComponentOptions
+    descriptionContentPath: string
     purchaseUrl: string
     purchaseLabel: string
   }
 }>()
+
+const { data: description } = await useAsyncData(
+  props.product.descriptionContentPath,
+  () => queryCollection('homeProducts').path(props.product.descriptionContentPath).first()
+)
 </script>
 
 <style scoped>

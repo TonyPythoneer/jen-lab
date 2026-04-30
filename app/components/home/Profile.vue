@@ -57,9 +57,19 @@ const props = defineProps<{
   }[]
 }>()
 
-const tabItems = props.profile.tabs.map(t => ({ label: t.label, value: t.label }))
-const activeTab = ref(tabItems[0]!.value)
-const bios = Object.fromEntries(props.profile.tabs.map(t => [t.label, t.bio]))
+const tabItems = computed(() =>
+  props.profile.tabs.map(t => ({ label: t.label, value: t.label }))
+)
+const bios = computed(() =>
+  Object.fromEntries(props.profile.tabs.map(t => [t.label, t.bio]))
+)
+const activeTab = ref(tabItems.value[0]!.value)
+
+watch(tabItems, (items) => {
+  if (!items.find(i => i.value === activeTab.value)) {
+    activeTab.value = items[0]!.value
+  }
+})
 </script>
 
 <style scoped>
