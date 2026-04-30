@@ -33,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import type { collections } from '#content/types'
+import type { Collections } from '@nuxt/content'
 
-type HomePage = collections['home'][number]
+type HomePage = Collections['home']
 
 defineProps<{
   page: HomePage
