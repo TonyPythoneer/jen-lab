@@ -13,6 +13,13 @@
 	"upload_source_maps": true,
 	"compatibility_flags": [
 		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "jen-lab",
+			"database_id": "af8dfdd2-e4c7-42a6-85f7-628eab64cad3"
+		}
 	]
 	/**
 	 * Smart Placement

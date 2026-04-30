@@ -5,14 +5,16 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --host",
+    "typecheck": "nuxt typecheck",
     "generate": "nuxt generate",
     "analyze": "nuxt analyze --no-serve --logLevel=silent",
     "analyze:web": "nuxt analyze --serve --logLevel=silent",
     "analyze:ci": "pnpm analyze && cp ./node_modules/.cache/nuxt/.nuxt/dist/client/stats.json \"./analyze.client.${COMMIT_SHA:-$(git rev-parse HEAD)}.json\"",
-    "preview": "npm run build && wrangler pages dev",
+    "preview": "NUXT_CONTENT_DB=d1 npm run build && NUXT_CONTENT_DB=d1 wrangler pages dev",
     "postinstall": "nuxt prepare",
-    "deploy": "npm run build && wrangler pages deploy",
-    "bundle-report": "node --experimental-strip-types scripts/bundle-report.ts"
+    "deploy": "NUXT_CONTENT_DB=d1 npm run build && wrangler pages deploy",
+    "bundle-report": "node --experimental-strip-types scripts/bundle-report.ts",
+		"cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@nuxt/content": "^3.13.0",
@@ -37,5 +39,5 @@
   "engines": {
     "node": ">=24 <25"
   },
-  "packageManager": "pnpm@11.0.1"
+  "packageManager": "pnpm@11.0.3"
 }
