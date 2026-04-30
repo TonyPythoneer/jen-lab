@@ -7,7 +7,7 @@
         <CollapsibleSeparator :label="section.label" :default-open="true">
 
           <template v-if="section.component === 'portal-list'">
-            <HomeItem v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
+            <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
           </template>
 
           <template v-else-if="section.component === 'youtube-carousel'">
@@ -25,7 +25,7 @@
           </template>
 
           <template v-else-if="section.component === 'product-list'">
-            <HomeProductCard
+            <HomeProduct
               v-for="product in section.products"
               :key="product.title"
               :product="product"
