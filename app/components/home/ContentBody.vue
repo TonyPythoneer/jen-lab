@@ -3,7 +3,8 @@
     <div v-if="show" class="flex flex-col gap-5">
 
       <template v-for="section in page.sections" :key="section.id">
-        <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
+        <section :id="section.id" class="scroll-mt-4 flex flex-col gap-5">
+        <CollapsibleSeparator :label="section.label" :default-open="true">
 
           <template v-if="section.component === 'portal-list'">
             <HomeItem v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
@@ -32,6 +33,7 @@
           </template>
 
         </CollapsibleSeparator>
+        </section>
       </template>
 
     </div>

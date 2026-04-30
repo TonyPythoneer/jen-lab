@@ -55,8 +55,6 @@
     <div class="flex-1 flex justify-center sm:pt-0 sm:pl-36">
       <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
-        <div id="profile" />
-
         <UTabs
           v-model="currentProfile"
           :items="profileTabs"
