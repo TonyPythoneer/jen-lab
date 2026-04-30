@@ -1,0 +1,206 @@
+# 首頁分頁完整說明
+
+歡迎更新自己的分頁。本檔逐項解釋每個欄位,需要快速上手的速查請看 `homepage.tmpl`。
+
+---
+
+## 一、檔案位置
+
+每個分頁 = 一個檔案,放在這裡:
+```
+content/home/<分頁名字>.md
+```
+例如 `jen-liu.md` 會出現「jen-liu」這個分頁。
+
+要新增分頁 → 複製現有的 `.md` 檔重新命名即可。
+要修改現有分頁 → 直接編輯該檔。
+
+## 二、圖片放哪裡
+
+圖片通通放這:
+```
+public/home/<分頁名字>/
+├── avatar.webp                          ← 頭像
+├── galleries/<相簿名字>/xxx.webp        ← 圖片輪播用
+└── products/xxx.webp                    ← 商品圖
+```
+
+寫進 md 時路徑去掉 `public`,寫成 `/home/<分頁名字>/...`。
+
+## 三、檔案結構
+
+每個 md 檔由 **兩段** 組成:
+
+### 1. profile (頭像 + 簡介,必填)
+
+```yaml
+profile:
+  avatarLink: /home/jen-liu/avatar.webp
+  name: 顯示名稱
+  tabs:
+    - label: 身分一
+      bio: |
+        多行簡介
+        第二行
+    - label: 身分二
+      bio: |
+        另一段簡介
+```
+
+### 2. sections (抽屜清單)
+
+**重要**: `sections` 由上往下的順序 = 網頁顯示順序。
+想換順序 → 整段剪下貼到別的位置即可。
+不要某個區塊 → 整段刪掉。
+
+每個抽屜 (section) 必填:
+- `id`: 唯一名字 (建議英文小寫,連字號分隔,例 `my-products`)
+- `label`: 抽屜標題 (顯示在網頁上,中英都行)
+- `component`: 抽屜種類 (從下方 4 種挑一個)
+
+## 四、抽屜種類 (component) — 目前提供 4 種
+
+未來想要新的種類 → 跟工程師討論加上去。
+
+### ① portal-list — 連結卡片清單
+
+放外部連結或內部頁面連結。
+
+```yaml
+- id: portals
+  label: Portals
+  component: portal-list
+  portals:
+    - to: https://example.com
+      icon: i-lucide-link
+      title: 卡片標題
+      description: 簡短描述
+    - to: https://another.com
+      icon: i-simple-icons-wordpress
+      title: 另一張卡
+      description: 描述
+```
+
+`icon` 是圖示名稱,最簡單的方式是從現有檔案複製貼上,或請工程師幫你找。
+
+### ② youtube-carousel — 影片輪播
+
+```yaml
+- id: videos
+  label: Videos
+  component: youtube-carousel
+  carousels:
+    - id: career-talks
+      label: 職涯分享          # 可選,加了會顯示子標題
+      videos:
+        - id: J7AWXUoq9ck      # YouTube 影片 ID (網址 v= 後那串)
+          title: 影片標題
+        - id: b2k3oprSEOI
+          title: 第二支影片
+    - id: vlog                  # 同一抽屜內第 2 組影片輪播
+      label: Vlog
+      videos:
+        - id: xxxxxxxx
+          title: ...
+```
+
+**同抽屜放多組** → 一個 section 內塞多個 `carousels` 項。
+**各自獨立抽屜** → 寫多個 section。
+
+### ③ image-carousel — 圖片輪播
+
+```yaml
+- id: galleries
+  label: Galleries
+  component: image-carousel
+  carousels:
+    - id: trip-photos
+      label: 旅遊紀錄          # 可選
+      items:
+        - /home/jen-liu/galleries/trip-photos/a.webp
+        - /home/jen-liu/galleries/trip-photos/b.webp
+    - id: food-photos
+      items:
+        - /home/jen-liu/galleries/food-photos/x.webp
+```
+
+規則跟 youtube-carousel 一樣 — 一個 section 多 `carousels` = 同抽屜多組。
+
+### ④ product-list — 商品卡片
+
+```yaml
+- id: products
+  label: Products
+  component: product-list
+  products:
+    - bannerImage: /home/jen-liu/products/foo.webp
+      title: 商品名
+      brief: 一句話簡介 (折疊前看得到)
+      description: |
+        詳細描述,點開後才出現
+        可換行
+        * 重點一
+        * **重點二** (加粗)
+        [連結文字](https://example.com)
+      purchaseUrl: https://buy.example.com/xxx
+      purchaseLabel: 立即購買
+```
+
+`description` 支援基本 markdown: `**粗體**`、`* 列表`、`[連結](url)`、`---` 分隔線。
+
+## 五、完整範例
+
+```yaml
+---
+profile:
+  avatarLink: /home/my-tab/avatar.webp
+  name: 我的名字
+  tabs:
+    - label: 身分
+      bio: |
+        簡介
+
+sections:                          # ← 順序決定顯示順序
+  - id: portals                    # ← 第 1 個出現
+    label: Portals
+    component: portal-list
+    portals:
+      - to: https://example.com
+        icon: i-lucide-link
+        title: 範例
+        description: 描述
+
+  - id: galleries                  # ← 第 2 個出現
+    label: 相簿
+    component: image-carousel
+    carousels:
+      - id: photos
+        items:
+          - /home/my-tab/galleries/photos/a.webp
+
+  - id: products                   # ← 第 3 個出現
+    label: 商品
+    component: product-list
+    products:
+      - bannerImage: /home/my-tab/products/foo.webp
+        title: 商品 A
+        brief: 簡介
+        description: |
+          詳細
+        purchaseUrl: https://buy.example.com
+        purchaseLabel: 購買
+---
+```
+
+## 六、小提醒
+
+寫 YAML 時有幾個格式細節要留意,改完若網頁顯示異常,通常是其中一項沒對齊:
+
+- 縮排請用空格 (建議每層 2 格),避免使用 tab
+- `-` 後面要有一個空格,例如 `- to: ...`
+- 多行文字前一行先寫 `|`,下方內容統一往內縮 2 格
+- 同一檔案內 `id` 不要重複
+- 引用圖片前,確認檔案真的存在於 `public/home/...`
+- 改完存檔後重新整理網頁就會看到效果
+
+最快上手方式:直接複製 `jen-liu.md` 或 `jen-knows.md` 改,範本保留正確格式最安全。
