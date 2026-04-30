@@ -1,7 +1,7 @@
 ---
 profile:
   avatarLink: /home/jen-liu-avatar.webp
-  name: 榛知 | 澳洲旅遊作家
+  name: 榛知
   tabs:
     - label: 澳洲旅遊作家
       bio: |

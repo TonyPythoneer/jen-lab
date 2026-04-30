@@ -10,7 +10,7 @@ profile:
         ✍️ 澳洲企業商模分析系列，每週四於 FB, IG, Threads 更新
         📅 預約職涯諮詢
         📒 購買澳洲職場指南
-    - label: Jen Knows
+    - label: About me
       bio: |
         Hi 我是Jen，一個15歲隻身來到澳洲求學，之後走過技術移民、求職、轉職道路，跌跌撞撞也沒放棄的女子
 
