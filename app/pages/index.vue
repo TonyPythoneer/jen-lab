@@ -1,7 +1,9 @@
 <template>
+  <!--
+    flex-col = mobile vertical stack
+    sm:flex-row = desktop horizontal row
+  -->
   <div class="flex flex-col sm:flex-row min-h-screen">
-    <!-- flex-col = mobile vertical stack | sm:flex-row = desktop horizontal row -->
-
     <!-- Nav: top on mobile, left sidebar on sm+ -->
     <ClientOnly>
       <aside
@@ -86,21 +88,18 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: '榛知' })
-type ProfileKey = 'jen-knows' | 'jen-liu'
-
+const titleByProfile = {
+  'jen-knows': '榛知 | NextSteps Academy',
+  'jen-liu': '榛知 | 澳洲旅遊作家',
+} as const
+type ProfileKey = keyof typeof titleByProfile
 const currentProfile = ref<ProfileKey>('jen-knows')
+useHead({ title: () => titleByProfile[currentProfile.value] })
 
 const profileTabs: { label: string; value: ProfileKey }[] = [
   { label: 'Jen Knows', value: 'jen-knows' },
   { label: 'Jen Liu', value: 'jen-liu' },
 ]
-
-const titleByProfile: Record<ProfileKey, string> = {
-  'jen-knows': '榛知',
-  'jen-liu': '榛知 | 澳洲旅遊作家',
-}
-useHead({ title: () => titleByProfile[currentProfile.value] })
 
 const { contacts } = useAppConfig()
 
