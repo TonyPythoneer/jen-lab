@@ -1,6 +1,6 @@
 ---
 profile:
-  avatarLink: /home/avatar.webp
+  avatarLink: /home/jen-knows-avatar.webp
   name: 榛知
   tabs:
     - label: NextSteps Academy
@@ -43,10 +43,13 @@ products:
 sections:
   - id: portals
     label: Portals
+    component: portal-list
   - id: videos
     label: Videos
+    component: youtube-carousel
   - id: products
     label: Products
+    component: product-list
 
 items:
   - to: https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715

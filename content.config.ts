@@ -5,6 +5,7 @@ const homeSchema = z.object({
   sections: z.array(z.object({
     id: z.string(),
     label: z.string(),
+    component: z.enum(['portal-list', 'youtube-carousel', 'product-list', 'image-carousel']),
   })),
   profile: z.object({
     avatarLink: z.string(),
@@ -32,6 +33,7 @@ const homeSchema = z.object({
     title: z.string(),
     description: z.string(),
   })),
+  galleries: z.array(z.string()).optional(),
 })
 
 const homeProductSchema = z.object({

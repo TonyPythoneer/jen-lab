@@ -5,15 +5,19 @@
       <template v-for="section in page.sections" :key="section.id">
         <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
 
-          <template v-if="section.id === 'portals'">
+          <template v-if="section.component === 'portal-list'">
             <HomeItem v-for="item in page.items" :key="item.to" v-bind="item" />
           </template>
 
-          <template v-else-if="section.id === 'videos'">
+          <template v-else-if="section.component === 'youtube-carousel'">
             <HomeYoutubeCarousel :videos="page.videos" />
           </template>
 
-          <template v-else-if="section.id === 'products'">
+          <template v-else-if="section.component === 'image-carousel'">
+            <HomeImageCarousel :images="page.galleries ?? []" />
+          </template>
+
+          <template v-else-if="section.component === 'product-list'">
             <HomeProductCard
               v-for="product in page.products"
               :key="product.descriptionContentPath"

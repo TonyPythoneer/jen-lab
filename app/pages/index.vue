@@ -54,7 +54,15 @@
       <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
         <div id="profile" />
-        <HomeProfile v-if="page" :profile="page.profile" :contacts="contacts" />
+
+        <UTabs
+          v-model="currentProfile"
+          :items="profileTabs"
+          size="sm"
+          class="pt-2"
+        />
+
+        <HomeProfile v-if="page" id="profile" :profile="page.profile" :contacts="contacts" />
 
         <HomeContentBody
           v-if="page"
@@ -80,12 +88,27 @@
 
 <script setup lang="ts">
 useHead({ title: '榛知' })
+type ProfileKey = 'jen-knows' | 'jen-liu'
+
+const currentProfile = ref<ProfileKey>('jen-knows')
+
+const profileTabs: { label: string; value: ProfileKey }[] = [
+  { label: 'Jen Knows', value: 'jen-knows' },
+  { label: 'Jen Liu', value: 'jen-liu' },
+]
+
+const titleByProfile: Record<ProfileKey, string> = {
+  'jen-knows': '榛知',
+  'jen-liu': '榛知 | 澳洲旅遊作家',
+}
+useHead({ title: () => titleByProfile[currentProfile.value] })
 
 const { contacts } = useAppConfig()
 
 const { data: page } = await useAsyncData(
-  'home-jen-knows',
-  () => queryCollection('home').path('/home/jen-knows').first()
+  'home',
+  () => queryCollection('home').path(`/home/${currentProfile.value}`).first(),
+  { watch: [currentProfile] }
 )
 
 const navItems = computed(() => [
@@ -96,6 +119,11 @@ const navItems = computed(() => [
 const navOpen = ref(false)
 const activeSection = ref(navItems.value[0]!)
 const isReady = ref(false)
+
+watch(navItems, (items) => {
+  const stillExists = items.find(i => i.value === activeSection.value?.value)
+  if (!stillExists) activeSection.value = items[0]!
+})
 
 function onNavSelect(item: { label: string; value: string } | undefined) {
   if (!item) return
@@ -121,6 +149,12 @@ function installObserver() {
     if (el) observer.observe(el)
   }
 }
+
+watch(currentProfile, async () => {
+  observer?.disconnect()
+  await nextTick()
+  installObserver()
+})
 
 onMounted(() => { isReady.value = true })
 onUnmounted(() => observer?.disconnect())
