@@ -19,7 +19,7 @@
               v-model="selectedProfileKey"
               :items="profileTabs"
               size="sm"
-              class="pt-2"
+              class="pt-5"
             />
           </Transition>
           <template #fallback>
