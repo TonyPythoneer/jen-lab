@@ -1,43 +1,23 @@
 <template>
   <ClientOnly>
     <aside
-      class="sticky top-0 sm:fixed z-40 transition-all duration-200"
-      :class="[
-        'top-0 left-0 w-full sm:w-auto',
-        'sm:h-full sm:flex-col sm:pt-4',
-        'sm:w-36',
-        'flex sm:flex-col',
-        'border-b border-gray-200 sm:border-none',
-        'bg-[rgb(248,248,248)] sm:bg-transparent'
-      ]"
+      class="
+        sm:fixed sm:top-1/2 sm:-translate-y-1/2
+        max-sm:border-b max-sm:border-gray-200
+      "
     >
-      <div class="sm:hidden flex items-center w-full px-4 py-3">
-        <span class="flex-1 text-center font-semibold">{{ title }}</span>
-        <UButton
-          :icon="isOpen ? 'i-lucide-x' : 'i-lucide-menu'"
-          variant="ghost"
-          color="neutral"
-          @click="isOpen = !isOpen"
-        />
-      </div>
-
-      <Transition name="menu">
-        <div
-          v-show="isOpen"
-          class="
-            absolute top-full left-0 w-full shadow-lg rounded-md p-2 bg-white
-            sm:flex! sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
-            sm:flex-1 sm:flex-col sm:justify-center
-          "
-        >
-          <UContentToc
-            highlight
-            :links="links"
-            :title="title"
-            :ui="{ content: 'flex! px-2', trailing: 'max-sm:hidden!', title: 'max-sm:hidden!' }"
-          />
-        </div>
-      </Transition>
+      <UContentToc
+        highlight
+        :links="links"
+        :title="title"
+        :ui="{
+          root: 'max-sm:w-full -mx-4! px-4! sm:px-6! pl-4',
+          container: 'border-0! sm:border-b border-dashed',
+          content: 'px-2',
+          title: 'max-sm:flex-1 max-sm:text-center',
+          trailingIcon: 'sm:hidden!',
+        }"
+      />
     </aside>
   </ClientOnly>
 </template>
@@ -49,11 +29,19 @@ defineProps<{
   links: ContentTocLink[]
   title: string
 }>()
-
-const isOpen = ref(false)
 </script>
 
 <style scoped>
-.menu-enter-active, .menu-leave-active { transition: opacity 0.2s; }
-.menu-enter-from, .menu-leave-to { opacity: 0; }
+@media (min-width: 640px) {
+  :deep(button[data-slot="trigger"]),
+  :deep([data-slot="content"][data-state]) {
+    display: none !important;
+  }
+  :deep(p[data-slot="trigger"]) {
+    display: flex !important;
+  }
+  :deep(div[data-slot="content"]:not([data-state])) {
+    display: flex !important;
+  }
+}
 </style>
