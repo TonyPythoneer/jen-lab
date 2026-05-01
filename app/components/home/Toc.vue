@@ -11,13 +11,15 @@
         'bg-[rgb(248,248,248)] sm:bg-transparent'
       ]"
     >
-      <UButton
-        :icon="isOpen ? 'i-lucide-x' : 'i-lucide-menu'"
-        variant="ghost"
-        color="neutral"
-        class="sm:hidden px-4.5 self-center shrink-0 mt-2 ml-1"
-        @click="isOpen = !isOpen"
-      />
+      <div class="sm:hidden flex items-center w-full px-4 py-3">
+        <span class="flex-1 text-center font-semibold">{{ title }}</span>
+        <UButton
+          :icon="isOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+          variant="ghost"
+          color="neutral"
+          @click="isOpen = !isOpen"
+        />
+      </div>
 
       <Transition name="menu">
         <div
@@ -32,7 +34,7 @@
             highlight
             :links="links"
             :title="title"
-            :ui="{ content: 'flex! px-2' }"
+            :ui="{ content: 'flex! px-2', trailing: 'max-sm:hidden!', title: 'max-sm:hidden!' }"
           />
         </div>
       </Transition>
