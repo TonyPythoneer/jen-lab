@@ -7,6 +7,7 @@ const setupSettings: NuxtConfig = {
     '@nuxt/content',
     'nitro-cloudflare-dev',
     '@nuxt/ui',
+    '@vueuse/nuxt',
   ],
   css: ['~/assets/css/main.css'],
   colorMode: {

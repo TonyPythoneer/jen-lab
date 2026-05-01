@@ -5,7 +5,7 @@
     </div>
     <div class="flex-1">
       <p class="font-semibold text-gray-800 text-sm">{{ title }}</p>
-      <p class="text-xs text-gray-500 mt-0.5">{{ description }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">{{ brief }}</p>
     </div>
   </NuxtLink>
 </template>
@@ -15,6 +15,6 @@ defineProps<{
   to: string
   icon: string
   title: string
-  description: string
+  brief: string
 }>()
 </script>

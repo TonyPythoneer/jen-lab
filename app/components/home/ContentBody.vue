@@ -1,32 +1,43 @@
 <template>
-  <Transition name="content-body" @after-enter="emit('after-enter')">
+  <Transition name="content-body">
     <div v-if="show" class="flex flex-col gap-5">
 
-      <template v-for="section in page.sections" :key="section.id">
-        <CollapsibleSeparator :id="section.id" :label="section.label" :default-open="true">
+      <section
+        v-for="section in page.sections"
+        :id="section.id"
+        :key="section.id"
+        class="scroll-mt-4 flex flex-col gap-5"
+      >
+        <CollapsibleSeparator :label="section.label" default-open>
 
           <template v-if="section.component === 'portal-list'">
-            <HomeItem v-for="item in page.items" :key="item.to" v-bind="item" />
+            <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
           </template>
 
           <template v-else-if="section.component === 'youtube-carousel'">
-            <HomeYoutubeCarousel :videos="page.videos" />
+            <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
+              <h3 v-if="carousel.label" class="text-sm font-semibold text-gray-700">{{ carousel.label }}</h3>
+              <HomeYoutubeCarousel :videos="carousel.videos" />
+            </div>
           </template>
 
           <template v-else-if="section.component === 'image-carousel'">
-            <HomeImageCarousel :images="page.galleries ?? []" />
+            <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
+              <h3 v-if="carousel.label" class="text-sm font-semibold text-gray-700">{{ carousel.label }}</h3>
+              <HomeImageCarousel :images="carousel.images" />
+            </div>
           </template>
 
           <template v-else-if="section.component === 'product-list'">
-            <HomeProductCard
-              v-for="product in page.products"
-              :key="product.descriptionContentPath"
-              :product="product"
+            <HomeProduct
+              v-for="product in section.products"
+              :key="product.purchaseUrl"
+              v-bind="product"
             />
           </template>
 
         </CollapsibleSeparator>
-      </template>
+      </section>
 
     </div>
   </Transition>
@@ -40,10 +51,6 @@ type HomePage = Collections['home']
 defineProps<{
   page: HomePage
   show: boolean
-}>()
-
-const emit = defineEmits<{
-  'after-enter': []
 }>()
 </script>
 

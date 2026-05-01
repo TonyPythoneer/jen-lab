@@ -1,47 +1,72 @@
 import { defineCollection, defineContentConfig } from '@nuxt/content'
 import { z } from 'zod'
 
-const homeSchema = z.object({
-  sections: z.array(z.object({
-    id: z.string(),
-    label: z.string(),
-    component: z.enum(['portal-list', 'youtube-carousel', 'product-list', 'image-carousel']),
+const portalListSection = z.object({
+  id: z.string(),
+  label: z.string(),
+  component: z.literal('portal-list'),
+  portals: z.array(z.object({
+    to: z.string(),
+    icon: z.string(),
+    title: z.string(),
+    brief: z.string(),
   })),
+})
+
+const youtubeCarouselSection = z.object({
+  id: z.string(),
+  label: z.string(),
+  component: z.literal('youtube-carousel'),
+  carousels: z.array(z.object({
+    id: z.string(),
+    label: z.string().optional(),
+    videos: z.array(z.object({
+      id: z.string(),
+      title: z.string(),
+    })),
+  })),
+})
+
+const imageCarouselSection = z.object({
+  id: z.string(),
+  label: z.string(),
+  component: z.literal('image-carousel'),
+  carousels: z.array(z.object({
+    id: z.string(),
+    label: z.string().optional(),
+    images: z.array(z.string()),
+  })),
+})
+
+const productListSection = z.object({
+  id: z.string(),
+  label: z.string(),
+  component: z.literal('product-list'),
+  products: z.array(z.object({
+    banner: z.string(),
+    title: z.string(),
+    brief: z.string(),
+    description: z.string(),
+    purchaseUrl: z.string(),
+    purchaseLabel: z.string(),
+  })),
+})
+
+const homeSchema = z.object({
   profile: z.object({
-    avatarLink: z.string(),
+    avatar: z.string(),
     name: z.string(),
     tabs: z.array(z.object({
       label: z.string(),
       bio: z.string(),
     })),
   }),
-  videos: z.array(z.object({
-    id: z.string(),
-    title: z.string(),
-  })),
-  products: z.array(z.object({
-    bannerImage: z.string(),
-    title: z.string(),
-    brief: z.string(),
-    descriptionContentPath: z.string(),
-    purchaseUrl: z.string(),
-    purchaseLabel: z.string(),
-  })),
-  items: z.array(z.object({
-    to: z.string(),
-    icon: z.string(),
-    title: z.string(),
-    description: z.string(),
-  })),
-  galleries: z.array(z.string()).optional(),
-})
-
-const homeProductSchema = z.object({
-  title: z.string(),
-  bannerImage: z.string(),
-  brief: z.string(),
-  purchaseUrl: z.string(),
-  purchaseLabel: z.string(),
+  sections: z.array(z.discriminatedUnion('component', [
+    portalListSection,
+    youtubeCarouselSection,
+    imageCarouselSection,
+    productListSection,
+  ])),
 })
 
 export default defineContentConfig({
@@ -50,11 +75,6 @@ export default defineContentConfig({
       type: 'page',
       source: 'home/*.md',
       schema: homeSchema,
-    }),
-    homeProducts: defineCollection({
-      type: 'page',
-      source: 'home/products/*.md',
-      schema: homeProductSchema,
     }),
   },
 })

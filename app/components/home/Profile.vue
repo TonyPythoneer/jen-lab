@@ -6,7 +6,7 @@
       <div class="absolute top-0 left-0 w-full h-28" style="background-color: rgb(107, 187, 224);" />
       <div class="relative flex items-end justify-between px-6 pt-14 pb-0">
         <div class="flex items-end gap-3">
-          <img :src="profile.avatarLink" :alt="profile.name" loading="lazy"
+          <img :src="profile.avatar" :alt="profile.name" loading="lazy"
             class="w-28 h-28 rounded-full object-cover border-3 border-white shadow" />
           <h1 class="text-xl font-bold text-gray-800">{{ profile.name }}</h1>
         </div>
@@ -45,7 +45,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   profile: {
-    avatarLink: string
+    avatar: string
     name: string
     tabs: { label: string; bio: string }[]
   }
