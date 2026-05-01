@@ -28,7 +28,8 @@
         </ClientOnly>
 
         <HomeProfile
-          v-if="page" id="profile"
+          v-if="page"
+          id="profile"
           :profile="page.profile"
           :contacts="contacts"
         />
@@ -47,6 +48,7 @@
 
 <script setup lang="ts">
 import type { ContentTocLink } from '@nuxt/ui'
+import type { Collections } from '@nuxt/content'
 
 const { contacts } = useAppConfig()
 
@@ -59,14 +61,21 @@ const selectedProfile = computed(() => profiles[selectedProfileKey.value])
 const profileTabs = Object.entries(profiles).map(([value, { label }]) => ({ value, label }))
 useHead({ title: () => selectedProfile.value.headTitle })
 
-const { data: page, status } = useLazyAsyncData(
-  computed(() => `profile:${selectedProfileKey.value}`),
-  () => queryCollection('home').path(`/home/${selectedProfileKey.value}`).first(),
-  {
-    getCachedData: (key, nuxtApp) =>
-      nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
-  }
+type ProfileKey = keyof typeof profiles
+const profileQueries = Object.fromEntries(
+  (Object.keys(profiles) as ProfileKey[]).map(key => [
+    key,
+    useLazyAsyncData(
+      `profile:${key}`,
+      () => queryCollection('home').path(`/home/${key}`).first(),
+    ),
+  ])
+) as Record<ProfileKey, ReturnType<typeof useLazyAsyncData>>
+
+const page = computed(
+  () => profileQueries[selectedProfileKey.value].data.value as Collections['home'] | null
 )
+const status = computed(() => profileQueries[selectedProfileKey.value].status.value)
 const isMounted = useMounted()
 const isReady = computed(() => status.value === 'success' && isMounted.value)
 
