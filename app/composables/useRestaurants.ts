@@ -1,31 +1,32 @@
 import type { categories, restaurants } from '~/assets/data/pages/restaurants'
 
-const importDataSource = () => import('~/assets/data/pages/restaurants')
-
 type Category = typeof categories[number]
-export type CategoryId = Category['id']
 type Restaurant = typeof restaurants[number]
+export type CategoryId = Category['id']
 export type RestaurantArea = Restaurant['area']
 
+export type EnrichedRestaurant = Restaurant & {
+  categoryColor: string
+  categoryName: string
+}
+
 async function loadData() {
-  const { categories, restaurants } = await importDataSource()
+  const { categories, restaurants } = await import('~/assets/data/pages/restaurants')
 
-  const categoryDict = Object.fromEntries(categories.map(c => [c.id, c])) as Record<CategoryId, Category>
-
-  const restaurantAreaSet = new Set<RestaurantArea>()
-  const enrichedRestaurants = restaurants.map(r => {
-    const category = categoryDict[r.categoryId]
-    restaurantAreaSet.add(r.area)
-    return { ...r, categoryColor: category.color, categoryName: category.name }
+  const categoryById = new Map(categories.map(c => [c.id, c]))
+  const enrichedRestaurants: EnrichedRestaurant[] = restaurants.map((r) => {
+    const c = categoryById.get(r.categoryId)!
+    return { ...r, categoryColor: c.color, categoryName: c.name }
   })
+  const restaurantAreaSet = new Set<RestaurantArea>(restaurants.map(r => r.area))
 
   return { categories, restaurantAreaSet, enrichedRestaurants }
 }
-export type EnrichedRestaurant = Awaited<ReturnType<typeof loadData>>['enrichedRestaurants'][number]
 
 export function useRestaurants() {
   const { status, data } = useLazyAsyncData('~/assets/data/pages/restaurants', loadData)
 
+  // Filters — each independently nullable, all AND-combined.
   const selectedArea = ref<RestaurantArea | null>(null)
   const selectedCategoryId = ref<CategoryId | null>(null)
   const searchedName = ref('')
@@ -34,15 +35,21 @@ export function useRestaurants() {
   const isReady = computed(() => status.value === 'success')
   const categories = computed(() => data.value?.categories ?? [])
   const restaurantAreaSet = computed(() => data.value?.restaurantAreaSet ?? new Set<RestaurantArea>())
-  const filteredRestaurantList = computed<EnrichedRestaurant[]>(() =>
-    (data.value?.enrichedRestaurants ?? []).filter((r) =>
-      (!selectedArea.value || r.area === selectedArea.value) &&
-      (!selectedCategoryId.value || r.categoryId === selectedCategoryId.value) &&
-      (!searchedName.value || r.name.toLowerCase().includes(searchedName.value.toLowerCase()))
+
+  const filteredRestaurantList = computed<EnrichedRestaurant[]>(() => {
+    const all = data.value?.enrichedRestaurants ?? []
+    const area = selectedArea.value
+    const categoryId = selectedCategoryId.value
+    const search = searchedName.value.trim().toLowerCase()
+    return all.filter(r =>
+      (!area || r.area === area)
+      && (!categoryId || r.categoryId === categoryId)
+      && (!search || r.name.toLowerCase().includes(search)),
     )
-  )
+  })
+
   const selectedRestaurant = computed(() =>
-    filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null
+    filteredRestaurantList.value.find(r => r.id === selectedRestaurantId.value) ?? null,
   )
 
   const clearFilters = () => {

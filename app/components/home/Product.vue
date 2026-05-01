@@ -1,5 +1,6 @@
 <template>
   <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-[#f7f7f7]">
+    <!-- Banner placeholder. Teal background shows while the lazy image is decoding or if `banner` is unset. -->
     <div class="relative h-40 sm:h-56 bg-teal-400">
       <img
         v-if="banner"
@@ -10,6 +11,10 @@
     </div>
     <div class="flex flex-col gap-3 p-5">
       <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
+      <!--
+        Collapsible: brief copy is always shown; full description (markdown via MDC) toggles open.
+        `class="group"` enables the chevron rotate via group-data-[state=open] in the UI override below.
+      -->
       <UCollapsible class="group">
         <div class="flex items-center gap-1 -ml-1">
           <UButton

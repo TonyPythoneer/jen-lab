@@ -1,15 +1,9 @@
 <template>
+  <!-- Override @nuxt/ui's default container width to 4xl for this page's wider map layout. -->
   <UPage style="--ui-container: var(--container-4xl)">
+  <!-- Page is a fixed-height column (search / map / list / footer); only the list scrolls. -->
   <div class="h-dvh flex flex-col overflow-hidden relative">
-    <!--
-      ████████╗ ██████╗ ██████╗
-      ╚══██╔══╝██╔═══██╗██╔══██╗
-         ██║   ██║   ██║██████╔╝
-         ██║   ██║   ██║██╔═══╝
-         ██║   ╚██████╔╝██║
-         ╚═╝    ╚═════╝ ╚═╝
-    -->
-    <!-- search engine -->
+    <!-- TOP: search input + filter modal trigger -->
     <div class="px-6 py-5 space-y-3 shrink-0">
       <div class="flex items-center gap-2">
         <UInput
@@ -50,7 +44,7 @@
         </UChip>
       </div>
 
-      <UModal v-model:open="filterModalOpen" :ui="{ content: 'sm:max-w-2xl max-h-[70dvh] overflow-y-auto' }"  >
+      <UModal v-model:open="filterModalOpen" :ui="{ content: 'sm:max-w-2xl max-h-[70dvh] overflow-y-auto' }">
         <template #header>
           <div class="flex items-center justify-between w-full">
             <p class="font-semibold text-gray-300">篩選</p>
@@ -69,6 +63,7 @@
           <div class="space-y-4 pb-2">
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">地區</p>
+              <!-- "全部" sits alone on row 1; spacer divs push the real items to row 2 of the 4-col grid. -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
                 <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
                 <div /><div /><div />
@@ -83,6 +78,7 @@
             </div>
             <div>
               <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">類別</p>
+              <!-- Same row-1 spacer pattern as "地區" above. -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
                 <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
                 <div /><div /><div />
@@ -101,14 +97,7 @@
       </UModal>
     </div>
 
-    <!--
-      ███╗   ███╗██╗██████╗ ██████╗ ██╗     ███████╗
-      ████╗ ████║██║██╔══██╗██╔══██╗██║     ██╔════╝
-      ██╔████╔██║██║██║  ██║██║  ██║██║     █████╗
-      ██║╚██╔╝██║██║██║  ██║██║  ██║██║     ██╔══╝
-      ██║ ╚═╝ ██║██║██████╔╝██████╔╝███████╗███████╗
-      ╚═╝     ╚═╝╚═╝╚═════╝ ╚═════╝ ╚══════╝╚══════╝
-    -->
+    <!-- MIDDLE: Leaflet map. ClientOnly avoids SSR (Leaflet needs window). -->
     <div class="relative h-72 shrink-0">
       <ClientOnly>
         <MapView
@@ -120,7 +109,7 @@
         />
       </ClientOnly>
 
-      <!-- 一層地圖加載中的畫面 -->
+      <!-- Loading overlay. 1s leave-delay lets tiles paint in before the spinner fades. -->
       <Transition
         leave-active-class="transition-opacity duration-300 delay-[1000ms] ease-in-out"
         leave-to-class="opacity-0"
@@ -134,26 +123,17 @@
       </Transition>
     </div>
 
-    <!--
-      ██████╗  ██████╗ ████████╗████████╗ ██████╗ ███╗   ███╗
-      ██╔══██╗██╔═══██╗╚══██╔══╝╚══██╔══╝██╔═══██╗████╗ ████║
-      ██████╔╝██║   ██║   ██║      ██║   ██║   ██║██╔████╔██║
-      ██╔══██╗██║   ██║   ██║      ██║   ██║   ██║██║╚██╔╝██║
-      ██████╔╝╚██████╔╝   ██║      ██║   ╚██████╔╝██║ ╚═╝ ██║
-      ╚═════╝  ╚═════╝    ╚═╝      ╚═╝    ╚═════╝ ╚═╝     ╚═╝
-    -->
-    <!-- filtered restaurant list -->
+    <!-- BOTTOM: scrollable restaurant list. The selected card is pinned at the top via the ref + scrollTo watcher. -->
     <div ref="listEl" class="flex-1 overflow-y-auto">
       <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
-
-        <!-- Selected restaurant pinned at top -->
+        <!-- Pinned card: render the selected restaurant at the top, ring-highlighted. -->
         <RestaurantCard
           v-if="selectedRestaurant"
           :restaurant="selectedRestaurant"
           class="relative ring-2 ring-teal-500"
         />
 
-        <!-- Rest of the list -->
+        <!-- The remaining list, with the pinned card filtered out to avoid duplication. -->
         <template v-for="restaurant in filteredRestaurantList" :key="restaurant.id">
           <RestaurantCard
             v-if="restaurant.id !== selectedRestaurantId"
@@ -161,7 +141,6 @@
             @select="selectedRestaurantId = restaurant.id"
           />
         </template>
-
       </div>
     </div>
 
@@ -184,9 +163,9 @@
       </p>
     </div>
 
-    <!-- Dark mode toggle -->
+    <!-- Dark mode toggle. z-1100 sits above any in-map z-1000 overlays. -->
     <UColorModeButton
-      class="fixed bottom-4 right-4 z-9999"
+      class="fixed bottom-4 right-4 z-1100"
     />
   </div>
   </UPage>

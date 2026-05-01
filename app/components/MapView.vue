@@ -2,17 +2,18 @@
   <div class="relative w-full h-full">
     <div ref="mapEl" class="w-full h-full" />
 
+    <!-- Selected-restaurant action bar. z-1000 sits above all Leaflet panes. -->
     <div
       v-if="selectedRestaurant"
       class="absolute bottom-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-1"
     >
+      <!-- Re-keyed by URL so changing the selection replays the burst animation. -->
       <div v-if="selectedRestaurant.googleMapsLink" :key="selectedRestaurant.googleMapsLink" class="burst-wrap relative">
-        <!-- Ring halo -->
         <span
           class="burst-ring absolute inset-0 rounded-full pointer-events-none"
           :style="{ borderColor: selectedRestaurant.categoryColor }"
         />
-        <!-- Sparks: 8 dots at different angles -->
+        <!-- 8 sparks fanned 0°-315° in 45° steps. Stagger by index for a fanning-out feel. -->
         <span
           v-for="i in 8"
           :key="i"
@@ -23,6 +24,8 @@
             animationDelay: `${(i - 1) * 0.03}s`,
           }"
         />
+        <!-- z-10 lifts the link above the sibling ring/sparks: their CSS animations create
+             stacking contexts (transform/opacity), so DOM order alone is not enough. -->
         <a
           :href="selectedRestaurant.googleMapsLink"
           target="_blank"
@@ -43,6 +46,7 @@
       </button>
     </div>
 
+    <!-- HD/SD tile toggle. z-1000 keeps it above Leaflet panes, same layer as the action bar. -->
     <button
       class="absolute bottom-6 right-2.5 z-1000 w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
       :class="tileQuality === 'high'
@@ -77,23 +81,23 @@ const isReady = defineModel<boolean>('ready', { default: false })
 
 
 const mapEl = ref<HTMLDivElement | null>(null)
-let map: LeafletMap | null = null
-let L: LeafletInstance | null = null
-let activeTileLayer: ReturnType<LeafletInstance['tileLayer']> | null = null
 const tileQuality = ref<'low' | 'high'>('low')
-const markerMap = new Map<string, Marker>()
-const iconCache = new Map<string, { dot: DivIcon; pin: DivIcon }>()
 
-function makeIcon(color: string, selected: boolean): DivIcon {
+// Non-reactive Leaflet handles. Kept as plain `let` to avoid Vue reactivity wrapping.
+let L: LeafletInstance | null = null
+let map: LeafletMap | null = null
+let activeTileLayer: ReturnType<LeafletInstance['tileLayer']> | null = null
+const markerById = new Map<string, Marker>()
+const iconsByColor = new Map<string, { dot: DivIcon; pin: DivIcon }>()
+
+function getIcon(color: string, selected: boolean): DivIcon {
   if (!L) throw new Error('Leaflet not initialized')
-  if (!iconCache.has(color)) {
-    iconCache.set(color, {
-      dot: makeDotIcon(L, { color }),
-      pin: makePinIcon(L, { color }),
-    })
+  let pair = iconsByColor.get(color)
+  if (!pair) {
+    pair = { dot: makeDotIcon(L, { color }), pin: makePinIcon(L, { color }) }
+    iconsByColor.set(color, pair)
   }
-  const iconOptions = iconCache.get(color);
-  return selected ? iconOptions!.pin : iconOptions!.dot
+  return selected ? pair.pin : pair.dot
 }
 
 function toggleTileQuality() {
@@ -106,43 +110,33 @@ function toggleTileQuality() {
 function renderMarkers() {
   if (!map || !L) return
 
-  markerMap.forEach((m) => m.remove())
-  markerMap.clear()
+  markerById.forEach(m => m.remove())
+  markerById.clear()
 
-  for (const restaurant of props.restaurants) {
-    const selected = props.selectedRestaurant?.id === restaurant.id
-    const {lat, lng} = restaurant.coordinates
-    const marker = L.marker([lat, lng], {
-      icon: makeIcon(restaurant.categoryColor, selected),
-    }).addTo(map!)
-
-    marker.on('click', () => emit('select', restaurant))
-    markerMap.set(restaurant.id, marker)
+  const selectedId = props.selectedRestaurant?.id
+  for (const r of props.restaurants) {
+    const marker = L.marker([r.coordinates.lat, r.coordinates.lng], {
+      icon: getIcon(r.categoryColor, r.id === selectedId),
+    }).addTo(map)
+    marker.on('click', () => emit('select', r))
+    markerById.set(r.id, marker)
   }
 }
 
-watch(
-  () => props.restaurants,
-  () => {
-    renderMarkers()
-  },
-)
+// Re-render markers when the filtered list changes (no diffing — list is small).
+watch(() => props.restaurants, renderMarkers)
 
-watch(
-  () => props.selectedRestaurant,
-  (newR, oldR) => {
-    if (!map || !L) return
+// Selection change: swap icons + recenter without rebuilding all markers.
+watch(() => props.selectedRestaurant, (newR, oldR) => {
+  if (!map || !L) return
+  if (oldR) markerById.get(oldR.id)?.setIcon(getIcon(oldR.categoryColor, false))
+  if (newR) {
+    markerById.get(newR.id)?.setIcon(getIcon(newR.categoryColor, true))
+    map.panTo([newR.coordinates.lat, newR.coordinates.lng])
+  }
+})
 
-    if (oldR) markerMap.get(oldR.id)?.setIcon(makeIcon(oldR.categoryColor, false))
-
-    if (newR) {
-      markerMap.get(newR.id)?.setIcon(makeIcon(newR.categoryColor, true))
-      map.panTo([newR.coordinates.lat, newR.coordinates.lng])
-    }
-  },
-)
-
-onMounted(async function initMap() {
+onMounted(async () => {
   if (!mapEl.value) return
   L = (await import('leaflet')).default
   await import('leaflet/dist/leaflet.css')
@@ -156,7 +150,8 @@ onMounted(async function initMap() {
 onUnmounted(() => {
   map?.remove()
   map = null
-  iconCache.clear()
+  markerById.clear()
+  iconsByColor.clear()
 })
 </script>
 

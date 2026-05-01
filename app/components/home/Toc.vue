@@ -1,4 +1,11 @@
 <template>
+  <!--
+    TOC layout is dual-mode:
+      - sm+ : fixed rail vertically centered on the left.
+      - max-sm : sticky strip pinned to the top of the page so it stays
+                 visible while the body scrolls.
+    z-30 + opaque background so scrolled content doesn't bleed through.
+  -->
   <ClientOnly>
     <aside
       class="
@@ -33,6 +40,12 @@ defineProps<{
 </script>
 
 <style scoped>
+/*
+ * UContentToc renders mobile-first with a collapsible disclosure (button[trigger] +
+ * [content][data-state]). On sm+ we want the always-visible rail layout, so we
+ * swap which trigger/content pair is shown. !important is required to override
+ * the component's inline display rules.
+ */
 @media (min-width: 640px) {
   :deep(button[data-slot="trigger"]),
   :deep([data-slot="content"][data-state]) {

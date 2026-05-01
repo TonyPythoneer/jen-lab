@@ -1,4 +1,10 @@
 <template>
+  <!--
+    Section divider that doubles as a collapsible. Default content slot renders a
+    horizontal rule with the label + chevron in the middle (the rule + label IS the trigger).
+    `[&>div]:overflow-visible` overrides UCollapsible's default `overflow:hidden` so children
+    that paint outside their box (carousel arrows, badge shadows, etc.) are not clipped.
+  -->
   <UCollapsible class="flex flex-col gap-5 [&>div]:overflow-visible" :default-open="defaultOpen">
     <template #default="{ open }">
       <button class="flex items-center justify-center gap-2 w-full">
