@@ -1,18 +1,19 @@
 <template>
-  <!--
-    flex-col = mobile vertical stack
-    sm:flex-row = desktop horizontal row
-  -->
+  <!-- Two-column layout on sm+ (TOC rail | content). Stacked vertically on mobile (TOC sticky strip on top). -->
   <div class="flex flex-col sm:flex-row min-h-screen">
     <HomeToc
       :links="navLinks"
       :title="selectedProfile.label"
     />
 
-    <!-- Main content: offset top on mobile, offset left on desktop -->
+    <!-- Main content column. sm:pl-36 reserves space for the fixed TOC rail; mobile uses 0 left padding. -->
     <div class="flex-1 flex justify-center sm:pt-0 sm:pl-36">
       <div class="w-full max-w-lg px-4 sm:px-8 flex flex-col gap-5">
 
+        <!--
+          Profile-switcher tabs animate in on first paint via tab-drop transition.
+          ClientOnly + fallback reserves the same height pre-hydration to prevent CLS.
+        -->
         <ClientOnly>
           <Transition name="tab-drop" appear>
             <UTabs
@@ -27,6 +28,7 @@
           </template>
         </ClientOnly>
 
+        <!-- `id="profile"` is the TOC anchor target (see navLinks). -->
         <HomeProfile
           v-if="page"
           id="profile"
@@ -34,6 +36,7 @@
           :contacts="contacts"
         />
 
+        <!-- `show` gates entry animation until both data is ready and component is mounted. -->
         <HomeContentBody
           v-if="page"
           :page="page"
@@ -56,12 +59,14 @@ const profiles = {
   'jen-knows': { label: 'Jen Knows', headTitle: '榛知 | NextSteps Academy' },
   'jen-liu': { label: 'Jen Liu', headTitle: '榛知 | 澳洲旅遊作家' },
 } as const satisfies Record<string, { label: string; headTitle: string }>
-const selectedProfileKey = ref<keyof typeof profiles>('jen-knows')
+type ProfileKey = keyof typeof profiles
+
+const selectedProfileKey = ref<ProfileKey>('jen-knows')
 const selectedProfile = computed(() => profiles[selectedProfileKey.value])
 const profileTabs = Object.entries(profiles).map(([value, { label }]) => ({ value, label }))
 useHead({ title: () => selectedProfile.value.headTitle })
 
-type ProfileKey = keyof typeof profiles
+// Pre-fetch every profile once so tab switching is instant. Each query owns its own cache key.
 const profileQueries = Object.fromEntries(
   (Object.keys(profiles) as ProfileKey[]).map(key => [
     key,
@@ -69,21 +74,22 @@ const profileQueries = Object.fromEntries(
       `profile:${key}`,
       () => queryCollection('home').path(`/home/${key}`).first(),
     ),
-  ])
+  ]),
 ) as Record<ProfileKey, ReturnType<typeof useLazyAsyncData>>
 
-const page = computed(
-  () => profileQueries[selectedProfileKey.value].data.value as Collections['home'] | null
-)
-const status = computed(() => profileQueries[selectedProfileKey.value].status.value)
+const activeQuery = computed(() => profileQueries[selectedProfileKey.value])
+const page = computed(() => activeQuery.value.data.value as Collections['home'] | null)
+
 const isMounted = useMounted()
-const isReady = computed(() => status.value === 'success' && isMounted.value)
+const isReady = computed(() => activeQuery.value.status.value === 'success' && isMounted.value)
 
 const navLinks = computed<ContentTocLink[]>(() => [
   { id: 'profile', text: 'Profile', depth: 2 },
   ...(page.value?.sections ?? []).map(s => ({ id: s.id, text: s.label, depth: 1 })),
 ])
 
+// Notify Nuxt UI's TOC that anchor targets have re-rendered, so its scroll-spy
+// re-measures section offsets after `navLinks` changes (e.g. profile switch).
 const nuxtApp = useNuxtApp()
 watch(navLinks, async () => {
   await nextTick()

@@ -15,6 +15,7 @@
     </template>
 
     <template #description>
+      <!-- @click.stop prevents the collapsible toggle from also firing the card-level select. -->
       <div class="flex items-start gap-1" @click.stop>
         <UCollapsible v-if="restaurant.description" class="group flex-1">
           <div class="flex items-center gap-1">
@@ -36,7 +37,7 @@
 
     <template #footer>
       <div v-if="restaurant.recommendations?.length" class="flex flex-wrap items-center gap-1">
-        <UBadge v-for="rec in restaurant.recommendations" :key="rec" text-gray-400 color="neutral" variant="subtle" size="sm" :style="{ backgroundColor: restaurant.categoryColor }">★ {{ rec }}</UBadge>
+        <UBadge v-for="rec in restaurant.recommendations" :key="rec" color="neutral" variant="subtle" size="sm" :style="{ backgroundColor: restaurant.categoryColor }">★ {{ rec }}</UBadge>
       </div>
     </template>
   </UPageCard>
@@ -45,12 +46,11 @@
 <script setup lang="ts">
 import type { EnrichedRestaurant } from '@/composables/useRestaurants'
 
-const props = defineProps<{
+defineProps<{
   restaurant: EnrichedRestaurant
 }>()
 
 const emit = defineEmits<{
   select: []
 }>()
-
 </script>

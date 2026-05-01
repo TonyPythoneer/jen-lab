@@ -13,12 +13,9 @@
 <script setup lang="ts">
 const { threshold = 200 } = defineProps<{ threshold?: number }>()
 
-const scrollY = ref(0)
-const onScroll = () => { scrollY.value = window.scrollY }
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
-
-const show = computed(() => scrollY.value > threshold)
+// useWindowScroll handles SSR + passive listener + cleanup; we only react to the y value.
+const { y } = useWindowScroll()
+const show = computed(() => y.value > threshold)
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 </script>
 

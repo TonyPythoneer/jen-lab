@@ -1,7 +1,10 @@
 <template>
+  <!-- `show` gates the entry animation until both content is fetched and the client has mounted,
+       avoiding a flash where the body appears, hides, then re-animates after hydration. -->
   <Transition name="content-body">
     <div v-if="show" class="flex flex-col gap-5">
 
+      <!-- scroll-mt-4 reserves vertical space so the TOC anchor jump doesn't stick to the viewport edge. -->
       <section
         v-for="section in page.sections"
         :id="section.id"
@@ -10,6 +13,7 @@
       >
         <CollapsibleSeparator :label="section.label" default-open>
 
+          <!-- Section type → component dispatch. The schema discriminator is `section.component`. -->
           <template v-if="section.component === 'portal-list'">
             <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
           </template>

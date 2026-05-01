@@ -1,2 +1,19 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/*
+ * Project z-index layer policy
+ * ----------------------------
+ *  10  : local stacking inside an isolated parent (e.g. lift content above
+ *        sibling decorations that create their own stacking contexts via
+ *        transform/opacity animations).
+ *  30  : sticky/affixed page chrome that must overlap scrolled content
+ *        (mobile TOC header).
+ *  50  : page-level floating UI (scroll-to-top button, non-map pages only).
+ * 1000 : overlays anchored INSIDE the Leaflet map container (must beat
+ *        Leaflet's internal panes — controls top out around z 800).
+ * 1100 : floating UI on the Leaflet page that must sit above 1000-layer
+ *        in-map overlays (e.g. UColorModeButton).
+ *
+ *  Modal/popover layers come from @nuxt/ui — do not redeclare here.
+ */

@@ -25,8 +25,9 @@
       <UModal v-model:open="isOpen" :ui="{ content: 'p-0 overflow-hidden' }" fullscreen>
         <template #content>
           <div class="relative w-full h-full bg-black flex items-center justify-center">
+            <!-- Close button comes after the iframe in DOM, so paint order keeps it on top — no z-index needed. -->
             <button
-              class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors"
+              class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors"
               @click="closeVideo"
             >
               <UIcon name="i-lucide-x" class="w-5 h-5 text-white" />
