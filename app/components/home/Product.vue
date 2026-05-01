@@ -1,19 +1,15 @@
 <template>
-  <!-- Featured Product -->
   <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-[#f7f7f7]">
-    <!-- Banner -->
     <div class="relative h-40 sm:h-56 bg-teal-400">
       <img
-        v-if="product.banner"
-        :src="product.banner"
+        v-if="banner"
+        :src="banner"
         class="absolute inset-0 w-full h-full"
         loading="lazy"
       />
     </div>
-    <!-- Body -->
     <div class="flex flex-col gap-3 p-5">
-      <h2 class="text-lg font-bold text-gray-900">{{ product.title }}</h2>
-      <!-- Collapsible description -->
+      <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
       <UCollapsible class="group">
         <div class="flex items-center gap-1 -ml-1">
           <UButton
@@ -23,19 +19,16 @@
             leading-icon="i-lucide-chevron-right"
             :ui="{ leadingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200', base: 'hover:bg-transparent' }"
           />
-          <!-- Brief -->
-          <span class="text-sm text-gray-500">{{ product.brief }}</span>
+          <span class="text-sm text-gray-500">{{ brief }}</span>
         </div>
-        <!-- description -->
         <template #content>
           <div class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description">
-            <MDC v-if="product.description" :value="product.description" />
+            <MDC v-if="description" :value="description" />
           </div>
         </template>
       </UCollapsible>
-      <!-- CTA -->
       <UButton
-        :to="product.purchaseUrl"
+        :to="purchaseUrl"
         target="_blank"
         rel="noopener"
         color="primary"
@@ -43,7 +36,7 @@
         block
         class="rounded-full font-semibold mt-1"
       >
-        {{ product.purchaseLabel }}
+        {{ purchaseLabel }}
       </UButton>
     </div>
   </div>
@@ -51,14 +44,12 @@
 
 <script setup lang="ts">
 defineProps<{
-  product: {
-    banner?: string
-    title: string
-    brief: string
-    description: string
-    purchaseUrl: string
-    purchaseLabel: string
-  }
+  banner?: string
+  title: string
+  brief: string
+  description: string
+  purchaseUrl: string
+  purchaseLabel: string
 }>()
 </script>
 

@@ -14,7 +14,7 @@
     "postinstall": "nuxt prepare",
     "deploy": "NUXT_CONTENT_DB=d1 npm run build && wrangler pages deploy",
     "bundle-report": "node --experimental-strip-types scripts/bundle-report.ts",
-		"cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@nuxt/content": "^3.13.0",
@@ -22,6 +22,7 @@
     "@nuxtjs/color-mode": "^4.0.0",
     "@nuxtjs/mdc": "^0.21.1",
     "@types/leaflet": "^1.9.21",
+    "@vueuse/nuxt": "^14.2.1",
     "better-sqlite3": "^12.9.0",
     "leaflet": "^1.9.4",
     "nuxt": "^4.4.2",

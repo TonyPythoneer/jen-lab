@@ -12,16 +12,16 @@
       ]"
     >
       <UButton
-        :icon="navOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+        :icon="isOpen ? 'i-lucide-x' : 'i-lucide-menu'"
         variant="ghost"
         color="neutral"
         class="sm:hidden px-4.5 self-center shrink-0 mt-2 ml-1"
-        @click="navOpen = !navOpen"
+        @click="isOpen = !isOpen"
       />
 
       <Transition name="menu">
         <div
-          v-show="navOpen"
+          v-show="isOpen"
           class="
             absolute top-full left-0 w-full shadow-lg rounded-md p-2 bg-white
             sm:flex! sm:static sm:shadow-none sm:rounded-none sm:bg-transparent sm:w-auto sm:p-0
@@ -48,7 +48,7 @@ defineProps<{
   title: string
 }>()
 
-const navOpen = ref(false)
+const isOpen = ref(false)
 </script>
 
 <style scoped>
