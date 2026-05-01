@@ -26,5 +26,3 @@ const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
-</content>
-</invoke>

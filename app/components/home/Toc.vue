@@ -55,5 +55,3 @@ const navOpen = ref(false)
 .menu-enter-active, .menu-leave-active { transition: opacity 0.2s; }
 .menu-enter-from, .menu-leave-to { opacity: 0; }
 </style>
-</content>
-</invoke>
