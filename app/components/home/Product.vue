@@ -12,7 +12,7 @@
     <div class="flex flex-col gap-3 p-5">
       <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
       <!--
-        Collapsible: brief copy is always shown; full description (markdown via MDC) toggles open.
+        Collapsible: brief copy is always shown; full description toggles open.
         `class="group"` enables the chevron rotate via group-data-[state=open] in the UI override below.
       -->
       <UCollapsible class="group">
@@ -27,9 +27,14 @@
           <span class="text-sm text-gray-500">{{ brief }}</span>
         </div>
         <template #content>
-          <div class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description">
-            <MDC v-if="description" :value="description" />
-          </div>
+          <!-- descriptionHtml is pre-rendered at build time by markdown-it inside
+               the content:file:afterParse hook (see nuxt.config.ts). v-html ships
+               zero markdown parser to the client; source is trusted local content. -->
+          <div
+            v-if="descriptionHtml"
+            class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
+            v-html="descriptionHtml"
+          />
         </template>
       </UCollapsible>
       <UButton
@@ -48,17 +53,23 @@
 </template>
 
 <script setup lang="ts">
+// `descriptionHtml` is pre-rendered at build (see nuxt.config.ts hook).
+// `description` is the markdown source — declared only to absorb the
+// spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
 defineProps<{
   banner?: string
   title: string
   brief: string
-  description: string
+  description?: string
+  descriptionHtml?: string
   purchaseUrl: string
   purchaseLabel: string
 }>()
 </script>
 
 <style scoped>
+/* Restores defaults for tags markdown-it emits — Tailwind Preflight resets
+ * them. `:deep()` because the markup comes from v-html, not the template. */
 .product-description :deep(a) {
   color: var(--color-primary-500);
   text-decoration: underline;
@@ -69,5 +80,9 @@ defineProps<{
 }
 .product-description :deep(p) {
   margin-bottom: 0.5rem;
+}
+.product-description :deep(hr) {
+  margin: 0.75rem 0;
+  border-color: rgb(229 231 235);
 }
 </style>

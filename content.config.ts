@@ -46,7 +46,11 @@ const productListSection = z.object({
     banner: z.string(),
     title: z.string(),
     brief: z.string(),
+    // `description` = markdown source. `descriptionHtml` is rendered at
+    // build time by the markdown-it hook in nuxt.config.ts; the component
+    // v-html's it so no parser ships to the client.
     description: z.string(),
+    descriptionHtml: z.string().optional(),
     purchaseUrl: z.string(),
     purchaseLabel: z.string(),
   })),
