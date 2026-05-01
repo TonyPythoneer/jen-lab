@@ -46,11 +46,11 @@ const productListSection = z.object({
     banner: z.string(),
     title: z.string(),
     brief: z.string(),
-    // Markdown source. Rendered to HTML at component level via the
-    // tiny `markdownToHtml` util (see app/utils/markdown.ts) so we can
-    // skip shipping the full @nuxtjs/mdc client runtime + its sqlite-wasm
-    // dependency chunk.
+    // `description` = markdown source. `descriptionHtml` is rendered at
+    // build time by the markdown-it hook in nuxt.config.ts; the component
+    // v-html's it so no parser ships to the client.
     description: z.string(),
+    descriptionHtml: z.string().optional(),
     purchaseUrl: z.string(),
     purchaseLabel: z.string(),
   })),

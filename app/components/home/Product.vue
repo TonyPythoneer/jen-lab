@@ -12,7 +12,7 @@
     <div class="flex flex-col gap-3 p-5">
       <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
       <!--
-        Collapsible: brief copy is always shown; full description (markdown via MDC) toggles open.
+        Collapsible: brief copy is always shown; full description toggles open.
         `class="group"` enables the chevron rotate via group-data-[state=open] in the UI override below.
       -->
       <UCollapsible class="group">
@@ -27,15 +27,13 @@
           <span class="text-sm text-gray-500">{{ brief }}</span>
         </div>
         <template #content>
-          <!-- description comes through as Markdown source from content/*.md and
-               is rendered by our tiny `markdownToHtml` (app/utils/markdown.ts).
-               Using v-html avoids shipping the full <MDC> client runtime +
-               sqlite-wasm dependency chunk; source is trusted local content
-               and is HTML-escaped inside the converter. -->
+          <!-- descriptionHtml is pre-rendered at build time by markdown-it inside
+               the content:file:afterParse hook (see nuxt.config.ts). v-html ships
+               zero markdown parser to the client; source is trusted local content. -->
           <div
-            v-if="description"
+            v-if="descriptionHtml"
             class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
-            v-html="renderedDescription"
+            v-html="descriptionHtml"
           />
         </template>
       </UCollapsible>
@@ -55,21 +53,23 @@
 </template>
 
 <script setup lang="ts">
-import { markdownToHtml } from '@/utils/markdown'
-
-const props = defineProps<{
+// `descriptionHtml` is pre-rendered at build (see nuxt.config.ts hook).
+// `description` is the markdown source — declared only to absorb the
+// spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
+defineProps<{
   banner?: string
   title: string
   brief: string
-  description: string
+  description?: string
+  descriptionHtml?: string
   purchaseUrl: string
   purchaseLabel: string
 }>()
-
-const renderedDescription = computed(() => markdownToHtml(props.description))
 </script>
 
 <style scoped>
+/* Restores defaults for tags markdown-it emits — Tailwind Preflight resets
+ * them. `:deep()` because the markup comes from v-html, not the template. */
 .product-description :deep(a) {
   color: var(--color-primary-500);
   text-decoration: underline;
@@ -80,5 +80,9 @@ const renderedDescription = computed(() => markdownToHtml(props.description))
 }
 .product-description :deep(p) {
   margin-bottom: 0.5rem;
+}
+.product-description :deep(hr) {
+  margin: 0.75rem 0;
+  border-color: rgb(229 231 235);
 }
 </style>
