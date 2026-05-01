@@ -27,9 +27,16 @@
           <span class="text-sm text-gray-500">{{ brief }}</span>
         </div>
         <template #content>
-          <div class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description">
-            <MDC v-if="description" :value="description" />
-          </div>
+          <!-- description comes through as Markdown source from content/*.md and
+               is rendered by our tiny `markdownToHtml` (app/utils/markdown.ts).
+               Using v-html avoids shipping the full <MDC> client runtime +
+               sqlite-wasm dependency chunk; source is trusted local content
+               and is HTML-escaped inside the converter. -->
+          <div
+            v-if="description"
+            class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
+            v-html="renderedDescription"
+          />
         </template>
       </UCollapsible>
       <UButton
@@ -48,7 +55,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { markdownToHtml } from '@/utils/markdown'
+
+const props = defineProps<{
   banner?: string
   title: string
   brief: string
@@ -56,6 +65,8 @@ defineProps<{
   purchaseUrl: string
   purchaseLabel: string
 }>()
+
+const renderedDescription = computed(() => markdownToHtml(props.description))
 </script>
 
 <style scoped>

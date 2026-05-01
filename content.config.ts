@@ -46,6 +46,10 @@ const productListSection = z.object({
     banner: z.string(),
     title: z.string(),
     brief: z.string(),
+    // Markdown source. Rendered to HTML at component level via the
+    // tiny `markdownToHtml` util (see app/utils/markdown.ts) so we can
+    // skip shipping the full @nuxtjs/mdc client runtime + its sqlite-wasm
+    // dependency chunk.
     description: z.string(),
     purchaseUrl: z.string(),
     purchaseLabel: z.string(),

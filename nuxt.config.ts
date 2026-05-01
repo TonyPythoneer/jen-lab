@@ -15,6 +15,13 @@ const setupSettings: NuxtConfig = {
     fallback: 'light',
     storage: 'cookie',
   },
+  // Markdown content has no fenced code blocks. Disabling Shiki below drops the
+  // oniguruma WASM runtime (~600 KB) and preloaded language grammars (~900 KB)
+  // from the client bundle. Re-enable if a code block is ever introduced into
+  // content/**.md or product description fields.
+  mdc: {
+    highlight: false,
+  },
 }
 
 const cloudflareSettings: NuxtConfig = {
@@ -56,8 +63,14 @@ export default defineNuxtConfig({
   ...cloudflareSettings,
   ...devSettings,
   content: {
+    build: {
+      markdown: {
+        // See `mdc.highlight: false` above — same rationale.
+        highlight: false,
+      },
+    },
     database: process.env.NUXT_CONTENT_DB === 'd1'
       ? { type: 'd1', bindingName: 'DB' }
-      : { type: 'sqlite', filename: ':memory:' }
+      : { type: 'sqlite', filename: ':memory:' },
   },
 })
