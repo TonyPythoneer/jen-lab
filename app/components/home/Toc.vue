@@ -3,6 +3,7 @@
     <aside
       class="
         sm:fixed sm:top-1/2 sm:-translate-y-1/2
+        max-sm:sticky max-sm:top-0 max-sm:z-30 max-sm:bg-white
         max-sm:border-b max-sm:border-gray-200
       "
     >
