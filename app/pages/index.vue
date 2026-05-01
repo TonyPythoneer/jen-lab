@@ -62,6 +62,10 @@ useHead({ title: () => selectedProfile.value.headTitle })
 const { data: page, status } = useLazyAsyncData(
   computed(() => `profile:${selectedProfileKey.value}`),
   () => queryCollection('home').path(`/home/${selectedProfileKey.value}`).first(),
+  {
+    getCachedData: (key, nuxtApp) =>
+      nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+  }
 )
 const isMounted = useMounted()
 const isReady = computed(() => status.value === 'success' && isMounted.value)
