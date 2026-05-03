@@ -33,18 +33,18 @@ sections:
         icon: i-lucide-map-pin
         title: 榛知雪梨美食地圖
         brief: 精選私藏雪梨餐廳，找到你的下一頓好飯
-      - to: https://jenliu.com.au/
-        icon: i-simple-icons-wordpress
-        title: 榛知部落格
-        brief: 深入淺出的中文澳洲知識庫
+      # - to: https://jenliu.com.au/
+      #   icon: i-simple-icons-wordpress
+      #   title: 榛知部落格
+      #   brief: 深入淺出的中文澳洲知識庫
       - to: https://crossing.cw.com.tw/author/1204
         icon: i-tdesign-copyright-filled
         title: 榛知專欄
         brief: 澳洲觀點專欄，刊載於《Crossing》
-      - to: https://portaly.cc/jenknowsau/support
-        icon: i-lucide-heart
-        title: 買杯奶茶，支持我繼續創造
-        brief: 有你的支持，創作才能長長久久
+      # - to: https://portaly.cc/jenknowsau/support
+      #   icon: i-lucide-heart
+      #   title: 買杯奶茶，支持我繼續創造
+      #   brief: 有你的支持，創作才能長長久久
 
   - id: videos
     label: Videos

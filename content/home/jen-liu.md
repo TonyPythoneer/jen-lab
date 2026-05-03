@@ -66,17 +66,17 @@ sections:
           - /home/jen-liu/galleries/food-in-greater-sydney/sydney-asian-restaurants.webp
           - /home/jen-liu/galleries/food-in-greater-sydney/sydney-city-food-court-map.webp
 
-  - id: portals
-    label: Portals
-    component: portal-list
-    portals:
-      - to: https://jenliu.com.au/
-        icon: i-simple-icons-wordpress
-        title: 澳洲知識部落格
-        brief: 澳洲知識、雪梨美食、旅遊資訊
-      - to: https://portaly.cc/jenliuau/support
-        icon: i-lucide-heart
-        title: 買杯奶茶，支持我的創作
-        brief: 有你的支持，創作才能長長久久
+  # - id: portals
+  #   label: Portals
+  #   component: portal-list
+  #   portals:
+  #     - to: https://jenliu.com.au/
+  #       icon: i-simple-icons-wordpress
+  #       title: 澳洲知識部落格
+  #       brief: 澳洲知識、雪梨美食、旅遊資訊
+      # - to: https://portaly.cc/jenliuau/support
+      #   icon: i-lucide-heart
+      #   title: 買杯奶茶，支持我的創作
+      #   brief: 有你的支持，創作才能長長久久
 
 ---

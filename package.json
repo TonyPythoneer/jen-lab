@@ -23,7 +23,6 @@
     "@nuxtjs/mdc": "^0.21.1",
     "@types/leaflet": "^1.9.21",
     "@vueuse/nuxt": "^14.2.1",
-    "better-sqlite3": "^12.9.0",
     "leaflet": "^1.9.4",
     "nuxt": "^4.4.4",
     "tailwindcss": "^4.2.2",
