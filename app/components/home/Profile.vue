@@ -17,14 +17,9 @@
           half="right"
           class="sprite-banner-right absolute -bottom-18 left-3/8 sm:hidden"
         />
-        <HomeSprite
-          half="left"
-          class="sprite-banner-left absolute -bottom-18 left-5/8 sm:hidden"
-        />
+        <HomeSprite half="left" class="sprite-banner-left absolute -bottom-18 left-5/8 sm:hidden" />
       </div>
-      <div
-        class="relative -mt-[calc(var(--spacing)*28/16*5)] flex items-end justify-between px-6"
-      >
+      <div class="relative -mt-[calc(var(--spacing)*28/16*5)] flex items-end justify-between px-6">
         <div class="flex items-end gap-5">
           <img
             :src="profile.avatar"
@@ -70,9 +65,7 @@
         size="sm"
         class="w-full tabs-profile px-6"
       />
-      <p
-        class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line px-6"
-      >
+      <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line px-6">
         {{ activeBio }}
       </p>
       <USeparator label="Contacts" class="px-6" />
@@ -82,11 +75,7 @@
           :key="contact.label"
           :href="contact.url"
           :aria-label="contact.label"
-          v-bind="
-            contact.url.startsWith('mailto:')
-              ? {}
-              : { target: '_blank', rel: 'noopener' }
-          "
+          v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
           :class="`text-gray-500 ${contact.hoverClass} transition-colors`"
         >
           <UIcon :name="contact.icon" class="w-5 h-5" />
@@ -142,20 +131,36 @@ watch(tabItems, (items) => {
    (layout.css.scroll-driven-animations.enabled). Unsupported browsers
    stay at the `from` keyframe (resting position). */
 @keyframes sprite-outer-left-slide {
-  from { transform: translateX(-108px) translateY(-50%); }
-  to   { transform: translateX(50px) translateY(-50%); }
+  from {
+    transform: translateX(-108px) translateY(-50%);
+  }
+  to {
+    transform: translateX(50px) translateY(-50%);
+  }
 }
 @keyframes sprite-outer-right-slide {
-  from { transform: translateX(112px) translateY(-50%) rotate(-5deg); }
-  to   { transform: translateX(-50px) translateY(-50%) rotate(-5deg); }
+  from {
+    transform: translateX(112px) translateY(-50%) rotate(-5deg);
+  }
+  to {
+    transform: translateX(-50px) translateY(-50%) rotate(-5deg);
+  }
 }
 @keyframes sprite-banner-right-slide {
-  from { transform: translateX(-50%) translateY(0) rotate(30deg); }
-  to   { transform: translateX(-50%) translateY(120px) rotate(30deg); }
+  from {
+    transform: translateX(-50%) translateY(0) rotate(30deg);
+  }
+  to {
+    transform: translateX(-50%) translateY(120px) rotate(30deg);
+  }
 }
 @keyframes sprite-banner-left-slide {
-  from { transform: translateX(-50%) translateY(0) rotate(325deg); }
-  to   { transform: translateX(-50%) translateY(120px) rotate(325deg); }
+  from {
+    transform: translateX(-50%) translateY(0) rotate(325deg);
+  }
+  to {
+    transform: translateX(-50%) translateY(120px) rotate(325deg);
+  }
 }
 
 .sprite-outer-left {
