@@ -67,15 +67,17 @@ const profileTabs = Object.entries(profiles).map(([value, { label }]) => ({ valu
 useHead({ title: () => selectedProfile.value.headTitle })
 
 // Pre-fetch every profile once so tab switching is instant. Each query owns its own cache key.
-const profileQueries = Object.fromEntries(
-  (Object.keys(profiles) as ProfileKey[]).map(key => [
-    key,
-    useLazyAsyncData(
-      `profile:${key}`,
-      () => queryCollection('home').path(`/home/${key}`).first(),
-    ),
-  ]),
-) as Record<ProfileKey, ReturnType<typeof useLazyAsyncData>>
+// `satisfies` enforces that all ProfileKeys are present without widening the inferred value types.
+const profileQueries = {
+  'jen-knows': useLazyAsyncData(
+    'profile:jen-knows',
+    () => queryCollection('home').path('/home/jen-knows').first(),
+  ),
+  'jen-liu': useLazyAsyncData(
+    'profile:jen-liu',
+    () => queryCollection('home').path('/home/jen-liu').first(),
+  ),
+} satisfies Record<ProfileKey, unknown>
 
 const activeQuery = computed(() => profileQueries[selectedProfileKey.value])
 const page = computed(() => activeQuery.value.data.value as Collections['home'] | null)
