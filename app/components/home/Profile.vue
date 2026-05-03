@@ -3,34 +3,30 @@
   <!-- Outer wrapper allows sprite girls to overflow the card edges -->
   <div class="relative">
     <!-- Camera girl (right half of sprite) → left edge, slides inward on scroll past -->
-    <div
+    <HomeSprite
+      half="right"
       class="absolute top-1/2 left-0 -z-10 pointer-events-none max-sm:hidden"
       :style="{ transform: `translateX(${leftGirlX}px) translateY(-50%)` }"
-      style="width:130px;height:168px;background-image:url('/home/jen-on-home-page.h168.png');background-position:-130px 0;background-repeat:no-repeat;background-size:254px 168px"
-      aria-hidden="true"
     />
     <!-- Waving girl (left half of sprite) → right edge, slides inward on scroll past -->
-    <div
+    <HomeSprite
+      half="left"
       class="absolute top-1/2 right-0 -z-10 pointer-events-none max-sm:hidden"
       :style="{ transform: `translateX(${rightGirlX}px) translateY(-50%) rotate(-5deg)` }"
-      style="width:130px;height:168px;background-image:url('/home/jen-on-home-page.h168.png');background-position:0 0;background-repeat:no-repeat;background-size:254px 168px"
-      aria-hidden="true"
     />
     <div class="relative z-10 flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-[#f7f7f7]">
       <div class="relative w-full">
         <div class="absolute top-0 left-0 w-full h-28 bg-[rgb(107,187,224)] overflow-hidden">
           <!-- Mobile-only sprite placement preview (clipped to banner) -->
-          <div
+          <HomeSprite
+            half="right"
             class="absolute -bottom-18 left-3/8 sm:hidden"
             :style="{ transform: `translateX(-50%) translateY(${bannerGirlY}px) rotate(30deg)` }"
-            style="width:130px;height:168px;background-image:url('/home/jen-on-home-page.h168.png');background-position:-130px 0;background-repeat:no-repeat;background-size:254px 168px"
-            aria-hidden="true"
           />
-          <div
+          <HomeSprite
+            half="left"
             class="absolute -bottom-18 left-5/8 sm:hidden"
             :style="{ transform: `translateX(-50%) translateY(${bannerGirlY}px) rotate(325deg)` }"
-            style="width:130px;height:168px;background-image:url('/home/jen-on-home-page.h168.png');background-position:0 0;background-repeat:no-repeat;background-size:254px 168px"
-            aria-hidden="true"
           />
         </div>
         <div class="relative z-10 flex items-end justify-between px-6 pt-14">
