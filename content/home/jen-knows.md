@@ -41,10 +41,10 @@ sections:
         icon: i-tdesign-copyright-filled
         title: 榛知專欄
         brief: 澳洲觀點專欄，刊載於《Crossing》
-      - to: https://portaly.cc/jenknowsau/support
-        icon: i-lucide-heart
-        title: 買杯奶茶，支持我繼續創造
-        brief: 有你的支持，創作才能長長久久
+      # - to: https://portaly.cc/jenknowsau/support
+      #   icon: i-lucide-heart
+      #   title: 買杯奶茶，支持我繼續創造
+      #   brief: 有你的支持，創作才能長長久久
 
   - id: videos
     label: Videos
