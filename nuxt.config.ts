@@ -81,6 +81,9 @@ export default defineNuxtConfig({
         highlight: false,
       },
     },
+    experimental: {
+      sqliteConnector: 'native',
+    },
     database: process.env.NUXT_CONTENT_DB === 'd1'
       ? { type: 'd1', bindingName: 'DB' }
       : { type: 'sqlite', filename: ':memory:' },
