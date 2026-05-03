@@ -12,6 +12,7 @@
     <div
       class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-[#f7f7f7]"
     >
+      <!-- Banner -->
       <div class="relative h-28 bg-[rgb(107,187,224)] overflow-hidden">
         <HomeSprite
           half="right"
@@ -19,6 +20,7 @@
         />
         <HomeSprite half="left" class="sprite-banner-left absolute -bottom-18 left-5/8 sm:hidden" />
       </div>
+      <!-- Avatar row -->
       <div class="relative -mt-[calc(var(--spacing)*28/16*5)] flex items-end justify-between px-6">
         <div class="flex items-end gap-5">
           <img
@@ -58,6 +60,7 @@
           </UButton>
         </div>
       </div>
+      <!-- Bio tabs -->
       <UTabs
         v-model="activeTab"
         :items="tabItems"
@@ -68,6 +71,7 @@
       <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line px-6">
         {{ activeBio }}
       </p>
+      <!-- Contacts -->
       <USeparator label="Contacts" class="px-6" />
       <div class="flex justify-center gap-4 py-2 px-6">
         <a
