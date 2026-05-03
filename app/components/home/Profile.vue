@@ -3,15 +3,11 @@
   <div class="relative">
     <HomeSprite
       half="right"
-      class="absolute top-1/2 left-0 -z-10 pointer-events-none max-sm:hidden"
-      :style="{ transform: `translateX(${leftGirlX}px) translateY(-50%)` }"
+      class="sprite-outer-left absolute top-1/2 left-0 -z-10 pointer-events-none max-sm:hidden"
     />
     <HomeSprite
       half="left"
-      class="absolute top-1/2 right-0 -z-10 pointer-events-none max-sm:hidden"
-      :style="{
-        transform: `translateX(${rightGirlX}px) translateY(-50%) rotate(-5deg)`,
-      }"
+      class="sprite-outer-right absolute top-1/2 right-0 -z-10 pointer-events-none max-sm:hidden"
     />
     <div
       class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-[#f7f7f7]"
@@ -19,17 +15,11 @@
       <div class="relative h-28 bg-[rgb(107,187,224)] overflow-hidden">
         <HomeSprite
           half="right"
-          class="absolute -bottom-18 left-3/8 sm:hidden"
-          :style="{
-            transform: `translateX(-50%) translateY(${bannerGirlY}px) rotate(30deg)`,
-          }"
+          class="sprite-banner-right absolute -bottom-18 left-3/8 sm:hidden"
         />
         <HomeSprite
           half="left"
-          class="absolute -bottom-18 left-5/8 sm:hidden"
-          :style="{
-            transform: `translateX(-50%) translateY(${bannerGirlY}px) rotate(325deg)`,
-          }"
+          class="sprite-banner-left absolute -bottom-18 left-5/8 sm:hidden"
         />
       </div>
       <div
@@ -136,42 +126,6 @@ watch(tabItems, (items) => {
     activeTab.value = items[0]!.value;
   }
 });
-
-// Scroll-driven sprite positions. Both desktop outer pair and mobile banner pair
-// are driven by window scrollY. Each pair has its own SCROLL_RANGE for speed control.
-
-// Desktop outer pair: peek at card edges, slide toward center as page scrolls.
-const RESTING_LEFT_X = -108;
-const RESTING_RIGHT_X = 112;
-const END_LEFT_X = 50;
-const END_RIGHT_X = -50;
-const OUTER_GIRL_SCROLL_RANGE = 300;
-
-// Mobile banner pair: slide down (clipped by banner overflow-hidden) as page scrolls.
-const BANNER_GIRL_END_Y = 120;
-const BANNER_GIRL_SCROLL_RANGE = 50;
-
-// SSR-safe defaults: values at scrollY=0, so first client render matches server output.
-const leftGirlX = ref(RESTING_LEFT_X);
-const rightGirlX = ref(RESTING_RIGHT_X);
-const bannerGirlY = ref(0);
-
-function setupSpriteScroll() {
-  const { y: windowScrollY } = useWindowScroll();
-
-  watchEffect(() => {
-    const scroll = Math.max(windowScrollY.value, 0);
-    const outerProgress = Math.min(scroll / OUTER_GIRL_SCROLL_RANGE, 1);
-    const bannerProgress = Math.min(scroll / BANNER_GIRL_SCROLL_RANGE, 1);
-    leftGirlX.value =
-      RESTING_LEFT_X + (END_LEFT_X - RESTING_LEFT_X) * outerProgress;
-    rightGirlX.value =
-      RESTING_RIGHT_X + (END_RIGHT_X - RESTING_RIGHT_X) * outerProgress;
-    bannerGirlY.value = bannerProgress * BANNER_GIRL_END_Y;
-  });
-}
-
-onMounted(setupSpriteScroll);
 </script>
 
 <style scoped>
@@ -181,5 +135,51 @@ onMounted(setupSpriteScroll);
 .tabs-profile :deep([data-state="active"] [data-slot="label"]) {
   font-size: 14px;
   font-weight: bold;
+}
+
+/* Scroll-driven sprite animations. Pure CSS, no JS — best perf.
+   Support: Chrome/Edge 115+, Safari 26+. Firefox behind flag
+   (layout.css.scroll-driven-animations.enabled). Unsupported browsers
+   stay at the `from` keyframe (resting position). */
+@keyframes sprite-outer-left-slide {
+  from { transform: translateX(-108px) translateY(-50%); }
+  to   { transform: translateX(50px) translateY(-50%); }
+}
+@keyframes sprite-outer-right-slide {
+  from { transform: translateX(112px) translateY(-50%) rotate(-5deg); }
+  to   { transform: translateX(-50px) translateY(-50%) rotate(-5deg); }
+}
+@keyframes sprite-banner-right-slide {
+  from { transform: translateX(-50%) translateY(0) rotate(30deg); }
+  to   { transform: translateX(-50%) translateY(120px) rotate(30deg); }
+}
+@keyframes sprite-banner-left-slide {
+  from { transform: translateX(-50%) translateY(0) rotate(325deg); }
+  to   { transform: translateX(-50%) translateY(120px) rotate(325deg); }
+}
+
+.sprite-outer-left {
+  transform: translateX(-108px) translateY(-50%);
+  animation: sprite-outer-left-slide linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0 300px;
+}
+.sprite-outer-right {
+  transform: translateX(112px) translateY(-50%) rotate(-5deg);
+  animation: sprite-outer-right-slide linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0 300px;
+}
+.sprite-banner-right {
+  transform: translateX(-50%) rotate(30deg);
+  animation: sprite-banner-right-slide linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0 50px;
+}
+.sprite-banner-left {
+  transform: translateX(-50%) rotate(325deg);
+  animation: sprite-banner-left-slide linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0 50px;
 }
 </style>
