@@ -1,97 +1,89 @@
 <template>
-  <div class="max-w-5xl mx-auto px-4 py-10">
-    <header class="flex items-center justify-between gap-4 mb-8">
-      <NuxtLink
-        to="/"
-        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 shrink-0"
-      >
-        <UIcon name="i-lucide-arrow-left" class="size-4" />
-        平臺入口
-      </NuxtLink>
-      <div class="text-right">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">{{ blog.title }}</h1>
-        <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400">{{ blog.brief }}</p>
-      </div>
-    </header>
+  <div>
+    <BlogTopBar :title="blog.title">
+      <template #left>
+        <NuxtLink
+          to="/"
+          aria-label="返回首頁"
+          class="inline-flex items-center text-neutral-400 hover:text-neutral-600"
+        >
+          <UIcon name="i-lucide-house" class="size-5" />
+        </NuxtLink>
+      </template>
+      <template #right>
+        <ClientOnly>
+          <UButton
+            :disabled="!filtersReady"
+            :color="!filtersReady ? 'neutral' : searchOpen ? 'neutral' : 'primary'"
+            :variant="!filtersReady || searchOpen ? 'soft' : 'solid'"
+            :icon="searchOpen ? 'i-lucide-x' : 'i-lucide-search'"
+            size="sm"
+            :aria-label="searchOpen ? '關閉搜尋' : '開啟搜尋'"
+            @click="searchOpen = !searchOpen"
+          />
+        </ClientOnly>
+      </template>
+    </BlogTopBar>
 
-    <!-- Search + Category + Tags -->
-    <form class="flex flex-wrap gap-2 mb-6" @submit.prevent="submitSearch">
-      <BlogFilterButton
-        v-model="selectedCategoryIds"
-        label="分類"
-        clear-label="清除分類"
-        :items="categories ?? []"
-        @change="currentPage = 1"
-      />
-
-      <BlogFilterButton
-        v-model="selectedTagIds"
-        label="標籤"
-        clear-label="清除標籤"
-        :items="activeTags"
-        @change="currentPage = 1"
-      />
-
-      <div class="flex gap-2 flex-1">
-        <UInput
-          v-model="searchInput"
-          placeholder="搜尋文章..."
-          icon="i-lucide-search"
-          class="flex-1"
+    <div class="max-w-5xl mx-auto px-4 py-10">
+      <!-- Search + Category + Tags -->
+      <Transition name="search-fade">
+        <BlogSearchBar
+          v-if="searchOpen"
+          v-model:selected-category-ids="selectedCategoryIds"
+          v-model:selected-tag-ids="selectedTagIds"
+          v-model:search-input="searchInput"
+          :categories="categories ?? []"
+          :tags="tags ?? []"
+          @change="currentPage = 1"
+          @submit="submitSearch"
         />
-        <UButton size="sm" type="submit">搜尋</UButton>
-      </div>
-    </form>
+      </Transition>
 
-    <!-- Loading -->
-    <div v-if="pending" class="text-center py-20 text-neutral-400">載入中...</div>
+      <!-- Loading -->
+      <div v-if="pending" class="text-center py-20 text-neutral-400">載入中...</div>
 
-    <template v-else-if="posts?.length">
-      <!-- Featured latest post -->
-      <BlogPostCard
-        v-if="featuredPost"
-        :post="featuredPost"
-        :to="postRoute(featuredPost)"
-        :tag-map="tagMap"
-        featured
-      />
-
-      <!-- Posts grid (exclude featured) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <template v-else-if="posts?.length">
+        <!-- Featured latest post -->
         <BlogPostCard
-          v-for="post in remainingPosts"
-          :key="post.id"
-          :post="post"
-          :to="postRoute(post)"
+          v-if="featuredPost"
+          :post="featuredPost"
+          :to="postRoute(featuredPost)"
           :tag-map="tagMap"
+          featured
+        />
+
+        <!-- Posts grid (exclude featured) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <BlogPostCard
+            v-for="post in remainingPosts"
+            :key="post.id"
+            :post="post"
+            :to="postRoute(post)"
+            :tag-map="tagMap"
+          />
+        </div>
+      </template>
+
+      <!-- Empty -->
+      <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center mt-10">
+        <UPagination
+          v-model:page="currentPage"
+          :total="totalPages * PER_PAGE"
+          :items-per-page="PER_PAGE"
         />
       </div>
-    </template>
 
-    <!-- Empty -->
-    <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
-
-    <!-- Pagination -->
-    <div v-if="totalPages > 1" class="flex justify-center mt-10">
-      <UPagination
-        v-model:page="currentPage"
-        :total="totalPages * PER_PAGE"
-        :items-per-page="PER_PAGE"
-      />
+      <ScrollToTopButton />
     </div>
-
-    <ScrollToTopButton />
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  fetchCategories,
-  fetchPosts,
-  fetchTags,
-  stripHtml,
-  type WpPost,
-} from "~/composables/useWpApi";
+import { fetchPosts, stripHtml, type WpPost } from "~/composables/useWpApi";
 
 const PER_PAGE = 10;
 const NEW_POST_DAYS = 7;
@@ -138,16 +130,25 @@ lastQuery.value = { ...initialQuery } as Record<string, string>;
 const cached = (key: string, app: ReturnType<typeof useNuxtApp>) =>
   app.payload.data[key] ?? app.static.data[key];
 
-// Taxonomies
-const { data: categories } = await useAsyncData("wp-categories", () => fetchCategories(), {
-  getCachedData: cached,
-});
-const { data: tags } = await useAsyncData("wp-tags", () => fetchTags(), {
-  getCachedData: cached,
-});
+// Taxonomies (sourced from content collections — sync via `pnpm sync:wp`)
+// Client-only: defers taxonomy fetch off SSR/hydration critical path.
+const { data: categories } = useLazyAsyncData(
+  "wp-categories",
+  () => queryCollection("wpCategories").order("wpId", "DESC").all(),
+  { server: false, getCachedData: cached },
+);
+const { data: tags } = useLazyAsyncData(
+  "wp-tags",
+  () => queryCollection("wpTags").order("count", "DESC").order("wpId", "DESC").all(),
+  { server: false, getCachedData: cached },
+);
 
-const activeTags = computed(() => (tags.value ?? []).filter((t) => t.count > 0));
-const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.id, t.name])));
+const searchOpen = ref(
+  !!search.value || selectedCategoryIds.value.length > 0 || selectedTagIds.value.length > 0,
+);
+const filtersReady = computed(() => !!categories.value && !!tags.value);
+
+const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
 
 // Posts (key includes filters → each combo cached separately)
 const postsKey = computed(
@@ -197,3 +198,18 @@ function postRoute(post: WpPost) {
   return { path: `/blogs/${post.id}`, query: { title: slug } };
 }
 </script>
+
+<style scoped>
+.search-fade-enter-active,
+.search-fade-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+  overflow: hidden;
+}
+.search-fade-enter-from,
+.search-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>

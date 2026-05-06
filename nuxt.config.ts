@@ -3,6 +3,7 @@ import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
 import linkAttrs from "markdown-it-link-attributes";
 import { analyzer } from "vite-bundle-analyzer";
+import { WP_BASE } from "./shared/wp";
 
 const isD1 = process.env.NUXT_CONTENT_DB === "d1";
 
@@ -73,7 +74,7 @@ const devSettings: NuxtConfig = {
     plugins: [analyzer({ analyzerMode: "json", fileName: "stats" }) as any],
     // Build-time constants (string-replaced into bundle, zero runtime overhead)
     define: {
-      __WP_BASE__: JSON.stringify("https://jenliu.com.au/wp-json/wp/v2"),
+      __WP_BASE__: JSON.stringify(WP_BASE),
     },
   },
 };

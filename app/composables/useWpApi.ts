@@ -6,7 +6,6 @@ const POST_LIST_FIELDS =
   "id,date,title,excerpt,link,tags,categories,jetpack_featured_media_url";
 const POST_DETAIL_FIELDS =
   "id,date,title,excerpt,content,link,tags,categories,jetpack_featured_media_url";
-const TAXONOMY_FIELDS = "id,name,count";
 const PAGE_FIELDS = "id,date,title,content,link";
 
 export interface WpPost {
@@ -23,19 +22,6 @@ export interface WpPost {
     description?: string;
     og_image?: { url: string }[];
   };
-}
-
-export interface WpTag {
-  id: number;
-  name: string;
-  count: number;
-}
-
-export interface WpCategory {
-  id: number;
-  name: string;
-  count: number;
-  parent: number;
 }
 
 export interface WpPage {
@@ -80,28 +66,6 @@ export async function fetchPosts(params: {
 export async function fetchPost(id: number): Promise<WpPost> {
   return $fetch<WpPost>(`${WP_BASE}/posts/${id}`, {
     query: { _fields: POST_DETAIL_FIELDS },
-  });
-}
-
-export async function fetchTags(perPage = 100): Promise<WpTag[]> {
-  return $fetch<WpTag[]>(`${WP_BASE}/tags`, {
-    query: {
-      per_page: perPage,
-      orderby: "count",
-      order: "desc",
-      _fields: TAXONOMY_FIELDS,
-    },
-  });
-}
-
-export async function fetchCategories(perPage = 100): Promise<WpCategory[]> {
-  return $fetch<WpCategory[]>(`${WP_BASE}/categories`, {
-    query: {
-      per_page: perPage,
-      orderby: "count",
-      order: "desc",
-      _fields: TAXONOMY_FIELDS,
-    },
   });
 }
 

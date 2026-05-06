@@ -21,22 +21,51 @@
           {{ clearLabel }}
         </button>
         <div class="p-2 overflow-y-auto max-h-64 flex flex-col gap-0.5">
-          <button
-            v-for="item in items"
-            :key="item.id"
-            class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
-            @click="toggle(item.id)"
-          >
-            <span class="flex items-center gap-1 min-w-0">
-              <span class="truncate">{{ item.name }}</span>
-              <span class="text-xs text-neutral-400 shrink-0">({{ item.count }})</span>
-            </span>
-            <UIcon
-              v-if="modelValue.includes(item.id)"
-              name="i-lucide-check"
-              class="text-primary-500 size-4 shrink-0"
-            />
-          </button>
+          <template v-if="grouped">
+            <div v-for="group in groups" :key="group.parent.wpId" class="flex flex-col gap-0.5">
+              <button
+                class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm font-semibold text-left"
+                @click="toggle(group.parent.wpId)"
+              >
+                <span class="truncate">{{ group.parent.name }}</span>
+                <UIcon
+                  v-if="modelValue.includes(group.parent.wpId)"
+                  name="i-lucide-check"
+                  class="text-primary-500 size-4 shrink-0"
+                />
+              </button>
+              <button
+                v-for="child in group.children"
+                :key="child.wpId"
+                class="flex items-center justify-between gap-2 pl-6 pr-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
+                @click="toggle(child.wpId)"
+              >
+                <span class="truncate text-neutral-600 dark:text-neutral-300">{{ child.name }}</span>
+                <UIcon
+                  v-if="modelValue.includes(child.wpId)"
+                  name="i-lucide-check"
+                  class="text-primary-500 size-4 shrink-0"
+                />
+              </button>
+            </div>
+          </template>
+          <template v-else>
+            <button
+              v-for="item in items"
+              :key="item.wpId"
+              class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
+              @click="toggle(item.wpId)"
+            >
+              <span class="flex items-center gap-1 min-w-0">
+                <span class="truncate">{{ item.name }}</span>
+              </span>
+              <UIcon
+                v-if="modelValue.includes(item.wpId)"
+                name="i-lucide-check"
+                class="text-primary-500 size-4 shrink-0"
+              />
+            </button>
+          </template>
         </div>
       </div>
     </template>
@@ -45,9 +74,9 @@
 
 <script setup lang="ts">
 interface FilterItem {
-  id: number
+  wpId: number
   name: string
-  count: number
+  parent?: number
 }
 
 const props = defineProps<{
@@ -62,10 +91,32 @@ const emit = defineEmits<{
   change: []
 }>()
 
-function toggle(id: number) {
-  const next = props.modelValue.includes(id)
-    ? props.modelValue.filter((v) => v !== id)
-    : [...props.modelValue, id]
+const grouped = computed(() => props.items.some((i) => typeof i.parent === 'number'))
+
+const groups = computed(() => {
+  const byId = new Map(props.items.map((i) => [i.wpId, i]))
+  const childrenByParent = new Map<number, FilterItem[]>()
+  const roots: FilterItem[] = []
+  for (const item of props.items) {
+    const p = item.parent ?? 0
+    if (p && byId.has(p)) {
+      const arr = childrenByParent.get(p) ?? []
+      arr.push(item)
+      childrenByParent.set(p, arr)
+    } else {
+      roots.push(item)
+    }
+  }
+  return roots.map((parent) => ({
+    parent,
+    children: childrenByParent.get(parent.wpId) ?? [],
+  }))
+})
+
+function toggle(wpId: number) {
+  const next = props.modelValue.includes(wpId)
+    ? props.modelValue.filter((v) => v !== wpId)
+    : [...props.modelValue, wpId]
   emit('update:modelValue', next)
   emit('change')
 }
