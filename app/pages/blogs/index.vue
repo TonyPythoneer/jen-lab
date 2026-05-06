@@ -109,7 +109,7 @@ function csvToIds(v: unknown): number[] {
   return v
     .split(",")
     .map(Number)
-    .filter((n) => Number.isFinite(n) && n > 0);
+    .filter((n) => Number.isInteger(n) && n > 0);
 }
 
 const initialQuery = route.query;

@@ -1,4 +1,13 @@
-export const WP_BASE = "https://jenliu.com.au/wp-json/wp/v2";
+declare const __WP_BASE__: string;
+export const WP_BASE = __WP_BASE__;
+
+// Field whitelists keep payloads lean (WP defaults include many unused properties)
+const POST_LIST_FIELDS =
+  "id,date,title,excerpt,link,tags,categories,jetpack_featured_media_url";
+const POST_DETAIL_FIELDS =
+  "id,date,title,excerpt,content,link,tags,categories,jetpack_featured_media_url";
+const TAXONOMY_FIELDS = "id,name,count";
+const PAGE_FIELDS = "id,date,title,content,link";
 
 export interface WpPost {
   id: number;
@@ -58,8 +67,7 @@ export async function fetchPosts(params: {
       ...(search && { search }),
       ...(tags?.length && { tags: tags.join(",") }),
       ...(categories?.length && { categories: categories.join(",") }),
-      _fields:
-        "id,date,title,excerpt,link,tags,categories,jetpack_featured_media_url",
+      _fields: POST_LIST_FIELDS,
     },
   });
   return {
@@ -70,23 +78,37 @@ export async function fetchPosts(params: {
 }
 
 export async function fetchPost(id: number): Promise<WpPost> {
-  return $fetch<WpPost>(`${WP_BASE}/posts/${id}`);
+  return $fetch<WpPost>(`${WP_BASE}/posts/${id}`, {
+    query: { _fields: POST_DETAIL_FIELDS },
+  });
 }
 
 export async function fetchTags(perPage = 100): Promise<WpTag[]> {
   return $fetch<WpTag[]>(`${WP_BASE}/tags`, {
-    query: { per_page: perPage, orderby: "count", order: "desc" },
+    query: {
+      per_page: perPage,
+      orderby: "count",
+      order: "desc",
+      _fields: TAXONOMY_FIELDS,
+    },
   });
 }
 
 export async function fetchCategories(perPage = 100): Promise<WpCategory[]> {
   return $fetch<WpCategory[]>(`${WP_BASE}/categories`, {
-    query: { per_page: perPage, orderby: "count", order: "desc" },
+    query: {
+      per_page: perPage,
+      orderby: "count",
+      order: "desc",
+      _fields: TAXONOMY_FIELDS,
+    },
   });
 }
 
 export async function fetchPages(): Promise<WpPage[]> {
-  return $fetch<WpPage[]>(`${WP_BASE}/pages`);
+  return $fetch<WpPage[]>(`${WP_BASE}/pages`, {
+    query: { _fields: PAGE_FIELDS },
+  });
 }
 
 export function stripHtml(html: string) {

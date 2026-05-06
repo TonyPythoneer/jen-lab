@@ -66,6 +66,10 @@ const devSettings: NuxtConfig = {
     plugins: [
       analyzer({ analyzerMode: 'json', fileName: 'stats' }) as any,
     ],
+    // Build-time constants (string-replaced into bundle, zero runtime overhead)
+    define: {
+      __WP_BASE__: JSON.stringify('https://jenliu.com.au/wp-json/wp/v2'),
+    },
   },
 }
 
