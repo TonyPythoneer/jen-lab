@@ -1,12 +1,18 @@
 <template>
   <div class="max-w-3xl mx-auto px-4 py-10">
-    <NuxtLink
-      :to="{ path: '/blogs', query: lastQuery }"
-      class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 mb-8"
-    >
-      <UIcon name="i-lucide-arrow-left" class="size-4" />
-      返回部落格
-    </NuxtLink>
+    <header class="flex items-center justify-between gap-4 mb-10 pb-6 border-b border-neutral-200 dark:border-neutral-800">
+      <NuxtLink
+        :to="{ path: '/blogs', query: lastQuery }"
+        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 shrink-0"
+      >
+        <UIcon name="i-lucide-arrow-left" class="size-4" />
+        返回部落格
+      </NuxtLink>
+      <NuxtLink :to="{ path: '/blogs', query: lastQuery }" class="text-right hover:opacity-80 transition-opacity">
+        <h2 class="text-xl md:text-2xl font-bold tracking-tight">{{ blog.title }}</h2>
+        <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400">{{ blog.brief }}</p>
+      </NuxtLink>
+    </header>
 
     <div v-if="pending || error" class="text-center py-20 text-neutral-400">
       {{ pending ? '載入中...' : '找不到文章' }}
@@ -32,6 +38,7 @@ import { fetchPost, stripHtml, formatDate } from "~/composables/useWpApi";
 
 const route = useRoute();
 const lastQuery = useState<Record<string, string>>('blogs:lastQuery', () => ({}))
+const { blog } = useAppConfig()
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
 const postId = Number(route.params.slug?.[0]);

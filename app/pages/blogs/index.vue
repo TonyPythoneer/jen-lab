@@ -1,12 +1,18 @@
 <template>
   <div class="max-w-5xl mx-auto px-4 py-10">
-    <NuxtLink
-      to="/"
-      class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 mb-8"
-    >
-      <UIcon name="i-lucide-arrow-left" class="size-4" />
-      平臺入口
-    </NuxtLink>
+    <header class="flex items-center justify-between gap-4 mb-8">
+      <NuxtLink
+        to="/"
+        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 shrink-0"
+      >
+        <UIcon name="i-lucide-arrow-left" class="size-4" />
+        平臺入口
+      </NuxtLink>
+      <div class="text-right">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">{{ blog.title }}</h1>
+        <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400">{{ blog.brief }}</p>
+      </div>
+    </header>
 
     <!-- Search + Category + Tags -->
     <form class="flex flex-wrap gap-2 mb-6" @submit.prevent="submitSearch">
@@ -90,7 +96,8 @@ import {
 const PER_PAGE = 10;
 const NEW_POST_DAYS = 7;
 
-useSeoMeta({ title: "榛知 - 關於澳洲的中文知識庫", description: "關於澳洲的中文知識庫" });
+const { blog } = useAppConfig();
+useSeoMeta({ title: `${blog.title} - ${blog.brief}`, description: blog.brief });
 
 const route = useRoute();
 const router = useRouter();
@@ -99,7 +106,10 @@ const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({})
 // Parse initial filters from URL (one-shot; subsequent URL → state sync would flicker on route leave)
 function csvToIds(v: unknown): number[] {
   if (typeof v !== "string" || !v) return [];
-  return v.split(",").map(Number).filter((n) => Number.isFinite(n) && n > 0);
+  return v
+    .split(",")
+    .map(Number)
+    .filter((n) => Number.isFinite(n) && n > 0);
 }
 
 const initialQuery = route.query;
@@ -110,19 +120,16 @@ const currentPage = ref(Math.max(1, Number(initialQuery.page) || 1));
 const searchInput = ref(search.value);
 
 // State → URL (one-way). Skip when leaving /blogs to avoid clobbering during navigation.
-watch(
-  [search, selectedCategoryIds, selectedTagIds, currentPage],
-  () => {
-    if (route.path !== "/blogs") return;
-    const query: Record<string, string> = {};
-    if (search.value) query.q = search.value;
-    if (selectedCategoryIds.value.length) query.cat = selectedCategoryIds.value.join(",");
-    if (selectedTagIds.value.length) query.tag = selectedTagIds.value.join(",");
-    if (currentPage.value > 1) query.page = String(currentPage.value);
-    lastQuery.value = query;
-    router.replace({ query });
-  },
-);
+watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
+  if (route.path !== "/blogs") return;
+  const query: Record<string, string> = {};
+  if (search.value) query.q = search.value;
+  if (selectedCategoryIds.value.length) query.cat = selectedCategoryIds.value.join(",");
+  if (selectedTagIds.value.length) query.tag = selectedTagIds.value.join(",");
+  if (currentPage.value > 1) query.page = String(currentPage.value);
+  lastQuery.value = query;
+  router.replace({ query });
+});
 
 // Capture initial URL into lastQuery (covers fresh load / back-from-detail)
 lastQuery.value = { ...initialQuery } as Record<string, string>;
