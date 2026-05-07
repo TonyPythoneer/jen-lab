@@ -21,14 +21,14 @@
                 label="分類"
                 clear-label="清除分類"
                 icon="i-lucide-folder"
-                :items="categories ?? []"
+                :items="categoryTree"
               />
               <BlogFilterButton
                 v-model="selectedTagIds"
                 label="標籤"
                 clear-label="清除標籤"
                 icon="i-lucide-tag"
-                :items="tags ?? []"
+                :items="tagTree"
               />
               <UInput
                 v-model="searchInput"
@@ -165,6 +165,18 @@ const searchOpen = ref(
 const filtersReady = computed(() => !!categories.value && !!tags.value);
 
 const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
+
+const categoryTree = computed(() =>
+  (categories.value ?? []).map((c) => ({
+    label: c.name,
+    value: c.wpId,
+    children: c.children?.map((ch) => ({ label: ch.name, value: ch.wpId })),
+  })),
+);
+
+const tagTree = computed(() =>
+  (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })),
+);
 
 // Cache for instant page revisits. Wiped on filter/search change.
 const cache = ref(new Map<number, WpPost[]>());

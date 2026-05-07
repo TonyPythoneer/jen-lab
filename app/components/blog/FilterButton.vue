@@ -30,7 +30,7 @@
         <div class="p-2 overflow-y-auto max-h-64">
           <UTree
             v-model="selectedTree"
-            :items="treeItems"
+            :items="items"
             :as="{ link: 'div' }"
             multiple
             propagate-select
@@ -55,12 +55,6 @@
 <script setup lang="ts">
 import type { TreeItem } from "@nuxt/ui";
 
-interface FilterItem {
-  wpId: number;
-  name: string;
-  parent?: number;
-}
-
 interface FilterTreeItem extends TreeItem {
   value: number;
   children?: FilterTreeItem[];
@@ -70,7 +64,7 @@ const props = defineProps<{
   modelValue: number[];
   label: string;
   clearLabel: string;
-  items: FilterItem[];
+  items: FilterTreeItem[];
   icon?: string;
 }>();
 
@@ -79,26 +73,10 @@ const emit = defineEmits<{
   change: [];
 }>();
 
-const childrenMap = computed(() => {
-  const m = new Map<number, FilterTreeItem[]>();
-  for (const i of props.items) {
-    if (i.parent) {
-      const arr = m.get(i.parent) ?? [];
-      arr.push({ label: i.name, value: i.wpId });
-      m.set(i.parent, arr);
-    }
-  }
-  return m;
-});
-
-const treeItems = computed<FilterTreeItem[]>(() =>
-  props.items
-    .filter((i) => !i.parent)
-    .map((p) => ({ label: p.name, value: p.wpId, children: childrenMap.value.get(p.wpId) })),
-);
-
+// UTree v-model expects node objects, but modelValue stores ids only.
+// Flatten parents + children so ids can be resolved back to nodes.
 const flatNodes = computed(() =>
-  treeItems.value.flatMap((n) => [n, ...(n.children ?? [])]),
+  props.items.flatMap((n) => [n, ...(n.children ?? [])]),
 );
 
 const selectedTree = computed<FilterTreeItem[]>({

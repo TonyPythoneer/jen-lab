@@ -16,8 +16,7 @@ interface TaxonomyConfig<T> {
   endpoint: string;
   fields: string;
   dir: URL;
-  filter?: (raw: WpTaxonomyRaw) => boolean;
-  map: (raw: WpTaxonomyRaw) => T;
+  transform: (raws: WpTaxonomyRaw[]) => T[];
 }
 
 interface SyncResult<T> {
@@ -27,26 +26,56 @@ interface SyncResult<T> {
 
 const CONTENT_ROOT = new URL("../content/wp/", import.meta.url);
 
+interface CategoryChild {
+  wpId: number;
+  slug: string;
+  name: string;
+}
+
+interface CategoryNode extends CategoryChild {
+  children?: CategoryChild[];
+}
+
 const TAG_CONFIG: TaxonomyConfig<{ wpId: number; slug: string; name: string; count: number }> = {
   label: "tags",
   endpoint: "tags",
   fields: "id,slug,name,count",
   dir: new URL("tags/", CONTENT_ROOT),
-  filter: (t) => t.count > 0,
-  map: ({ id, slug, name, count }) => ({ wpId: id, slug, name, count }),
+  transform: (raws) =>
+    raws
+      .filter((t) => t.count > 0)
+      .map(({ id, slug, name, count }) => ({ wpId: id, slug, name, count })),
 };
 
-const CATEGORY_CONFIG: TaxonomyConfig<{
-  wpId: number;
-  slug: string;
-  name: string;
-  parent: number;
-}> = {
+const CATEGORY_CONFIG: TaxonomyConfig<CategoryNode> = {
   label: "categories",
   endpoint: "categories",
   fields: "id,slug,name,parent,count",
   dir: new URL("categories/", CONTENT_ROOT),
-  map: ({ id, slug, name, parent }) => ({ wpId: id, slug, name, parent: parent ?? 0 }),
+  transform: (raws) => {
+    const childrenByParent = new Map<number, CategoryChild[]>();
+    const roots: WpTaxonomyRaw[] = [];
+    for (const raw of raws) {
+      const child: CategoryChild = { wpId: raw.id, slug: raw.slug, name: raw.name };
+      const parent = raw.parent ?? 0;
+      if (parent) {
+        const arr = childrenByParent.get(parent) ?? [];
+        arr.push(child);
+        childrenByParent.set(parent, arr);
+      } else {
+        roots.push(raw);
+      }
+    }
+    return roots.map((root) => {
+      const children = childrenByParent.get(root.id);
+      return {
+        wpId: root.id,
+        slug: root.slug,
+        name: root.name,
+        ...(children?.length ? { children } : {}),
+      };
+    });
+  },
 };
 
 async function fetchAllPages(endpoint: string, fields: string): Promise<WpTaxonomyRaw[]> {
@@ -70,8 +99,7 @@ async function fetchAllPages(endpoint: string, fields: string): Promise<WpTaxono
 async function syncTaxonomy<T>(config: TaxonomyConfig<T>): Promise<SyncResult<T>> {
   try {
     const raw = await fetchAllPages(config.endpoint, config.fields);
-    const filtered = config.filter ? raw.filter(config.filter) : raw;
-    const items = filtered.map(config.map);
+    const items = config.transform(raw);
     return { ok: true, items };
   } catch (err) {
     console.warn(`[sync-wp] ${config.label} fetch failed: ${(err as Error).message}`);
@@ -80,14 +108,15 @@ async function syncTaxonomy<T>(config: TaxonomyConfig<T>): Promise<SyncResult<T>
   }
 }
 
-function fileNameFor(name: string) {
-  return `${name.replace(/[\/\\]/g, "-").trim()}.yaml`;
+function fileNameFor(item: { wpId: number; name: string }) {
+  const safeName = item.name.replace(/[\/\\]/g, "-").trim();
+  return `${item.wpId}-${safeName}.yaml`;
 }
 
-async function writeItemsToDir<T extends { name: string }>(dir: URL, items: T[]) {
+async function writeItemsToDir<T extends { wpId: number; name: string }>(dir: URL, items: T[]) {
   await mkdir(dir, { recursive: true });
 
-  const wantedFiles = new Set(items.map((i) => fileNameFor(i.name)));
+  const wantedFiles = new Set(items.map((i) => fileNameFor(i)));
   const existing = await readdir(dir);
   const stale = existing.filter(
     (f) => (f.endsWith(".yml") || f.endsWith(".yaml")) && !wantedFiles.has(f),
@@ -98,7 +127,7 @@ async function writeItemsToDir<T extends { name: string }>(dir: URL, items: T[])
   }
 
   for (const item of items) {
-    const fname = fileNameFor(item.name);
+    const fname = fileNameFor(item);
     const tmpPath = join(dir.pathname, `${fname}.tmp`);
     const finalPath = join(dir.pathname, fname);
     await writeFile(tmpPath, stringify(item), "utf-8");

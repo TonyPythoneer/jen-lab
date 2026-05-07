@@ -80,11 +80,17 @@ const wpTagSchema = z.object({
   count: z.number(),
 })
 
+const wpCategoryChildSchema = z.object({
+  wpId: z.number(),
+  slug: z.string(),
+  name: z.string(),
+})
+
 const wpCategorySchema = z.object({
   wpId: z.number(),
   slug: z.string(),
   name: z.string(),
-  parent: z.number(),
+  children: z.array(wpCategoryChildSchema).optional(),
 })
 
 export default defineContentConfig({
