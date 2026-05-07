@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <BlogTopBar :title="blog.title">
+  <!-- `fixed inset-0` escapes UMain's `min-h-[calc(100vh-...)]`; the bottom pagination then pins to the visible viewport edge on mobile/desktop alike. -->
+  <div class="fixed inset-0 z-10 flex flex-col overflow-hidden bg-white dark:bg-neutral-900">
+    <BlogTopBar :title="blog.title" class="shrink-0">
       <template #left>
         <NuxtLink
           to="/"
@@ -25,8 +26,8 @@
       </template>
     </BlogTopBar>
 
-    <div class="max-w-5xl mx-auto px-4 py-10">
-      <!-- Search + Category + Tags -->
+    <!-- Search + Category + Tags -->
+    <div class="shrink-0 max-w-5xl mx-auto w-full px-4">
       <Transition name="search-fade">
         <BlogSearchBar
           v-if="searchOpen"
@@ -35,49 +36,44 @@
           v-model:search-input="searchInput"
           :categories="categories ?? []"
           :tags="tags ?? []"
-          @change="currentPage = 1"
+          class="pt-4"
           @submit="submitSearch"
         />
       </Transition>
+    </div>
 
-      <!-- Loading -->
-      <div v-if="pending" class="text-center py-20 text-neutral-400">載入中...</div>
+    <!-- Scrollable content body. Pagination drives navigation; one page rendered at a time. -->
+    <div ref="scrollEl" class="flex-1 overflow-y-auto">
+      <div class="max-w-5xl mx-auto px-4 py-6">
+        <div v-if="loading" class="text-center py-20 text-neutral-400">載入中...</div>
 
-      <template v-else-if="posts?.length">
-        <!-- Featured latest post -->
-        <BlogPostCard
-          v-if="featuredPost"
-          :post="featuredPost"
-          :to="postRoute(featuredPost)"
-          :tag-map="tagMap"
-          featured
-        />
-
-        <!-- Posts grid (exclude featured) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BlogPostCard
-            v-for="post in remainingPosts"
+            v-for="post in posts"
             :key="post.id"
             :post="post"
             :to="postRoute(post)"
             :tag-map="tagMap"
           />
         </div>
-      </template>
 
-      <!-- Empty -->
-      <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
+        <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center mt-10">
-        <UPagination
-          v-model:page="currentPage"
-          :total="totalPages * PER_PAGE"
-          :items-per-page="PER_PAGE"
-        />
+        <ScrollToTopButton />
       </div>
+    </div>
 
-      <ScrollToTopButton />
+    <!-- Pagination pinned to bottom -->
+    <div
+      v-if="totalPages > 1"
+      class="shrink-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur px-4 py-3 flex justify-center"
+    >
+      <UPagination
+        :page="currentPage"
+        :total="totalPages * PER_PAGE"
+        :items-per-page="PER_PAGE"
+        @update:page="loadPage"
+      />
     </div>
   </div>
 </template>
@@ -150,39 +146,69 @@ const filtersReady = computed(() => !!categories.value && !!tags.value);
 
 const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
 
-// Posts (key includes filters → each combo cached separately)
-const postsKey = computed(
-  () =>
-    `wp-posts:${currentPage.value}:${search.value}:${selectedCategoryIds.value.join(",")}:${selectedTagIds.value.join(",")}`,
-);
+// Cache for instant page revisits. Wiped on filter/search change.
+const cache = ref(new Map<number, WpPost[]>());
+const totalPages = ref(1);
+const loading = ref(false);
+const scrollEl = ref<HTMLDivElement | null>(null);
 
-const { data: postsResult, pending } = await useAsyncData(
-  postsKey,
-  () =>
-    fetchPosts({
-      page: currentPage.value,
-      perPage: PER_PAGE,
-      search: search.value || undefined,
-      categories: selectedCategoryIds.value,
-      tags: selectedTagIds.value,
-    }),
-  { getCachedData: cached },
-);
+function fetchPage(page: number) {
+  return fetchPosts({
+    page,
+    perPage: PER_PAGE,
+    search: search.value || undefined,
+    categories: selectedCategoryIds.value,
+    tags: selectedTagIds.value,
+  });
+}
 
-const posts = computed(() => postsResult.value?.data ?? []);
-const totalPages = computed(() => postsResult.value?.totalPages ?? 1);
+// SSR seed: one-shot static-key fetch for the URL-requested page. Pagination clicks go through
+// the manual `loadPage` path — keeping the seed non-reactive avoids refetch on filter watcher fires.
+const seedKey = `wp-posts:seed:${currentPage.value}:${search.value}:${selectedCategoryIds.value.join(",")}:${selectedTagIds.value.join(",")}`;
+const { data: seedResult } = await useAsyncData(seedKey, () => fetchPage(currentPage.value), {
+  getCachedData: cached,
+});
+if (seedResult.value) {
+  cache.value.set(currentPage.value, seedResult.value.data);
+  totalPages.value = seedResult.value.totalPages;
+}
 
-const featuredPost = computed(() => {
-  const first = posts.value[0];
-  return first && isNew(first) ? first : null;
+// Filter/search change → wipe cache and reload from page 1.
+watch([search, selectedCategoryIds, selectedTagIds], () => {
+  cache.value.clear();
+  loadPage(1);
 });
 
-const remainingPosts = computed(() => (featuredPost.value ? posts.value.slice(1) : posts.value));
+// Featured/pinned post UI is currently disabled — flip the flag to re-enable.
+// Original placement: first post of page 1, only when `isNew`.
+const ENABLE_FEATURED = false;
+const featuredPost = computed(() => {
+  if (!ENABLE_FEATURED || currentPage.value !== 1) return null;
+  const post = cache.value.get(1)?.[0];
+  return post && isNew(post) ? post : null;
+});
 
-// Actions
+const posts = computed(() => cache.value.get(currentPage.value) ?? []);
+
+async function loadPage(page: number) {
+  if (page < 1 || page > totalPages.value || loading.value) return;
+  if (!cache.value.has(page)) {
+    loading.value = true;
+    try {
+      const result = await fetchPage(page);
+      totalPages.value = result.totalPages;
+      cache.value.set(page, result.data);
+    } finally {
+      loading.value = false;
+    }
+  }
+  currentPage.value = page;
+  await nextTick();
+  scrollEl.value?.scrollTo({ top: 0 });
+}
+
 function submitSearch() {
   search.value = searchInput.value;
-  currentPage.value = 1;
 }
 
 // Helpers
