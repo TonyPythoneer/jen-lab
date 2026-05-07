@@ -3,13 +3,43 @@
   <div class="fixed inset-0 z-10 flex flex-col overflow-hidden bg-white dark:bg-neutral-900">
     <BlogTopBar :title="blog.title" class="shrink-0">
       <template #left>
-        <NuxtLink
+        <UButton
           to="/"
+          variant="ghost"
+          color="neutral"
+          icon="i-lucide-house"
           aria-label="返回首頁"
-          class="inline-flex items-center text-neutral-400 hover:text-neutral-600"
-        >
-          <UIcon name="i-lucide-house" class="size-5" />
-        </NuxtLink>
+        />
+      </template>
+      <template v-if="searchOpen" #center>
+        <ClientOnly>
+          <form class="flex items-center gap-2 w-full" @submit.prevent="submitSearch">
+            <BlogFilterButton
+              v-model="selectedCategoryIds"
+              label="分類"
+              clear-label="清除分類"
+              :items="categories ?? []"
+            />
+            <BlogFilterButton
+              v-model="selectedTagIds"
+              label="標籤"
+              clear-label="清除標籤"
+              :items="tags ?? []"
+            />
+            <div class="relative flex-1 min-w-0 group">
+              <UInput
+                v-model="searchInput"
+                placeholder="搜尋文章..."
+                class="w-full"
+                :ui="{ base: 'pl-9 transition-[padding] duration-200 group-focus-within:pl-3' }"
+              />
+              <UIcon
+                name="i-lucide-search"
+                class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-neutral-400 transition-all duration-200 group-focus-within:opacity-0 group-focus-within:-translate-x-4"
+              />
+            </div>
+          </form>
+        </ClientOnly>
       </template>
       <template #right>
         <ClientOnly>
@@ -18,29 +48,12 @@
             :color="!filtersReady ? 'neutral' : searchOpen ? 'neutral' : 'primary'"
             :variant="!filtersReady || searchOpen ? 'soft' : 'solid'"
             :icon="searchOpen ? 'i-lucide-x' : 'i-lucide-search'"
-            size="sm"
             :aria-label="searchOpen ? '關閉搜尋' : '開啟搜尋'"
             @click="searchOpen = !searchOpen"
           />
         </ClientOnly>
       </template>
     </BlogTopBar>
-
-    <!-- Search + Category + Tags -->
-    <div class="shrink-0 max-w-5xl mx-auto w-full px-4">
-      <Transition name="search-fade">
-        <BlogSearchBar
-          v-if="searchOpen"
-          v-model:selected-category-ids="selectedCategoryIds"
-          v-model:selected-tag-ids="selectedTagIds"
-          v-model:search-input="searchInput"
-          :categories="categories ?? []"
-          :tags="tags ?? []"
-          class="pt-4"
-          @submit="submitSearch"
-        />
-      </Transition>
-    </div>
 
     <!-- Scrollable content body. Pagination drives navigation; one page rendered at a time. -->
     <div ref="scrollEl" class="flex-1 overflow-y-auto">
@@ -224,18 +237,3 @@ function postRoute(post: WpPost) {
   return { path: `/blogs/${post.id}`, query: { title: slug } };
 }
 </script>
-
-<style scoped>
-.search-fade-enter-active,
-.search-fade-leave-active {
-  transition:
-    opacity 200ms ease,
-    transform 200ms ease;
-  overflow: hidden;
-}
-.search-fade-enter-from,
-.search-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-</style>

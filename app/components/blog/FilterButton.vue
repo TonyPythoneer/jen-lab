@@ -40,7 +40,9 @@
                 class="flex items-center justify-between gap-2 pl-6 pr-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
                 @click="toggle(child.wpId)"
               >
-                <span class="truncate text-neutral-600 dark:text-neutral-300">{{ child.name }}</span>
+                <span class="truncate text-neutral-600 dark:text-neutral-300">{{
+                  child.name
+                }}</span>
                 <UIcon
                   v-if="modelValue.includes(child.wpId)"
                   name="i-lucide-check"
@@ -74,55 +76,55 @@
 
 <script setup lang="ts">
 interface FilterItem {
-  wpId: number
-  name: string
-  parent?: number
+  wpId: number;
+  name: string;
+  parent?: number;
 }
 
 const props = defineProps<{
-  modelValue: number[]
-  label: string
-  clearLabel: string
-  items: FilterItem[]
-}>()
+  modelValue: number[];
+  label: string;
+  clearLabel: string;
+  items: FilterItem[];
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number[]]
-  change: []
-}>()
+  "update:modelValue": [value: number[]];
+  change: [];
+}>();
 
-const grouped = computed(() => props.items.some((i) => typeof i.parent === 'number'))
+const grouped = computed(() => props.items.some((i) => typeof i.parent === "number"));
 
 const groups = computed(() => {
-  const byId = new Map(props.items.map((i) => [i.wpId, i]))
-  const childrenByParent = new Map<number, FilterItem[]>()
-  const roots: FilterItem[] = []
+  const byId = new Map(props.items.map((i) => [i.wpId, i]));
+  const childrenByParent = new Map<number, FilterItem[]>();
+  const roots: FilterItem[] = [];
   for (const item of props.items) {
-    const p = item.parent ?? 0
+    const p = item.parent ?? 0;
     if (p && byId.has(p)) {
-      const arr = childrenByParent.get(p) ?? []
-      arr.push(item)
-      childrenByParent.set(p, arr)
+      const arr = childrenByParent.get(p) ?? [];
+      arr.push(item);
+      childrenByParent.set(p, arr);
     } else {
-      roots.push(item)
+      roots.push(item);
     }
   }
   return roots.map((parent) => ({
     parent,
     children: childrenByParent.get(parent.wpId) ?? [],
-  }))
-})
+  }));
+});
 
 function toggle(wpId: number) {
   const next = props.modelValue.includes(wpId)
     ? props.modelValue.filter((v) => v !== wpId)
-    : [...props.modelValue, wpId]
-  emit('update:modelValue', next)
-  emit('change')
+    : [...props.modelValue, wpId];
+  emit("update:modelValue", next);
+  emit("change");
 }
 
 function clear() {
-  emit('update:modelValue', [])
-  emit('change')
+  emit("update:modelValue", []);
+  emit("change");
 }
 </script>
