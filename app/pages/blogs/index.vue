@@ -117,9 +117,13 @@ useSeoMeta({ title: `${blog.title} - ${blog.brief}`, description: blog.brief });
 
 const route = useRoute();
 const router = useRouter();
-const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const initialQuery = route.query;
 
-// Parse initial filters from URL (one-shot; subsequent URL → state sync would flicker on route leave)
+// Cache: hit memory before re-fetching (Nuxt payload during hydration, then static.data on client)
+const cached = (key: string, app: ReturnType<typeof useNuxtApp>) =>
+  app.payload.data[key] ?? app.static.data[key];
+
+// #region Filter state
 function csvToIds(v: unknown): number[] {
   if (typeof v !== "string" || !v) return [];
   return v
@@ -128,33 +132,32 @@ function csvToIds(v: unknown): number[] {
     .filter((n) => Number.isInteger(n) && n > 0);
 }
 
-const initialQuery = route.query;
 const search = ref(typeof initialQuery.q === "string" ? initialQuery.q : "");
+const searchInput = ref(search.value);
 const selectedCategoryIds = ref<number[]>(csvToIds(initialQuery.cat));
 const selectedTagIds = ref<number[]>(csvToIds(initialQuery.tag));
-const currentPage = ref(Math.max(1, Number(initialQuery.page) || 1));
-const searchInput = ref(search.value);
 
-// State → URL (one-way). Skip when leaving /blogs to avoid clobbering during navigation.
-watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
-  if (route.path !== "/blogs") return;
-  const query: Record<string, string> = {};
-  if (search.value) query.q = search.value;
-  if (selectedCategoryIds.value.length) query.cat = selectedCategoryIds.value.join(",");
-  if (selectedTagIds.value.length) query.tag = selectedTagIds.value.join(",");
-  if (currentPage.value > 1) query.page = String(currentPage.value);
-  lastQuery.value = query;
-  router.replace({ query });
-});
+const hasActiveFilters = computed(
+  () =>
+    !!search.value
+    || !!searchInput.value
+    || selectedCategoryIds.value.length > 0
+    || selectedTagIds.value.length > 0,
+);
 
-// Capture initial URL into lastQuery (covers fresh load / back-from-detail)
-lastQuery.value = { ...initialQuery } as Record<string, string>;
+function submitSearch() {
+  search.value = searchInput.value;
+}
 
-// Cache: hit memory before re-fetching (Nuxt payload during hydration, then static.data on client)
-const cached = (key: string, app: ReturnType<typeof useNuxtApp>) =>
-  app.payload.data[key] ?? app.static.data[key];
+function clearAllFilters() {
+  searchInput.value = "";
+  search.value = "";
+  selectedCategoryIds.value = [];
+  selectedTagIds.value = [];
+}
+// #endregion
 
-// Taxonomies (sourced from content collections — sync via `pnpm sync:wp`)
+// #region Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`)
 // Client-only: defers taxonomy fetch off SSR/hydration critical path.
 const { data: categories } = useLazyAsyncData(
   "wp-categories",
@@ -167,13 +170,8 @@ const { data: tags } = useLazyAsyncData(
   { server: false, getCachedData: cached },
 );
 
-const searchOpen = ref(
-  !!search.value || selectedCategoryIds.value.length > 0 || selectedTagIds.value.length > 0,
-);
 const filtersReady = computed(() => !!categories.value && !!tags.value);
-
 const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
-
 const categoryTree = computed(() =>
   (categories.value ?? []).map((c) => ({
     label: c.name,
@@ -181,16 +179,17 @@ const categoryTree = computed(() =>
     children: c.children?.map((ch) => ({ label: ch.name, value: ch.wpId })),
   })),
 );
-
 const tagTree = computed(() =>
   (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })),
 );
+// #endregion
 
-// Cache for instant page revisits. Wiped on filter/search change.
+// #region Pagination + posts
+const currentPage = ref(Math.max(1, Number(initialQuery.page) || 1));
 const cache = ref(new Map<number, WpPost[]>());
 const totalPages = ref(1);
 const loading = ref(false);
-const scrollEl = ref<HTMLDivElement | null>(null);
+const posts = computed(() => cache.value.get(currentPage.value) ?? []);
 
 function fetchPage(page: number) {
   return fetchPosts({
@@ -219,17 +218,6 @@ watch([search, selectedCategoryIds, selectedTagIds], () => {
   loadPage(1);
 });
 
-// Featured/pinned post UI is currently disabled — flip the flag to re-enable.
-// Original placement: first post of page 1, only when `isNew`.
-const ENABLE_FEATURED = false;
-const featuredPost = computed(() => {
-  if (!ENABLE_FEATURED || currentPage.value !== 1) return null;
-  const post = cache.value.get(1)?.[0];
-  return post && isNew(post) ? post : null;
-});
-
-const posts = computed(() => cache.value.get(currentPage.value) ?? []);
-
 async function loadPage(page: number) {
   if (page < 1 || page > totalPages.value || loading.value) return;
   if (!cache.value.has(page)) {
@@ -247,26 +235,43 @@ async function loadPage(page: number) {
   scrollEl.value?.scrollTo({ top: 0 });
 }
 
-function submitSearch() {
-  search.value = searchInput.value;
-}
+// Featured/pinned post UI is currently disabled — flip the flag to re-enable.
+// Original placement: first post of page 1, only when `isNew`.
+const ENABLE_FEATURED = false;
+const featuredPost = computed(() => {
+  if (!ENABLE_FEATURED || currentPage.value !== 1) return null;
+  const post = cache.value.get(1)?.[0];
+  return post && isNew(post) ? post : null;
+});
+// #endregion
 
-const hasActiveFilters = computed(
-  () =>
-    !!search.value
-    || !!searchInput.value
-    || selectedCategoryIds.value.length > 0
-    || selectedTagIds.value.length > 0,
+// #region URL sync
+const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+
+// State → URL (one-way). Skip when leaving /blogs to avoid clobbering during navigation.
+watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
+  if (route.path !== "/blogs") return;
+  const query: Record<string, string> = {};
+  if (search.value) query.q = search.value;
+  if (selectedCategoryIds.value.length) query.cat = selectedCategoryIds.value.join(",");
+  if (selectedTagIds.value.length) query.tag = selectedTagIds.value.join(",");
+  if (currentPage.value > 1) query.page = String(currentPage.value);
+  lastQuery.value = query;
+  router.replace({ query });
+});
+
+// Capture initial URL into lastQuery (covers fresh load / back-from-detail)
+lastQuery.value = { ...initialQuery } as Record<string, string>;
+// #endregion
+
+// #region UI state
+const searchOpen = ref(
+  !!search.value || selectedCategoryIds.value.length > 0 || selectedTagIds.value.length > 0,
 );
+const scrollEl = ref<HTMLDivElement | null>(null);
+// #endregion
 
-function clearAllFilters() {
-  searchInput.value = "";
-  search.value = "";
-  selectedCategoryIds.value = [];
-  selectedTagIds.value = [];
-}
-
-// Helpers
+// #region Helpers
 function isNew(post: WpPost) {
   return Date.now() - new Date(post.date).getTime() < NEW_POST_DAYS * 86_400_000;
 }
@@ -278,6 +283,7 @@ function postRoute(post: WpPost) {
     .toLowerCase();
   return { path: `/blogs/${post.id}`, query: { title: slug } };
 }
+// #endregion
 </script>
 
 <style scoped>
