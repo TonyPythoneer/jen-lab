@@ -3,13 +3,20 @@
     <UButton
       variant="outline"
       color="neutral"
-      trailing-icon="i-lucide-chevron-down"
+      :icon="icon"
+      :aria-label="label"
       :class="modelValue.length ? 'ring-2 ring-primary-500' : ''"
     >
-      {{ label }}
-      <span v-if="modelValue.length" class="ml-1 text-primary-500">
-        ({{ modelValue.length }})
-      </span>
+      <template v-if="!icon">{{ label }}</template>
+      <template #trailing>
+        <span
+          v-if="modelValue.length"
+          class="rounded-full size-5 inline-flex items-center justify-center text-xs font-semibold bg-primary-500 text-white"
+        >
+          {{ modelValue.length }}
+        </span>
+        <UIcon v-else name="i-lucide-chevron-down" />
+      </template>
     </UButton>
     <template #content>
       <div class="w-56 flex flex-col">
@@ -20,54 +27,25 @@
         >
           {{ clearLabel }}
         </button>
-        <div class="p-2 overflow-y-auto max-h-64 flex flex-col gap-0.5">
-          <template v-if="grouped">
-            <div v-for="group in groups" :key="group.parent.wpId" class="flex flex-col gap-0.5">
-              <button
-                class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm font-semibold text-left"
-                @click="toggle(group.parent.wpId)"
-              >
-                <span class="truncate">{{ group.parent.name }}</span>
-                <UIcon
-                  v-if="modelValue.includes(group.parent.wpId)"
-                  name="i-lucide-check"
-                  class="text-primary-500 size-4 shrink-0"
-                />
-              </button>
-              <button
-                v-for="child in group.children"
-                :key="child.wpId"
-                class="flex items-center justify-between gap-2 pl-6 pr-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
-                @click="toggle(child.wpId)"
-              >
-                <span class="truncate text-neutral-600 dark:text-neutral-300">{{
-                  child.name
-                }}</span>
-                <UIcon
-                  v-if="modelValue.includes(child.wpId)"
-                  name="i-lucide-check"
-                  class="text-primary-500 size-4 shrink-0"
-                />
-              </button>
-            </div>
-          </template>
-          <template v-else>
-            <button
-              v-for="item in items"
-              :key="item.wpId"
-              class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-left"
-              @click="toggle(item.wpId)"
-            >
-              <span class="flex items-center gap-1 min-w-0">
-                <span class="truncate">{{ item.name }}</span>
-              </span>
-              <UIcon
-                v-if="modelValue.includes(item.wpId)"
-                name="i-lucide-check"
-                class="text-primary-500 size-4 shrink-0"
+        <div class="p-2 overflow-y-auto max-h-64">
+          <UTree
+            v-model="selectedTree"
+            :items="treeItems"
+            :as="{ link: 'div' }"
+            multiple
+            propagate-select
+            bubble-select
+            @select="onSelect"
+          >
+            <template #item-leading="{ selected, indeterminate, handleSelect }">
+              <UCheckbox
+                :model-value="indeterminate ? 'indeterminate' : selected"
+                tabindex="-1"
+                @change="handleSelect"
+                @click.stop
               />
-            </button>
-          </template>
+            </template>
+          </UTree>
         </div>
       </div>
     </template>
@@ -75,10 +53,17 @@
 </template>
 
 <script setup lang="ts">
+import type { TreeItem } from "@nuxt/ui";
+
 interface FilterItem {
   wpId: number;
   name: string;
   parent?: number;
+}
+
+interface FilterTreeItem extends TreeItem {
+  value: number;
+  children?: FilterTreeItem[];
 }
 
 const props = defineProps<{
@@ -86,6 +71,7 @@ const props = defineProps<{
   label: string;
   clearLabel: string;
   items: FilterItem[];
+  icon?: string;
 }>();
 
 const emit = defineEmits<{
@@ -93,34 +79,40 @@ const emit = defineEmits<{
   change: [];
 }>();
 
-const grouped = computed(() => props.items.some((i) => typeof i.parent === "number"));
-
-const groups = computed(() => {
-  const byId = new Map(props.items.map((i) => [i.wpId, i]));
-  const childrenByParent = new Map<number, FilterItem[]>();
-  const roots: FilterItem[] = [];
-  for (const item of props.items) {
-    const p = item.parent ?? 0;
-    if (p && byId.has(p)) {
-      const arr = childrenByParent.get(p) ?? [];
-      arr.push(item);
-      childrenByParent.set(p, arr);
-    } else {
-      roots.push(item);
+const childrenMap = computed(() => {
+  const m = new Map<number, FilterTreeItem[]>();
+  for (const i of props.items) {
+    if (i.parent) {
+      const arr = m.get(i.parent) ?? [];
+      arr.push({ label: i.name, value: i.wpId });
+      m.set(i.parent, arr);
     }
   }
-  return roots.map((parent) => ({
-    parent,
-    children: childrenByParent.get(parent.wpId) ?? [],
-  }));
+  return m;
 });
 
-function toggle(wpId: number) {
-  const next = props.modelValue.includes(wpId)
-    ? props.modelValue.filter((v) => v !== wpId)
-    : [...props.modelValue, wpId];
-  emit("update:modelValue", next);
-  emit("change");
+const treeItems = computed<FilterTreeItem[]>(() =>
+  props.items
+    .filter((i) => !i.parent)
+    .map((p) => ({ label: p.name, value: p.wpId, children: childrenMap.value.get(p.wpId) })),
+);
+
+const flatNodes = computed(() =>
+  treeItems.value.flatMap((n) => [n, ...(n.children ?? [])]),
+);
+
+const selectedTree = computed<FilterTreeItem[]>({
+  get: () => flatNodes.value.filter((n) => props.modelValue.includes(n.value)),
+  set: (items) => {
+    emit("update:modelValue", items.map((i) => i.value));
+    emit("change");
+  },
+});
+
+function onSelect(e: { detail: { originalEvent: Event }; preventDefault: () => void }) {
+  if (e.detail.originalEvent.type === "click") {
+    e.preventDefault();
+  }
 }
 
 function clear() {

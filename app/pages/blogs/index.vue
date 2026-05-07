@@ -1,7 +1,7 @@
 <template>
   <!-- `fixed inset-0` escapes UMain's `min-h-[calc(100vh-...)]`; the bottom pagination then pins to the visible viewport edge on mobile/desktop alike. -->
   <div class="fixed inset-0 z-10 flex flex-col overflow-hidden bg-white dark:bg-neutral-900">
-    <BlogTopBar :title="blog.title" class="shrink-0">
+    <BlogTopBar class="shrink-0">
       <template #left>
         <UButton
           to="/"
@@ -9,37 +9,43 @@
           color="neutral"
           icon="i-lucide-house"
           aria-label="返回首頁"
+          class="rounded-full"
         />
       </template>
-      <template v-if="searchOpen" #center>
-        <ClientOnly>
-          <form class="flex items-center gap-2 w-full" @submit.prevent="submitSearch">
-            <BlogFilterButton
-              v-model="selectedCategoryIds"
-              label="分類"
-              clear-label="清除分類"
-              :items="categories ?? []"
-            />
-            <BlogFilterButton
-              v-model="selectedTagIds"
-              label="標籤"
-              clear-label="清除標籤"
-              :items="tags ?? []"
-            />
-            <div class="relative flex-1 min-w-0 group">
+      <template #center>
+        <div class="relative h-8 overflow-hidden">
+          <Transition name="topbar-swap">
+            <UFieldGroup v-if="searchOpen" key="search" class="absolute inset-0 w-full">
+              <BlogFilterButton
+                v-model="selectedCategoryIds"
+                label="分類"
+                clear-label="清除分類"
+                icon="i-lucide-folder"
+                :items="categories ?? []"
+              />
+              <BlogFilterButton
+                v-model="selectedTagIds"
+                label="標籤"
+                clear-label="清除標籤"
+                icon="i-lucide-tag"
+                :items="tags ?? []"
+              />
               <UInput
                 v-model="searchInput"
-                placeholder="搜尋文章..."
-                class="w-full"
-                :ui="{ base: 'pl-9 transition-[padding] duration-200 group-focus-within:pl-3' }"
+                placeholder="🔍 Search"
+                class="flex-1 min-w-0"
+                @keyup.enter="submitSearch"
               />
-              <UIcon
-                name="i-lucide-search"
-                class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-neutral-400 transition-all duration-200 group-focus-within:opacity-0 group-focus-within:-translate-x-4"
-              />
-            </div>
-          </form>
-        </ClientOnly>
+            </UFieldGroup>
+            <h1
+              v-else
+              key="title"
+              class="absolute inset-0 flex items-center justify-center text-base md:text-lg font-semibold tracking-tight truncate"
+            >
+              {{ blog.title }}
+            </h1>
+          </Transition>
+        </div>
       </template>
       <template #right>
         <ClientOnly>
@@ -50,6 +56,7 @@
             :icon="searchOpen ? 'i-lucide-x' : 'i-lucide-search'"
             :aria-label="searchOpen ? '關閉搜尋' : '開啟搜尋'"
             @click="searchOpen = !searchOpen"
+            class="rounded-full"
           />
         </ClientOnly>
       </template>
@@ -237,3 +244,20 @@ function postRoute(post: WpPost) {
   return { path: `/blogs/${post.id}`, query: { title: slug } };
 }
 </script>
+
+<style scoped>
+.topbar-swap-enter-active,
+.topbar-swap-leave-active {
+  transition:
+    transform 250ms ease,
+    opacity 250ms ease;
+}
+.topbar-swap-enter-from {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+.topbar-swap-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+</style>
