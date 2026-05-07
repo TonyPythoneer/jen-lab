@@ -23,7 +23,7 @@
     <div
       v-else
       :class="[
-        'w-full flex items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900',
+        'w-full flex items-center justify-center bg-linear-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900',
         featured ? 'h-48 md:h-56' : 'h-48',
       ]"
     >
@@ -57,13 +57,13 @@
 </template>
 
 <script setup lang="ts">
-import { stripHtml, formatDate, type WpPost } from '~/composables/useWpApi'
-import type { RouteLocationRaw } from 'vue-router'
+import { stripHtml, formatDate, type WpPost } from "~/composables/useWpApi";
+import type { RouteLocationRaw } from "vue-router";
 
 defineProps<{
-  post: WpPost
-  to: RouteLocationRaw
-  tagMap: Record<number, string>
-  featured?: boolean
-}>()
+  post: WpPost;
+  to: RouteLocationRaw;
+  tagMap: Record<number, string>;
+  featured?: boolean;
+}>();
 </script>

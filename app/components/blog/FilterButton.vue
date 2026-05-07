@@ -19,34 +19,25 @@
       </template>
     </UButton>
     <template #content>
-      <div class="w-56 flex flex-col">
-        <button
-          :disabled="!modelValue.length"
-          class="sticky top-0 z-10 bg-white dark:bg-neutral-900 text-xs px-3 py-2 text-left border-b border-neutral-200 dark:border-neutral-800 text-neutral-400 enabled:hover:text-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="clear"
+      <div class="w-56 p-2 max-h-64 overflow-y-auto">
+        <UTree
+          v-model="selectedTree"
+          :items="items"
+          :as="{ link: 'div' }"
+          multiple
+          propagate-select
+          bubble-select
+          @select="onSelect"
         >
-          {{ clearLabel }}
-        </button>
-        <div class="p-2 overflow-y-auto max-h-64">
-          <UTree
-            v-model="selectedTree"
-            :items="items"
-            :as="{ link: 'div' }"
-            multiple
-            propagate-select
-            bubble-select
-            @select="onSelect"
-          >
-            <template #item-leading="{ selected, indeterminate, handleSelect }">
-              <UCheckbox
-                :model-value="indeterminate ? 'indeterminate' : selected"
-                tabindex="-1"
-                @change="handleSelect"
-                @click.stop
-              />
-            </template>
-          </UTree>
-        </div>
+          <template #item-leading="{ selected, indeterminate, handleSelect }">
+            <UCheckbox
+              :model-value="indeterminate ? 'indeterminate' : selected"
+              tabindex="-1"
+              @change="handleSelect"
+              @click.stop
+            />
+          </template>
+        </UTree>
       </div>
     </template>
   </UPopover>
@@ -63,7 +54,6 @@ interface FilterTreeItem extends TreeItem {
 const props = defineProps<{
   modelValue: number[];
   label: string;
-  clearLabel: string;
   items: FilterTreeItem[];
   icon?: string;
 }>();
@@ -93,8 +83,4 @@ function onSelect(e: { detail: { originalEvent: Event }; preventDefault: () => v
   }
 }
 
-function clear() {
-  emit("update:modelValue", []);
-  emit("change");
-}
 </script>

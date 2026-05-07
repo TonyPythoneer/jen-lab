@@ -19,14 +19,12 @@
               <BlogFilterButton
                 v-model="selectedCategoryIds"
                 label="分類"
-                clear-label="清除分類"
                 icon="i-lucide-folder"
                 :items="categoryTree"
               />
               <BlogFilterButton
                 v-model="selectedTagIds"
                 label="標籤"
-                clear-label="清除標籤"
                 icon="i-lucide-tag"
                 :items="tagTree"
               />
@@ -35,6 +33,14 @@
                 placeholder="🔍 Search"
                 class="flex-1 min-w-0"
                 @keyup.enter="submitSearch"
+              />
+              <UButton
+                v-if="hasActiveFilters"
+                icon="i-lucide-eraser"
+                color="neutral"
+                variant="outline"
+                aria-label="清除全部篩選"
+                @click="clearAllFilters"
               />
             </UFieldGroup>
             <h1
@@ -65,7 +71,9 @@
     <!-- Scrollable content body. Pagination drives navigation; one page rendered at a time. -->
     <div ref="scrollEl" class="flex-1 overflow-y-auto">
       <div class="max-w-5xl mx-auto px-4 py-6">
-        <div v-if="loading" class="text-center py-20 text-neutral-400">載入中...</div>
+        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <BlogPostCardSkeleton v-for="n in PER_PAGE" :key="n" />
+        </div>
 
         <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BlogPostCard
@@ -241,6 +249,21 @@ async function loadPage(page: number) {
 
 function submitSearch() {
   search.value = searchInput.value;
+}
+
+const hasActiveFilters = computed(
+  () =>
+    !!search.value
+    || !!searchInput.value
+    || selectedCategoryIds.value.length > 0
+    || selectedTagIds.value.length > 0,
+);
+
+function clearAllFilters() {
+  searchInput.value = "";
+  search.value = "";
+  selectedCategoryIds.value = [];
+  selectedTagIds.value = [];
 }
 
 // Helpers
