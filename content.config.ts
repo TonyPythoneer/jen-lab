@@ -73,12 +73,42 @@ const homeSchema = z.object({
   ])),
 })
 
+const wpTagSchema = z.object({
+  wpId: z.number(),
+  slug: z.string(),
+  name: z.string(),
+  count: z.number(),
+})
+
+const wpCategoryChildSchema = z.object({
+  wpId: z.number(),
+  slug: z.string(),
+  name: z.string(),
+})
+
+const wpCategorySchema = z.object({
+  wpId: z.number(),
+  slug: z.string(),
+  name: z.string(),
+  children: z.array(wpCategoryChildSchema).optional(),
+})
+
 export default defineContentConfig({
   collections: {
     home: defineCollection({
       type: 'page',
       source: 'home/*.md',
       schema: homeSchema,
+    }),
+    wpTags: defineCollection({
+      type: 'data',
+      source: 'wp/tags/*.yaml',
+      schema: wpTagSchema,
+    }),
+    wpCategories: defineCollection({
+      type: 'data',
+      source: 'wp/categories/*.yaml',
+      schema: wpCategorySchema,
     }),
   },
 })

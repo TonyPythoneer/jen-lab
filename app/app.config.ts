@@ -1,4 +1,8 @@
 export default defineAppConfig({
+  blog: {
+    title: "榛知部落格",
+    brief: "深入淺出的中文澳洲知識庫",
+  },
   contacts: [
     {
       label: "Threads",

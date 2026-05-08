@@ -21,6 +21,10 @@ sections:
     label: Portals
     component: portal-list
     portals:
+      - to: /blogs
+        icon: i-lucide-library
+        title: 榛知部落格
+        brief: 深入淺出的中文澳洲知識庫
       - to: https://diamond-earth-bf6.notion.site/NextSteps-25200d494c4980609687da8989482715
         icon: i-lucide-calendar
         title: NextSteps 職涯諮詢預約
