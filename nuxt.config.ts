@@ -79,6 +79,12 @@ const devSettings: NuxtConfig = {
   },
 };
 
+const experimentalSettings: NuxtConfig = {
+  experimental: {
+    typedPages: true,
+  },
+};
+
 const lifecycleHookstSettings: NuxtConfig = {
   hooks: {
     // Render markdown → HTML once at build, store on the content row as
@@ -103,4 +109,5 @@ export default defineNuxtConfig({
   ...cloudflareSettings,
   ...devSettings,
   ...lifecycleHookstSettings,
+  ...experimentalSettings,
 });

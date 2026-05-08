@@ -72,7 +72,7 @@
     <div ref="scrollEl" class="flex-1 overflow-y-auto">
       <div class="max-w-5xl mx-auto px-4 py-6">
         <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BlogPostCardSkeleton v-for="n in PER_PAGE" :key="n" />
+          <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
         </div>
 
         <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -80,7 +80,7 @@
             v-for="post in posts"
             :key="post.id"
             :post="post"
-            :to="postRoute(post)"
+            :to="{ name: 'blogs-slug', params: { slug: [String(post.id)] }, query: { title: post.slug } }"
             :tag-map="tagMap"
           />
         </div>
@@ -93,24 +93,24 @@
 
     <!-- Pagination pinned to bottom -->
     <div
-      v-if="totalPages > 1"
       class="shrink-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur px-4 py-3 flex justify-center"
     >
       <UPagination
         :page="currentPage"
         :total="totalPages * PER_PAGE"
         :items-per-page="PER_PAGE"
-        @update:page="loadPage"
+        :disabled="totalPages <= 1"
+        @update:page="currentPage = $event"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { fetchPosts, stripHtml, type WpPost } from "~/composables/useWpApi";
+import { fetchPosts, type WpPost } from "~/composables/useWpApi";
 
-const PER_PAGE = 10;
-const NEW_POST_DAYS = 7;
+const PER_PAGE = 20;
+const SKELETON_COUNT = 4;
 
 const { blog } = useAppConfig();
 useSeoMeta({ title: `${blog.title} - ${blog.brief}`, description: blog.brief });
@@ -139,10 +139,10 @@ const selectedTagIds = ref<number[]>(csvToIds(initialQuery.tag));
 
 const hasActiveFilters = computed(
   () =>
-    !!search.value
-    || !!searchInput.value
-    || selectedCategoryIds.value.length > 0
-    || selectedTagIds.value.length > 0,
+    !!search.value ||
+    !!searchInput.value ||
+    selectedCategoryIds.value.length > 0 ||
+    selectedTagIds.value.length > 0,
 );
 
 function submitSearch() {
@@ -179,70 +179,60 @@ const categoryTree = computed(() =>
     children: c.children?.map((ch) => ({ label: ch.name, value: ch.wpId })),
   })),
 );
-const tagTree = computed(() =>
-  (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })),
-);
+const tagTree = computed(() => (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })));
 // #endregion
 
 // #region Pagination + posts
 const currentPage = ref(Math.max(1, Number(initialQuery.page) || 1));
-const cache = ref(new Map<number, WpPost[]>());
+const scrollEl = ref<HTMLDivElement | null>(null);
+
+// scopeKey = filter set; pageCache lives within one scope. New scope → wipe.
+const scopeKey = computed(
+  () =>
+    `${search.value}|${selectedCategoryIds.value.join(",")}|${selectedTagIds.value.join(",")}`,
+);
+const fullKey = computed(() => `wp-posts:${scopeKey.value}:${currentPage.value}`);
+
+type PageResult = { data: WpPost[]; totalPages: number };
+const pageCache = ref(new Map<number, PageResult>());
 const totalPages = ref(1);
-const loading = ref(false);
-const posts = computed(() => cache.value.get(currentPage.value) ?? []);
 
-function fetchPage(page: number) {
-  return fetchPosts({
-    page,
-    perPage: PER_PAGE,
-    search: search.value || undefined,
-    categories: selectedCategoryIds.value,
-    tags: selectedTagIds.value,
-  });
-}
-
-// SSR seed: one-shot static-key fetch for the URL-requested page. Pagination clicks go through
-// the manual `loadPage` path — keeping the seed non-reactive avoids refetch on filter watcher fires.
-const seedKey = `wp-posts:seed:${currentPage.value}:${search.value}:${selectedCategoryIds.value.join(",")}:${selectedTagIds.value.join(",")}`;
-const { data: seedResult } = await useAsyncData(seedKey, () => fetchPage(currentPage.value), {
-  getCachedData: cached,
-});
-if (seedResult.value) {
-  cache.value.set(currentPage.value, seedResult.value.data);
-  totalPages.value = seedResult.value.totalPages;
-}
-
-// Filter/search change → wipe cache and reload from page 1.
-watch([search, selectedCategoryIds, selectedTagIds], () => {
-  cache.value.clear();
-  loadPage(1);
+watch(scopeKey, () => {
+  pageCache.value.clear();
+  currentPage.value = 1;
+  totalPages.value = 1;
 });
 
-async function loadPage(page: number) {
-  if (page < 1 || page > totalPages.value || loading.value) return;
-  if (!cache.value.has(page)) {
-    loading.value = true;
-    try {
-      const result = await fetchPage(page);
-      totalPages.value = result.totalPages;
-      cache.value.set(page, result.data);
-    } finally {
-      loading.value = false;
-    }
-  }
-  currentPage.value = page;
+const { data: result, status } = useLazyAsyncData<PageResult>(
+  fullKey.value,
+  () =>
+    fetchPosts({
+      page: currentPage.value,
+      perPage: PER_PAGE,
+      search: search.value || undefined,
+      categories: selectedCategoryIds.value,
+      tags: selectedTagIds.value,
+    }),
+  {
+    server: false,
+    watch: [fullKey],
+    getCachedData: () => pageCache.value.get(currentPage.value),
+  },
+);
+
+watch(result, (v) => {
+  if (!v) return;
+  pageCache.value.set(currentPage.value, v);
+  if (totalPages.value === 1) totalPages.value = v.totalPages;
+});
+
+watch(currentPage, async () => {
   await nextTick();
   scrollEl.value?.scrollTo({ top: 0 });
-}
-
-// Featured/pinned post UI is currently disabled — flip the flag to re-enable.
-// Original placement: first post of page 1, only when `isNew`.
-const ENABLE_FEATURED = false;
-const featuredPost = computed(() => {
-  if (!ENABLE_FEATURED || currentPage.value !== 1) return null;
-  const post = cache.value.get(1)?.[0];
-  return post && isNew(post) ? post : null;
 });
+
+const posts = computed(() => result.value?.data ?? []);
+const loading = computed(() => status.value === "pending");
 // #endregion
 
 // #region URL sync
@@ -268,22 +258,8 @@ lastQuery.value = { ...initialQuery } as Record<string, string>;
 const searchOpen = ref(
   !!search.value || selectedCategoryIds.value.length > 0 || selectedTagIds.value.length > 0,
 );
-const scrollEl = ref<HTMLDivElement | null>(null);
 // #endregion
 
-// #region Helpers
-function isNew(post: WpPost) {
-  return Date.now() - new Date(post.date).getTime() < NEW_POST_DAYS * 86_400_000;
-}
-
-function postRoute(post: WpPost) {
-  const slug = stripHtml(post.title.rendered)
-    .replace(/\s+/g, "-")
-    .replace(/[^\w一-鿿-]/g, "")
-    .toLowerCase();
-  return { path: `/blogs/${post.id}`, query: { title: slug } };
-}
-// #endregion
 </script>
 
 <style scoped>

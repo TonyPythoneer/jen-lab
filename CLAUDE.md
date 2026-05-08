@@ -57,6 +57,10 @@ Deploys to **Cloudflare Pages** via Wrangler, `cloudflare-pages` Nitro preset. `
 
 - `mdc.highlight: false` and `content.build.markdown.highlight: false` in `nuxt.config.ts` — markdown has no fenced code blocks, so Shiki's oniguruma WASM (~600 KB) and language grammars (~900 KB) are skipped from the client bundle. Re-enable if a code block is ever introduced into `content/**.md` or product descriptions.
 
+## Data fetching
+
+Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI render until the request resolves — slow networks stall the page shell. Use `useLazyAsyncData` (non-blocking, paints shell first, fills data when ready) or fetch imperatively inside event handlers / `onMounted`.
+
 ## Code Style
 
 - 2-space indent for Vue and TypeScript. Configured in `.zed/settings.json` for the Zed IDE.

@@ -3,14 +3,15 @@ export const WP_BASE = __WP_BASE__;
 
 // Field whitelists keep payloads lean (WP defaults include many unused properties)
 const POST_LIST_FIELDS =
-  "id,date,title,excerpt,link,tags,categories,jetpack_featured_media_url";
+  "id,date,slug,title,excerpt,link,tags,categories,jetpack_featured_media_url";
 const POST_DETAIL_FIELDS =
-  "id,date,title,excerpt,content,link,tags,categories,jetpack_featured_media_url";
+  "id,date,slug,title,excerpt,content,link,tags,categories,jetpack_featured_media_url";
 const PAGE_FIELDS = "id,date,title,content,link";
 
 export interface WpPost {
   id: number;
   date: string;
+  slug: string;
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
