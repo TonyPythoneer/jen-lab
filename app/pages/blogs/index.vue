@@ -99,7 +99,7 @@
         :page="currentPage"
         :total="totalPages * PER_PAGE"
         :items-per-page="PER_PAGE"
-        :disabled="totalPages <= 1"
+        :disabled="loading || totalPages <= 1"
         @update:page="currentPage = $event"
       />
     </div>
