@@ -1,17 +1,34 @@
 {
   "preferred_line_length": 100,
+  "format_on_save": "on",
+  "formatter": {
+    "external": {
+      "command": "pnpm",
+      "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+    }
+  },
   "languages": {
     "Vue.js": {
       "tab_size": 2,
-      "hard_tabs": false
+      "hard_tabs": false,
+      "preferred_line_length": 100
     },
     "TypeScript": {
       "tab_size": 2,
-      "hard_tabs": false
+      "hard_tabs": false,
+      "preferred_line_length": 100
     },
     "JavaScript": {
       "tab_size": 2,
+      "hard_tabs": false,
+      "preferred_line_length": 100
+    },
+    "JSON": {
+      "tab_size": 2,
       "hard_tabs": false
+    },
+    "Markdown": {
+      "format_on_save": "off"
     }
   }
 }
