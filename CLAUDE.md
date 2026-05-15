@@ -4,14 +4,27 @@ Guidance for Claude Code (claude.ai/code) in this repo.
 
 ## Commands
 
+This project uses [Vite+](https://viteplus.dev/guide/) (`vp`) as unified toolchain. Run `vp help` for full command list.
+
 ```bash
-pnpm dev          # Start dev server at http://localhost:3000
+# Development
+pnpm dev          # Start Nuxt dev server at http://localhost:3000
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages
-pnpm typecheck    # nuxt typecheck
 pnpm analyze      # Bundle analyzer (no serve)
+
+# Validation (run before committing)
+vp install        # Install dependencies
+vp check          # Lint + format + typecheck in one pass
+vp test           # Run tests (Vitest)
+
+# Other
+pnpm typecheck    # Nuxt typecheck only (also covered by vp check)
+pnpm sync:wp      # Sync WordPress content
 ```
+
+> `vp dev` / `vp build` do NOT replace `pnpm dev` / `pnpm build` — Nuxt has its own pipeline.
 
 ## Architecture
 
