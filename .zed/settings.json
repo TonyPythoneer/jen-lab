@@ -53,7 +53,12 @@
       "language_servers": ["oxfmt", "..."]
     },
     "Markdown": {
-      "format_on_save": "off"
+      "format_on_save": "off",
+      "soft_wrap": "editor_width"
     }
+  },
+  "file_types": {
+    "Markdown": ["mdc"],
+    "JSONC": ["tsconfig.json", "tsconfig.*.json", ".zed/*.json"]
   }
 }

@@ -1,4 +1,5 @@
 # 04 — File associations + JSON schemas
+## Status: ✅
 
 ## Why
 
