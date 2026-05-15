@@ -33,7 +33,6 @@
           v-if="page"
           id="profile"
           :profile="page.profile"
-          :contacts="contacts"
         />
 
         <!-- `show` gates entry animation until both data is ready and component is mounted. -->
@@ -52,8 +51,6 @@
 <script setup lang="ts">
 import type { ContentTocLink } from '@nuxt/ui'
 import type { Collections } from '@nuxt/content'
-
-const { contacts } = useAppConfig()
 
 const profiles = {
   'jen-knows': { label: 'Jen Knows', headTitle: '榛知 | NextSteps Academy' },
@@ -84,6 +81,15 @@ const page = computed(() => activeQuery.value.data.value as Collections['home'] 
 
 const isMounted = useMounted()
 const isReady = computed(() => activeQuery.value.status.value === 'success' && isMounted.value)
+
+const seoDescription = computed(() => page.value?.profile.tabs[0]?.bio ?? '')
+useSeoMeta({
+  description: seoDescription,
+  ogTitle: () => selectedProfile.value.headTitle,
+  ogDescription: seoDescription,
+  ogImage: () => page.value?.profile.avatar,
+  twitterCard: 'summary',
+})
 
 const navLinks = computed<ContentTocLink[]>(() => [
   { id: 'profile', text: 'Profile', depth: 2 },

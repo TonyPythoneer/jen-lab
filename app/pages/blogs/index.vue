@@ -75,6 +75,11 @@
           <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
         </div>
 
+        <div v-else-if="error" class="text-center py-20">
+          <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
+          <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
+        </div>
+
         <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BlogPostCard
             v-for="post in posts"
@@ -107,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { fetchPosts, type WpPost } from "~/composables/useWpApi";
+import { fetchPosts } from "~/utils/wpApi";
 
 const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
@@ -123,39 +128,22 @@ const initialQuery = route.query;
 const cached = (key: string, app: ReturnType<typeof useNuxtApp>) =>
   app.payload.data[key] ?? app.static.data[key];
 
-// #region Filter state
-function csvToIds(v: unknown): number[] {
-  if (typeof v !== "string" || !v) return [];
-  return v
-    .split(",")
-    .map(Number)
-    .filter((n) => Number.isInteger(n) && n > 0);
-}
-
-const search = ref(typeof initialQuery.q === "string" ? initialQuery.q : "");
-const searchInput = ref(search.value);
-const selectedCategoryIds = ref<number[]>(csvToIds(initialQuery.cat));
-const selectedTagIds = ref<number[]>(csvToIds(initialQuery.tag));
-
-const hasActiveFilters = computed(
-  () =>
-    !!search.value ||
-    !!searchInput.value ||
-    selectedCategoryIds.value.length > 0 ||
-    selectedTagIds.value.length > 0,
-);
-
-function submitSearch() {
-  search.value = searchInput.value;
-}
-
-function clearAllFilters() {
-  searchInput.value = "";
-  search.value = "";
-  selectedCategoryIds.value = [];
-  selectedTagIds.value = [];
-}
-// #endregion
+// Filters, pagination + per-scope page cache (pure, see useBlogList).
+const {
+  search,
+  searchInput,
+  selectedCategoryIds,
+  selectedTagIds,
+  hasActiveFilters,
+  searchOpen,
+  submitSearch,
+  clearAllFilters,
+  currentPage,
+  fullKey,
+  pageCache,
+  totalPages,
+  recordResult,
+} = useBlogList(initialQuery);
 
 // #region Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`)
 // Client-only: defers taxonomy fetch off SSR/hydration critical path.
@@ -182,28 +170,10 @@ const categoryTree = computed(() =>
 const tagTree = computed(() => (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })));
 // #endregion
 
-// #region Pagination + posts
-const currentPage = ref(Math.max(1, Number(initialQuery.page) || 1));
+// #region Posts
 const scrollEl = ref<HTMLDivElement | null>(null);
 
-// scopeKey = filter set; pageCache lives within one scope. New scope → wipe.
-const scopeKey = computed(
-  () =>
-    `${search.value}|${selectedCategoryIds.value.join(",")}|${selectedTagIds.value.join(",")}`,
-);
-const fullKey = computed(() => `wp-posts:${scopeKey.value}:${currentPage.value}`);
-
-type PageResult = { data: WpPost[]; totalPages: number };
-const pageCache = ref(new Map<number, PageResult>());
-const totalPages = ref(1);
-
-watch(scopeKey, () => {
-  pageCache.value.clear();
-  currentPage.value = 1;
-  totalPages.value = 1;
-});
-
-const { data: result, status } = useLazyAsyncData<PageResult>(
+const { data: result, status, error, refresh } = useLazyAsyncData(
   fullKey.value,
   () =>
     fetchPosts({
@@ -221,9 +191,7 @@ const { data: result, status } = useLazyAsyncData<PageResult>(
 );
 
 watch(result, (v) => {
-  if (!v) return;
-  pageCache.value.set(currentPage.value, v);
-  if (totalPages.value === 1) totalPages.value = v.totalPages;
+  if (v) recordResult(v);
 });
 
 watch(currentPage, async () => {
@@ -253,13 +221,6 @@ watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
 // Capture initial URL into lastQuery (covers fresh load / back-from-detail)
 lastQuery.value = { ...initialQuery } as Record<string, string>;
 // #endregion
-
-// #region UI state
-const searchOpen = ref(
-  !!search.value || selectedCategoryIds.value.length > 0 || selectedTagIds.value.length > 0,
-);
-// #endregion
-
 </script>
 
 <style scoped>

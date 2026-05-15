@@ -14,11 +14,11 @@
       </NuxtLink>
     </header>
 
-    <div v-if="pending || error" class="text-center py-20 text-neutral-400">
+    <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
       {{ pending ? '載入中...' : '找不到文章' }}
     </div>
 
-    <article v-else-if="post">
+    <article v-else>
       <div class="text-center border-b border-neutral-200 dark:border-neutral-800 pb-8 mb-10">
         <h1 class="text-4xl md:text-5xl font-bold leading-tight" v-html="post.title.rendered" />
         <p class="text-sm text-neutral-400 mb-4">{{ formatDate(post.date) }}</p>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { fetchPost, stripHtml, formatDate } from "~/composables/useWpApi";
+import { fetchPost, stripHtml, formatDate } from "~/utils/wpApi";
 
 const route = useRoute();
 const lastQuery = useState<Record<string, string>>('blogs:lastQuery', () => ({}))
@@ -42,12 +42,15 @@ const { blog } = useAppConfig()
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
 const postId = Number(route.params.slug?.[0]);
+const validId = Number.isInteger(postId) && postId > 0;
 
-const {
-  data: post,
-  pending,
-  error,
-} = await useAsyncData(`wp-post-${postId}`, () => fetchPost(postId));
+// Lazy (not useAsyncData): non-blocking, paints the shell + loading state first.
+const { data: post, status, error } = useLazyAsyncData(
+  `wp-post-${postId}`,
+  () => fetchPost(postId),
+  { immediate: validId },
+);
+const pending = computed(() => validId && status.value === "pending");
 
 const meta = computed(() => {
   const p = post.value

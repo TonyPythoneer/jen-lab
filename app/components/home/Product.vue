@@ -5,7 +5,8 @@
       <img
         v-if="banner"
         :src="banner"
-        class="absolute inset-0 w-full h-full"
+        :alt="title"
+        class="absolute inset-0 w-full h-full object-cover"
         loading="lazy"
       />
     </div>

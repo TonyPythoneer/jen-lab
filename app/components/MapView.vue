@@ -48,6 +48,8 @@
 
     <!-- HD/SD tile toggle. z-1000 keeps it above Leaflet panes, same layer as the action bar. -->
     <button
+      aria-label="切換高解析度地圖"
+      :aria-pressed="tileQuality === 'high'"
       class="absolute bottom-6 right-2.5 z-1000 w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
       :class="tileQuality === 'high'
         ? 'bg-gray-900 border-gray-900 text-white shadow-lg'

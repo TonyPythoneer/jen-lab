@@ -6,6 +6,8 @@
     "build": "nuxt build",
     "dev": "nuxt dev --host",
     "typecheck": "nuxt typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "generate": "nuxt generate",
     "analyze": "nuxt analyze --no-serve --logLevel=silent",
     "analyze:web": "nuxt analyze --serve --logLevel=silent",
@@ -40,6 +42,7 @@
     "markdown-it-link-attributes": "^4.0.1",
     "nitro-cloudflare-dev": "^0.2.2",
     "vite-bundle-analyzer": "^1.3.8",
+    "vitest": "^4.1.6",
     "wrangler": "^4.86.0",
     "yaml": "^2.8.4"
   },

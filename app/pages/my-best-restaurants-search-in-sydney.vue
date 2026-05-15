@@ -61,37 +61,8 @@
         </template>
         <template #body>
           <div class="space-y-4 pb-2">
-            <div>
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">地區</p>
-              <!-- "全部" sits alone on row 1; spacer divs push the real items to row 2 of the 4-col grid. -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
-                <FilterItem :active="!selectedArea" label="全部" @click="selectedArea = null" />
-                <div /><div /><div />
-                <FilterItem
-                  v-for="area in restaurantAreaSet"
-                  :key="area"
-                  :active="selectedArea === area"
-                  :label="area"
-                  @click="selectedArea = area"
-                />
-              </div>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">類別</p>
-              <!-- Same row-1 spacer pattern as "地區" above. -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
-                <FilterItem :active="!selectedCategoryId" label="全部" @click="selectedCategoryId = null" />
-                <div /><div /><div />
-                <FilterItem
-                  v-for="category in categories"
-                  :key="category.id"
-                  :active="selectedCategoryId === category.id"
-                  :label="category.name"
-                  :dot-color="category.color"
-                  @click="selectedCategoryId = category.id"
-                />
-              </div>
-            </div>
+            <FilterGroup title="地區" :items="areaItems" v-model="selectedArea" />
+            <FilterGroup title="類別" :items="categoryItems" v-model="selectedCategoryId" />
           </div>
         </template>
       </UModal>
@@ -147,16 +118,7 @@
     <!-- Footer -->
     <div class="shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
       <div class="flex items-center gap-3">
-        <a
-          v-for="contact in contacts"
-          :key="contact.label"
-          :href="contact.url"
-          :aria-label="contact.label"
-          v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
-          :class="`text-gray-400 ${contact.hoverClass} transition-colors`"
-        >
-          <UIcon :name="contact.icon" class="w-4 h-4" />
-        </a>
+        <ContactLinks link-class="text-gray-400" icon-class="w-4 h-4" />
       </div>
       <p class="text-[10px] text-gray-400">
         © {{ new Date().getFullYear() }} <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a> · Data powered by Jen Knows
@@ -172,11 +134,12 @@
 </template>
 
 <script setup lang="ts">
-useHead({
-  title: '知雪梨美食地圖'
+useSeoMeta({
+  title: '榛知雪梨美食地圖',
+  description: '榛知雪梨精選的雪梨美食地圖，可依地區與類別篩選的互動地圖與清單。',
+  ogTitle: '榛知雪梨美食地圖',
+  ogDescription: '榛知雪梨精選的雪梨美食地圖，可依地區與類別篩選的互動地圖與清單。',
 })
-
-const { contacts } = useAppConfig()
 
 const isMapReady = ref(false)
 const listEl = ref<HTMLDivElement | null>(null)
@@ -195,6 +158,13 @@ const {
   isReady: isDataReady,
   clearFilters,
 } = useRestaurants()
+
+const areaItems = computed(() =>
+  [...restaurantAreaSet.value].map(area => ({ value: area, label: area })),
+)
+const categoryItems = computed(() =>
+  categories.value.map(c => ({ value: c.id, label: c.name, dotColor: c.color })),
+)
 
 watch(selectedRestaurantId, (id) => {
   if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: 'smooth' }))
