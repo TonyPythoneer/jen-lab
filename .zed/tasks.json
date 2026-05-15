@@ -1,13 +1,3 @@
-# 06 — Tasks (`.zed/tasks.json`)
-## status: complete
-
-## Why
-
-`task: spawn` palette beats opening terminal + retyping. Map every `package.json` script worth one-keying.
-
-## Create `.zed/tasks.json`
-
-```jsonc
 [
   {
     "label": "dev: nuxt",
@@ -67,10 +57,3 @@
     "reveal": "always"
   }
 ]
-```
-
-Bind: `cmd-shift-p` → `task: spawn` → fuzzy match label.
-
-## Rollback
-
-Delete file.
