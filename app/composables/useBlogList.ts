@@ -47,7 +47,8 @@ export function useBlogList(init: BlogListInit) {
   // Pagination + per-scope cache. scopeKey = filter set; a new scope wipes the cache.
   const currentPage = ref(Math.max(1, Number(init.page) || 1));
   const scopeKey = computed(
-    () => `${search.value}|${selectedCategoryIds.value.join(",")}|${selectedTagIds.value.join(",")}`,
+    () =>
+      `${search.value}|${selectedCategoryIds.value.join(",")}|${selectedTagIds.value.join(",")}`,
   );
   const fullKey = computed(() => `wp-posts:${scopeKey.value}:${currentPage.value}`);
 

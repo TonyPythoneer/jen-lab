@@ -11,15 +11,21 @@
 </template>
 
 <script setup lang="ts">
-const { threshold = 200 } = defineProps<{ threshold?: number }>()
+const { threshold = 200 } = defineProps<{ threshold?: number }>();
 
 // useWindowScroll handles SSR + passive listener + cleanup; we only react to the y value.
-const { y } = useWindowScroll()
-const show = computed(() => y.value > threshold)
-const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+const { y } = useWindowScroll();
+const show = computed(() => y.value > threshold);
+const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

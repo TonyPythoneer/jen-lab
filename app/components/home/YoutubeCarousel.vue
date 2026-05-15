@@ -2,10 +2,7 @@
   <ClientOnly>
     <div class="flex flex-col gap-3">
       <UCarousel v-slot="{ item }" dots :items="videos" class="w-full mb-8">
-        <button
-          class="flex flex-col gap-1.5 group w-full text-left"
-          @click="openVideo(item)"
-        >
+        <button class="flex flex-col gap-1.5 group w-full text-left" @click="openVideo(item)">
           <div class="relative rounded-4xl overflow-hidden aspect-video bg-gray-100">
             <img
               :src="`https://img.youtube.com/vi/${item.id}/mqdefault.jpg`"
@@ -14,7 +11,9 @@
               loading="lazy"
             />
             <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center group-hover:bg-red-600 transition-colors">
+              <div
+                class="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center group-hover:bg-red-600 transition-colors"
+              >
                 <UIcon name="i-lucide-play" class="w-5 h-5 text-white ml-0.5" />
               </div>
             </div>
@@ -36,7 +35,14 @@
               v-if="activeVideoId"
               :src="`https://www.youtube.com/embed/${activeVideoId}?autoplay=1`"
               class="w-full aspect-video max-h-screen"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+              "
               allowfullscreen
             />
           </div>
@@ -48,19 +54,19 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  videos: { id: string; title: string }[]
-}>()
+  videos: { id: string; title: string }[];
+}>();
 
-const isOpen = ref(false)
-const activeVideoId = ref<string | null>(null)
+const isOpen = ref(false);
+const activeVideoId = ref<string | null>(null);
 
 function openVideo(item: { id: string }) {
-  activeVideoId.value = item.id
-  isOpen.value = true
+  activeVideoId.value = item.id;
+  isOpen.value = true;
 }
 
 function closeVideo() {
-  isOpen.value = false
-  activeVideoId.value = null
+  isOpen.value = false;
+  activeVideoId.value = null;
 }
 </script>

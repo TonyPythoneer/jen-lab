@@ -8,11 +8,7 @@
   -->
   <ClientOnly>
     <aside
-      class="
-        sm:fixed sm:top-1/2 sm:-translate-y-1/2
-        max-sm:sticky max-sm:top-0 max-sm:z-30 max-sm:bg-white
-        max-sm:border-b max-sm:border-gray-200
-      "
+      class="sm:fixed sm:top-1/2 sm:-translate-y-1/2 max-sm:sticky max-sm:top-0 max-sm:z-30 max-sm:bg-white max-sm:border-b max-sm:border-gray-200"
     >
       <UContentToc
         highlight
@@ -31,12 +27,12 @@
 </template>
 
 <script setup lang="ts">
-import type { ContentTocLink } from '@nuxt/ui'
+import type { ContentTocLink } from "@nuxt/ui";
 
 defineProps<{
-  links: ContentTocLink[]
-  title: string
-}>()
+  links: ContentTocLink[];
+  title: string;
+}>();
 </script>
 
 <style scoped>

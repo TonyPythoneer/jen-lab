@@ -109,7 +109,7 @@ async function syncTaxonomy<T>(config: TaxonomyConfig<T>): Promise<SyncResult<T>
 }
 
 function fileNameFor(item: { wpId: number; name: string }) {
-  const safeName = item.name.replace(/[\/\\]/g, "-").trim();
+  const safeName = item.name.replace(/[/\\]/g, "-").trim();
   return `${item.wpId}-${safeName}.yaml`;
 }
 

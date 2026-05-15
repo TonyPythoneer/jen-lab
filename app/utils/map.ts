@@ -1,12 +1,12 @@
-import type { DivIcon } from 'leaflet'
-import { markerIcons } from '@/assets/data/map'
+import type { DivIcon } from "leaflet";
+import { markerIcons } from "@/assets/data/map";
 
-type LeafletInstance = typeof import('leaflet')
-type IconOpt = { color: string }
+type LeafletInstance = typeof import("leaflet");
+type IconOpt = { color: string };
 
 // Default unselected marker: a small colored circle with a white outline.
 export function makeDotIcon(L: LeafletInstance, opt: IconOpt): DivIcon {
-  const { dot } = markerIcons
+  const { dot } = markerIcons;
   const html = `<div style="
     width:${dot.size}px;
     height:${dot.size}px;
@@ -14,21 +14,21 @@ export function makeDotIcon(L: LeafletInstance, opt: IconOpt): DivIcon {
     border:${dot.border};
     border-radius:50%;
     box-shadow:${dot.shadow};
-  "></div>`
+  "></div>`;
   return L.divIcon({
-    className: '',
+    className: "",
     html,
     iconSize: [dot.size, dot.size],
     iconAnchor: [dot.size / 2, dot.size / 2],
-  })
+  });
 }
 
 // Selected marker: classic teardrop pin with a hopping intro animation.
 // Two bounces (40px → 20px) on a 0.7s timeline, ease-out on the rise and ease-in on the fall.
 export function makePinIcon(L: LeafletInstance, opt: IconOpt): DivIcon {
-  const { pin } = markerIcons
-  const easeRise = 'cubic-bezier(0.215,0.61,0.355,1)'
-  const easeFall = 'cubic-bezier(0.55,0.055,0.675,0.19)'
+  const { pin } = markerIcons;
+  const easeRise = "cubic-bezier(0.215,0.61,0.355,1)";
+  const easeFall = "cubic-bezier(0.55,0.055,0.675,0.19)";
 
   const keyframes = `@keyframes pin-hop {
     0%   { transform: translateY(0);     animation-timing-function: ${easeRise} }
@@ -36,7 +36,7 @@ export function makePinIcon(L: LeafletInstance, opt: IconOpt): DivIcon {
     50%  { transform: translateY(0);     animation-timing-function: ${easeRise} }
     75%  { transform: translateY(-20px); animation-timing-function: ${easeFall} }
     100% { transform: translateY(0) }
-  }`
+  }`;
 
   const html = `
     <style>${keyframes}</style>
@@ -65,12 +65,12 @@ export function makePinIcon(L: LeafletInstance, opt: IconOpt): DivIcon {
         "></div>
       </div>
     </div>
-  `
+  `;
 
   return L.divIcon({
-    className: '',
+    className: "",
     html,
     iconSize: [pin.size, pin.size],
     iconAnchor: [pin.size / 2, pin.size],
-  })
+  });
 }

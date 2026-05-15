@@ -85,7 +85,11 @@
             v-for="post in posts"
             :key="post.id"
             :post="post"
-            :to="{ name: 'blogs-slug', params: { slug: [String(post.id)] }, query: { title: post.slug } }"
+            :to="{
+              name: 'blogs-slug',
+              params: { slug: [String(post.id)] },
+              query: { title: post.slug },
+            }"
             :tag-map="tagMap"
           />
         </div>
@@ -173,7 +177,12 @@ const tagTree = computed(() => (tags.value ?? []).map((t) => ({ label: t.name, v
 // #region Posts
 const scrollEl = ref<HTMLDivElement | null>(null);
 
-const { data: result, status, error, refresh } = useLazyAsyncData(
+const {
+  data: result,
+  status,
+  error,
+  refresh,
+} = useLazyAsyncData(
   fullKey.value,
   () =>
     fetchPosts({
