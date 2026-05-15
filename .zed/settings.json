@@ -3,15 +3,15 @@
   "languages": {
     "Vue.js": {
       "tab_size": 2,
-      "hard_tabs": false,
+      "hard_tabs": false
     },
     "TypeScript": {
       "tab_size": 2,
-      "hard_tabs": false,
+      "hard_tabs": false
     },
     "JavaScript": {
       "tab_size": 2,
-      "hard_tabs": false,
-    },
-  },
+      "hard_tabs": false
+    }
+  }
 }

@@ -8,7 +8,11 @@
       class="absolute bottom-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-1"
     >
       <!-- Re-keyed by URL so changing the selection replays the burst animation. -->
-      <div v-if="selectedRestaurant.googleMapsLink" :key="selectedRestaurant.googleMapsLink" class="burst-wrap relative">
+      <div
+        v-if="selectedRestaurant.googleMapsLink"
+        :key="selectedRestaurant.googleMapsLink"
+        class="burst-wrap relative"
+      >
         <span
           class="burst-ring absolute inset-0 rounded-full pointer-events-none"
           :style="{ borderColor: selectedRestaurant.categoryColor }"
@@ -48,10 +52,14 @@
 
     <!-- HD/SD tile toggle. z-1000 keeps it above Leaflet panes, same layer as the action bar. -->
     <button
+      aria-label="切換高解析度地圖"
+      :aria-pressed="tileQuality === 'high'"
       class="absolute bottom-6 right-2.5 z-1000 w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
-      :class="tileQuality === 'high'
-        ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
-        : 'bg-white border-gray-300 text-gray-400 shadow hover:border-gray-400 hover:text-gray-500'"
+      :class="
+        tileQuality === 'high'
+          ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
+          : 'bg-white border-gray-300 text-gray-400 shadow hover:border-gray-400 hover:text-gray-500'
+      "
       @click="toggleTileQuality"
     >
       HD
@@ -60,99 +68,101 @@
 </template>
 
 <script setup lang="ts">
-import type { Map as LeafletMap, Marker, DivIcon } from 'leaflet'
-import type { EnrichedRestaurant } from '@/composables/useRestaurants'
-import { mapOptions, tileLayers, tileLayerOptions } from '@/assets/data/map'
-import { makeDotIcon, makePinIcon } from '@/utils/map'
+import type { Map as LeafletMap, Marker, DivIcon } from "leaflet";
+import type { EnrichedRestaurant } from "@/composables/useRestaurants";
+import { mapOptions, tileLayers, tileLayerOptions } from "@/assets/data/map";
+import { makeDotIcon, makePinIcon } from "@/utils/map";
 
-type LeafletInstance = typeof import('leaflet')
+type LeafletInstance = typeof import("leaflet");
 
 const props = defineProps<{
-  restaurants: EnrichedRestaurant[]
-  selectedRestaurant: EnrichedRestaurant | null
-}>()
+  restaurants: EnrichedRestaurant[];
+  selectedRestaurant: EnrichedRestaurant | null;
+}>();
 
 const emit = defineEmits<{
-  select: [restaurant: EnrichedRestaurant]
-  unpin: []
-}>()
+  select: [restaurant: EnrichedRestaurant];
+  unpin: [];
+}>();
 
-const isReady = defineModel<boolean>('ready', { default: false })
+const isReady = defineModel<boolean>("ready", { default: false });
 
-
-const mapEl = ref<HTMLDivElement | null>(null)
-const tileQuality = ref<'low' | 'high'>('low')
+const mapEl = ref<HTMLDivElement | null>(null);
+const tileQuality = ref<"low" | "high">("low");
 
 // Non-reactive Leaflet handles. Kept as plain `let` to avoid Vue reactivity wrapping.
-let L: LeafletInstance | null = null
-let map: LeafletMap | null = null
-let activeTileLayer: ReturnType<LeafletInstance['tileLayer']> | null = null
-const markerById = new Map<string, Marker>()
-const iconsByColor = new Map<string, { dot: DivIcon; pin: DivIcon }>()
+let L: LeafletInstance | null = null;
+let map: LeafletMap | null = null;
+let activeTileLayer: ReturnType<LeafletInstance["tileLayer"]> | null = null;
+const markerById = new Map<string, Marker>();
+const iconsByColor = new Map<string, { dot: DivIcon; pin: DivIcon }>();
 
 function getIcon(color: string, selected: boolean): DivIcon {
-  if (!L) throw new Error('Leaflet not initialized')
-  let pair = iconsByColor.get(color)
+  if (!L) throw new Error("Leaflet not initialized");
+  let pair = iconsByColor.get(color);
   if (!pair) {
-    pair = { dot: makeDotIcon(L, { color }), pin: makePinIcon(L, { color }) }
-    iconsByColor.set(color, pair)
+    pair = { dot: makeDotIcon(L, { color }), pin: makePinIcon(L, { color }) };
+    iconsByColor.set(color, pair);
   }
-  return selected ? pair.pin : pair.dot
+  return selected ? pair.pin : pair.dot;
 }
 
 function toggleTileQuality() {
-  if (!map || !L) return
-  tileQuality.value = tileQuality.value === 'low' ? 'high' : 'low'
-  activeTileLayer?.remove()
-  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
+  if (!map || !L) return;
+  tileQuality.value = tileQuality.value === "low" ? "high" : "low";
+  activeTileLayer?.remove();
+  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map);
 }
 
 function renderMarkers() {
-  if (!map || !L) return
+  if (!map || !L) return;
 
-  markerById.forEach(m => m.remove())
-  markerById.clear()
+  markerById.forEach((m) => m.remove());
+  markerById.clear();
 
-  const selectedId = props.selectedRestaurant?.id
+  const selectedId = props.selectedRestaurant?.id;
   for (const r of props.restaurants) {
     const marker = L.marker([r.coordinates.lat, r.coordinates.lng], {
       icon: getIcon(r.categoryColor, r.id === selectedId),
-    }).addTo(map)
-    marker.on('click', () => emit('select', r))
-    markerById.set(r.id, marker)
+    }).addTo(map);
+    marker.on("click", () => emit("select", r));
+    markerById.set(r.id, marker);
   }
 }
 
 // Re-render markers when the filtered list changes (no diffing — list is small).
-watch(() => props.restaurants, renderMarkers)
+watch(() => props.restaurants, renderMarkers);
 
 // Selection change: swap icons + recenter without rebuilding all markers.
-watch(() => props.selectedRestaurant, (newR, oldR) => {
-  if (!map || !L) return
-  if (oldR) markerById.get(oldR.id)?.setIcon(getIcon(oldR.categoryColor, false))
-  if (newR) {
-    markerById.get(newR.id)?.setIcon(getIcon(newR.categoryColor, true))
-    map.panTo([newR.coordinates.lat, newR.coordinates.lng])
-  }
-})
+watch(
+  () => props.selectedRestaurant,
+  (newR, oldR) => {
+    if (!map || !L) return;
+    if (oldR) markerById.get(oldR.id)?.setIcon(getIcon(oldR.categoryColor, false));
+    if (newR) {
+      markerById.get(newR.id)?.setIcon(getIcon(newR.categoryColor, true));
+      map.panTo([newR.coordinates.lat, newR.coordinates.lng]);
+    }
+  },
+);
 
 onMounted(async () => {
-  if (!mapEl.value) return
-  L = (await import('leaflet')).default
-  await import('leaflet/dist/leaflet.css')
+  if (!mapEl.value) return;
+  L = (await import("leaflet")).default;
+  await import("leaflet/dist/leaflet.css");
 
-  map = L.map(mapEl.value, mapOptions)
-  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map)
-  renderMarkers()
-  isReady.value = true
-})
+  map = L.map(mapEl.value, mapOptions);
+  activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map);
+  renderMarkers();
+  isReady.value = true;
+});
 
 onUnmounted(() => {
-  map?.remove()
-  map = null
-  markerById.clear()
-  iconsByColor.clear()
-})
+  map?.remove();
+  map = null;
+  markerById.clear();
+  iconsByColor.clear();
+});
 </script>
 
 <style scoped>
@@ -169,8 +179,14 @@ onUnmounted(() => {
 }
 
 @keyframes ring-burst {
-  0%   { transform: scale(1);   opacity: 0.8; }
-  100% { transform: scale(1.8); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
 /* ── Sparks: each dot shoots outward at its angle ── */

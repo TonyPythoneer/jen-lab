@@ -65,14 +65,15 @@ const emit = defineEmits<{
 
 // UTree v-model expects node objects, but modelValue stores ids only.
 // Flatten parents + children so ids can be resolved back to nodes.
-const flatNodes = computed(() =>
-  props.items.flatMap((n) => [n, ...(n.children ?? [])]),
-);
+const flatNodes = computed(() => props.items.flatMap((n) => [n, ...(n.children ?? [])]));
 
 const selectedTree = computed<FilterTreeItem[]>({
   get: () => flatNodes.value.filter((n) => props.modelValue.includes(n.value)),
   set: (items) => {
-    emit("update:modelValue", items.map((i) => i.value));
+    emit(
+      "update:modelValue",
+      items.map((i) => i.value),
+    );
     emit("change");
   },
 });
@@ -82,5 +83,4 @@ function onSelect(e: { detail: { originalEvent: Event }; preventDefault: () => v
     e.preventDefault();
   }
 }
-
 </script>

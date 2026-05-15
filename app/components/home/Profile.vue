@@ -26,6 +26,8 @@
           <img
             :src="profile.avatar"
             :alt="profile.name"
+            width="112"
+            height="112"
             loading="lazy"
             class="w-28 h-28 rounded-full object-cover border-3 border-white shadow"
           />
@@ -74,16 +76,7 @@
       <!-- Contacts -->
       <USeparator label="Contacts" class="px-6" />
       <div class="flex justify-center gap-4 py-2 px-6">
-        <a
-          v-for="contact in contacts"
-          :key="contact.label"
-          :href="contact.url"
-          :aria-label="contact.label"
-          v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
-          :class="`text-gray-500 ${contact.hoverClass} transition-colors`"
-        >
-          <UIcon :name="contact.icon" class="w-5 h-5" />
-        </a>
+        <ContactLinks />
       </div>
     </div>
   </div>
@@ -96,12 +89,6 @@ const props = defineProps<{
     name: string;
     tabs: { label: string; bio: string }[];
   };
-  contacts: {
-    label: string;
-    url: string;
-    icon: string;
-    hoverClass: string;
-  }[];
 }>();
 
 const tabItems = computed(() =>

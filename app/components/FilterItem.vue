@@ -5,12 +5,11 @@
     @click="$emit('click')"
   >
     <!-- ui: radio dot for selection display -->
-    <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
-      :class="active ? 'border-teal-500' : 'border-gray-300'">
-      <span
-        v-if="active"
-        class="w-2 h-2 rounded-full bg-teal-500"
-      />
+    <span
+      class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+      :class="active ? 'border-teal-500' : 'border-gray-300'"
+    >
+      <span v-if="active" class="w-2 h-2 rounded-full bg-teal-500" />
     </span>
     <!-- ui: dotColored circle mark -->
     <span
@@ -23,6 +22,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ active: boolean; label: string; dotColor?: string }>()
-defineEmits<{ click: [] }>()
+defineProps<{ active: boolean; label: string; dotColor?: string }>();
+defineEmits<{ click: [] }>();
 </script>

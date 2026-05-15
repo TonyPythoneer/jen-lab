@@ -6,7 +6,6 @@ const POST_LIST_FIELDS =
   "id,date,slug,title,excerpt,link,tags,categories,jetpack_featured_media_url";
 const POST_DETAIL_FIELDS =
   "id,date,slug,title,excerpt,content,link,tags,categories,jetpack_featured_media_url";
-const PAGE_FIELDS = "id,date,title,content,link";
 
 export interface WpPost {
   id: number;
@@ -25,18 +24,9 @@ export interface WpPost {
   };
 }
 
-export interface WpPage {
-  id: number;
-  date: string;
-  title: { rendered: string };
-  content: { rendered: string };
-  link: string;
-}
-
-export interface WpListResult<T> {
-  data: T[];
+export interface WpPostsPage {
+  data: WpPost[];
   totalPages: number;
-  total: number;
 }
 
 export async function fetchPosts(params: {
@@ -45,7 +35,7 @@ export async function fetchPosts(params: {
   search?: string;
   tags?: number[];
   categories?: number[];
-}): Promise<WpListResult<WpPost>> {
+}): Promise<WpPostsPage> {
   const { page = 1, perPage = 10, search, tags, categories } = params;
   const resp = await $fetch.raw<WpPost[]>(`${WP_BASE}/posts`, {
     query: {
@@ -60,19 +50,12 @@ export async function fetchPosts(params: {
   return {
     data: resp._data ?? [],
     totalPages: parseInt(resp.headers.get("X-WP-TotalPages") ?? "1"),
-    total: parseInt(resp.headers.get("X-WP-Total") ?? "0"),
   };
 }
 
 export async function fetchPost(id: number): Promise<WpPost> {
   return $fetch<WpPost>(`${WP_BASE}/posts/${id}`, {
     query: { _fields: POST_DETAIL_FIELDS },
-  });
-}
-
-export async function fetchPages(): Promise<WpPage[]> {
-  return $fetch<WpPage[]>(`${WP_BASE}/pages`, {
-    query: { _fields: PAGE_FIELDS },
   });
 }
 

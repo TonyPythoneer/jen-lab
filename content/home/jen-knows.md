@@ -57,7 +57,7 @@ sections:
       - id: career-videos
         videos:
           - id: J7AWXUoq9ck
-            title: 'Breaking Into the Australian Tech Industry: What No One Tells You'
+            title: "Breaking Into the Australian Tech Industry: What No One Tells You"
           - id: b2k3oprSEOI
             title: 華人在澳洲職場如何升職加薪？實用職涯規劃經驗分享
           - id: qCT8OUpRO6k

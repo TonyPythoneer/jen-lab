@@ -5,7 +5,8 @@
       <img
         v-if="banner"
         :src="banner"
-        class="absolute inset-0 w-full h-full"
+        :alt="title"
+        class="absolute inset-0 w-full h-full object-cover"
         loading="lazy"
       />
     </div>
@@ -22,7 +23,10 @@
             variant="ghost"
             size="xs"
             leading-icon="i-lucide-chevron-right"
-            :ui="{ leadingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200', base: 'hover:bg-transparent' }"
+            :ui="{
+              leadingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200',
+              base: 'hover:bg-transparent',
+            }"
           />
           <span class="text-sm text-gray-500">{{ brief }}</span>
         </div>
@@ -57,14 +61,14 @@
 // `description` is the markdown source — declared only to absorb the
 // spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
 defineProps<{
-  banner?: string
-  title: string
-  brief: string
-  description?: string
-  descriptionHtml?: string
-  purchaseUrl: string
-  purchaseLabel: string
-}>()
+  banner?: string;
+  title: string;
+  brief: string;
+  description?: string;
+  descriptionHtml?: string;
+  purchaseUrl: string;
+  purchaseLabel: string;
+}>();
 </script>
 
 <style scoped>

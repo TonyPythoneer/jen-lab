@@ -1,0 +1,11 @@
+{
+  // tests/ aren't covered by Nuxt's generated tsconfigs.
+  // - extends app config: inherit $fetch ambient types + `~` alias
+  // - skipLibCheck: dodge vite-plus-test's broken bundled .d.ts
+  // - include nuxt.d.ts: pulls in the ambient global declarations
+  "extends": "./.nuxt/tsconfig.app.json",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "include": ["./.nuxt/nuxt.d.ts", "tests/**/*.ts"]
+}
