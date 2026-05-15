@@ -1,3 +1,7 @@
+# oxfmt already respects .gitignore by default — the entries below are the
+# extra paths that ARE committed but should not be reformatted.
+# NOTE: gitignore syntax — inline (end-of-line) comments are NOT supported.
 .agents/
-tasks/
 AGENTS.md
+tasks/
+.vscode/

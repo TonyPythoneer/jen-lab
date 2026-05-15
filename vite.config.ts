@@ -5,10 +5,8 @@ export default defineConfig({
   staged: {
     "*": "vp check --fix",
   },
-  fmt: {},
-  // typeAware/typeCheck disabled: Nuxt generates tsconfig refs under .nuxt/,
-  // vp's standalone tsc can't resolve them. Use `nuxt typecheck` instead.
-  lint: { options: { typeAware: false, typeCheck: false } },
+  fmt: {}, // presence enables oxfmt's vite.config.ts integration — keep even if empty
+  lint: { options: { typeAware: true, typeCheck: true } },
   // Mirror the build-time constant injected by nuxt.config.ts so importing
   // wpApi.ts doesn't hit an undefined `__WP_BASE__`.
   define: {
