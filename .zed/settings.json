@@ -1,31 +1,56 @@
 {
   "preferred_line_length": 100,
   "format_on_save": "on",
-  "formatter": {
-    "external": {
-      "command": "pnpm",
-      "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+  "formatter": "language_server",
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "tsserver": { "maxTsServerMemory": 8192 },
+          "preferences": { "importModuleSpecifier": "non-relative" },
+          "updateImportsOnFileMove": { "enabled": "always" },
+          "inlayHints": {
+            "parameterNames": { "enabled": "none" },
+            "variableTypes": { "enabled": true },
+            "propertyDeclarationTypes": { "enabled": true },
+            "functionLikeReturnTypes": { "enabled": true }
+          }
+        }
+      }
     }
   },
   "languages": {
     "Vue.js": {
       "tab_size": 2,
       "hard_tabs": false,
-      "preferred_line_length": 100
+      "preferred_line_length": 100,
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."]
     },
     "TypeScript": {
       "tab_size": 2,
       "hard_tabs": false,
-      "preferred_line_length": 100
+      "preferred_line_length": 100,
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."],
+      "inlay_hints": {
+        "enabled": true,
+        "show_parameter_hints": false,
+        "show_other_hints": true,
+        "show_type_hints": true
+      }
+    },
+    "TSX": {
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."]
     },
     "JavaScript": {
       "tab_size": 2,
       "hard_tabs": false,
-      "preferred_line_length": 100
+      "preferred_line_length": 100,
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."]
     },
     "JSON": {
       "tab_size": 2,
-      "hard_tabs": false
+      "hard_tabs": false,
+      "language_servers": ["oxfmt", "..."]
     },
     "Markdown": {
       "format_on_save": "off"
