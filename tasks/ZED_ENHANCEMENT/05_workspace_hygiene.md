@@ -1,5 +1,5 @@
 # 05 — Workspace hygiene
-
+## status: complete
 ## Why
 
 Repo has many generated dirs (`.nuxt`, `.wrangler`, `.data`, `.vite-hooks`, `.hypothesis`, `node_modules/.cache`) that pollute project panel + global search.
