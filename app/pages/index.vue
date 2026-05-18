@@ -9,11 +9,11 @@ useSeoMeta({
   // TODO: ogImage — Jen to supply 1200×630 og asset.
 });
 
-const heroStats = [
-  { value: "5y", label: "Tinkering" },
-  { value: "120+", label: "Restaurants" },
-  { value: "30+", label: "Posts" },
-  { value: "1", label: "Harbour" },
+const stats = [
+  { value: "5y", label: "Years tinkering", caption: "Since the first toy app." },
+  { value: "120+", label: "Restaurants logged", caption: "Across 11 Sydney suburbs." },
+  { value: "30+", label: "Posts drafted", caption: "Half-finished is still progress." },
+  { value: "1", label: "Harbour called home", caption: "Stretching from Bondi to Manly." },
 ];
 
 const marqueeStrings = [
@@ -110,22 +110,6 @@ const marqueeStrings = [
             About Jen
           </UButton>
         </div>
-
-        <!-- Stat strip -->
-        <div
-          class="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 pt-8 border-t border-abyssal-ink/10 max-w-3xl mx-auto"
-        >
-          <div v-for="s in heroStats" :key="s.label" class="text-center pt-6">
-            <p
-              class="font-display tracking-[0.02em] leading-none text-3xl md:text-4xl text-abyssal-ink tabular-nums"
-            >
-              {{ s.value }}
-            </p>
-            <p class="text-xs uppercase tracking-widest text-abyssal-ink/60 mt-1.5">
-              {{ s.label }}
-            </p>
-          </div>
-        </div>
       </div>
 
       <!-- Bottom marquee strip -->
@@ -145,11 +129,43 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- Sections 05 – 10 land in subsequent tasks. -->
+    <!-- Stats grid (task 05) -->
+    <section class="space-y-4">
+      <div class="flex items-end justify-between px-1">
+        <h2
+          class="font-display tracking-[0.02em] leading-[0.95] text-3xl md:text-4xl text-abyssal-ink"
+        >
+          By The Numbers.
+        </h2>
+        <span class="text-xs uppercase tracking-widest text-abyssal-ink/60">As of 18 May 2026</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        <div
+          v-for="(s, i) in stats"
+          :key="s.label"
+          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between"
+          :class="
+            i % 2 === 0 ? 'bg-digital-orange text-pure-white' : 'bg-ash-white text-abyssal-ink'
+          "
+        >
+          <p class="font-display tracking-[0.02em] leading-[0.9] text-6xl md:text-7xl tabular-nums">
+            {{ s.value }}
+          </p>
+          <div class="space-y-1">
+            <p class="text-base font-medium">{{ s.label }}</p>
+            <p :class="i % 2 === 0 ? 'text-pure-white/75' : 'text-abyssal-ink/60'" class="text-sm">
+              {{ s.caption }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sections 06 – 10 land in subsequent commits. -->
     <div
       class="bg-ash-white rounded-card p-10 text-center text-abyssal-ink/60 border border-dashed border-abyssal-ink/15"
     >
-      Stats / features / tabs / testimonials / blog / newsletter land in tasks 05 – 10.
+      Features / tabs / testimonials / blog / newsletter land in tasks 06 – 10.
     </div>
   </div>
 </template>
