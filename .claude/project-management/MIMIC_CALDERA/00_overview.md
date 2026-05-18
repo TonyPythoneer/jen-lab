@@ -43,7 +43,7 @@ Everything else = inline Nuxt UI in page files. Page files may grow to ~250 line
 - [x] 07_use_case_tabs
 - [x] 08_testimonials
 - [x] 09_blog_cards
-- [ ] 10_newsletter_band
+- [x] 10_newsletter_band
 - [ ] 11_footer
 - [ ] 12_about_page
 - [ ] 13_blogs_page
