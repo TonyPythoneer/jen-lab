@@ -16,7 +16,20 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(link
 });
 
 const moduleSettings: NuxtConfig = {
-  modules: ["@nuxtjs/mdc", "@nuxt/content", "nitro-cloudflare-dev", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: [
+    "@nuxtjs/mdc",
+    "@nuxt/content",
+    "nitro-cloudflare-dev",
+    "@nuxt/ui",
+    "@nuxt/fonts",
+    "@vueuse/nuxt",
+  ],
+  fonts: {
+    families: [
+      { name: "Bebas Neue", provider: "google", weights: [400] },
+      { name: "Inter", provider: "google", weights: [400, 500, 700] },
+    ],
+  },
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "light",

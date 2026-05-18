@@ -1,4 +1,11 @@
 export default defineAppConfig({
+  ui: {
+    colors: {
+      primary: "digital-orange",
+      secondary: "cyber-violet",
+      neutral: "abyssal-ink",
+    },
+  },
   blog: {
     title: "榛知部落格",
     brief: "深入淺出的中文澳洲知識庫",

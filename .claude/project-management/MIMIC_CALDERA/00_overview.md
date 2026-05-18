@@ -34,7 +34,7 @@ Everything else = inline Nuxt UI in page files. Page files may grow to ~250 line
 
 ## Tasks
 
-- [ ] 01_tokens_and_fonts
+- [x] 01_tokens_and_fonts
 - [ ] 02_styleguide ← visual catalogue / `/styleguide` route (early feedback)
 - [ ] 03_layout_shell
 - [ ] 04_hero_with_opera_house_svg

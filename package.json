@@ -37,6 +37,7 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@nuxt/fonts": "^0.14.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.6.0",
