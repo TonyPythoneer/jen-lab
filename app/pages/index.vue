@@ -161,11 +161,106 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- Sections 06 – 10 land in subsequent commits. -->
+    <!-- Features (task 06): two side-by-side blocks -->
+    <section class="space-y-2.5">
+      <!-- Block 1 — Workshop with Harbour Bridge -->
+      <div
+        class="bg-ash-white rounded-card p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
+      >
+        <div class="space-y-5">
+          <span class="text-cyber-violet text-xs uppercase tracking-widest">Workshop</span>
+          <h3
+            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
+          >
+            The Workshop Where
+            <span class="block text-digital-orange">Ideas Get Forged.</span>
+          </h3>
+          <p class="text-abyssal-ink/75 max-w-prose leading-relaxed">
+            Quiet bench, sharp tools, lots of half-finished prototypes. The point of any side
+            project isn't the artefact — it's the muscle memory of shipping small things, over and
+            over, until the next one feels easy.
+          </p>
+          <ul class="space-y-2 text-sm text-abyssal-ink/70">
+            <li class="flex items-center gap-2">
+              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
+              Built in Vue 3 + Nuxt 4
+            </li>
+            <li class="flex items-center gap-2">
+              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
+              Deployed to Cloudflare Pages
+            </li>
+            <li class="flex items-center gap-2">
+              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
+              Open in public, half the time
+            </li>
+          </ul>
+          <UButton
+            color="neutral"
+            variant="outline"
+            :ui="{ base: 'rounded-button px-6' }"
+            to="/about"
+            trailing-icon="i-lucide-arrow-right"
+          >
+            Read the workbench notes
+          </UButton>
+        </div>
+        <div class="order-first md:order-last">
+          <HomeHarbourBridgeSvg class="w-full max-w-[460px] mx-auto" />
+        </div>
+      </div>
+
+      <!-- Block 2 — Reef with Wave -->
+      <div
+        class="bg-ash-white rounded-card p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
+      >
+        <div>
+          <HomeWaveSvg class="w-full max-w-[460px] mx-auto" />
+        </div>
+        <div class="space-y-5">
+          <span class="text-cyber-violet text-xs uppercase tracking-widest">Reef</span>
+          <h3
+            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
+          >
+            Stitched To The
+            <span class="block text-digital-orange">Wider Reef.</span>
+          </h3>
+          <p class="text-abyssal-ink/75 max-w-prose leading-relaxed">
+            Everything links to everything: blog references restaurants, restaurants reference
+            walks, walks reference notes. One site, lots of currents, all flowing back to the same
+            harbour.
+          </p>
+          <div class="grid grid-cols-3 gap-2 pt-2">
+            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
+              <p class="font-display text-2xl text-abyssal-ink tabular-nums">11</p>
+              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Suburbs</p>
+            </div>
+            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
+              <p class="font-display text-2xl text-abyssal-ink tabular-nums">7</p>
+              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Tags</p>
+            </div>
+            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
+              <p class="font-display text-2xl text-abyssal-ink tabular-nums">∞</p>
+              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Currents</p>
+            </div>
+          </div>
+          <UButton
+            color="neutral"
+            variant="outline"
+            :ui="{ base: 'rounded-button px-6' }"
+            to="/my-best-restaurants-search-in-sydney"
+            trailing-icon="i-lucide-arrow-right"
+          >
+            Follow the currents
+          </UButton>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sections 07 – 10 land in subsequent commits. -->
     <div
       class="bg-ash-white rounded-card p-10 text-center text-abyssal-ink/60 border border-dashed border-abyssal-ink/15"
     >
-      Features / tabs / testimonials / blog / newsletter land in tasks 06 – 10.
+      Tabs / testimonials / blog / newsletter land in tasks 07 – 10.
     </div>
   </div>
 </template>
