@@ -82,6 +82,57 @@ const testimonials = [
   },
 ];
 
+// TODO: replace with real @nuxt/content blog collection once /blogs route is
+// restored (task 13). For now, placeholder posts so the row composition can be
+// designed.
+const blogPosts = [
+  {
+    date: "18 May 2026",
+    tag: "Food",
+    title: "What I learned from logging 100 Sydney restaurants.",
+    excerpt:
+      "A year in, here are the patterns I didn't expect — and the three suburbs that consistently punch above their weight.",
+    glyph: "gum-leaf" as const,
+    accent: "bg-digital-orange/10",
+  },
+  {
+    date: "04 May 2026",
+    tag: "Code",
+    title: "Tinkering with Nuxt content collections in production.",
+    excerpt:
+      "Schema design choices, gotchas with discriminated unions, and what I'd do differently on day two.",
+    glyph: "terminal" as const,
+    accent: "bg-cyber-violet/10",
+  },
+  {
+    date: "19 Apr 2026",
+    tag: "Wander",
+    title: "A weekend walk from Bondi to Coogee.",
+    excerpt:
+      "Eight kilometres, four beaches, one very good banana bread stop. The coastal walk, done slow.",
+    glyph: "compass" as const,
+    accent: "bg-pixel-glare/30",
+  },
+  {
+    date: "02 Apr 2026",
+    tag: "Code",
+    title: "Tabs, not stacks: a small UI rule that pays off.",
+    excerpt:
+      "When to group screens into tabs vs collapse into a stack, with three real examples from this site.",
+    glyph: "book" as const,
+    accent: "bg-cyber-violet/10",
+  },
+  {
+    date: "21 Mar 2026",
+    tag: "Meta",
+    title: "Why I rewrote my personal site for the fifth time.",
+    excerpt:
+      "Less framework churn, more design intent. Notes on choosing a vocabulary and committing to it.",
+    glyph: "sail" as const,
+    accent: "bg-digital-orange/10",
+  },
+];
+
 const marqueeStrings = [
   "Built in Sydney",
   "Brewed at the bench",
@@ -417,11 +468,75 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- Sections 09 – 10 land in subsequent commits. -->
+    <!-- Blog preview row (task 09) -->
+    <section id="blog" class="space-y-6">
+      <div class="flex items-end justify-between gap-4 px-1">
+        <div class="space-y-2">
+          <span class="text-cyber-violet text-xs uppercase tracking-widest">Notebook</span>
+          <h2
+            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
+          >
+            Latest From
+            <span class="block text-digital-orange">The Notebook.</span>
+          </h2>
+        </div>
+        <UButton
+          to="/blogs"
+          color="neutral"
+          variant="ghost"
+          :ui="{ base: 'rounded-button shrink-0' }"
+          trailing-icon="i-lucide-arrow-right"
+        >
+          See all
+        </UButton>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2.5">
+        <NuxtLink
+          v-for="post in blogPosts"
+          :key="post.title"
+          to="/blogs"
+          class="group bg-ash-white rounded-card overflow-hidden p-5 flex flex-col gap-4 hover:scale-[1.01] transition-transform"
+        >
+          <div
+            class="aspect-video w-full rounded-card flex items-center justify-center"
+            :class="post.accent"
+          >
+            <HomeGlyphSvg :kind="post.glyph" class="w-1/2" />
+          </div>
+          <div class="flex items-center gap-2">
+            <span
+              class="bg-pixel-glare text-abyssal-ink text-xs px-3 py-1 rounded-button font-medium"
+            >
+              {{ post.date }}
+            </span>
+            <span class="text-xs uppercase tracking-widest text-abyssal-ink/60">
+              {{ post.tag }}
+            </span>
+          </div>
+          <h3
+            class="text-base font-bold leading-snug text-abyssal-ink line-clamp-2 group-hover:text-digital-orange transition-colors"
+          >
+            {{ post.title }}
+          </h3>
+          <p class="text-sm text-abyssal-ink/70 line-clamp-2 flex-1">
+            {{ post.excerpt }}
+          </p>
+          <span
+            class="inline-flex items-center gap-1 text-sm text-abyssal-ink/80 group-hover:text-digital-orange group-hover:translate-x-1 transition-all"
+          >
+            Read post
+            <UIcon name="i-lucide-arrow-right" class="size-3.5" />
+          </span>
+        </NuxtLink>
+      </div>
+    </section>
+
+    <!-- Newsletter band (task 10) lands next. -->
     <div
       class="bg-ash-white rounded-card p-10 text-center text-abyssal-ink/60 border border-dashed border-abyssal-ink/15"
     >
-      Blog / newsletter land in tasks 09 – 10.
+      Newsletter band lands in task 10.
     </div>
   </div>
 </template>
