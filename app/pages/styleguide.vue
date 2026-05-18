@@ -168,14 +168,14 @@ const svgPlaceholders = [
   { label: "OperaHouseSvg", filledBy: "task 04", done: true },
   { label: "HarbourBridgeSvg", filledBy: "task 06", done: true },
   { label: "WaveSvg", filledBy: "task 06", done: true },
-  { label: "GlyphSvg · gum-leaf", filledBy: "task 07" },
-  { label: "GlyphSvg · terminal", filledBy: "task 07" },
-  { label: "GlyphSvg · book", filledBy: "task 07" },
-  { label: "GlyphSvg · compass", filledBy: "task 07" },
-  { label: "GlyphSvg · coffee", filledBy: "task 07" },
-  { label: "GlyphSvg · surf", filledBy: "task 07" },
-  { label: "GlyphSvg · ferris", filledBy: "task 07" },
-  { label: "GlyphSvg · sail", filledBy: "task 07" },
+  { label: "GlyphSvg · gum-leaf", filledBy: "task 07", done: true, kind: "gum-leaf" },
+  { label: "GlyphSvg · terminal", filledBy: "task 07", done: true, kind: "terminal" },
+  { label: "GlyphSvg · book", filledBy: "task 07", done: true, kind: "book" },
+  { label: "GlyphSvg · compass", filledBy: "task 07", done: true, kind: "compass" },
+  { label: "GlyphSvg · coffee", filledBy: "task 07", done: true, kind: "coffee" },
+  { label: "GlyphSvg · surf", filledBy: "task 07", done: true, kind: "surf" },
+  { label: "GlyphSvg · ferris", filledBy: "task 07", done: true, kind: "ferris" },
+  { label: "GlyphSvg · sail", filledBy: "task 07", done: true, kind: "sail" },
   { label: "KoalaSvg (optional)", filledBy: "task 11" },
 ];
 // #endregion
@@ -820,6 +820,11 @@ function fireToast() {
                   <HomeWaveSvg
                     v-else-if="s.label === 'WaveSvg' && s.done"
                     class="w-full h-full p-2"
+                  />
+                  <HomeGlyphSvg
+                    v-else-if="(s as any).kind && s.done"
+                    :kind="(s as any).kind"
+                    class="w-full h-full p-4"
                   />
                   <span v-else class="text-cyber-violet/60 text-xs text-center px-2"
                     >Placeholder</span
