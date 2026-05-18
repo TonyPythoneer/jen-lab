@@ -163,9 +163,9 @@ const marqueeStrings = [
   "And the workbench",
 ];
 
-// Decorative SVG inventory — placeholder cells until tasks 04 / 06 / 07 author the components.
+// Decorative SVG inventory — `done: true` swaps the placeholder cell for the real component.
 const svgPlaceholders = [
-  { label: "OperaHouseSvg", filledBy: "task 04" },
+  { label: "OperaHouseSvg", filledBy: "task 04", done: true },
   { label: "HarbourBridgeSvg", filledBy: "task 06" },
   { label: "WaveSvg", filledBy: "task 06" },
   { label: "GlyphSvg · gum-leaf", filledBy: "task 07" },
@@ -807,9 +807,15 @@ function fireToast() {
                 class="bg-ash-white rounded-card p-5 space-y-3"
               >
                 <div
-                  class="w-full aspect-square bg-cyber-violet/10 rounded-card flex items-center justify-center"
+                  class="w-full aspect-square bg-cyber-violet/10 rounded-card flex items-center justify-center overflow-hidden"
                 >
-                  <span class="text-cyber-violet/60 text-xs text-center px-2">Placeholder</span>
+                  <HomeOperaHouseSvg
+                    v-if="s.label === 'OperaHouseSvg' && s.done"
+                    class="w-full h-full p-2"
+                  />
+                  <span v-else class="text-cyber-violet/60 text-xs text-center px-2"
+                    >Placeholder</span
+                  >
                 </div>
                 <div class="space-y-1">
                   <p class="text-sm font-mono text-abyssal-ink">{{ s.label }}</p>
