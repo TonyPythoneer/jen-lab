@@ -32,7 +32,7 @@ const navLinks = [
   <!-- Mobile: single column stack; Desktop: two equal columns -->
   <footer
     id="footer"
-    class="mx-auto w-[min(calc(100%-2rem),1200px)] grid grid-cols-1 md:grid-cols-2 gap-2.5 pb-2.5"
+    class="mx-auto w-[min(calc(100%-2rem),1200px)] grid md:grid-cols-2 gap-2.5 pb-2.5 pt-40"
   >
     <!-- Left: dark brand card — fixed min-height on all breakpoints -->
     <div
@@ -43,11 +43,11 @@ const navLinks = [
       <!-- Brand mark + wordmark -->
       <NuxtLink to="/" class="flex items-center gap-2.5 w-fit">
         <img src="/favicon.128x128.webp" alt="" class="size-7 rounded-full shrink-0" />
-        <span class="font-display tracking-[0.02em] text-xl text-pure-white">JEN</span>
+        <span class="font-display tracking-[0.02em] text-xl">JEN</span>
       </NuxtLink>
 
       <!-- Tagline: tighter font size on mobile, larger on desktop -->
-      <h2 class="font-display tracking-[0.02em] leading-[1.3] text-pure-white text-4xl md:text-5xl">
+      <h2 class="font-display tracking-[0.02em] leading-[1.3] text-4xl md:text-5xl">
         您最真摯的聲音<br />探索、認識<br /><b>澳洲</b>的各個角落
       </h2>
     </div>
