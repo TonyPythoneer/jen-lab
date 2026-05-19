@@ -5,6 +5,17 @@ export default defineAppConfig({
       secondary: "cyber-violet",
       neutral: "abyssal-ink",
     },
+    button: {
+      compoundVariants: [
+        // Caldera ghost: neutral outline → full fill reverse on hover
+        {
+          color: "neutral",
+          variant: "outline",
+          class:
+            "shadow-[inset_0_0_0_1.5px_var(--color-abyssal-ink)] ring-0 hover:bg-abyssal-ink hover:text-pure-white hover:shadow-none",
+        },
+      ],
+    },
   },
   blog: {
     title: "榛知部落格",

@@ -1,77 +1,84 @@
 <script setup lang="ts">
 const appConfig = useAppConfig();
-
-const columns = [
-  {
-    label: "Explore",
-    children: [
-      { label: "Home", to: "/" },
-      { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
-      { label: "Blogs", to: "/blogs" },
-      { label: "About", to: "/about" },
-    ],
-  },
-  {
-    label: "Resources",
-    children: [
-      { label: "Brand kit", to: "#" },
-      { label: "Now", to: "#" },
-      { label: "Uses", to: "#" },
-    ],
-  },
-];
-
 const socials = appConfig.contacts ?? [];
+
+const navLinks = [
+  { label: "Home", to: "/" },
+  { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
+  { label: "Blogs", to: "/blogs" },
+  { label: "About", to: "/about" },
+  { label: "Brand Kit", to: "#" },
+  { label: "Now", to: "#" },
+  { label: "Uses", to: "#" },
+];
 </script>
 
 <template>
-  <UFooter
-    :ui="{
-      root: 'bg-abyssal-ink text-pure-white rounded-t-card mt-10',
-      top: 'p-10 grid sm:grid-cols-2 md:grid-cols-4 gap-10',
-      bottom:
-        'border-t border-pure-white/10 p-6 flex flex-col md:flex-row items-center justify-between gap-4',
-    }"
-  >
-    <template #top>
-      <!-- Brand -->
-      <div class="space-y-4">
-        <div class="flex items-center gap-3">
-          <HomeGlyphSvg kind="sail" class="w-8 h-8" aria-hidden="true" />
-          <span class="font-display text-2xl tracking-[0.02em]">JEN-LAB</span>
+  <!-- 5fr/7fr split matching caldera .foot -->
+  <footer class="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5 px-4 pb-2.5">
+    <!-- Left: dark brand card -->
+    <div
+      class="relative bg-abyssal-ink text-pure-white rounded-card p-10 flex flex-col justify-between gap-10 min-h-[360px] overflow-hidden"
+    >
+      <!-- Brand mark + wordmark -->
+      <NuxtLink to="/" class="flex items-center gap-2.5 w-fit">
+        <span class="size-6 bg-digital-orange rounded-sm shrink-0" />
+        <span class="font-display tracking-[0.02em] text-xl text-pure-white">JEN-LAB</span>
+      </NuxtLink>
+
+      <!-- Tagline -->
+      <h2
+        class="font-display tracking-[0.02em] leading-[0.95] text-pure-white text-4xl md:text-5xl"
+      >
+        Fastest-Growing<br />Personal Site<br />On The Harbour.
+      </h2>
+
+      <!-- CTA -->
+      <UButton
+        to="mailto:jen@jenliu.com.au"
+        color="primary"
+        :ui="{ base: 'rounded-button w-fit' }"
+        trailing-icon="i-lucide-arrow-right"
+      >
+        Book A Hello
+      </UButton>
+    </div>
+
+    <!-- Right: socials row + ash nav card -->
+    <div class="flex flex-col gap-2.5 min-h-[360px]">
+      <!-- Socials row: 64px solid orange circles -->
+      <div class="flex flex-wrap gap-2.5 justify-end" aria-label="Social links">
+        <a
+          v-for="c in socials"
+          :key="c.label"
+          :href="c.url"
+          :aria-label="c.label"
+          target="_blank"
+          rel="noopener"
+          class="size-16 rounded-full bg-digital-orange text-pure-white inline-flex items-center justify-center transition-[background-color,transform] duration-[180ms] ease-[ease] hover:bg-[#e34800] hover:-translate-y-0.5"
+        >
+          <UIcon :name="c.icon" class="size-6" />
+        </a>
+      </div>
+
+      <!-- Ash nav card: inline links + dotted divider + copyright -->
+      <div class="flex-1 bg-ash-white rounded-card p-10 flex flex-col justify-between gap-7">
+        <nav class="flex flex-wrap gap-x-11 gap-y-5" aria-label="Footer navigation">
+          <NuxtLink
+            v-for="link in navLinks"
+            :key="link.to + link.label"
+            :to="link.to"
+            class="text-lg font-medium text-abyssal-ink hover:text-digital-orange transition-colors"
+          >
+            {{ link.label }}
+          </NuxtLink>
+        </nav>
+
+        <div class="space-y-5">
+          <hr class="border-0 border-t-2 border-dotted border-abyssal-ink/30" />
+          <p class="text-base text-abyssal-ink">jen-lab 2026 © All rights reserved.</p>
         </div>
-        <p class="text-pure-white/70 text-sm">Built in Sydney. Shipped from a laptop.</p>
       </div>
-
-      <!-- Columns -->
-      <UFooterColumns
-        :columns="columns"
-        :ui="{ label: 'text-pure-white/60 text-xs uppercase tracking-widest mb-3' }"
-      />
-
-      <!-- Connect -->
-      <div>
-        <p class="text-pure-white/60 text-xs uppercase tracking-widest mb-4">Connect</p>
-        <ul class="flex flex-wrap gap-2">
-          <li v-for="c in socials" :key="c.label">
-            <UButton
-              :to="c.url"
-              target="_blank"
-              rel="noopener"
-              color="neutral"
-              variant="outline"
-              :icon="c.icon"
-              :aria-label="c.label"
-              class="w-10 h-10 rounded-card border-pure-white/20 text-pure-white hover:border-digital-orange hover:text-digital-orange"
-            />
-          </li>
-        </ul>
-      </div>
-    </template>
-
-    <template #bottom>
-      <p class="text-pure-white/60 text-sm">© Jen-Lab 2026. All rights reserved.</p>
-      <p class="text-pure-white/60 text-sm flex items-center gap-2">Made in Sydney 🐨</p>
-    </template>
-  </UFooter>
+    </div>
+  </footer>
 </template>

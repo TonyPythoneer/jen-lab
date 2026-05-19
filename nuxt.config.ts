@@ -28,7 +28,9 @@ const moduleSettings: NuxtConfig = {
     families: [
       // English display — bold condensed headlines
       { name: "Bebas Neue", provider: "google", weights: [400] },
-      // English body — humanist sans-serif
+      // English body — humanist, matching caldera reference
+      { name: "DM Sans", provider: "google", weights: [400, 500, 700] },
+      // English body — fallback
       { name: "Inter", provider: "google", weights: [400, 500, 700] },
       // Chinese body — neutral modern (recommended default)
       { name: "Noto Sans TC", provider: "google", weights: [400, 500, 700] },

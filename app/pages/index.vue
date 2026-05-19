@@ -190,7 +190,7 @@ const marqueeStrings = [
 </script>
 
 <template>
-  <div class="container mx-auto max-w-[1200px] space-y-10 px-4 py-10">
+  <div class="container mx-auto max-w-[1200px] flex flex-col gap-2.5 px-4 py-2.5">
     <!-- Hero -->
     <section class="relative bg-ash-white rounded-card overflow-hidden">
       <!-- Background dot pattern -->
@@ -292,31 +292,34 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- Stats grid (task 05) -->
-    <section class="space-y-4">
-      <div class="flex items-end justify-between px-1">
-        <h2
-          class="font-display tracking-[0.02em] leading-[0.95] text-3xl md:text-4xl text-abyssal-ink"
-        >
-          By The Numbers.
-        </h2>
-        <span class="text-xs uppercase tracking-widest text-abyssal-ink/60">As of 18 May 2026</span>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+    <!-- Stats -->
+    <section class="py-14 flex flex-col items-center gap-4">
+      <h2
+        class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-center text-5xl md:text-6xl lg:text-7xl"
+      >
+        The Most Personal<br />Multi-Surface Lab.
+      </h2>
+      <UButton
+        color="neutral"
+        variant="outline"
+        :ui="{ base: 'rounded-button px-6' }"
+        to="#features"
+        trailing-icon="i-lucide-arrow-right"
+      >
+        Explore The Workbench
+      </UButton>
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-4">
         <div
           v-for="(s, i) in stats"
           :key="s.label"
-          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between transition-transform duration-200 hover:scale-[1.005]"
-          :class="
-            i % 2 === 0 ? 'bg-digital-orange text-pure-white' : 'bg-ash-white text-abyssal-ink'
-          "
+          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between bg-digital-orange text-pure-white transition-transform duration-200 hover:scale-[1.005]"
         >
           <p class="font-display tracking-[0.02em] leading-[0.9] text-6xl md:text-7xl tabular-nums">
             {{ s.value }}
           </p>
           <div class="space-y-1">
             <p class="text-base font-medium">{{ s.label }}</p>
-            <p :class="i % 2 === 0 ? 'text-pure-white/75' : 'text-abyssal-ink/60'" class="text-sm">
+            <p class="text-sm text-pure-white/75">
               {{ s.caption }}
             </p>
           </div>
