@@ -11,7 +11,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container mx-auto max-w-[1200px] flex flex-col gap-2.5 px-4 py-2.5">
+  <SitePageContainer breakout>
     <!-- Hero -->
     <HomeSectionHero />
 
@@ -36,8 +36,8 @@ useSeoMeta({
     <!-- Testimonials -->
     <HomeSectionTestimonials />
 
-    <!-- Blog carousel -->
-    <HomeSectionBlog />
+    <!-- Blog carousel (full-bleed: carousel peeks beyond 1200px) -->
+    <HomeSectionBlog class="full-bleed" />
 
     <!-- Join The jen-lab Community -->
     <HomeSectionCommunity />
@@ -47,5 +47,5 @@ useSeoMeta({
 
     <!-- Newsletter band -->
     <HomeSectionNewsletter />
-  </div>
+  </SitePageContainer>
 </template>

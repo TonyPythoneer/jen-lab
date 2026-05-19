@@ -27,7 +27,7 @@ const stats = [
       <div
         v-for="s in stats"
         :key="s.label"
-        class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between bg-digital-orange text-pure-white transition-transform duration-200 hover:scale-[1.005]"
+        class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between bg-digital-orange text-pure-white"
       >
         <p class="font-display tracking-[0.02em] leading-[0.9] text-6xl md:text-7xl tabular-nums">
           {{ s.value }}

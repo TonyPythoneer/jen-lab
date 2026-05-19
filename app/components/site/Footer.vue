@@ -78,7 +78,7 @@ const navLinks = [
           :aria-label="c.label"
           target="_blank"
           rel="noopener"
-          class="size-16 rounded-full bg-digital-orange text-pure-white inline-flex items-center justify-center transition-[background-color,transform] duration-[180ms] ease-[ease] hover:bg-[#e34800] hover:-translate-y-0.5"
+          class="size-16 rounded-full bg-digital-orange text-pure-white inline-flex items-center justify-center transition-colors duration-[180ms] hover:bg-[#e34800]"
         >
           <UIcon :name="c.icon" class="size-6" />
         </a>

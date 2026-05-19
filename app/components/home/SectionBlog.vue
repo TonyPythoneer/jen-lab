@@ -44,7 +44,8 @@ function scrollBlogNext() {
 
 <template>
   <section id="blog" class="py-[72px] sm:py-[140px] space-y-6">
-    <div class="flex items-end justify-between gap-4 px-1">
+    <!-- px aligns header to the 1200px content column when section is full-bleed -->
+    <div class="flex items-end justify-between gap-4 px-[max(1rem,calc((100vw-1200px)/2+1rem))]">
       <h2
         class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-6xl"
       >
@@ -87,10 +88,7 @@ function scrollBlogNext() {
         </div>
       </template>
       <template #default="{ item }">
-        <NuxtLink
-          :to="`/blogs/${item.id}?title=${item.slug}`"
-          class="group block space-y-3 transition-transform duration-200 hover:scale-[1.005]"
-        >
+        <NuxtLink :to="`/blogs/${item.id}?title=${item.slug}`" class="group block space-y-3">
           <div
             class="relative aspect-[16/9] rounded-card overflow-hidden border-2 border-abyssal-ink"
             :class="{

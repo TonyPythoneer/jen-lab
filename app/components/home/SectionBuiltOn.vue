@@ -57,7 +57,7 @@ const builtOn = [
       <div
         v-for="(t, i) in builtOn"
         :key="t.name"
-        class="group rounded-card p-6 md:p-8 flex flex-col gap-4 transition-[transform,background-color] duration-200 hover:scale-[1.005]"
+        class="group rounded-card p-6 md:p-8 flex flex-col gap-4"
         :class="
           i === 0 || i === 5
             ? 'bg-cyber-violet text-pure-white'

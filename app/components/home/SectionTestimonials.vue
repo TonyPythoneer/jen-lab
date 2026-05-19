@@ -49,7 +49,7 @@ const testimonials = [
       <article
         v-for="(t, i) in testimonials"
         :key="t.name"
-        class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[300px] transition-transform duration-200 hover:scale-[1.005]"
+        class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[300px]"
         :class="i === 1 ? 'bg-cyber-violet text-pure-white' : 'bg-ash-white text-abyssal-ink'"
       >
         <div

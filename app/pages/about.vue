@@ -68,7 +68,7 @@ const now =
         v-for="f in facets"
         :key="f.title"
         :ui="{
-          root: 'bg-ash-white rounded-card p-8 transition-transform duration-200 hover:scale-[1.005]',
+          root: 'bg-ash-white rounded-card p-8',
           title: 'font-display tracking-[0.02em] text-2xl text-abyssal-ink mt-4',
           description: 'text-abyssal-ink/70 mt-2',
         }"
