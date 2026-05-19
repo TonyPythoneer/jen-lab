@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto max-w-[800px] px-4 py-10 space-y-10">
+  <SitePageContainer>
     <!-- Back navigation -->
     <NuxtLink
       :to="{ path: '/blogs', query: lastQuery }"
@@ -28,6 +28,14 @@
         </template>
       </UPageHeader>
 
+      <!-- Featured image -->
+      <img
+        v-if="meta.image"
+        :src="meta.image"
+        :alt="meta.title"
+        class="w-full aspect-video object-cover rounded-card"
+      />
+
       <!-- Post content -->
       <article
         class="prose prose-neutral max-w-none wp-content bg-ash-white rounded-card p-10"
@@ -36,7 +44,7 @@
     </template>
 
     <ScrollToTopButton />
-  </div>
+  </SitePageContainer>
 </template>
 
 <script setup lang="ts">

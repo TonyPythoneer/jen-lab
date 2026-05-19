@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto max-w-[1200px] px-4 py-10 space-y-10">
+  <SitePageContainer>
     <!-- Header -->
     <UPageHeader
       title="Notes From The Notebook."
@@ -115,7 +115,7 @@
     </div>
 
     <ScrollToTopButton />
-  </div>
+  </SitePageContainer>
 </template>
 
 <script setup lang="ts">
