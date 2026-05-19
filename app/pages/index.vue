@@ -82,119 +82,47 @@ const testimonials = [
   },
 ];
 
-// News carousel: 8 dummy items, all placeholder content. Replace with real
-// @nuxt/content "news" or "announcements" collection once Jen seeds one.
-const newsItems = [
-  {
-    title: "Introducing Notebook Drops: the weekly Sydney brief.",
-    tag: "Announcement",
-    date: "04 Feb 2026",
-    banner: "Notebook Drops",
-    bannerTone: "violet",
-  },
-  {
-    title: "Jen Lab partners with the Harbour Café to seed map data.",
-    tag: "Integration",
-    date: "29 Jan 2026",
-    banner: "Harbour · Lab",
-    bannerTone: "orange",
-  },
-  {
-    title: "Restaurant map's coverage expands: now live in Inner West.",
-    tag: "Product",
-    date: "14 Dec 2025",
-    banner: "Inner West",
-    bannerTone: "orange",
-  },
-  {
-    title: "Workshop pipeline is now live on Cloudflare Pages.",
-    tag: "Engineering",
-    date: "09 Dec 2025",
-    banner: "Pipeline · CF",
-    bannerTone: "dark",
-  },
-  {
-    title: "Bondi loop walking guide added to the Wander section.",
-    tag: "Wander",
-    date: "21 Nov 2025",
-    banner: "Bondi Loop",
-    bannerTone: "violet",
-  },
-  {
-    title: "Slow-mail subscriber count hits 312, all hand-typed.",
-    tag: "Milestone",
-    date: "08 Nov 2025",
-    banner: "312 · Slow Mail",
-    bannerTone: "orange",
-  },
-  {
-    title: "New design tokens shipped — radius / spacing scales doubled.",
-    tag: "Design",
-    date: "27 Oct 2025",
-    banner: "Tokens · 2.0",
-    bannerTone: "dark",
-  },
-  {
-    title: "The Living Lab redesigned for the fifth time, finally Caldera-style.",
-    tag: "Meta",
-    date: "12 Oct 2025",
-    banner: "Lab · v5",
-    bannerTone: "violet",
-  },
-];
+// Pull real WP posts (newest 8) via the shared wpApi helper. Pattern mirrors
+// app/pages_backup/blogs/index.vue — useLazyAsyncData (non-blocking SSR), with
+// wpTags pulled from the content collection for chip labels.
+import { fetchPosts, stripHtml, formatDate } from "~/utils/wpApi";
 
-const newsApi = ref<{ scrollPrev: () => void; scrollNext: () => void } | null>(null);
+const { data: postsResult } = useLazyAsyncData("home:blog-carousel", () =>
+  fetchPosts({ page: 1, perPage: 10 }),
+);
 
-// TODO: replace with real @nuxt/content blog collection once /blogs route is
-// restored (task 13). For now, placeholder posts so the row composition can be
-// designed.
-const blogPosts = [
-  {
-    date: "18 May 2026",
-    tag: "Food",
-    title: "What I learned from logging 100 Sydney restaurants.",
-    excerpt:
-      "A year in, here are the patterns I didn't expect — and the three suburbs that consistently punch above their weight.",
-    glyph: "gum-leaf" as const,
-    accent: "bg-digital-orange/10",
-  },
-  {
-    date: "04 May 2026",
-    tag: "Code",
-    title: "Tinkering with Nuxt content collections in production.",
-    excerpt:
-      "Schema design choices, gotchas with discriminated unions, and what I'd do differently on day two.",
-    glyph: "terminal" as const,
-    accent: "bg-cyber-violet/10",
-  },
-  {
-    date: "19 Apr 2026",
-    tag: "Wander",
-    title: "A weekend walk from Bondi to Coogee.",
-    excerpt:
-      "Eight kilometres, four beaches, one very good banana bread stop. The coastal walk, done slow.",
-    glyph: "compass" as const,
-    accent: "bg-pixel-glare/30",
-  },
-  {
-    date: "02 Apr 2026",
-    tag: "Code",
-    title: "Tabs, not stacks: a small UI rule that pays off.",
-    excerpt:
-      "When to group screens into tabs vs collapse into a stack, with three real examples from this site.",
-    glyph: "book" as const,
-    accent: "bg-cyber-violet/10",
-  },
-  {
-    date: "21 Mar 2026",
-    tag: "Meta",
-    title: "Why I rewrote my personal site for the fifth time.",
-    excerpt:
-      "Less framework churn, more design intent. Notes on choosing a vocabulary and committing to it.",
-    glyph: "sail" as const,
-    accent: "bg-digital-orange/10",
-  },
-];
+const { data: wpTagsData } = useLazyAsyncData(
+  "home:wp-tags",
+  () => queryCollection("wpTags").order("count", "DESC").all(),
+  { server: false },
+);
+
+const tagMap = computed(() =>
+  Object.fromEntries((wpTagsData.value ?? []).map((t) => [t.wpId, t.name])),
+);
+
+const BANNER_TONES = ["orange", "violet", "dark"] as const;
+
+const blogPosts = computed(() =>
+  (postsResult.value?.data ?? []).map((p, i) => ({
+    id: p.id,
+    slug: p.slug,
+    title: p.title.rendered,
+    excerpt: stripHtml(p.excerpt.rendered),
+    date: formatDate(p.date),
+    image: p.jetpack_featured_media_url,
+    tagLabel: (p.tags?.[0] !== undefined && tagMap.value[p.tags[0]]) || "Post",
+    bannerTone: BANNER_TONES[i % BANNER_TONES.length],
+  })),
+);
+
+const blogCarousel = ref<{ scrollPrev: () => void; scrollNext: () => void } | null>(null);
+function scrollBlogPrev() {
+  blogCarousel.value?.scrollPrev();
+}
+function scrollBlogNext() {
+  blogCarousel.value?.scrollNext();
+}
 
 const toast = useToast();
 const subscribeEmail = ref("");
@@ -535,25 +463,25 @@ const marqueeStrings = [
               <h3
                 class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl md:text-4xl"
               >
-                {{ (item as any).headline }}
+                {{ item.headline }}
               </h3>
-              <p class="text-abyssal-ink/75 leading-relaxed">{{ (item as any).body }}</p>
+              <p class="text-abyssal-ink/75 leading-relaxed">{{ item.body }}</p>
               <UButton
-                v-if="(item as any).cta"
+                v-if="item.cta"
                 color="neutral"
                 variant="outline"
                 :ui="{ base: 'rounded-button px-6' }"
-                :to="(item as any).cta.to"
+                :to="item.cta.to"
                 trailing-icon="i-lucide-arrow-right"
               >
-                {{ (item as any).cta.label }}
+                {{ item.cta.label }}
               </UButton>
               <p v-else class="text-sm text-abyssal-ink/50 italic">Trail journal coming soon.</p>
             </div>
             <div
               class="bg-basalt-canvas rounded-card aspect-square flex items-center justify-center p-10"
             >
-              <HomeGlyphSvg :kind="(item as any).glyph" class="w-full max-w-[260px]" />
+              <HomeGlyphSvg :kind="item.glyph" class="w-full max-w-[260px]" />
             </div>
           </div>
         </template>
@@ -657,13 +585,14 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- News carousel -->
-    <section class="space-y-6">
+    <!-- Blog carousel (full-bleed, scrolls beyond container edges) -->
+    <section id="blog" class="space-y-6">
+      <!-- Header sits inside the 1200px column -->
       <div class="flex items-end justify-between gap-4 px-1">
         <h2
           class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-6xl"
         >
-          News.
+          Blog.
         </h2>
         <div
           class="flex items-center gap-1 border border-dotted border-abyssal-ink/30 rounded-button p-1"
@@ -671,7 +600,7 @@ const marqueeStrings = [
           <button
             class="size-9 inline-flex items-center justify-center rounded-button hover:bg-ash-white transition-colors text-abyssal-ink"
             aria-label="Previous"
-            @click="newsApi?.scrollPrev()"
+            @click="scrollBlogPrev"
           >
             <UIcon name="i-lucide-arrow-left" class="size-4" />
           </button>
@@ -679,57 +608,60 @@ const marqueeStrings = [
           <button
             class="size-9 inline-flex items-center justify-center rounded-button hover:bg-ash-white transition-colors text-abyssal-ink"
             aria-label="Next"
-            @click="newsApi?.scrollNext()"
+            @click="scrollBlogNext"
           >
             <UIcon name="i-lucide-arrow-right" class="size-4" />
           </button>
         </div>
       </div>
 
-      <UCarousel
+      <SnapCarousel
+        ref="blogCarousel"
         v-slot="{ item }"
-        :items="newsItems"
-        :ui="{ item: 'basis-[80%] sm:basis-[55%] md:basis-[38%] lg:basis-[28%] pl-2.5' }"
-        class="w-full"
-        @init="(api: any) => (newsApi = api)"
+        :items="blogPosts"
+        peek="max(1rem, calc((100vw - 1200px) / 2 + 1rem))"
       >
-        <NuxtLink to="/blogs" class="group block space-y-3">
-          <!-- Banner card with halftone -->
+        <NuxtLink :to="`/blogs/${item.id}?title=${item.slug}`" class="group block space-y-3">
+          <!-- Banner: WP featured image when present; coloured halftone fallback otherwise -->
           <div
-            class="relative aspect-[16/9] rounded-card overflow-hidden border-2 transition-transform group-hover:scale-[1.01]"
+            class="relative aspect-[16/9] rounded-card overflow-hidden border-2 border-abyssal-ink"
             :class="{
-              'bg-digital-orange border-abyssal-ink': (item as any).bannerTone === 'orange',
-              'bg-cyber-violet border-abyssal-ink': (item as any).bannerTone === 'violet',
-              'bg-abyssal-ink border-abyssal-ink': (item as any).bannerTone === 'dark',
+              'bg-digital-orange': item.bannerTone === 'orange',
+              'bg-cyber-violet': item.bannerTone === 'violet',
+              'bg-abyssal-ink': item.bannerTone === 'dark',
             }"
           >
-            <!-- Halftone overlay -->
-            <div
-              aria-hidden="true"
-              class="absolute inset-0 pointer-events-none"
-              :style="{
-                backgroundImage:
-                  (item as any).bannerTone === 'dark'
-                    ? 'radial-gradient(circle, var(--color-cyber-violet) 2px, transparent 2.5px)'
-                    : 'radial-gradient(circle, var(--color-abyssal-ink) 2px, transparent 2.5px)',
-                backgroundSize: '12px 12px',
-                opacity: (item as any).bannerTone === 'dark' ? 0.6 : 0.2,
-                maskImage:
-                  'radial-gradient(circle at 30% 50%, black 20%, rgba(0,0,0,0.4) 60%, transparent 100%)',
-                WebkitMaskImage:
-                  'radial-gradient(circle at 30% 50%, black 20%, rgba(0,0,0,0.4) 60%, transparent 100%)',
-              }"
+            <img
+              v-if="item.image"
+              :src="item.image"
+              :alt="stripHtml(item.title)"
+              loading="lazy"
+              class="absolute inset-0 w-full h-full object-cover"
             />
 
-            <!-- Banner text overlay -->
-            <div class="absolute inset-0 flex items-center justify-center p-4 text-center">
-              <span
-                class="font-display tracking-[0.02em] leading-[0.95] text-2xl md:text-3xl drop-shadow"
-                :class="(item as any).bannerTone === 'dark' ? 'text-pure-white' : 'text-pure-white'"
-              >
-                {{ (item as any).banner }}
-              </span>
-            </div>
+            <!-- Fallback: coloured halftone + title fragment when no featured image -->
+            <template v-else>
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 pointer-events-none"
+                :style="{
+                  backgroundImage:
+                    'radial-gradient(circle, var(--color-abyssal-ink) 2px, transparent 2.5px)',
+                  backgroundSize: '12px 12px',
+                  opacity: 0.22,
+                  maskImage:
+                    'radial-gradient(circle at 25% 50%, black 25%, rgba(0,0,0,0.4) 65%, transparent 100%)',
+                  WebkitMaskImage:
+                    'radial-gradient(circle at 25% 50%, black 25%, rgba(0,0,0,0.4) 65%, transparent 100%)',
+                }"
+              />
+              <div class="absolute inset-0 flex items-center justify-center p-4 text-center">
+                <span
+                  class="font-display tracking-[0.02em] leading-[0.95] text-2xl md:text-3xl text-pure-white drop-shadow line-clamp-2"
+                  v-html="item.title"
+                />
+              </div>
+            </template>
 
             <!-- Brand mark bottom-left -->
             <div class="absolute bottom-2 left-3 flex items-center gap-1.5">
@@ -745,81 +677,16 @@ const marqueeStrings = [
             <span
               class="inline-block bg-pixel-glare text-abyssal-ink text-xs px-2.5 py-1 rounded font-medium"
             >
-              {{ (item as any).tag }}
+              {{ item.tagLabel }}
             </span>
             <h3
               class="text-base font-bold leading-snug text-abyssal-ink line-clamp-2 group-hover:text-digital-orange transition-colors"
-            >
-              {{ (item as any).title }}
-            </h3>
-            <p class="text-sm text-abyssal-ink/60">{{ (item as any).date }}</p>
+              v-html="item.title"
+            />
+            <p class="text-sm text-abyssal-ink/60">{{ item.date }}</p>
           </div>
         </NuxtLink>
-      </UCarousel>
-    </section>
-
-    <!-- Blog preview row (task 09) -->
-    <section id="blog" class="space-y-6">
-      <div class="flex items-end justify-between gap-4 px-1">
-        <div class="space-y-2">
-          <span class="text-cyber-violet text-xs uppercase tracking-widest">Notebook</span>
-          <h2
-            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
-          >
-            Latest From
-            <span class="block text-digital-orange">The Notebook.</span>
-          </h2>
-        </div>
-        <UButton
-          to="/blogs"
-          color="neutral"
-          variant="ghost"
-          :ui="{ base: 'rounded-button shrink-0' }"
-          trailing-icon="i-lucide-arrow-right"
-        >
-          See all
-        </UButton>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2.5">
-        <NuxtLink
-          v-for="post in blogPosts"
-          :key="post.title"
-          to="/blogs"
-          class="group bg-ash-white rounded-card overflow-hidden p-5 flex flex-col gap-4 hover:scale-[1.01] transition-transform"
-        >
-          <div
-            class="aspect-video w-full rounded-card flex items-center justify-center"
-            :class="post.accent"
-          >
-            <HomeGlyphSvg :kind="post.glyph" class="w-1/2" />
-          </div>
-          <div class="flex items-center gap-2">
-            <span
-              class="bg-pixel-glare text-abyssal-ink text-xs px-3 py-1 rounded-button font-medium"
-            >
-              {{ post.date }}
-            </span>
-            <span class="text-xs uppercase tracking-widest text-abyssal-ink/60">
-              {{ post.tag }}
-            </span>
-          </div>
-          <h3
-            class="text-base font-bold leading-snug text-abyssal-ink line-clamp-2 group-hover:text-digital-orange transition-colors"
-          >
-            {{ post.title }}
-          </h3>
-          <p class="text-sm text-abyssal-ink/70 line-clamp-2 flex-1">
-            {{ post.excerpt }}
-          </p>
-          <span
-            class="inline-flex items-center gap-1 text-sm text-abyssal-ink/80 group-hover:text-digital-orange group-hover:translate-x-1 transition-all"
-          >
-            Read post
-            <UIcon name="i-lucide-arrow-right" class="size-3.5" />
-          </span>
-        </NuxtLink>
-      </div>
+      </SnapCarousel>
     </section>
 
     <!-- Newsletter band (task 10) -->
