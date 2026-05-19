@@ -22,16 +22,6 @@
   }
 }
 
-/* Caldera-style: all buttons lift 1px on hover */
-[data-slot="base"]:not([disabled]) {
-  transition-property: transform, background-color, color, box-shadow;
-  transition-duration: 180ms;
-  transition-timing-function: ease;
-}
-[data-slot="base"]:not([disabled]):hover {
-  transform: translateY(-1px);
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

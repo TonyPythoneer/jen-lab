@@ -14,12 +14,35 @@ const navLinks = [
 </script>
 
 <template>
-  <!-- 5fr/7fr split matching caldera .foot -->
-  <footer class="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5 px-4 pb-2.5">
+  <!-- container matches body's max-w-[1200px] px-4 so columns align with page content -->
+  <footer
+    class="container mx-auto max-w-[1200px] grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5 px-4 pb-2.5"
+  >
     <!-- Left: dark brand card -->
     <div
       class="relative bg-abyssal-ink text-pure-white rounded-card p-10 flex flex-col justify-between gap-10 min-h-[360px] overflow-hidden"
     >
+      <!-- Dark-radial dotfield: pixel-glare dots fading from top-right corner -->
+      <HomeBackgroundDots
+        color="var(--color-pixel-glare)"
+        :size="2"
+        :spacing="28"
+        :opacity="1"
+        style="
+          mask-image: radial-gradient(
+            ellipse 70% 70% at 90% 10%,
+            rgba(0, 0, 0, 0.22) 0%,
+            rgba(0, 0, 0, 0.08) 55%,
+            transparent 100%
+          );
+          -webkit-mask-image: radial-gradient(
+            ellipse 70% 70% at 90% 10%,
+            rgba(0, 0, 0, 0.22) 0%,
+            rgba(0, 0, 0, 0.08) 55%,
+            transparent 100%
+          );
+        "
+      />
       <!-- Brand mark + wordmark -->
       <NuxtLink to="/" class="flex items-center gap-2.5 w-fit">
         <span class="size-6 bg-digital-orange rounded-sm shrink-0" />

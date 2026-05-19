@@ -720,12 +720,26 @@ const marqueeStrings = [
         class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none rotate-12"
       />
 
-      <!-- Pixel Glare dot scatter -->
+      <!-- Radial dotfield: pixel-glare dots concentrated at centre, fading to edges -->
       <HomeBackgroundDots
         color="var(--color-pixel-glare)"
-        :opacity="0.18"
-        :spacing="36"
+        :opacity="1"
+        :spacing="32"
         :size="2"
+        style="
+          mask-image: radial-gradient(
+            ellipse 80% 80% at 50% 50%,
+            rgba(0, 0, 0, 0.25) 0%,
+            rgba(0, 0, 0, 0.12) 50%,
+            transparent 100%
+          );
+          -webkit-mask-image: radial-gradient(
+            ellipse 80% 80% at 50% 50%,
+            rgba(0, 0, 0, 0.25) 0%,
+            rgba(0, 0, 0, 0.12) 50%,
+            transparent 100%
+          );
+        "
       />
 
       <div class="relative z-10 max-w-2xl mx-auto space-y-6">
