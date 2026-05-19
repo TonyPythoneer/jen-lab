@@ -361,11 +361,13 @@ defineExpose({ scrollPrev, scrollNext });
       -->
       <slot name="skeleton" :index="i - 1">
         <div class="space-y-3">
-          <div class="aspect-[16/9] rounded-card bg-ash-white/60 animate-pulse" />
+          <div
+            class="aspect-[16/9] rounded-card bg-abyssal-ink/10 border-2 border-dashed border-abyssal-ink/20 animate-pulse"
+          />
           <div class="space-y-2 px-1">
-            <div class="h-5 w-16 rounded bg-ash-white/60 animate-pulse" />
-            <div class="h-4 w-full rounded bg-ash-white/60 animate-pulse" />
-            <div class="h-4 w-2/3 rounded bg-ash-white/60 animate-pulse" />
+            <div class="h-5 w-16 rounded bg-abyssal-ink/15 animate-pulse" />
+            <div class="h-4 w-full rounded bg-abyssal-ink/10 animate-pulse" />
+            <div class="h-4 w-2/3 rounded bg-abyssal-ink/10 animate-pulse" />
           </div>
         </div>
       </slot>
