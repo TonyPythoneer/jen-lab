@@ -26,8 +26,22 @@ const moduleSettings: NuxtConfig = {
   ],
   fonts: {
     families: [
+      // English display — bold condensed headlines
       { name: "Bebas Neue", provider: "google", weights: [400] },
+      // English body — humanist sans-serif
       { name: "Inter", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — neutral modern (recommended default)
+      { name: "Noto Sans TC", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — rounded friendly
+      // { name: "Zen Maru Gothic", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — geometric, close to Inter feel
+      // { name: "Murecho", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — handwritten, personal blog vibe
+      // { name: "LXGW WenKai TC", provider: "google", weights: [400, 700] },
+      // Chinese body — clean, legible
+      // { name: "BIZ UDPGothic", provider: "google", weights: [400, 700] },
+      // Chinese body — serif, elegant
+      // { name: "Noto Serif TC", provider: "google", weights: [400, 500, 700] },
     ],
   },
   css: ["~/assets/css/main.css"],
