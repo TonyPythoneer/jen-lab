@@ -124,11 +124,19 @@ const props = withDefaults(
      */
     peek?: string;
     /**
-     * Number of skeleton cards to render while `ready` is false (data pending
-     * or scroll position not yet anchored). Consumers supply the skeleton
-     * shape via the `#skeleton` named slot.
+     * Number of skeleton cards to render while `loading` is true or `items`
+     * is empty. Consumers can override the per-card shape via the
+     * `#skeleton` named slot.
      */
     skeletonCount?: number;
+    /**
+     * Explicit loading flag. Drive this from the data fetcher's status
+     * (e.g. `status.value === 'pending'` from `useLazyAsyncData`) so the
+     * skeleton stays visible during the fetch even when the items array is
+     * still empty for unrelated reasons. When omitted, the carousel falls
+     * back to `!items.length` as a heuristic.
+     */
+    loading?: boolean;
   }>(),
   {
     loop: true,
@@ -137,6 +145,7 @@ const props = withDefaults(
     gap: 10,
     peek: "0px",
     skeletonCount: 4,
+    loading: undefined,
   },
 );
 
@@ -147,11 +156,25 @@ defineSlots<{
 
 const track = ref<HTMLDivElement | null>(null);
 
-// Three-state lifecycle:
-//   idle        → no items yet; skeleton visible, track in DOM but empty
-//   positioning → items arrived; skeleton visible, track invisible + measuring
-//   ready       → scrollLeft anchored; skeleton gone, track live
-const state = ref<"idle" | "positioning" | "ready">("idle");
+/**
+ * Skeleton visibility.
+ *
+ * Prefers the explicit `loading` flag when the consumer passes one (e.g.
+ * piping `status.value === 'pending'` from useLazyAsyncData). Falls back
+ * to the items-empty heuristic when no flag is passed — useful for
+ * static datasets where there is no async fetch to track.
+ */
+const showSkeleton = computed(() =>
+  props.loading !== undefined ? props.loading : !props.items.length,
+);
+
+/**
+ * Whether scrollLeft has been anchored to the middle copy's snap point.
+ * Stays false while loading; flips true after the first nextTick that
+ * follows items landing in the DOM. Reset to false if the items array
+ * empties out (e.g. consumer cleared on filter change).
+ */
+const anchored = ref(false);
 
 /**
  * When `loop` is on, render the source list three times back-to-back. The
@@ -277,33 +300,35 @@ function wrap(): void {
   else if (el.scrollLeft >= anchor + set) el.scrollLeft -= set;
 }
 
-// Drive idle → positioning → ready transitions.
+/**
+ * Anchor scrollLeft to the middle copy's snap point once the track is in
+ * the DOM and items are present. Fires:
+ *   - on initial mount when loading flips false and items exist
+ *   - after `items` changes shape (e.g. consumer swaps the dataset)
+ *   - after `track` ref binds (covers v-if remount)
+ * Skipped when `loop` is off (no middle copy to anchor to).
+ */
 watch(
-  () => props.items,
-  () => {
-    if (!props.items.length) {
-      state.value = "idle";
-    } else if (state.value === "idle") {
-      // Only advance from idle; if already positioning or ready, don't regress.
-      state.value = props.loop ? "positioning" : "ready";
+  [() => showSkeleton.value, () => props.items.length, track],
+  ([sk, len, el]) => {
+    if (sk || !len) {
+      anchored.value = false;
+      return;
     }
+    if (!props.loop) {
+      anchored.value = true;
+      return;
+    }
+    if (!el || anchored.value) return;
+    nextTick(() => {
+      if (!track.value) return;
+      track.value.scrollLeft = oneSetWidth() - peekPx();
+      anchored.value = true;
+      track.value.addEventListener("scrollend", wrap);
+    });
   },
-  { immediate: true, deep: true },
+  { immediate: true, flush: "post" },
 );
-
-// Once items are in the DOM (positioning state), anchor scrollLeft then go live.
-watchEffect(() => {
-  if (state.value !== "positioning" || !track.value || !props.items.length) return;
-  nextTick(() => {
-    if (!track.value || state.value !== "positioning") return;
-    track.value.scrollLeft = oneSetWidth() - peekPx();
-    state.value = "ready";
-  });
-});
-
-onMounted(() => {
-  track.value?.addEventListener("scrollend", wrap);
-});
 
 onBeforeUnmount(() => {
   track.value?.removeEventListener("scrollend", wrap);
@@ -313,19 +338,26 @@ defineExpose({ scrollPrev, scrollNext });
 </script>
 
 <template>
-  <!-- Skeleton: visible while idle or positioning; sets the row's layout height -->
+  <!--
+    Skeleton row — visible while `showSkeleton` is true (loading or empty).
+    Reserves the same layout height as the live track so the page doesn't
+    jump when the skeleton swaps out. Anchoring of scrollLeft happens on
+    the live track AFTER this swap, so the consumer sees: skeleton →
+    track (already at the correct middle-copy position).
+  -->
   <div
-    v-if="state !== 'ready'"
+    v-if="showSkeleton"
     class="flex overflow-hidden"
     :class="bleed && 'snap-carousel-bleed'"
     :style="{ gap: `${gap}px` }"
+    aria-hidden="true"
   >
     <article v-for="i in skeletonCount" :key="`sk-${i}`" class="shrink-0" :class="itemClass">
       <!--
-        Default skeleton: rounded-card banner + tag pill + 2 title lines.
-        Mirrors the rough proportion of a typical card so the row reserves
-        the right height. Consumers can override by passing a `#skeleton`
-        slot with their own placeholder shape.
+        Default skeleton shape: rounded-card banner + tag pill + two title
+        lines. Same silhouette as a typical SnapCarousel card so the row
+        height is preserved. Consumers can override by passing a `#skeleton`
+        slot with their own placeholder.
       -->
       <slot name="skeleton" :index="i - 1">
         <div class="space-y-3">
@@ -341,19 +373,15 @@ defineExpose({ scrollPrev, scrollNext });
   </div>
 
   <!--
-    Track is always in the DOM so offsetWidth measurements work at any state.
-    During idle/positioning: absolute + opacity-0 + pointer-events-none keeps it
-    invisible and out of layout flow while still allowing scrollLeft to be set.
-    overflow-x-auto stays on at all times so scrollLeft assignment is not a no-op.
-    The .snap-carousel scoped CSS hides the scrollbar unconditionally.
+    Live track — only mounted once items are loaded. v-else (not v-if /
+    v-show) so the absent skeleton frees up rendering. The watch on
+    `track` ref + items triggers the anchor on first mount.
   -->
   <div
+    v-else
     ref="track"
     class="snap-carousel flex overflow-x-auto snap-x snap-mandatory"
-    :class="[
-      bleed && 'snap-carousel-bleed',
-      state !== 'ready' && 'absolute opacity-0 pointer-events-none',
-    ]"
+    :class="bleed && 'snap-carousel-bleed'"
     :style="{ gap: `${gap}px`, scrollPaddingLeft: peek }"
   >
     <article
