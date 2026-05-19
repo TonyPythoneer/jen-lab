@@ -58,7 +58,7 @@ const now =
         </UButton>
       </template>
       <template #default>
-        <HomeOperaHouseSvg class="w-full max-w-xs opacity-80" aria-hidden="true" />
+        <HomeOperaHouseSvg aria-hidden="true" class="w-full max-w-xs opacity-80" />
       </template>
     </UPageHero>
 
@@ -68,13 +68,13 @@ const now =
         v-for="f in facets"
         :key="f.title"
         :ui="{
-          root: 'bg-ash-white rounded-card p-8',
+          root: 'bg-ash-white rounded-card p-8 transition-transform duration-200 hover:scale-[1.005]',
           title: 'font-display tracking-[0.02em] text-2xl text-abyssal-ink mt-4',
           description: 'text-abyssal-ink/70 mt-2',
         }"
       >
         <template #leading>
-          <HomeGlyphSvg :kind="f.glyph" class="w-10 h-10" aria-hidden="true" />
+          <HomeGlyphSvg aria-hidden="true" :kind="f.glyph" class="w-10 h-10" />
         </template>
         <template #title>{{ f.title }}</template>
         <template #description>{{ f.body }}</template>

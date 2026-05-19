@@ -198,6 +198,7 @@ const marqueeStrings = [
 
       <!-- Faded Opera House behind everything -->
       <HomeOperaHouseSvg
+        aria-hidden="true"
         class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[140%] max-w-none opacity-15 pointer-events-none"
       />
 
@@ -305,7 +306,7 @@ const marqueeStrings = [
         <div
           v-for="(s, i) in stats"
           :key="s.label"
-          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between"
+          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between transition-transform duration-200 hover:scale-[1.005]"
           :class="
             i % 2 === 0 ? 'bg-digital-orange text-pure-white' : 'bg-ash-white text-abyssal-ink'
           "
@@ -395,14 +396,14 @@ const marqueeStrings = [
         <article
           class="md:col-span-7 bg-cyber-violet rounded-card overflow-hidden flex items-center justify-center min-h-[360px] p-10"
         >
-          <HomeHarbourBridgeSvg class="w-full h-full max-h-[320px]" />
+          <HomeHarbourBridgeSvg aria-hidden="true" class="w-full h-full max-h-[320px]" />
         </article>
 
         <!-- Cell C: wide orange illustration card, bottom-left (7/12) -->
         <article
           class="md:col-span-7 bg-digital-orange rounded-card overflow-hidden flex items-center justify-center min-h-[360px] p-10"
         >
-          <HomeOperaHouseSvg class="w-full h-full max-h-[320px]" />
+          <HomeOperaHouseSvg aria-hidden="true" class="w-full h-full max-h-[320px]" />
         </article>
 
         <!-- Cell D: narrow text card, bottom-right (5/12) -->
@@ -484,7 +485,7 @@ const marqueeStrings = [
             <div
               class="bg-basalt-canvas rounded-card aspect-square flex items-center justify-center p-10"
             >
-              <HomeGlyphSvg :kind="item.glyph" class="w-full max-w-[260px]" />
+              <HomeGlyphSvg aria-hidden="true" :kind="item.glyph" class="w-full max-w-[260px]" />
             </div>
           </div>
         </template>
@@ -514,7 +515,7 @@ const marqueeStrings = [
         <div
           v-for="(t, i) in builtOn"
           :key="t.name"
-          class="group rounded-card p-6 md:p-8 flex flex-col gap-4 transition-colors"
+          class="group rounded-card p-6 md:p-8 flex flex-col gap-4 transition-[transform,background-color] duration-200 hover:scale-[1.005]"
           :class="
             i === 0 || i === 5
               ? 'bg-cyber-violet text-pure-white'
@@ -566,14 +567,14 @@ const marqueeStrings = [
         <article
           v-for="(t, i) in testimonials"
           :key="t.name"
-          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[300px]"
+          class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[300px] transition-transform duration-200 hover:scale-[1.005]"
           :class="i === 1 ? 'bg-cyber-violet text-pure-white' : 'bg-ash-white text-abyssal-ink'"
         >
           <div
             class="size-12 rounded-card flex items-center justify-center shrink-0"
             :class="i === 1 ? 'bg-pure-white/15' : 'bg-basalt-canvas'"
           >
-            <HomeGlyphSvg :kind="t.glyph" class="size-8" />
+            <HomeGlyphSvg aria-hidden="true" :kind="t.glyph" class="size-8" />
           </div>
           <blockquote class="text-base md:text-lg leading-relaxed flex-1 italic">
             "{{ t.quote }}"
@@ -634,7 +635,10 @@ const marqueeStrings = [
           </div>
         </template>
         <template #default="{ item }">
-          <NuxtLink :to="`/blogs/${item.id}?title=${item.slug}`" class="group block space-y-3">
+          <NuxtLink
+            :to="`/blogs/${item.id}?title=${item.slug}`"
+            class="group block space-y-3 transition-transform duration-200 hover:scale-[1.005]"
+          >
             <!-- Banner: WP featured image when present; coloured halftone fallback otherwise -->
             <div
               class="relative aspect-[16/9] rounded-card overflow-hidden border-2 border-abyssal-ink"
@@ -709,6 +713,7 @@ const marqueeStrings = [
     >
       <!-- Background: faded pixel sails bleeding off right edge -->
       <HomeOperaHouseSvg
+        aria-hidden="true"
         class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none rotate-12"
       />
 

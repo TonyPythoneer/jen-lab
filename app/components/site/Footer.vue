@@ -28,7 +28,7 @@ const socials = appConfig.contacts ?? [];
   <UFooter
     :ui="{
       root: 'bg-abyssal-ink text-pure-white rounded-t-card mt-10',
-      top: 'p-10 grid md:grid-cols-4 gap-10',
+      top: 'p-10 grid sm:grid-cols-2 md:grid-cols-4 gap-10',
       bottom:
         'border-t border-pure-white/10 p-6 flex flex-col md:flex-row items-center justify-between gap-4',
     }"

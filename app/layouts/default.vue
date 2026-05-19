@@ -39,6 +39,13 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 <template>
   <div class="bg-basalt-canvas min-h-screen flex flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-abyssal-ink focus:text-pure-white focus:rounded-button focus:text-sm"
+    >
+      Skip to main content
+    </a>
+
     <header class="sticky top-0 z-50 px-4 pt-3">
       <div
         class="mx-auto flex items-center gap-4"
@@ -135,22 +142,31 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       </div>
 
       <!-- Mobile drawer -->
-      <div
-        v-if="mobileOpen"
-        class="md:hidden mx-auto mt-2 max-w-[1200px] bg-ash-white rounded-card shadow-lg p-4 space-y-2"
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out"
+        enter-from-class="opacity-0 -translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-2"
       >
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          class="block px-4 py-2 text-abyssal-ink hover:bg-basalt-canvas rounded-card transition-colors"
+        <div
+          v-if="mobileOpen"
+          class="md:hidden mx-auto mt-2 max-w-[1200px] bg-ash-white rounded-card shadow-lg p-4 space-y-2"
         >
-          {{ item.label }}
-        </NuxtLink>
-      </div>
+          <NuxtLink
+            v-for="item in navItems"
+            :key="item.to"
+            :to="item.to"
+            class="block px-4 py-2 text-abyssal-ink hover:bg-basalt-canvas rounded-card transition-colors"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
+      </Transition>
     </header>
 
-    <div class="flex-1">
+    <div id="main" class="flex-1">
       <slot />
     </div>
 
