@@ -51,6 +51,27 @@ const useCaseItems = [
   },
 ];
 
+const bringItems = [
+  {
+    value: "food",
+    title: "Food",
+    icon: "i-lucide-utensils",
+    body: "120+ restaurants logged across the harbour, filterable by area and cuisine. Every entry is a personal visit — no scraped reviews, no SEO bait. Just where I'd send a friend tomorrow.",
+  },
+  {
+    value: "code",
+    title: "Code",
+    icon: "i-lucide-cpu",
+    body: "Toy projects, half-broken on purpose. Nuxt experiments and the occasional Cloudflare Worker.",
+  },
+  {
+    value: "writing",
+    title: "Writing",
+    icon: "i-lucide-book-open",
+    body: "Long-form notes from the workbench. Less manifesto, more diary.",
+  },
+];
+
 const activeUseCase = ref("food");
 
 // NOTE: all testimonials below are fictional placeholders. Replace with real
@@ -126,6 +147,12 @@ function scrollBlogPrev() {
 function scrollBlogNext() {
   blogCarousel.value?.scrollNext();
 }
+
+const communityPills = [
+  { label: "Threads", icon: "i-simple-icons-threads", count: "3.6K" },
+  { label: "RSS", icon: "i-lucide-rss", count: "2.7K" },
+  { label: "Email", icon: "i-lucide-mail", count: "1.1K" },
+];
 
 const toast = useToast();
 const subscribeEmail = ref("");
@@ -442,6 +469,72 @@ const marqueeStrings = [
       </div>
     </section>
 
+    <!-- Bringing The Harbour Online -->
+    <section class="py-14 flex flex-col items-center gap-10">
+      <h2
+        class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-center text-5xl md:text-6xl lg:text-7xl"
+      >
+        Bringing The<br />Harbour Online.
+      </h2>
+
+      <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2.5 items-stretch">
+        <!-- Left: accordion -->
+        <div class="flex flex-col gap-2.5">
+          <details
+            v-for="(acc, i) in bringItems"
+            :key="acc.value"
+            class="group bg-ash-white rounded-card px-7 py-6 open:px-8 open:py-8 transition-[padding] duration-200"
+            :open="i === 0"
+          >
+            <summary class="list-none cursor-pointer flex items-center gap-4">
+              <span
+                class="size-14 rounded-[16px] flex items-center justify-center shrink-0 bg-basalt-canvas group-open:bg-digital-orange transition-colors duration-200"
+              >
+                <UIcon
+                  :name="acc.icon"
+                  class="size-7 text-abyssal-ink group-open:text-pure-white transition-colors duration-200"
+                />
+              </span>
+              <span class="font-display tracking-[0.02em] text-3xl text-abyssal-ink">{{
+                acc.title
+              }}</span>
+            </summary>
+            <p class="mt-4 text-sm leading-relaxed text-abyssal-ink/70 max-w-[52ch]">
+              {{ acc.body }}
+            </p>
+          </details>
+        </div>
+
+        <!-- Right: violet detail card -->
+        <article
+          class="bg-cyber-violet text-pure-white rounded-card p-9 flex flex-col justify-between gap-7"
+        >
+          <div class="space-y-5 text-base leading-relaxed">
+            <p>
+              Pick a current and dive in. The food log opens to a Sydney map filterable by suburb,
+              cuisine and how loud the espresso machine is at 9am. Every entry is a personal visit —
+              no scraped reviews, no affiliate spam.
+            </p>
+            <p>
+              Most ideas don't survive their first weekend. The ones that do get a folder, a
+              throwaway prototype, and — eventually — a post.
+            </p>
+          </div>
+          <div class="border-t border-pure-white/20 pt-5 flex items-center gap-4 flex-wrap">
+            <span class="text-xs uppercase tracking-[0.18em] opacity-70">Built with</span>
+            <div class="flex gap-2 flex-wrap">
+              <span
+                v-for="tag in ['NUXT', 'VUE', 'CF']"
+                :key="tag"
+                class="bg-pure-white/15 rounded-button px-3.5 py-1.5 text-xs font-medium tracking-widest"
+                >{{ tag }}</span
+              >
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <!-- Use-case tabs (task 07) -->
     <section class="bg-ash-white rounded-card p-8 md:p-12 space-y-8">
       <div class="space-y-3 max-w-2xl">
@@ -710,81 +803,77 @@ const marqueeStrings = [
       </SnapCarousel>
     </section>
 
-    <!-- Newsletter band (task 10) -->
-    <section
-      class="relative bg-abyssal-ink rounded-card overflow-hidden p-8 md:p-16 text-center text-pure-white"
-    >
-      <!-- Background: faded pixel sails bleeding off right edge -->
-      <HomeOperaHouseSvg
-        aria-hidden="true"
-        class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none rotate-12"
-      />
-
-      <!-- Radial dotfield: pixel-glare dots concentrated at centre, fading to edges -->
+    <!-- Join The jen-lab Community -->
+    <section class="relative overflow-hidden py-20 flex flex-col items-center gap-8">
+      <!-- Radial dotfield: abyssal-ink dots from centre -->
       <HomeBackgroundDots
-        color="var(--color-pixel-glare)"
         :opacity="1"
         :spacing="32"
-        :size="2"
+        :size="1.5"
         style="
           mask-image: radial-gradient(
-            ellipse 80% 80% at 50% 50%,
-            rgba(0, 0, 0, 0.25) 0%,
-            rgba(0, 0, 0, 0.12) 50%,
+            ellipse 90% 90% at 50% 50%,
+            rgba(0, 0, 0, 0.12) 0%,
+            rgba(0, 0, 0, 0.05) 55%,
             transparent 100%
           );
           -webkit-mask-image: radial-gradient(
-            ellipse 80% 80% at 50% 50%,
-            rgba(0, 0, 0, 0.25) 0%,
-            rgba(0, 0, 0, 0.12) 50%,
+            ellipse 90% 90% at 50% 50%,
+            rgba(0, 0, 0, 0.12) 0%,
+            rgba(0, 0, 0, 0.05) 55%,
             transparent 100%
           );
         "
       />
 
-      <div class="relative z-10 max-w-2xl mx-auto space-y-6">
-        <div class="flex justify-center">
-          <UBadge color="secondary" variant="solid" :ui="{ base: 'rounded-button px-4 py-1.5' }">
-            <UIcon name="i-lucide-mail" class="size-3.5 mr-1.5" />
-            Slow mail
-          </UBadge>
+      <h2
+        class="relative z-10 font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-center text-5xl md:text-6xl lg:text-7xl"
+      >
+        Join The jen-lab<br />Community.
+      </h2>
+
+      <!-- 3 social count pills -->
+      <div class="relative z-10 w-full grid grid-cols-1 sm:grid-cols-3 gap-2.5 max-w-[760px]">
+        <div
+          v-for="pill in communityPills"
+          :key="pill.label"
+          class="bg-ash-white rounded-card px-6 py-5 flex items-center gap-3.5"
+        >
+          <span
+            class="size-9 rounded-xl bg-digital-orange text-pure-white inline-flex items-center justify-center shrink-0"
+          >
+            <UIcon :name="pill.icon" class="size-5" />
+          </span>
+          <span class="font-display tracking-[0.02em] text-3xl text-abyssal-ink leading-none">{{
+            pill.count
+          }}</span>
         </div>
+      </div>
 
-        <h2
-          class="font-display tracking-[0.02em] leading-[0.95] text-pure-white text-4xl md:text-6xl"
-        >
-          Notes From
-          <span class="block text-digital-orange">The Workbench.</span>
-        </h2>
-
-        <p class="text-pure-white/75 leading-relaxed">
-          One short email when something ships. No daily digest, no upsell, no AI-generated thread
-          summaries. Unsubscribe with one click.
-        </p>
-
-        <form
-          class="flex flex-col md:flex-row items-stretch gap-2.5 max-w-xl mx-auto pt-2"
-          @submit.prevent="onSubscribe"
-        >
+      <!-- Violet newsletter card -->
+      <div
+        class="relative z-10 w-full max-w-[760px] bg-cyber-violet text-pure-white rounded-card px-8 md:px-12 py-12 flex flex-col items-center gap-6 text-center"
+      >
+        <h3 class="font-display tracking-[0.02em] leading-[0.95] text-3xl md:text-4xl">
+          Sign Up To Be The First To<br />Hear About Posts &amp; Side-Projects.
+        </h3>
+        <form class="relative w-full max-w-[480px]" @submit.prevent="onSubscribe">
           <input
             v-model="subscribeEmail"
             type="email"
             required
-            placeholder="you@harbour.au"
-            class="flex-1 bg-transparent border border-pure-white/40 text-pure-white placeholder:text-pure-white/50 rounded-input px-6 py-4 focus:outline-none focus:border-pure-white focus:ring-2 focus:ring-pure-white/30 transition-colors"
+            placeholder="Type your email here"
+            class="w-full bg-transparent border border-pure-white/45 text-pure-white placeholder:text-pure-white/55 rounded-input pl-7 pr-16 py-[18px] text-[15px] focus:outline-none focus:border-pure-white focus:ring-4 focus:ring-pure-white/20 transition-[border-color,box-shadow]"
           />
-          <UButton
+          <button
             type="submit"
-            color="primary"
-            size="xl"
-            :ui="{ base: 'rounded-button px-8 justify-center' }"
-            trailing-icon="i-lucide-arrow-right"
+            aria-label="Subscribe"
+            class="absolute right-2 top-1/2 -translate-y-1/2 size-10 rounded-full bg-pure-white text-cyber-violet flex items-center justify-center font-bold text-lg hover:bg-abyssal-ink hover:text-pure-white transition-colors cursor-pointer"
           >
-            Subscribe
-          </UButton>
+            →
+          </button>
         </form>
-
-        <p class="text-xs text-pure-white/50 uppercase tracking-widest pt-2">
+        <p class="text-xs text-pure-white/60 uppercase tracking-widest">
           Roughly one email per month · 312 readers · 0 spam
         </p>
       </div>
