@@ -1,0 +1,102 @@
+<template>
+  <div class="container mx-auto max-w-[800px] px-4 py-10 space-y-10">
+    <!-- Back navigation -->
+    <NuxtLink
+      :to="{ path: '/blogs', query: lastQuery }"
+      class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
+    >
+      <UIcon name="i-lucide-arrow-left" class="size-4" />
+      返回部落格
+    </NuxtLink>
+
+    <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
+      {{ pending ? "載入中..." : "找不到文章" }}
+    </div>
+
+    <template v-else>
+      <!-- Post header -->
+      <UPageHeader
+        :title="meta.title"
+        :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
+      >
+        <template #description>
+          <span
+            class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-ash-white text-abyssal-ink border border-neutral-200"
+          >
+            {{ formatDate(post.date) }}
+          </span>
+        </template>
+      </UPageHeader>
+
+      <!-- Post content -->
+      <article
+        class="prose prose-neutral max-w-none wp-content bg-ash-white rounded-card p-10"
+        v-html="post.content.rendered"
+      />
+    </template>
+
+    <ScrollToTopButton />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { fetchPost, stripHtml, formatDate } from "~/utils/wpApi";
+
+const route = useRoute();
+const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const { blog } = useAppConfig();
+
+// [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
+const postId = Number(route.params.slug?.[0]);
+const validId = Number.isInteger(postId) && postId > 0;
+
+// Lazy (not useAsyncData): non-blocking, paints the shell + loading state first.
+const {
+  data: post,
+  status,
+  error,
+} = useLazyAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
+const pending = computed(() => validId && status.value === "pending");
+
+const meta = computed(() => {
+  const p = post.value;
+  return {
+    title: p ? stripHtml(p.title.rendered) : "文章",
+    description: p ? stripHtml(p.excerpt.rendered).slice(0, 160) : "",
+    image: p?.jetpack_featured_media_url ?? "",
+  };
+});
+
+useSeoMeta({
+  title: () => `${meta.value.title} | Jen Liu`,
+  description: () => meta.value.description,
+  ogTitle: () => meta.value.title,
+  ogDescription: () => meta.value.description,
+  ogImage: () => meta.value.image || undefined,
+  twitterCard: "summary_large_image",
+});
+</script>
+
+<style scoped>
+@reference "~/assets/css/main.css";
+
+.wp-content :deep(.wp-block-gallery) {
+  @apply flex flex-wrap gap-4 my-8 p-0 list-none;
+}
+
+.wp-content :deep(.wp-block-gallery > figure) {
+  @apply m-0 flex-1 min-w-[200px];
+}
+
+.wp-content :deep(.wp-block-image img) {
+  @apply w-full h-auto rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300;
+}
+
+.wp-content :deep(.aligncenter) {
+  @apply flex justify-center mx-auto;
+}
+
+.wp-content :deep(.wp-block-image.aligncenter) {
+  @apply flex justify-center;
+}
+</style>
