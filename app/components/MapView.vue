@@ -89,8 +89,6 @@ const isReady = defineModel<boolean>("ready", { default: false });
 
 const mapEl = ref<HTMLDivElement | null>(null);
 const tileQuality = ref<"low" | "high">("low");
-
-// Non-reactive Leaflet handles. Kept as plain `let` to avoid Vue reactivity wrapping.
 let L: LeafletInstance | null = null;
 let map: LeafletMap | null = null;
 let activeTileLayer: ReturnType<LeafletInstance["tileLayer"]> | null = null;
@@ -98,28 +96,25 @@ const markerById = new Map<string, Marker>();
 const iconsByColor = new Map<string, { dot: DivIcon; pin: DivIcon }>();
 
 function getIcon(color: string, selected: boolean): DivIcon {
-  if (!L) throw new Error("Leaflet not initialized");
   let pair = iconsByColor.get(color);
   if (!pair) {
-    pair = { dot: makeDotIcon(L, { color }), pin: makePinIcon(L, { color }) };
+    pair = { dot: makeDotIcon(L!, { color }), pin: makePinIcon(L!, { color }) };
     iconsByColor.set(color, pair);
   }
   return selected ? pair.pin : pair.dot;
 }
 
-function toggleTileQuality() {
+function toggleTileQuality(): void {
   if (!map || !L) return;
   tileQuality.value = tileQuality.value === "low" ? "high" : "low";
   activeTileLayer?.remove();
   activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map);
 }
 
-function renderMarkers() {
+function renderMarkers(): void {
   if (!map || !L) return;
-
   markerById.forEach((m) => m.remove());
   markerById.clear();
-
   const selectedId = props.selectedRestaurant?.id;
   for (const r of props.restaurants) {
     const marker = L.marker([r.coordinates.lat, r.coordinates.lng], {
@@ -130,10 +125,10 @@ function renderMarkers() {
   }
 }
 
-// Re-render markers when the filtered list changes (no diffing — list is small).
+// Watch for restaurant list changes
 watch(() => props.restaurants, renderMarkers);
 
-// Selection change: swap icons + recenter without rebuilding all markers.
+// Watch for selection changes
 watch(
   () => props.selectedRestaurant,
   (newR, oldR) => {
@@ -150,7 +145,6 @@ onMounted(async () => {
   if (!mapEl.value) return;
   L = (await import("leaflet")).default;
   await import("leaflet/dist/leaflet.css");
-
   map = L.map(mapEl.value, mapOptions);
   activeTileLayer = L.tileLayer(tileLayers[tileQuality.value], tileLayerOptions).addTo(map);
   renderMarkers();

@@ -40,7 +40,7 @@
  *    container is. Toggle via the `bleed` prop.
  *
  * 2. **Peek (`scroll-padding-left`):** tells the snap engine to land card
- *    starts at this offset from the viewport's left edge, so the snapped
+ *    starts at this offset from the carousel viewport's left edge, so the snapped
  *    card aligns with the container's inner left edge instead of the
  *    viewport edge. Configured via the `peek` prop (CSS length string,
  *    typically a `calc()` matching the parent container geometry).
@@ -79,7 +79,7 @@
  *     plain scroll-snap row; arrows will eventually hit the natural end.
  *   - Disable bleed (carousel stays inside parent padding) → `:bleed="false"`.
  *   - Different snap alignment → adjust the `peek` prop's CSS expression.
- *     Set `peek="0px"` (default) to snap to the viewport's left edge.
+ *     Set `peek="0px"` (default) to snap flush with the viewport's left edge.
  *   - Add dots / active-index indicator → expose `activeIndex` via
  *     `defineExpose`. Compute via an IntersectionObserver inside the track
  *     (1 observer, threshold 0.5, modulo `items.length`). Not added by
@@ -156,63 +156,25 @@ defineSlots<{
 
 const track = ref<HTMLDivElement | null>(null);
 
-/**
- * Skeleton visibility.
- *
- * Prefers the explicit `loading` flag when the consumer passes one (e.g.
- * piping `status.value === 'pending'` from useLazyAsyncData). Falls back
- * to the items-empty heuristic when no flag is passed — useful for
- * static datasets where there is no async fetch to track.
- */
 const showSkeleton = computed(() =>
   props.loading !== undefined ? props.loading : !props.items.length,
 );
 
-/**
- * Whether scrollLeft has been anchored to the middle copy's snap point.
- * Stays false while loading; flips true after the first nextTick that
- * follows items landing in the DOM. Reset to false if the items array
- * empties out (e.g. consumer cleared on filter change).
- */
 const anchored = ref(false);
 
-/**
- * When `loop` is on, render the source list three times back-to-back. The
- * three copies are visually indistinguishable from each other; the loop logic
- * exploits that to silently jump `scrollLeft` between copies without the user
- * noticing. When `loop` is off, render the source list as-is.
- */
 const renderItems = computed<T[]>(() =>
   props.loop ? [...props.items, ...props.items, ...props.items] : props.items,
 );
 
-/**
- * Width of one card + the inter-card gap, in px. Used as the unit for arrow
- * scrolls (`scrollBy(±cardStride)`) and as the building block of
- * `oneSetWidth()`. Reads the first `<article>` in the DOM, so it relies on
- * all cards being the same width (true given `shrink-0` + uniform basis).
- */
 function cardStride(): number {
   const card = track.value?.querySelector("article");
   return (card?.offsetWidth ?? 0) + props.gap;
 }
 
-/**
- * Width of one full copy of the source list in px = stride × item count.
- * Equals the distance in `scrollLeft` between identical cards across two
- * adjacent copies, which is exactly what the loop wrap jumps by.
- */
 function oneSetWidth(): number {
   return cardStride() * props.items.length;
 }
 
-/**
- * Resolved `scroll-padding-left` in px. We read the computed style because
- * the consumer can pass `peek` as any CSS length (px / rem / calc / max),
- * but the wrap thresholds and the initial anchor need an exact pixel value
- * to compare against `scrollLeft`. Re-evaluated on every call so it stays
- * correct across viewport resizes.
- */
 function peekPx(): number {
   const el = track.value;
   if (!el) return 0;
@@ -220,23 +182,6 @@ function peekPx(): number {
   return parseFloat(v) || 0;
 }
 
-/**
- * Scroll left by one card.
- *
- * Pre-emptive wrap (only when `loop` is on):
- *   - The middle copy's "safe zone" of `scrollLeft` starts at
- *     `oneSetWidth - peekPx` (where the middle copy's first card snaps).
- *   - If the target position (`scrollLeft - stride`) would land before
- *     that safe zone, we'd otherwise animate into copy 1's tail — visually
- *     a long rewind across the whole carousel width.
- *   - Instead, instant-jump `scrollLeft += oneSet` first. That puts us at
- *     the equivalent position in the third copy (same content, invisible
- *     teleport). The smooth scrollBy then runs from inside the third copy
- *     back by one card. User perceives a single card-width slide.
- *
- * The `- stride / 2` half-card slack handles the case where snap settled
- * slightly off the exact anchor (e.g. due to native swipe).
- */
 function scrollPrev(): void {
   const el = track.value;
   if (!el) return;
@@ -251,17 +196,6 @@ function scrollPrev(): void {
   el.scrollBy({ left: -stride, behavior: "smooth" });
 }
 
-/**
- * Scroll right by one card. Mirror of `scrollPrev`.
- *
- * Pre-emptive wrap (only when `loop` is on):
- *   - The middle copy ends at `scrollLeft = anchor + oneSet - stride`
- *     (where the last middle-copy card snaps).
- *   - If the target (`scrollLeft + stride`) would land beyond that, we'd
- *     animate into copy 3's lead.
- *   - Instant-jump `scrollLeft -= oneSet` first → same content in copy 1,
- *     smooth scroll forward by one card stays inside the safe zone.
- */
 function scrollNext(): void {
   const el = track.value;
   if (!el) return;
@@ -276,20 +210,6 @@ function scrollNext(): void {
   el.scrollBy({ left: stride, behavior: "smooth" });
 }
 
-/**
- * Safety-net wrap, fired by the `scrollend` event.
- *
- * `scrollPrev` / `scrollNext` already pre-empt the boundary, but native
- * swipe / wheel / keyboard scrolls don't go through them. After any such
- * scroll settles, this listener detects if the user ended up inside copy 1
- * or copy 3 and silently re-anchors back into the middle copy by jumping
- * `scrollLeft` ±oneSet. Same invisible-teleport trick as the pre-emptive
- * wrap: equivalent cards in adjacent copies hold identical content.
- *
- * `scrollend` is well-supported (Chrome / Firefox / Safari 18.2+). Older
- * browsers won't get the safety net, but the natural ends of the ×3 list
- * still let the user scroll quite far before noticing.
- */
 function wrap(): void {
   if (!props.loop) return;
   const el = track.value;
@@ -300,14 +220,6 @@ function wrap(): void {
   else if (el.scrollLeft >= anchor + set) el.scrollLeft -= set;
 }
 
-/**
- * Anchor scrollLeft to the middle copy's snap point once the track is in
- * the DOM and items are present. Fires:
- *   - on initial mount when loading flips false and items exist
- *   - after `items` changes shape (e.g. consumer swaps the dataset)
- *   - after `track` ref binds (covers v-if remount)
- * Skipped when `loop` is off (no middle copy to anchor to).
- */
 watch(
   [() => showSkeleton.value, () => props.items.length, track],
   ([sk, len, el]) => {
@@ -409,6 +321,7 @@ defineExpose({ scrollPrev, scrollNext });
 .snap-carousel {
   scrollbar-width: none;
 }
+
 .snap-carousel::-webkit-scrollbar {
   display: none;
 }
