@@ -9,12 +9,12 @@
 
 ## 1 · Quick orientation
 
-| File                  | What it is                                                                |
-| --------------------- | ------------------------------------------------------------------------- |
-| `caldera-layout.html` | Page markup. 8 sections, all hand-written semantic HTML.                  |
-| `caldera-layout.css`  | Page styles. Token-driven, no Tailwind. ~900 lines.                       |
-| `caldera-layout.js`   | Canvas dot-field renderers + carousel/accordion wiring. Vanilla JS.       |
-| `assets/opera-house.svg` | Sydney Opera House silhouette, used as CSS mask on the hero canvas.    |
+| File                        | What it is                                                          |
+| --------------------------- | ------------------------------------------------------------------- |
+| `caldera-layout.html`       | Page markup. 8 sections, all hand-written semantic HTML.            |
+| `caldera-layout.css`        | Page styles. Token-driven, no Tailwind. ~900 lines.                 |
+| `caldera-layout.js`         | Canvas dot-field renderers + carousel/accordion wiring. Vanilla JS. |
+| `assets/opera-house.svg`    | Sydney Opera House silhouette, used as CSS mask on the hero canvas. |
 | `style-guide.html` + `.css` | Companion: full visual catalogue of tokens, components, archetypes. |
 
 Every file's head comment carries a longer brief — read those first if you
@@ -31,15 +31,15 @@ when you port a section, every utility class you reach for (`bg-ash-white`,
 
 ### Colour (NEVER introduce new ones)
 
-| Token                    | Hex       | Role                                    |
-| ------------------------ | --------- | --------------------------------------- |
-| `--color-basalt-canvas`  | `#e2e2df` | Page background                         |
-| `--color-ash-white`      | `#f7f6f2` | Card surfaces                           |
-| `--color-abyssal-ink`    | `#070607` | Text, strong borders                    |
-| `--color-pure-white`     | `#ffffff` | Text on dark surfaces **only**          |
-| `--color-digital-orange` | `#fc5000` | Primary CTAs, feature cards             |
-| `--color-cyber-violet`   | `#524ae9` | Decorative surfaces **(never text)**    |
-| `--color-pixel-glare`    | `#f5f28e` | Highlights, tag chips                   |
+| Token                    | Hex       | Role                                 |
+| ------------------------ | --------- | ------------------------------------ |
+| `--color-basalt-canvas`  | `#e2e2df` | Page background                      |
+| `--color-ash-white`      | `#f7f6f2` | Card surfaces                        |
+| `--color-abyssal-ink`    | `#070607` | Text, strong borders                 |
+| `--color-pure-white`     | `#ffffff` | Text on dark surfaces **only**       |
+| `--color-digital-orange` | `#fc5000` | Primary CTAs, feature cards          |
+| `--color-cyber-violet`   | `#524ae9` | Decorative surfaces **(never text)** |
+| `--color-pixel-glare`    | `#f5f28e` | Highlights, tag chips                |
 
 For greys, use alpha on `--color-abyssal-ink` — there is no grey scale.
 
@@ -107,12 +107,12 @@ normalise to equal columns.**
 The hero canvas is a **trig-modulated greyscale dot field** clipped to the
 Opera House silhouette via CSS `mask-image`. Four total canvas renderers:
 
-| Renderer          | Location                  | Colour         | Math notes                              |
-| ----------------- | ------------------------- | -------------- | --------------------------------------- |
-| `drawHero`        | `.hero__canvas`           | `rgba(7,6,7)`  | Two cos focal points + diagonal carrier |
-| `drawWave`        | `.bento-section .dotfield`| ink alpha      | Two-frequency cos superposition         |
-| `drawRadial`      | `.community .dotfield`    | violet alpha   | `cos²` halo                             |
-| `drawDarkRadial`  | `.foot__brand-card .dotfield` | glare alpha    | `cos²` halo + ring ripple               |
+| Renderer         | Location                      | Colour        | Math notes                              |
+| ---------------- | ----------------------------- | ------------- | --------------------------------------- |
+| `drawHero`       | `.hero__canvas`               | `rgba(7,6,7)` | Two cos focal points + diagonal carrier |
+| `drawWave`       | `.bento-section .dotfield`    | ink alpha     | Two-frequency cos superposition         |
+| `drawRadial`     | `.community .dotfield`        | violet alpha  | `cos²` halo                             |
+| `drawDarkRadial` | `.foot__brand-card .dotfield` | glare alpha   | `cos²` halo + ring ripple               |
 
 **Why canvas and not CSS:** CSS `radial-gradient` tiled patterns can't vary
 dot size per cell. The user explicitly asked for trig-controlled size

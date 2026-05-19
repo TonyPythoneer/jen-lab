@@ -475,8 +475,7 @@ canvas {
   background: linear-gradient(45deg, var(--color-abyssal-ink) 50%, transparent 50%);
 }
 .logo-mark--e {
-  background:
-    radial-gradient(circle, var(--color-abyssal-ink) 35%, transparent 36%) 0 0 / 6px 6px;
+  background: radial-gradient(circle, var(--color-abyssal-ink) 35%, transparent 36%) 0 0 / 6px 6px;
   background-color: transparent;
 }
 
@@ -632,14 +631,12 @@ canvas {
     linear-gradient(var(--color-abyssal-ink) 0 0) 50% 60% / 30% 12% no-repeat,
     linear-gradient(var(--color-abyssal-ink) 0 0) 50% 70% / 50% 6% no-repeat,
     linear-gradient(var(--color-abyssal-ink) 0 0) 50% 78% / 14% 16% no-repeat,
-    /* side arms */
-    linear-gradient(var(--color-abyssal-ink) 0 0) 12% 55% / 22% 6% no-repeat,
+    /* side arms */ linear-gradient(var(--color-abyssal-ink) 0 0) 12% 55% / 22% 6% no-repeat,
     linear-gradient(var(--color-abyssal-ink) 0 0) 88% 55% / 22% 6% no-repeat,
     linear-gradient(var(--color-abyssal-ink) 0 0) 12% 70% / 6% 18% no-repeat,
     linear-gradient(var(--color-abyssal-ink) 0 0) 88% 70% / 6% 18% no-repeat,
-    /* stars */
-    radial-gradient(circle, var(--color-pure-white) 26%, transparent 28%) 30% 35% / 24px 24px
-      no-repeat,
+    /* stars */ radial-gradient(circle, var(--color-pure-white) 26%, transparent 28%) 30% 35% / 24px
+      24px no-repeat,
     radial-gradient(circle, var(--color-pure-white) 26%, transparent 28%) 65% 30% / 18px 18px
       no-repeat,
     radial-gradient(circle, var(--color-pure-white) 26%, transparent 28%) 55% 78% / 16px 16px
@@ -911,7 +908,10 @@ canvas {
     radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.18) 0, transparent 30%),
     radial-gradient(circle at 90% 90%, rgba(7, 6, 7, 0.18) 0, transparent 30%),
     radial-gradient(rgba(7, 6, 7, 0.35) 1px, transparent 1.5px);
-  background-size: auto, auto, 8px 8px;
+  background-size:
+    auto,
+    auto,
+    8px 8px;
   overflow: hidden;
 }
 .news-card__media-text {
@@ -1133,14 +1133,37 @@ canvas {
   background: var(--color-abyssal-ink);
   flex-shrink: 0;
 }
-.bm--nuxt { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-.bm--vue { clip-path: polygon(50% 0, 100% 100%, 0 100%); background: var(--color-cyber-violet); }
-.bm--tw { border-radius: 50%; background: var(--color-digital-orange); }
-.bm--cf { border-radius: 50%; }
-.bm--vite { transform: rotate(45deg); background: var(--color-pixel-glare); border: 2px solid var(--color-abyssal-ink); }
-.bm--ts { border-radius: 4px; background: var(--color-cyber-violet); }
-.bm--pnpm { background: var(--color-digital-orange); border-radius: 4px; }
-.bm--nuxtui { clip-path: polygon(50% 0, 100% 100%, 0 100%); background: var(--color-abyssal-ink); }
+.bm--nuxt {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.bm--vue {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: var(--color-cyber-violet);
+}
+.bm--tw {
+  border-radius: 50%;
+  background: var(--color-digital-orange);
+}
+.bm--cf {
+  border-radius: 50%;
+}
+.bm--vite {
+  transform: rotate(45deg);
+  background: var(--color-pixel-glare);
+  border: 2px solid var(--color-abyssal-ink);
+}
+.bm--ts {
+  border-radius: 4px;
+  background: var(--color-cyber-violet);
+}
+.bm--pnpm {
+  background: var(--color-digital-orange);
+  border-radius: 4px;
+}
+.bm--nuxtui {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: var(--color-abyssal-ink);
+}
 
 /* ═══════════════════════════════════════════════════════════ */
 /* FOOTER — dark brand card (left) + socials + ash nav (right) */
