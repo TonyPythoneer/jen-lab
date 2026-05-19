@@ -51,6 +51,8 @@ const useCaseItems = [
   },
 ];
 
+const activeAccordion = ref("food");
+
 const bringItems = [
   {
     value: "food",
@@ -478,31 +480,44 @@ const marqueeStrings = [
       </h2>
 
       <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2.5 items-stretch">
-        <!-- Left: accordion -->
-        <div class="flex flex-col gap-2.5">
-          <details
-            v-for="(acc, i) in bringItems"
+        <!-- Left: accordion — overflow-hidden keeps content within violet card height -->
+        <div class="flex flex-col gap-2.5 overflow-hidden">
+          <div
+            v-for="acc in bringItems"
             :key="acc.value"
-            class="group bg-ash-white rounded-card px-7 py-6 open:px-8 open:py-8 transition-[padding] duration-200"
-            :open="i === 0"
+            class="bg-ash-white rounded-card cursor-pointer transition-[padding] duration-200"
+            :class="activeAccordion === acc.value ? 'px-8 py-8' : 'px-7 py-6'"
+            @click="activeAccordion = acc.value"
           >
-            <summary class="list-none cursor-pointer flex items-center gap-4">
+            <!-- Header row -->
+            <div class="flex items-center gap-4">
               <span
-                class="size-14 rounded-[16px] flex items-center justify-center shrink-0 bg-basalt-canvas group-open:bg-digital-orange transition-colors duration-200"
+                class="size-14 rounded-[16px] flex items-center justify-center shrink-0 transition-colors duration-200"
+                :class="activeAccordion === acc.value ? 'bg-digital-orange' : 'bg-basalt-canvas'"
               >
                 <UIcon
                   :name="acc.icon"
-                  class="size-7 text-abyssal-ink group-open:text-pure-white transition-colors duration-200"
+                  class="size-7 transition-colors duration-200"
+                  :class="activeAccordion === acc.value ? 'text-pure-white' : 'text-abyssal-ink'"
                 />
               </span>
               <span class="font-display tracking-[0.02em] text-3xl text-abyssal-ink">{{
                 acc.title
               }}</span>
-            </summary>
-            <p class="mt-4 text-sm leading-relaxed text-abyssal-ink/70 max-w-[52ch]">
-              {{ acc.body }}
-            </p>
-          </details>
+            </div>
+
+            <!-- Body: grid-rows trick for smooth height animation -->
+            <div
+              class="grid transition-[grid-template-rows] duration-300 ease-in-out overflow-hidden"
+              :style="{ gridTemplateRows: activeAccordion === acc.value ? '1fr' : '0fr' }"
+            >
+              <div class="min-h-0">
+                <p class="mt-4 text-sm leading-relaxed text-abyssal-ink/70 max-w-[52ch]">
+                  {{ acc.body }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Right: violet detail card -->
@@ -805,23 +820,23 @@ const marqueeStrings = [
 
     <!-- Join The jen-lab Community -->
     <section class="relative overflow-hidden py-20 flex flex-col items-center gap-8">
-      <!-- Radial dotfield: cyber-violet dots from centre (caldera community radial) -->
+      <!-- Radial dotfield: cyber-violet dots, cos²-halo fade from centre (caldera community) -->
       <HomeBackgroundDots
         color="var(--color-cyber-violet)"
-        :opacity="1"
-        :spacing="32"
+        :opacity="0.22"
+        :spacing="28"
         :size="1.5"
         style="
           mask-image: radial-gradient(
-            ellipse 90% 90% at 50% 50%,
-            rgba(0, 0, 0, 0.12) 0%,
-            rgba(0, 0, 0, 0.05) 55%,
+            ellipse 80% 80% at 50% 50%,
+            black 0%,
+            black 30%,
             transparent 100%
           );
           -webkit-mask-image: radial-gradient(
-            ellipse 90% 90% at 50% 50%,
-            rgba(0, 0, 0, 0.12) 0%,
-            rgba(0, 0, 0, 0.05) 55%,
+            ellipse 80% 80% at 50% 50%,
+            black 0%,
+            black 30%,
             transparent 100%
           );
         "
