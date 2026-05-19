@@ -1,6 +1,19 @@
 <script setup lang="ts">
 const appConfig = useAppConfig();
 
+const contactDotField = {
+  color: "var(--color-pixel-glare)",
+  size: 2,
+  spacing: 28,
+  opacity: 1,
+  style: {
+    maskImage:
+      "radial-gradient(ellipse 70% 70% at 90% 10%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 55%, transparent 100%)",
+    WebkitMaskImage:
+      "radial-gradient(ellipse 70% 70% at 90% 10%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 55%, transparent 100%)",
+  },
+};
+
 const toast = useToast();
 const subscribeEmail = ref("");
 function onSubscribe() {
@@ -20,26 +33,7 @@ function onSubscribe() {
     <div
       class="relative bg-abyssal-ink text-pure-white rounded-card p-10 flex flex-col justify-between gap-10 min-h-[360px] overflow-hidden"
     >
-      <HomeBackgroundDots
-        color="var(--color-pixel-glare)"
-        :size="2"
-        :spacing="28"
-        :opacity="1"
-        style="
-          mask-image: radial-gradient(
-            ellipse 70% 70% at 90% 10%,
-            rgba(0, 0, 0, 0.22) 0%,
-            rgba(0, 0, 0, 0.08) 55%,
-            transparent 100%
-          );
-          -webkit-mask-image: radial-gradient(
-            ellipse 70% 70% at 90% 10%,
-            rgba(0, 0, 0, 0.22) 0%,
-            rgba(0, 0, 0, 0.08) 55%,
-            transparent 100%
-          );
-        "
-      />
+      <HomeBackgroundDots v-bind="contactDotField" />
       <div class="relative z-10 flex items-center gap-2.5 w-fit">
         <span class="size-6 bg-digital-orange rounded-sm shrink-0" />
         <span class="font-display tracking-[0.02em] text-xl">JEN-LAB</span>

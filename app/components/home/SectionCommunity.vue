@@ -1,4 +1,16 @@
 <script setup lang="ts">
+const communityDotField = {
+  color: "var(--color-cyber-violet)",
+  opacity: 0.22,
+  spacing: 28,
+  size: 1.5,
+  style: {
+    maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, black 30%, transparent 100%)",
+    WebkitMaskImage:
+      "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, black 30%, transparent 100%)",
+  },
+};
+
 const communityPills = [
   { label: "Threads", icon: "i-simple-icons-threads", count: "3.6K" },
   { label: "RSS", icon: "i-lucide-rss", count: "2.7K" },
@@ -22,26 +34,7 @@ function onSubscribe() {
   <section
     class="relative overflow-hidden py-[72px] sm:py-[140px] flex flex-col items-center gap-8"
   >
-    <HomeBackgroundDots
-      color="var(--color-cyber-violet)"
-      :opacity="0.22"
-      :spacing="28"
-      :size="1.5"
-      style="
-        mask-image: radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          black 0%,
-          black 30%,
-          transparent 100%
-        );
-        -webkit-mask-image: radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          black 0%,
-          black 30%,
-          transparent 100%
-        );
-      "
-    />
+    <HomeBackgroundDots v-bind="communityDotField" />
 
     <h2
       class="relative z-10 font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-center text-5xl md:text-6xl lg:text-7xl"

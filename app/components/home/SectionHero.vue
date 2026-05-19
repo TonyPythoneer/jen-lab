@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const heroDotField = { opacity: 0.08, spacing: 28 };
+
 const marqueeStrings = [
   "Built in Sydney",
   "Brewed at the bench",
@@ -12,7 +14,7 @@ const marqueeStrings = [
 
 <template>
   <section class="relative bg-ash-white rounded-card overflow-hidden">
-    <HomeBackgroundDots :opacity="0.08" :spacing="28" />
+    <HomeBackgroundDots v-bind="heroDotField" />
 
     <HomeOperaHouseSvg
       aria-hidden="true"

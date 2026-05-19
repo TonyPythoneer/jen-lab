@@ -1,4 +1,17 @@
 <script setup lang="ts">
+const newsletterDotField = {
+  color: "var(--color-pixel-glare)",
+  opacity: 1,
+  spacing: 32,
+  size: 2,
+  style: {
+    maskImage:
+      "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.12) 50%, transparent 100%)",
+    WebkitMaskImage:
+      "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.12) 50%, transparent 100%)",
+  },
+};
+
 const toast = useToast();
 const subscribeEmail = ref("");
 function onSubscribe() {
@@ -20,26 +33,7 @@ function onSubscribe() {
       aria-hidden="true"
       class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none rotate-12"
     />
-    <HomeBackgroundDots
-      color="var(--color-pixel-glare)"
-      :opacity="1"
-      :spacing="32"
-      :size="2"
-      style="
-        mask-image: radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          rgba(0, 0, 0, 0.25) 0%,
-          rgba(0, 0, 0, 0.12) 50%,
-          transparent 100%
-        );
-        -webkit-mask-image: radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          rgba(0, 0, 0, 0.25) 0%,
-          rgba(0, 0, 0, 0.12) 50%,
-          transparent 100%
-        );
-      "
-    />
+    <HomeBackgroundDots v-bind="newsletterDotField" />
     <div class="relative z-10 max-w-2xl mx-auto space-y-6">
       <div class="flex justify-center">
         <UBadge color="secondary" variant="solid" :ui="{ base: 'rounded-button px-4 py-1.5' }">
