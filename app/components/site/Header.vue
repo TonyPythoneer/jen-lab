@@ -6,24 +6,6 @@ const navItems = [
   { label: "About", to: "/about" },
 ];
 
-const socials = [
-  {
-    href: "https://www.threads.com/@jenknowsau",
-    label: "Threads",
-    icon: "i-simple-icons-threads",
-  },
-  {
-    href: "https://www.instagram.com/jenknowsau/",
-    label: "Instagram",
-    icon: "i-simple-icons-instagram",
-  },
-  {
-    href: "https://www.youtube.com/@jenliuau",
-    label: "YouTube",
-    icon: "i-simple-icons-youtube",
-  },
-];
-
 const route = useRoute();
 const { y } = useWindowScroll();
 const scrolled = computed(() => y.value > 80);
@@ -39,6 +21,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 <template>
   <header class="sticky top-0 z-50 px-4 pt-3">
+    <!-- Pill/bar wrapper — full-width bar by default, collapses to centered pill on scroll -->
     <div
       class="mx-auto flex items-center gap-4"
       :class="
@@ -50,8 +33,9 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
         transition: `max-width 600ms ${smoothEase}, padding 500ms ${smoothEase}, background-color 400ms ease-out, box-shadow 400ms ease-out`,
       }"
     >
-      <!-- Left group: logo + nav links -->
+      <!-- Logo + desktop nav -->
       <div class="flex items-center gap-3 shrink-0">
+        <!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->
         <NuxtLink
           to="/"
           aria-label="Jen Lab home"
@@ -71,49 +55,33 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
             JEN
           </span>
         </NuxtLink>
+
+        <!-- Desktop nav links -->
         <nav class="hidden md:flex items-center gap-0.5">
           <NuxtLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="px-3 py-2 text-sm text-abyssal-ink/80 hover:text-abyssal-ink rounded-button transition-colors"
-            active-class="text-abyssal-ink font-medium"
+            class="px-3 py-2 text-sm text-abyssal-ink/80 hover:text-abyssal-ink hover:bg-abyssal-ink/8 rounded-button transition-colors"
+            active-class="text-abyssal-ink font-bold bg-abyssal-ink/8"
           >
             {{ item.label }}
           </NuxtLink>
         </nav>
       </div>
 
-      <!-- Vertical separator — only in scrolled pill state -->
-      <span
-        v-if="scrolled"
-        class="hidden md:block border-l border-dotted border-abyssal-ink/30 self-stretch"
-        aria-hidden="true"
-      />
-
-      <!-- Right group: socials + CTA / burger -->
+      <!-- Socials + CTA + burger -->
       <div class="flex items-center gap-2 shrink-0">
-        <div class="hidden md:flex items-center gap-1 text-abyssal-ink/80">
-          <a
-            v-for="s in socials"
-            :key="s.href"
-            :href="s.href"
-            :aria-label="s.label"
-            target="_blank"
-            rel="noopener"
-            class="size-8 inline-flex items-center justify-center hover:text-digital-orange transition-colors"
-          >
-            <UIcon :name="s.icon" class="size-4" />
-          </a>
-        </div>
+        <!-- Desktop: CTA button (shorter height when scrolled) -->
         <a
-          href="mailto:jen@jenliu.com.au"
+          href="#footer"
           class="hidden md:inline-flex items-center px-4 text-sm font-medium bg-digital-orange text-pure-white rounded-button transition-colors duration-[180ms] hover:bg-[#e34800]"
           :class="scrolled ? 'h-8' : 'h-10'"
         >
           Get In Touch
         </a>
-        <!-- Mobile: burger menu -->
+
+        <!-- Mobile: hamburger toggle -->
         <button
           class="md:hidden inline-flex items-center justify-center size-10 rounded-button text-abyssal-ink"
           aria-label="Toggle menu"
@@ -124,7 +92,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       </div>
     </div>
 
-    <!-- Mobile drawer -->
+    <!-- Mobile drawer (slides down; closes on route change) -->
     <Transition
       enter-active-class="transition-all duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-2"

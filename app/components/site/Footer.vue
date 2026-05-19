@@ -16,6 +16,7 @@ const navLinks = [
 <template>
   <!-- container matches body's max-w-[1200px] px-4 so columns align with page content -->
   <footer
+    id="footer"
     class="container mx-auto max-w-[1200px] grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5 px-4 pb-2.5"
   >
     <!-- Left: dark brand card -->
