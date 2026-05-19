@@ -123,6 +123,12 @@ const props = withDefaults(
      * Set "0px" (default) to snap flush with the viewport's left edge.
      */
     peek?: string;
+    /**
+     * Number of skeleton cards to render while `ready` is false (data pending
+     * or scroll position not yet anchored). Consumers supply the skeleton
+     * shape via the `#skeleton` named slot.
+     */
+    skeletonCount?: number;
   }>(),
   {
     loop: true,
@@ -130,16 +136,22 @@ const props = withDefaults(
     itemClass: "basis-[80%] sm:basis-[55%] md:basis-[38%] lg:basis-[28%] xl:basis-[24%]",
     gap: 10,
     peek: "0px",
+    skeletonCount: 4,
   },
 );
 
 defineSlots<{
   default(props: { item: T; index: number }): unknown;
+  skeleton(props: { index: number }): unknown;
 }>();
 
-// Template ref to the scrolling element. All scroll math reads/writes through
-// `track.value`; consumers do NOT touch it directly.
 const track = ref<HTMLDivElement | null>(null);
+
+// Three-state lifecycle:
+//   idle        → no items yet; skeleton visible, track in DOM but empty
+//   positioning → items arrived; skeleton visible, track invisible + measuring
+//   ready       → scrollLeft anchored; skeleton gone, track live
+const state = ref<"idle" | "positioning" | "ready">("idle");
 
 /**
  * When `loop` is on, render the source list three times back-to-back. The
@@ -265,26 +277,31 @@ function wrap(): void {
   else if (el.scrollLeft >= anchor + set) el.scrollLeft -= set;
 }
 
+// Drive idle → positioning → ready transitions.
+watch(
+  () => props.items,
+  () => {
+    if (!props.items.length) {
+      state.value = "idle";
+    } else if (state.value === "idle") {
+      // Only advance from idle; if already positioning or ready, don't regress.
+      state.value = props.loop ? "positioning" : "ready";
+    }
+  },
+  { immediate: true, deep: true },
+);
+
+// Once items are in the DOM (positioning state), anchor scrollLeft then go live.
+watchEffect(() => {
+  if (state.value !== "positioning" || !track.value || !props.items.length) return;
+  nextTick(() => {
+    if (!track.value || state.value !== "positioning") return;
+    track.value.scrollLeft = oneSetWidth() - peekPx();
+    state.value = "ready";
+  });
+});
+
 onMounted(() => {
-  if (props.loop) {
-    // Anchor `scrollLeft` to the middle copy's snap point so the preceding
-    // card peeks from the left bleed zone and the user has equal room to
-    // scroll left or right before the wrap kicks in.
-    //
-    // `watch(..., { immediate })` runs once on mount AND again whenever
-    // `items` changes — covers the common case where items arrive from
-    // an async fetch after the component first mounts.
-    watch(
-      () => props.items,
-      () => {
-        nextTick(() => {
-          if (!track.value || !props.items.length) return;
-          track.value.scrollLeft = oneSetWidth() - peekPx();
-        });
-      },
-      { immediate: true, deep: true },
-    );
-  }
   track.value?.addEventListener("scrollend", wrap);
 });
 
@@ -296,23 +313,49 @@ defineExpose({ scrollPrev, scrollNext });
 </script>
 
 <template>
+  <!-- Skeleton: visible while idle or positioning; sets the row's layout height -->
+  <div
+    v-if="state !== 'ready'"
+    class="flex overflow-hidden"
+    :class="bleed && 'snap-carousel-bleed'"
+    :style="{ gap: `${gap}px` }"
+  >
+    <article v-for="i in skeletonCount" :key="`sk-${i}`" class="shrink-0" :class="itemClass">
+      <!--
+        Default skeleton: rounded-card banner + tag pill + 2 title lines.
+        Mirrors the rough proportion of a typical card so the row reserves
+        the right height. Consumers can override by passing a `#skeleton`
+        slot with their own placeholder shape.
+      -->
+      <slot name="skeleton" :index="i - 1">
+        <div class="space-y-3">
+          <div class="aspect-[16/9] rounded-card bg-ash-white/60 animate-pulse" />
+          <div class="space-y-2 px-1">
+            <div class="h-5 w-16 rounded bg-ash-white/60 animate-pulse" />
+            <div class="h-4 w-full rounded bg-ash-white/60 animate-pulse" />
+            <div class="h-4 w-2/3 rounded bg-ash-white/60 animate-pulse" />
+          </div>
+        </div>
+      </slot>
+    </article>
+  </div>
+
+  <!--
+    Track is always in the DOM so offsetWidth measurements work at any state.
+    During idle/positioning: absolute + opacity-0 + pointer-events-none keeps it
+    invisible and out of layout flow while still allowing scrollLeft to be set.
+    overflow-x-auto stays on at all times so scrollLeft assignment is not a no-op.
+    The .snap-carousel scoped CSS hides the scrollbar unconditionally.
+  -->
   <div
     ref="track"
     class="snap-carousel flex overflow-x-auto snap-x snap-mandatory"
-    :class="bleed && 'snap-carousel-bleed'"
+    :class="[
+      bleed && 'snap-carousel-bleed',
+      state !== 'ready' && 'absolute opacity-0 pointer-events-none',
+    ]"
     :style="{ gap: `${gap}px`, scrollPaddingLeft: peek }"
   >
-    <!--
-      Each item is wrapped in <article snap-start shrink-0> so:
-        - snap-start: scroll snap pins the card's left edge to the snap port
-          (the carousel viewport with `scroll-padding-left` already applied).
-        - shrink-0: cards don't compress when their summed width exceeds
-          the carousel viewport.
-        - `itemClass` brings the responsive basis (card width per breakpoint).
-      `key` mixes the loop index + the item's `id` (or fallback to index) so
-      the three copies don't collide in Vue's diff but identical content
-      across copies still keys deterministically.
-    -->
     <article
       v-for="(item, idx) in renderItems"
       :key="`${idx}-${String((item as Record<string, unknown>)?.id ?? idx)}`"
@@ -335,7 +378,6 @@ defineExpose({ scrollPrev, scrollNext });
  */
 .snap-carousel {
   scrollbar-width: none;
-  scroll-behavior: smooth;
 }
 .snap-carousel::-webkit-scrollbar {
   display: none;
