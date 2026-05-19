@@ -82,6 +82,69 @@ const testimonials = [
   },
 ];
 
+// News carousel: 8 dummy items, all placeholder content. Replace with real
+// @nuxt/content "news" or "announcements" collection once Jen seeds one.
+const newsItems = [
+  {
+    title: "Introducing Notebook Drops: the weekly Sydney brief.",
+    tag: "Announcement",
+    date: "04 Feb 2026",
+    banner: "Notebook Drops",
+    bannerTone: "violet",
+  },
+  {
+    title: "Jen Lab partners with the Harbour Café to seed map data.",
+    tag: "Integration",
+    date: "29 Jan 2026",
+    banner: "Harbour · Lab",
+    bannerTone: "orange",
+  },
+  {
+    title: "Restaurant map's coverage expands: now live in Inner West.",
+    tag: "Product",
+    date: "14 Dec 2025",
+    banner: "Inner West",
+    bannerTone: "orange",
+  },
+  {
+    title: "Workshop pipeline is now live on Cloudflare Pages.",
+    tag: "Engineering",
+    date: "09 Dec 2025",
+    banner: "Pipeline · CF",
+    bannerTone: "dark",
+  },
+  {
+    title: "Bondi loop walking guide added to the Wander section.",
+    tag: "Wander",
+    date: "21 Nov 2025",
+    banner: "Bondi Loop",
+    bannerTone: "violet",
+  },
+  {
+    title: "Slow-mail subscriber count hits 312, all hand-typed.",
+    tag: "Milestone",
+    date: "08 Nov 2025",
+    banner: "312 · Slow Mail",
+    bannerTone: "orange",
+  },
+  {
+    title: "New design tokens shipped — radius / spacing scales doubled.",
+    tag: "Design",
+    date: "27 Oct 2025",
+    banner: "Tokens · 2.0",
+    bannerTone: "dark",
+  },
+  {
+    title: "The Living Lab redesigned for the fifth time, finally Caldera-style.",
+    tag: "Meta",
+    date: "12 Oct 2025",
+    banner: "Lab · v5",
+    bannerTone: "violet",
+  },
+];
+
+const newsApi = ref<{ scrollPrev: () => void; scrollNext: () => void } | null>(null);
+
 // TODO: replace with real @nuxt/content blog collection once /blogs route is
 // restored (task 13). For now, placeholder posts so the row composition can be
 // designed.
@@ -144,6 +207,45 @@ function onSubscribe() {
   });
   subscribeEmail.value = "";
 }
+
+// no script state for product_dots section; CSS handles the pattern via the
+// .product_dots class defined in the <style> block below.
+
+const builtOn = [
+  { name: "Nuxt 4", caption: "Framework", icon: "i-simple-icons-nuxt", accent: "text-emerald-500" },
+  {
+    name: "Vue 3",
+    caption: "Runtime",
+    icon: "i-simple-icons-vuedotjs",
+    accent: "text-emerald-600",
+  },
+  {
+    name: "Tailwind 4",
+    caption: "Styling",
+    icon: "i-simple-icons-tailwindcss",
+    accent: "text-sky-500",
+  },
+  {
+    name: "Nuxt UI",
+    caption: "Components",
+    icon: "i-simple-icons-nuxt",
+    accent: "text-emerald-500",
+  },
+  {
+    name: "Cloudflare",
+    caption: "Hosting",
+    icon: "i-simple-icons-cloudflare",
+    accent: "text-orange-500",
+  },
+  { name: "Vite", caption: "Bundler", icon: "i-simple-icons-vite", accent: "text-yellow-500" },
+  {
+    name: "TypeScript",
+    caption: "Language",
+    icon: "i-simple-icons-typescript",
+    accent: "text-blue-600",
+  },
+  { name: "pnpm", caption: "Package mgr", icon: "i-simple-icons-pnpm", accent: "text-yellow-600" },
+];
 
 const marqueeStrings = [
   "Built in Sydney",
@@ -290,98 +392,118 @@ const marqueeStrings = [
       </div>
     </section>
 
-    <!-- Features (task 06): two side-by-side blocks -->
-    <section class="space-y-2.5">
-      <!-- Block 1 — Workshop with Harbour Bridge -->
-      <div
-        class="bg-ash-white rounded-card p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
-      >
-        <div class="space-y-5">
-          <span class="text-cyber-violet text-xs uppercase tracking-widest">Workshop</span>
-          <h3
-            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
-          >
-            The Workshop Where
-            <span class="block text-digital-orange">Ideas Get Forged.</span>
-          </h3>
-          <p class="text-abyssal-ink/75 max-w-prose leading-relaxed">
-            Quiet bench, sharp tools, lots of half-finished prototypes. The point of any side
-            project isn't the artefact — it's the muscle memory of shipping small things, over and
-            over, until the next one feels easy.
-          </p>
-          <ul class="space-y-2 text-sm text-abyssal-ink/70">
-            <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
-              Built in Vue 3 + Nuxt 4
-            </li>
-            <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
-              Deployed to Cloudflare Pages
-            </li>
-            <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-check" class="size-4 text-digital-orange" />
-              Open in public, half the time
-            </li>
-          </ul>
-          <UButton
-            color="neutral"
-            variant="outline"
-            :ui="{ base: 'rounded-button px-6' }"
-            to="/about"
-            trailing-icon="i-lucide-arrow-right"
-          >
-            Read the workbench notes
-          </UButton>
-        </div>
-        <div class="order-first md:order-last">
-          <HomeHarbourBridgeSvg class="w-full max-w-[460px] mx-auto" />
-        </div>
+    <!-- Products dots preview (radial fade pattern) -->
+    <section
+      class="product_dots relative bg-ash-white rounded-card overflow-hidden px-8 py-20 md:py-28 text-center"
+    >
+      <div class="relative z-10 max-w-2xl mx-auto space-y-5">
+        <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
+          <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
+          More is more
+        </UBadge>
+        <h2
+          class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-5xl md:text-7xl"
+        >
+          Built To
+          <span class="block text-digital-orange">Stack Up.</span>
+        </h2>
+        <p class="text-abyssal-ink/75 leading-relaxed">
+          Every section composes from the same six tokens — colour, radius, type, spacing, font,
+          shadow. Add another card and it just fits.
+        </p>
       </div>
+    </section>
 
-      <!-- Block 2 — Reef with Wave -->
-      <div
-        class="bg-ash-white rounded-card p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
+    <!-- Features (task 06): 2×2 diagonal layout with big headline above -->
+    <section class="space-y-8">
+      <h2
+        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
       >
-        <div>
-          <HomeWaveSvg class="w-full max-w-[460px] mx-auto" />
-        </div>
-        <div class="space-y-5">
-          <span class="text-cyber-violet text-xs uppercase tracking-widest">Reef</span>
-          <h3
-            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
-          >
-            Stitched To The
-            <span class="block text-digital-orange">Wider Reef.</span>
-          </h3>
-          <p class="text-abyssal-ink/75 max-w-prose leading-relaxed">
-            Everything links to everything: blog references restaurants, restaurants reference
-            walks, walks reference notes. One site, lots of currents, all flowing back to the same
-            harbour.
-          </p>
-          <div class="grid grid-cols-3 gap-2 pt-2">
-            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
-              <p class="font-display text-2xl text-abyssal-ink tabular-nums">11</p>
-              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Suburbs</p>
-            </div>
-            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
-              <p class="font-display text-2xl text-abyssal-ink tabular-nums">7</p>
-              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Tags</p>
-            </div>
-            <div class="bg-basalt-canvas/60 rounded-card p-3 text-center">
-              <p class="font-display text-2xl text-abyssal-ink tabular-nums">∞</p>
-              <p class="text-xs text-abyssal-ink/60 uppercase tracking-widest mt-1">Currents</p>
-            </div>
+        More Is More.
+        <span class="block">Stack Sideways.</span>
+      </h2>
+
+      <!--
+        Asymmetric 5:7 / 7:5 grid mirroring the reference layout.
+        Row 1: narrow text card (5fr) + wide illustration card (7fr).
+        Row 2: wide illustration card (7fr) + narrow text card (5fr).
+      -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:grid-rows-2 md:auto-rows-fr">
+        <!-- Cell A: narrow text card, top-left (5/12) -->
+        <article
+          class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-between gap-8 min-h-[360px]"
+        >
+          <div class="size-12 rounded-card bg-basalt-canvas flex items-center justify-center">
+            <span class="size-5 bg-digital-orange rotate-45 rounded-sm" />
           </div>
-          <UButton
-            color="neutral"
-            variant="outline"
-            :ui="{ base: 'rounded-button px-6' }"
-            to="/my-best-restaurants-search-in-sydney"
-            trailing-icon="i-lucide-arrow-right"
-          >
-            Follow the currents
-          </UButton>
-        </div>
+          <div class="space-y-3">
+            <h3
+              class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl md:text-4xl"
+            >
+              The Workshop,
+              <span class="block">For Massive Builds.</span>
+            </h3>
+            <p class="text-sm md:text-base text-abyssal-ink/75 leading-relaxed max-w-prose">
+              With the workshop bench, ideas and prototypes get their own dedicated chunk to build
+              without compromises. Quiet tools, fewer meetings, more shipping.
+            </p>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              :ui="{ base: 'rounded-button px-5 mt-2' }"
+              to="/about"
+              trailing-icon="i-lucide-play"
+            >
+              Learn More About Workshop
+            </UButton>
+          </div>
+        </article>
+
+        <!-- Cell B: wide violet illustration card, top-right (7/12) -->
+        <article
+          class="md:col-span-7 bg-cyber-violet rounded-card overflow-hidden flex items-center justify-center min-h-[360px] p-10"
+        >
+          <HomeHarbourBridgeSvg class="w-full h-full max-h-[320px]" />
+        </article>
+
+        <!-- Cell C: wide orange illustration card, bottom-left (7/12) -->
+        <article
+          class="md:col-span-7 bg-digital-orange rounded-card overflow-hidden flex items-center justify-center min-h-[360px] p-10"
+        >
+          <HomeOperaHouseSvg class="w-full h-full max-h-[320px]" />
+        </article>
+
+        <!-- Cell D: narrow text card, bottom-right (5/12) -->
+        <article
+          class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-between gap-8 min-h-[360px]"
+        >
+          <div class="size-12 rounded-card bg-basalt-canvas flex items-center justify-center">
+            <span class="size-5 bg-cyber-violet rotate-45 rounded-sm" />
+          </div>
+          <div class="space-y-3">
+            <h3
+              class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl md:text-4xl"
+            >
+              Stitched To The World
+              <span class="block">Via The Harbour.</span>
+            </h3>
+            <p class="text-sm md:text-base text-abyssal-ink/75 leading-relaxed max-w-prose">
+              Connect your reading list to a constellation of restaurants, walks and weekend trips.
+              Cross-link entries, follow currents, surface what's nearby — all from one map.
+            </p>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              :ui="{ base: 'rounded-button px-5 mt-2' }"
+              to="/my-best-restaurants-search-in-sydney"
+              trailing-icon="i-lucide-play"
+            >
+              Learn More About Map
+            </UButton>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -438,6 +560,61 @@ const marqueeStrings = [
       </UTabs>
     </section>
 
+    <!-- Built On — tech stack card grid -->
+    <section class="space-y-6">
+      <div class="flex items-end justify-between gap-4 px-1">
+        <div class="space-y-2">
+          <span class="text-cyber-violet text-xs uppercase tracking-widest">Built on</span>
+          <h2
+            class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-5xl"
+          >
+            The Stack
+            <span class="block text-digital-orange">Beneath The Site.</span>
+          </h2>
+        </div>
+        <span
+          class="hidden md:inline text-xs uppercase tracking-widest text-abyssal-ink/60 shrink-0"
+        >
+          Open source · MIT
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+        <div
+          v-for="(t, i) in builtOn"
+          :key="t.name"
+          class="group rounded-card p-6 md:p-8 flex flex-col gap-4 transition-colors"
+          :class="
+            i === 0 || i === 5
+              ? 'bg-cyber-violet text-pure-white'
+              : 'bg-ash-white text-abyssal-ink hover:bg-pixel-glare/40'
+          "
+        >
+          <div
+            class="size-12 rounded-card flex items-center justify-center"
+            :class="
+              i === 0 || i === 5 ? 'bg-pure-white/15' : 'bg-basalt-canvas group-hover:bg-pure-white'
+            "
+          >
+            <UIcon
+              :name="t.icon"
+              class="size-7"
+              :class="i === 0 || i === 5 ? 'text-pure-white' : t.accent"
+            />
+          </div>
+          <div class="space-y-1">
+            <p class="font-display tracking-[0.02em] text-2xl leading-none">{{ t.name }}</p>
+            <p
+              class="text-xs uppercase tracking-widest"
+              :class="i === 0 || i === 5 ? 'text-pure-white/70' : 'text-abyssal-ink/60'"
+            >
+              {{ t.caption }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Testimonials (task 08) -->
     <section class="space-y-8">
       <div class="text-center space-y-3 max-w-2xl mx-auto">
@@ -478,6 +655,107 @@ const marqueeStrings = [
           </footer>
         </article>
       </div>
+    </section>
+
+    <!-- News carousel -->
+    <section class="space-y-6">
+      <div class="flex items-end justify-between gap-4 px-1">
+        <h2
+          class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-4xl md:text-6xl"
+        >
+          News.
+        </h2>
+        <div
+          class="flex items-center gap-1 border border-dotted border-abyssal-ink/30 rounded-button p-1"
+        >
+          <button
+            class="size-9 inline-flex items-center justify-center rounded-button hover:bg-ash-white transition-colors text-abyssal-ink"
+            aria-label="Previous"
+            @click="newsApi?.scrollPrev()"
+          >
+            <UIcon name="i-lucide-arrow-left" class="size-4" />
+          </button>
+          <span class="border-l border-dotted border-abyssal-ink/30 self-stretch" />
+          <button
+            class="size-9 inline-flex items-center justify-center rounded-button hover:bg-ash-white transition-colors text-abyssal-ink"
+            aria-label="Next"
+            @click="newsApi?.scrollNext()"
+          >
+            <UIcon name="i-lucide-arrow-right" class="size-4" />
+          </button>
+        </div>
+      </div>
+
+      <UCarousel
+        v-slot="{ item }"
+        :items="newsItems"
+        :ui="{ item: 'basis-[80%] sm:basis-[55%] md:basis-[38%] lg:basis-[28%] pl-2.5' }"
+        class="w-full"
+        @init="(api: any) => (newsApi = api)"
+      >
+        <NuxtLink to="/blogs" class="group block space-y-3">
+          <!-- Banner card with halftone -->
+          <div
+            class="relative aspect-[16/9] rounded-card overflow-hidden border-2 transition-transform group-hover:scale-[1.01]"
+            :class="{
+              'bg-digital-orange border-abyssal-ink': (item as any).bannerTone === 'orange',
+              'bg-cyber-violet border-abyssal-ink': (item as any).bannerTone === 'violet',
+              'bg-abyssal-ink border-abyssal-ink': (item as any).bannerTone === 'dark',
+            }"
+          >
+            <!-- Halftone overlay -->
+            <div
+              aria-hidden="true"
+              class="absolute inset-0 pointer-events-none"
+              :style="{
+                backgroundImage:
+                  (item as any).bannerTone === 'dark'
+                    ? 'radial-gradient(circle, var(--color-cyber-violet) 2px, transparent 2.5px)'
+                    : 'radial-gradient(circle, var(--color-abyssal-ink) 2px, transparent 2.5px)',
+                backgroundSize: '12px 12px',
+                opacity: (item as any).bannerTone === 'dark' ? 0.6 : 0.2,
+                maskImage:
+                  'radial-gradient(circle at 30% 50%, black 20%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+                WebkitMaskImage:
+                  'radial-gradient(circle at 30% 50%, black 20%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+              }"
+            />
+
+            <!-- Banner text overlay -->
+            <div class="absolute inset-0 flex items-center justify-center p-4 text-center">
+              <span
+                class="font-display tracking-[0.02em] leading-[0.95] text-2xl md:text-3xl drop-shadow"
+                :class="(item as any).bannerTone === 'dark' ? 'text-pure-white' : 'text-pure-white'"
+              >
+                {{ (item as any).banner }}
+              </span>
+            </div>
+
+            <!-- Brand mark bottom-left -->
+            <div class="absolute bottom-2 left-3 flex items-center gap-1.5">
+              <span class="size-2 bg-pure-white rotate-45 rounded-[1px]" />
+              <span class="text-[10px] text-pure-white/80 uppercase tracking-widest font-medium">
+                jen-lab
+              </span>
+            </div>
+          </div>
+
+          <!-- Tag + title + date -->
+          <div class="space-y-2 px-1">
+            <span
+              class="inline-block bg-pixel-glare text-abyssal-ink text-xs px-2.5 py-1 rounded font-medium"
+            >
+              {{ (item as any).tag }}
+            </span>
+            <h3
+              class="text-base font-bold leading-snug text-abyssal-ink line-clamp-2 group-hover:text-digital-orange transition-colors"
+            >
+              {{ (item as any).title }}
+            </h3>
+            <p class="text-sm text-abyssal-ink/60">{{ (item as any).date }}</p>
+          </div>
+        </NuxtLink>
+      </UCarousel>
     </section>
 
     <!-- Blog preview row (task 09) -->
@@ -610,3 +888,12 @@ const marqueeStrings = [
     </section>
   </div>
 </template>
+
+<style scoped>
+.product_dots {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.2) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle, black 30%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, black 30%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+}
+</style>
