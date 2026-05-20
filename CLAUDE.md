@@ -118,6 +118,43 @@ All in `app/components/home/` — Sydney / Australia motif, two-tone (`cyber-vio
 
 - `mdc.highlight: false` and `content.build.markdown.highlight: false` in `nuxt.config.ts` — markdown has no fenced code blocks, so Shiki's oniguruma WASM (~600 KB) and language grammars (~900 KB) are skipped from the client bundle. Re-enable if a code block is ever introduced into `content/**.md`.
 
+## UI Testing
+
+All UI verification must use a **headless browser running in the background** — never rely on computer-use screenshots or manual browser navigation.
+
+```bash
+# Preferred: Playwright (install once if missing)
+pnpm dlx playwright install --with-deps chromium
+node -e "
+const { chromium } = require('playwright');
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage();
+  await p.goto('http://localhost:3000/YOUR_ROUTE');
+  await p.waitForLoadState('networkidle');
+  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
+  await b.close();
+})();
+"
+# Then read /tmp/verify.png with the Read tool.
+
+# Alternative: Puppeteer
+node -e "
+const puppeteer = require('puppeteer');
+(async () => {
+  const b = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const p = await b.newPage();
+  await p.goto('http://localhost:3000/YOUR_ROUTE', { waitUntil: 'networkidle0' });
+  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
+  await b.close();
+})();
+"
+```
+
+- Always run the screenshot command with `run_in_background: false` so the image is ready before reading.
+- Read `/tmp/verify.png` with the Read tool to inspect the result visually.
+- If neither Playwright nor Puppeteer is installed, install on the fly with `pnpm dlx` — never skip headless verification.
+
 ## Data fetching
 
 Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI render until the request resolves — slow networks stall the page shell. Use `useLazyAsyncData` (non-blocking, paints shell first, fills data when ready) or fetch imperatively inside event handlers / `onMounted`.

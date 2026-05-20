@@ -16,6 +16,8 @@ onMounted(() => {
 
 const navItems = [
   { label: "Home", to: "/" },
+  { label: "Jen Knows", to: "/jenknows" },
+  { label: "Jen Liu", to: "/jenliu" },
   { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
   { label: "Blogs", to: "/blogs" },
   { label: "About", to: "/about" },

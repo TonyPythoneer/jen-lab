@@ -1,0 +1,11 @@
+01 — Crop hero illustration into two webp halves
+
+Status: DONE
+
+- [x] Crop left (Jen Knows, raised hand) → public/home/jen-knows-hero.webp (524x676+0+0, 85.0 KB)
+- [x] Crop right (Jen Liu, camera) → public/home/jen-liu-hero.webp (500x676+524+0, 82.8 KB)
+- [x] Split point aligned to existing Sprite.vue midpoint (thumb x=130/254 → origin x=524)
+- [x] Visually verified each crop — single girl, fully framed
+- [x] File sizes ~83-85 KB each, << 797 KB origin
+
+Next: 02 — Caldera-ize shared content components

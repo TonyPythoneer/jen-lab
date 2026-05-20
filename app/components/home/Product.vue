@@ -1,7 +1,7 @@
 <template>
-  <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-[#f7f7f7]">
-    <!-- Banner placeholder. Teal background shows while the lazy image is decoding or if `banner` is unset. -->
-    <div class="relative h-40 sm:h-56 bg-teal-400">
+  <div class="rounded-card shadow-sm overflow-hidden bg-ash-white border border-abyssal-ink/8">
+    <!-- Banner placeholder. basalt-canvas shows while the lazy image is decoding or if `banner` is unset. -->
+    <div class="relative h-40 sm:h-56 bg-basalt-canvas">
       <img
         v-if="banner"
         :src="banner"
@@ -11,7 +11,7 @@
       />
     </div>
     <div class="flex flex-col gap-3 p-5">
-      <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
+      <h2 class="text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h2>
       <!--
         Collapsible: brief copy is always shown; full description toggles open.
         `class="group"` enables the chevron rotate via group-data-[state=open] in the UI override below.
@@ -28,7 +28,7 @@
               base: 'hover:bg-transparent',
             }"
           />
-          <span class="text-sm text-gray-500">{{ brief }}</span>
+          <span class="text-sm text-abyssal-ink/60">{{ brief }}</span>
         </div>
         <template #content>
           <!-- descriptionHtml is pre-rendered at build time by markdown-it inside
@@ -36,7 +36,7 @@
                zero markdown parser to the client; source is trusted local content. -->
           <div
             v-if="descriptionHtml"
-            class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
+            class="text-sm text-abyssal-ink/70 leading-relaxed mt-2 pl-5 product-description"
             v-html="descriptionHtml"
           />
         </template>
@@ -48,7 +48,7 @@
         color="primary"
         size="lg"
         block
-        class="rounded-full font-semibold mt-1"
+        class="rounded-button font-semibold mt-1"
       >
         {{ purchaseLabel }}
       </UButton>

@@ -13,8 +13,8 @@ After finishing a task, tick its box here and update `PROGRESS_<n>`.
 
 ## Task list
 
-- [ ] 01 — Crop hero illustration into two webp halves (Jen Knows / Jen Liu)
-- [ ] 02 — Caldera-ize shared content components (Portal / Product / ImageCarousel / YoutubeCarousel)
+- [x] 01 — Crop hero illustration into two webp halves (Jen Knows / Jen Liu)
+- [x] 02 — Caldera-ize shared content components (Portal / Product / ImageCarousel / YoutubeCarousel)
 - [ ] 03 — Build shared `<ProfilePage>` component (header + section dispatch)
 - [ ] 04 — `/jen-knows` page
 - [ ] 05 — `/jen-liu` page
