@@ -19,6 +19,9 @@ useSeoMeta({
     <!-- New product spotlight -->
     <HomeSectionNewProduct />
 
+    <!-- Blog carousel (full-bleed: carousel peeks beyond 1200px) -->
+    <HomeSectionBlog class="full-bleed" />
+
     <!-- Subscribe -->
     <HomeSectionNewsletter />
 
