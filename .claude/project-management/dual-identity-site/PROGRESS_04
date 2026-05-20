@@ -1,7 +1,0 @@
-Task 04 — /jen-knows page
-Status: DONE
-
-Created app/pages/jen-knows.vue (renamed from jenknows.vue → /jen-knows route).
-Uses ProfilePage component, useLazyAsyncData, useHead + useSeoMeta.
-All content blocks render: Portals (2-col), Videos carousel, Products (2-col).
-No console errors. Verified via Playwright screenshot.

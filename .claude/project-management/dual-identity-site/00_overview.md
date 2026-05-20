@@ -17,7 +17,7 @@ After finishing a task, tick its box here and update `PROGRESS_<n>`.
 - [x] 02 — Caldera-ize shared content components (Portal / Product / ImageCarousel / YoutubeCarousel)
 - [x] 03 — Build shared `<ProfilePage>` component (header + section dispatch)
 - [x] 04 — `/jen-knows` page
-- [ ] 05 — `/jen-liu` page
+- [x] 05 — `/jen-liu` page
 - [ ] 06 — Update navigation + remove `/about`
 - [ ] 07 — Homepage §1: Hero (big-picture intro, mixed lang)
 - [ ] 08 — Homepage §2: "More Is More. Stack Sideways." dual-direction cards

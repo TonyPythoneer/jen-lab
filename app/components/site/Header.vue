@@ -16,12 +16,13 @@ onMounted(() => {
 
 const navItems = [
   { label: "Home", to: "/" },
-  { label: "Jen Knows", to: "/jenknows" },
-  { label: "Jen Liu", to: "/jenliu" },
+  { label: "Jen Knows", to: "/jen-knows" },
+  { label: "Jen Liu", to: "/jen-liu" },
   { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
   { label: "Blogs", to: "/blogs" },
-  { label: "About", to: "/about" },
 ];
+
+const SUBSCRIBE_URL = "https://jen-nextsteps.kit.com/60463af80d";
 
 const route = useRoute();
 const { y } = useWindowScroll();
@@ -91,11 +92,13 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       <div class="flex items-center gap-2 shrink-0">
         <!-- Desktop: CTA button (shorter height when scrolled) -->
         <a
-          href="#footer"
+          :href="SUBSCRIBE_URL"
+          target="_blank"
+          rel="noopener"
           class="hidden md:inline-flex items-center px-4 text-sm font-medium bg-digital-orange text-pure-white rounded-button transition-colors duration-[180ms] hover:bg-[#e34800]"
           :class="scrolled ? 'h-8' : 'h-10'"
         >
-          Get In Touch
+          訂閱電子報
         </a>
 
         <!-- Mobile: hamburger toggle -->
