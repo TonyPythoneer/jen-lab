@@ -12,17 +12,7 @@ const newsletterDotField = {
   },
 };
 
-const toast = useToast();
-const subscribeEmail = ref("");
-function onSubscribe() {
-  if (!subscribeEmail.value) return;
-  toast.add({
-    title: "Thanks — placeholder.",
-    description: "Backend not wired yet. Your email won't be stored anywhere this round.",
-    color: "primary",
-  });
-  subscribeEmail.value = "";
-}
+const { email: subscribeEmail, onSubscribe } = useNewsletterSubscribe();
 </script>
 
 <template>
@@ -72,9 +62,6 @@ function onSubscribe() {
           Subscribe
         </UButton>
       </form>
-      <p class="text-xs text-pure-white/50 uppercase tracking-widest pt-2">
-        Roughly one email per month · 312 readers · 0 spam
-      </p>
     </div>
   </section>
 </template>

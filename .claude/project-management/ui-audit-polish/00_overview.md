@@ -11,8 +11,8 @@ Every task lists this as the final verify step.
 
 ## Tasks (sequential, no cross-task deps unless noted)
 
-- [ ] 01 — Deduplicate newsletter: 3 forms → 1; extract `useNewsletterSubscribe`
-- [ ] 02 — Remove fake data: communityPills counts + "312 readers" in 3 files
+- [x] 01 — Deduplicate newsletter: 3 forms → 1; extract `useNewsletterSubscribe`
+- [x] 02 — Remove fake data: communityPills counts + "312 readers" in 3 files
 - [ ] 03 — Fix SectionBringing right card: static → reactive to active accordion item [BUG]
 - [ ] 04 — Fix "More is more" text collision: ProductDots badge vs Features heading
 - [ ] 05 — Rewrite SectionProductDots copy (dev jargon → personal site voice); see candidate text in task file

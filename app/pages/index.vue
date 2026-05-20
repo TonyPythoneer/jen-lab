@@ -44,8 +44,5 @@ useSeoMeta({
 
     <!-- Get In Touch -->
     <HomeSectionContact />
-
-    <!-- Newsletter band -->
-    <HomeSectionNewsletter />
   </SitePageContainer>
 </template>
