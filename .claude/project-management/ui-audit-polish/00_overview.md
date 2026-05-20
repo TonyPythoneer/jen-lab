@@ -13,15 +13,15 @@ Every task lists this as the final verify step.
 
 - [x] 01 — Deduplicate newsletter: 3 forms → 1; extract `useNewsletterSubscribe`
 - [x] 02 — Remove fake data: communityPills counts + "312 readers" in 3 files
-- [ ] 03 — Fix SectionBringing right card: static → reactive to active accordion item [BUG]
-- [ ] 04 — Fix "More is more" text collision: ProductDots badge vs Features heading
-- [ ] 05 — Rewrite SectionProductDots copy (dev jargon → personal site voice); see candidate text in task file
-- [ ] 06 — Make Hero "New post" badge dynamic via WP API (needs custom EN date formatter)
-- [ ] 07 — Minor fixes: marquee v-if bug (line 103) + SectionBuiltOn `highlight` field rename
-- [ ] 08 — [Caldera gap] VOID — outline buttons already use UButton default 1px border; SectionBlog border-2 is intentional card image styling, not a button. No action needed.
-- [ ] 09 — [Caldera gap] Newsletter focus ring: SectionCommunity `ring-4` → `ring-2`
-- [ ] 10 — [Caldera gap] Mobile hero: hide "About Jen" ghost button on mobile (`hidden sm:inline-flex`)
-- [ ] 11 — [Caldera gap] Stats cards: gap-2.5 → connected band with responsive dividers
+- [x] 03 — Fix SectionBringing right card: static → reactive to active accordion item [BUG]
+- [x] 04 — Fix "More is more" text collision: ProductDots badge changed to "A living experiment"
+- [x] 05 — Rewrite SectionProductDots copy: "Always In Progress." + visitor-friendly body
+- [x] 06 — Hero "New post" badge now dynamic via WP API with EN date formatter (`badgeDate`)
+- [x] 07 — Minor fixes: marquee v-if `length - 1` + SectionBuiltOn `highlight: true` data field
+- [x] 08 — [Caldera gap] VOID — outline buttons already use UButton default 1px border; no action needed
+- [x] 09 — [Caldera gap] VOID — SectionCommunity email input removed in Task 01; no ring to fix
+- [x] 10 — [Caldera gap] Mobile hero: "About Jen" hidden on mobile (`hidden sm:inline-flex`)
+- [x] 11 — [Caldera gap] Stats cards: connected orange band with responsive white dividers
 
 ## Verified facts (do not re-derive)
 

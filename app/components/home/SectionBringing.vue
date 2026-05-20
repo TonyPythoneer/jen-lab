@@ -5,22 +5,38 @@ const bringItems = [
     title: "Food",
     icon: "i-lucide-utensils",
     body: "120+ restaurants logged across the harbour, filterable by area and cuisine. Every entry is a personal visit — no scraped reviews, no SEO bait. Just where I'd send a friend tomorrow.",
+    detail: [
+      "Pick a current and dive in. The food log opens to a Sydney map filterable by suburb, cuisine and how loud the espresso machine is at 9am.",
+      "Every entry is a personal visit — no scraped reviews, no affiliate spam. Just where I'd send a friend tomorrow.",
+    ],
+    tags: ["NUXT", "LEAFLET", "WP"],
   },
   {
     value: "code",
     title: "Code",
     icon: "i-lucide-cpu",
     body: "Toy projects, half-broken on purpose. Nuxt experiments and the occasional Cloudflare Worker.",
+    detail: [
+      "Toy projects, half-broken on purpose. Nuxt experiments and the occasional Cloudflare Worker.",
+      "Most ideas don't survive their first weekend. The ones that do get a folder, a throwaway prototype, and — eventually — a post.",
+    ],
+    tags: ["NUXT", "VUE", "CF"],
   },
   {
     value: "writing",
     title: "Writing",
     icon: "i-lucide-book-open",
     body: "Long-form notes from the workbench. Less manifesto, more diary.",
+    detail: [
+      "Long-form notes from the workbench. Less manifesto, more diary.",
+      "Ideas that refused to stay in a tweet. Published when they're ready, not when the calendar says so.",
+    ],
+    tags: ["MARKDOWN", "WP", "RSS"],
   },
 ];
 
 const activeAccordion = ref("food");
+const activeItem = computed(() => bringItems.find((i) => i.value === activeAccordion.value)!);
 </script>
 
 <template>
@@ -70,26 +86,20 @@ const activeAccordion = ref("food");
         </div>
       </div>
 
-      <!-- Right: violet detail card -->
+      <!-- Right: violet detail card — content driven by activeItem -->
       <article
-        class="bg-cyber-violet text-pure-white rounded-card p-9 flex flex-col justify-between gap-7"
+        class="bg-cyber-violet text-pure-white rounded-card p-9 flex flex-col justify-between gap-7 min-h-[280px]"
       >
-        <div class="space-y-5 text-base leading-relaxed">
-          <p>
-            Pick a current and dive in. The food log opens to a Sydney map filterable by suburb,
-            cuisine and how loud the espresso machine is at 9am. Every entry is a personal visit —
-            no scraped reviews, no affiliate spam.
-          </p>
-          <p>
-            Most ideas don't survive their first weekend. The ones that do get a folder, a throwaway
-            prototype, and — eventually — a post.
-          </p>
-        </div>
+        <Transition name="fade" mode="out-in">
+          <div :key="activeItem.value" class="space-y-5 text-base leading-relaxed">
+            <p v-for="p in activeItem.detail" :key="p">{{ p }}</p>
+          </div>
+        </Transition>
         <div class="border-t border-pure-white/20 pt-5 flex items-center gap-4 flex-wrap">
           <span class="text-xs uppercase tracking-[0.18em] opacity-70">Built with</span>
           <div class="flex gap-2 flex-wrap">
             <span
-              v-for="tag in ['NUXT', 'VUE', 'CF']"
+              v-for="tag in activeItem.tags"
               :key="tag"
               class="bg-pure-white/15 rounded-button px-3.5 py-1.5 text-xs font-medium tracking-widest"
               >{{ tag }}</span

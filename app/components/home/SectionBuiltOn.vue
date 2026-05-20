@@ -1,6 +1,12 @@
 <script setup lang="ts">
 const builtOn = [
-  { name: "Nuxt 4", caption: "Framework", icon: "i-simple-icons-nuxt", accent: "text-emerald-500" },
+  {
+    name: "Nuxt 4",
+    caption: "Framework",
+    icon: "i-simple-icons-nuxt",
+    accent: "text-emerald-500",
+    highlight: true,
+  },
   {
     name: "Vue 3",
     caption: "Runtime",
@@ -25,7 +31,13 @@ const builtOn = [
     icon: "i-simple-icons-cloudflare",
     accent: "text-orange-500",
   },
-  { name: "Vite", caption: "Bundler", icon: "i-simple-icons-vite", accent: "text-yellow-500" },
+  {
+    name: "Vite",
+    caption: "Bundler",
+    icon: "i-simple-icons-vite",
+    accent: "text-yellow-500",
+    highlight: true,
+  },
   {
     name: "TypeScript",
     caption: "Language",
@@ -59,28 +71,26 @@ const builtOn = [
         :key="t.name"
         class="group rounded-card p-6 md:p-8 flex flex-col gap-4"
         :class="
-          i === 0 || i === 5
+          t.highlight
             ? 'bg-cyber-violet text-pure-white'
             : 'bg-ash-white text-abyssal-ink hover:bg-pixel-glare/40'
         "
       >
         <div
           class="size-12 rounded-card flex items-center justify-center"
-          :class="
-            i === 0 || i === 5 ? 'bg-pure-white/15' : 'bg-basalt-canvas group-hover:bg-pure-white'
-          "
+          :class="t.highlight ? 'bg-pure-white/15' : 'bg-basalt-canvas group-hover:bg-pure-white'"
         >
           <UIcon
             :name="t.icon"
             class="size-7"
-            :class="i === 0 || i === 5 ? 'text-pure-white' : t.accent"
+            :class="t.highlight ? 'text-pure-white' : t.accent"
           />
         </div>
         <div class="space-y-1">
           <p class="font-display tracking-[0.02em] text-2xl leading-none">{{ t.name }}</p>
           <p
             class="text-xs uppercase tracking-widest"
-            :class="i === 0 || i === 5 ? 'text-pure-white/70' : 'text-abyssal-ink/60'"
+            :class="t.highlight ? 'text-pure-white/70' : 'text-abyssal-ink/60'"
           >
             {{ t.caption }}
           </p>

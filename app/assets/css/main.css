@@ -48,3 +48,12 @@
  *
  *  Modal/popover layers come from @nuxt/ui — do not redeclare here.
  */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

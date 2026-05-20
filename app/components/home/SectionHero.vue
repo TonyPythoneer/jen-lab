@@ -10,6 +10,20 @@ const marqueeStrings = [
   "Walked from Bondi to Coogee",
   "Open in public",
 ];
+
+const { data: latestPost } = useLazyAsyncData(
+  "hero-latest-post",
+  () => fetchPosts({ perPage: 1 }).then((r) => r.data[0] ?? null),
+  { server: false },
+);
+
+function badgeDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 </script>
 
 <template>
@@ -26,11 +40,12 @@ const marqueeStrings = [
       <span class="text-xs uppercase tracking-widest text-abyssal-ink/70">Online</span>
     </div>
     <NuxtLink
+      v-if="latestPost"
       to="#blog"
       class="absolute top-6 right-6 hidden md:inline-flex items-center gap-2 bg-abyssal-ink text-pure-white rounded-button px-3 py-1.5 text-xs hover:bg-digital-orange transition-colors"
     >
       <span class="size-1.5 rounded-full bg-pixel-glare" />
-      New post · 18 May 2026
+      New post · {{ badgeDate(latestPost.date) }}
       <UIcon name="i-lucide-arrow-up-right" class="size-3.5" />
     </NuxtLink>
 
@@ -75,11 +90,12 @@ const marqueeStrings = [
         >
           Read The Notebook
         </UButton>
+        <!-- Mobile: hidden (nav already has About) -->
         <UButton
           color="neutral"
           variant="ghost"
           size="xl"
-          :ui="{ base: 'rounded-button' }"
+          :ui="{ base: 'rounded-button hidden sm:inline-flex' }"
           to="/about"
           trailing-icon="i-lucide-arrow-right"
         >
@@ -99,7 +115,10 @@ const marqueeStrings = [
           class="mx-6 inline-flex items-center gap-3 font-display text-xl tracking-[0.02em] text-abyssal-ink/70"
         >
           {{ s }}
-          <span class="size-1.5 rounded-full bg-cyber-violet" v-if="i < marqueeStrings.length" />
+          <span
+            class="size-1.5 rounded-full bg-cyber-violet"
+            v-if="i < marqueeStrings.length - 1"
+          />
         </span>
       </UMarquee>
     </div>

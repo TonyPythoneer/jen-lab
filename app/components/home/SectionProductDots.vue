@@ -4,18 +4,18 @@
   >
     <div class="relative z-10 max-w-2xl mx-auto space-y-5">
       <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
-        <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
-        More is more
+        <UIcon name="i-lucide-flask-conical" class="size-3.5 mr-1.5" />
+        A living experiment
       </UBadge>
       <h2
         class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-5xl md:text-7xl"
       >
-        Built To
-        <span class="block text-digital-orange">Stack Up.</span>
+        Always In
+        <span class="block text-digital-orange">Progress.</span>
       </h2>
       <p class="text-abyssal-ink/75 leading-relaxed">
-        Every section composes from the same six tokens — colour, radius, type, spacing, font,
-        shadow. Add another card and it just fits.
+        This site is never finished — and that's the point. Each section is a snapshot of what I'm
+        building, eating, or thinking about right now.
       </p>
     </div>
   </section>

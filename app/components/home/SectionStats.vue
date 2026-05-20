@@ -23,11 +23,14 @@ const stats = [
     >
       Explore The Workbench
     </UButton>
-    <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-4">
+    <div
+      class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-4 rounded-card overflow-hidden"
+    >
       <div
-        v-for="s in stats"
+        v-for="(s, i) in stats"
         :key="s.label"
-        class="rounded-card p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between bg-digital-orange text-pure-white"
+        class="p-8 md:p-10 flex flex-col gap-6 min-h-[240px] justify-between bg-digital-orange text-pure-white"
+        :class="{ 'border-b border-pure-white/20 lg:border-b-0 lg:border-r': i < stats.length - 1 }"
       >
         <p class="font-display tracking-[0.02em] leading-[0.9] text-6xl md:text-7xl tabular-nums">
           {{ s.value }}
