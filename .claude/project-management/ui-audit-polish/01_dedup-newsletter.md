@@ -1,26 +1,47 @@
 # 01 — Deduplicate Newsletter Form
 
-## Problem
+## WHY (root cause)
 
-`subscribeEmail` ref + `onSubscribe()` defined identically in three components:
+`subscribeEmail` ref + `onSubscribe()` are defined identically in three separate components.
+Pages renders all three consecutively (Community → Contact → Newsletter) giving users three
+subscription CTAs back-to-back, which kills credibility and feels spammy.
 
-- `app/components/home/SectionCommunity.vue`
-- `app/components/home/SectionContact.vue`
-- `app/components/home/SectionNewsletter.vue`
+## WHAT was observed
 
-The page also shows newsletter CTAs three times (Community → Contact → Newsletter in sequence),
-which is a UX dead-end — users see the same ask three times before the footer.
+- `app/components/home/SectionCommunity.vue` — violet card with inline email form
+- `app/components/home/SectionContact.vue` — ash card "Notes From The Workbench" form
+- `app/components/home/SectionNewsletter.vue` — full dark band with form
+- `app/pages/index.vue` lines 43–49: all three rendered sequentially with no visual buffer
+- Playwright screenshot `12_community.png` + `13_contact.png` + `14_newsletter.png` confirms
+  users see three subscribe prompts in ~600px of scroll
 
-## Plan
+## HOW (exact steps)
 
-1. Extract shared subscribe logic into `app/composables/useNewsletterSubscribe.ts`
-   → verify: each component compiles and calls the same toast behavior
-2. Remove `SectionNewsletter` from `app/pages/index.vue` (it is redundant; SectionContact
-   already ends the page with a newsletter form)
-   → verify: `vp check` passes, page still renders Contact + Footer
+1. Create `app/composables/useNewsletterSubscribe.ts`:
+   ```ts
+   export function useNewsletterSubscribe() {
+     const toast = useToast();
+     const email = ref("");
+     function onSubscribe() {
+       if (!email.value) return;
+       toast.add({
+         title: "Thanks — placeholder.",
+         description: "Backend not wired yet.",
+         color: "primary",
+       });
+       email.value = "";
+     }
+     return { email, onSubscribe };
+   }
+   ```
+2. In SectionCommunity, SectionContact, SectionNewsletter: replace local `subscribeEmail`/`onSubscribe`
+   with `const { email: subscribeEmail, onSubscribe } = useNewsletterSubscribe()`
+3. Remove `<HomeSectionNewsletter />` from `app/pages/index.vue` (line 49).
+   SectionCommunity's subscribe card should also be removed (see task 02) — if doing 01+02
+   together, only SectionContact's form remains.
 
-## Success criteria
+## VERIFY
 
-- `subscribeEmail` + `onSubscribe` defined in exactly one place
-- `<HomeSectionNewsletter />` removed from index.vue
-- `vp check` passes
+- `vp check` passes (= `pnpm lint && pnpm typecheck`)
+- Grep: `subscribeEmail` and `onSubscribe` appear in source only inside the composable + import sites
+- Page renders Contact section with working form; Newsletter section absent
