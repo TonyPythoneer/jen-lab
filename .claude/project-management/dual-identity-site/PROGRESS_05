@@ -1,7 +1,0 @@
-Task 05 — /jen-liu page
-Status: DONE
-
-Created app/pages/jen-liu.vue (renamed from jenliu.vue → /jen-liu route).
-Same pattern as Task 04: ProfilePage, useLazyAsyncData, useHead + useSeoMeta.
-Single-tab bio renders directly (no UTabs). Products + Galleries all present.
-No console errors. Verified via Playwright screenshot.

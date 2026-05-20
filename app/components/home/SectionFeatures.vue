@@ -26,16 +26,6 @@
             With the workshop bench, ideas and prototypes get their own dedicated chunk to build
             without compromises. Quiet tools, fewer meetings, more shipping.
           </p>
-          <UButton
-            color="neutral"
-            variant="outline"
-            size="sm"
-            :ui="{ base: 'rounded-button px-5 mt-2' }"
-            to="/about"
-            trailing-icon="i-lucide-play"
-          >
-            Learn More About Workshop
-          </UButton>
         </div>
       </article>
 

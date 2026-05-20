@@ -92,17 +92,6 @@ function badgeDate(dateStr: string) {
         >
           Read The Notebook
         </UButton>
-        <!-- Mobile: hidden (nav already has About) -->
-        <UButton
-          color="neutral"
-          variant="ghost"
-          size="xl"
-          :ui="{ base: 'rounded-button hidden sm:inline-flex' }"
-          to="/about"
-          trailing-icon="i-lucide-arrow-right"
-        >
-          About Jen
-        </UButton>
       </div>
     </div>
 
