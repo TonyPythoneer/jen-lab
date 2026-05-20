@@ -43,6 +43,9 @@ const newsletterDotField = {
         收到榛知關於澳洲職場與旅遊的最新分享——一鍵到 Kit 完成訂閱，隨時可退訂。
       </p>
 
+      <!-- Animated envelope -->
+      <HomeEnvelopeAnimation />
+
       <UButton
         as="a"
         :href="KIT_URL"
