@@ -2,6 +2,9 @@
 const JEN_KNOWS_URL = "/jen-knows";
 const JEN_LIU_URL = "/jen-liu";
 
+const titleRef = useTemplateRef<HTMLHeadingElement>("title");
+useTextReveal(titleRef);
+
 const heroDotField = { opacity: 0.08, spacing: 28 };
 
 const marqueeStrings = [
@@ -40,6 +43,7 @@ const marqueeStrings = [
       </UBadge>
 
       <h1
+        ref="title"
         class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-6xl sm:text-7xl md:text-8xl lg:text-[148px]"
       >
         Two Worlds.
