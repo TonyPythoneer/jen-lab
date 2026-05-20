@@ -1,12 +1,10 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: "Jen Lab — The Living Lab Of Jen",
-  description:
-    "A personal sandbox where ideas, restaurants and writing share one harbour. Brewed in Sydney, served everywhere.",
-  ogTitle: "Jen Lab — The Living Lab Of Jen",
-  ogDescription: "A personal sandbox where ideas, restaurants and writing share one harbour.",
+  title: "榛知 — 職涯 × 旅遊，從雪梨出發",
+  description: "榛知 Jen：澳洲職涯顧問 × 旅遊作家。兩個身份，一個在雪梨的真實故事。",
+  ogTitle: "榛知 — 職涯 × 旅遊，從雪梨出發",
+  ogDescription: "澳洲職涯顧問 × 旅遊作家。探索 Jen Knows 職場資源，或跟著 Jen Liu 走訪澳洲。",
   ogType: "website",
-  // TODO: ogImage — Jen to supply 1200×630 og asset.
 });
 </script>
 
@@ -15,34 +13,16 @@ useSeoMeta({
     <!-- Hero -->
     <HomeSectionHero />
 
-    <!-- Stats -->
-    <HomeSectionStats />
-
-    <!-- Products dots preview (radial fade pattern) -->
-    <HomeSectionProductDots />
-
     <!-- Directions: dual-identity intro cards -->
     <HomeSectionDirections />
 
-    <!-- Bringing The Harbour Online -->
-    <HomeSectionBringing />
+    <!-- New product spotlight -->
+    <HomeSectionNewProduct />
 
-    <!-- Use-case tabs -->
-    <HomeSectionUseCases />
+    <!-- Subscribe -->
+    <HomeSectionNewsletter />
 
-    <!-- Built On — tech stack card grid -->
-    <HomeSectionBuiltOn />
-
-    <!-- Testimonials -->
-    <HomeSectionTestimonials />
-
-    <!-- Blog carousel (full-bleed: carousel peeks beyond 1200px) -->
-    <HomeSectionBlog class="full-bleed" />
-
-    <!-- Join The jen-lab Community -->
-    <HomeSectionCommunity />
-
-    <!-- Get In Touch -->
-    <HomeSectionContact />
+    <!-- Support -->
+    <HomeSectionSupport />
   </SitePageContainer>
 </template>

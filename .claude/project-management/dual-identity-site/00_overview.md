@@ -24,5 +24,5 @@ After finishing a task, tick its box here and update `PROGRESS_<n>`.
 - [x] 09 — Homepage §3: New-product spotlight (Australia travel book)
 - [x] 10 — Homepage §4: Subscription (replace email form with Kit link)
 - [x] 11 — Homepage §5: Soft support / donate section
-- [ ] 12 — Assemble `index.vue` + retire fake sections
+- [x] 12 — Assemble `index.vue` + retire fake sections
 - [ ] 13 — Validation (manual review + `vp check`)
