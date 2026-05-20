@@ -16,16 +16,6 @@ const footerDotField = {
 };
 
 const currentYear = new Date().getFullYear();
-
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
-  { label: "Blogs", to: "/blogs" },
-  { label: "About", to: "/about" },
-  { label: "Brand Kit", to: "#" },
-  { label: "Now", to: "#" },
-  { label: "Uses", to: "#" },
-];
 </script>
 
 <template>

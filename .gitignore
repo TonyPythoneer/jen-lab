@@ -40,3 +40,4 @@ logs
 
 # ci/cd
 analyze.client.*.json
+.claude/screenshots/
