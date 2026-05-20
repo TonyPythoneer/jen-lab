@@ -23,7 +23,7 @@ const marqueeStrings = [
 
     <HomeOperaHouseSvg
       aria-hidden="true"
-      class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[140%] max-w-none opacity-15 pointer-events-none"
+      class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[140%] opacity-15 pointer-events-none"
     />
 
     <div class="absolute top-6 left-6 hidden md:flex items-center gap-2">
@@ -34,12 +34,10 @@ const marqueeStrings = [
     <div
       class="relative z-10 px-6 md:px-12 pt-24 md:pt-28 pb-16 md:pb-20 max-w-[1100px] mx-auto text-center space-y-8"
     >
-      <div class="flex justify-center">
-        <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
-          <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
-          Sydney · Career × Travel
-        </UBadge>
-      </div>
+      <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
+        <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
+        Sydney · Career × Travel
+      </UBadge>
 
       <h1
         class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-6xl sm:text-7xl md:text-8xl lg:text-[148px]"

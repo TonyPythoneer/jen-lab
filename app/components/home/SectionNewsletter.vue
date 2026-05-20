@@ -27,12 +27,10 @@ const newsletterDotField = {
     <HomeBackgroundDots v-bind="newsletterDotField" />
 
     <div class="relative z-10 max-w-2xl mx-auto space-y-6">
-      <div class="flex justify-center">
-        <UBadge color="secondary" variant="solid" :ui="{ base: 'rounded-button px-4 py-1.5' }">
-          <UIcon name="i-lucide-mail" class="size-3.5 mr-1.5" />
-          每週電子報
-        </UBadge>
-      </div>
+      <UBadge color="secondary" variant="solid" :ui="{ base: 'rounded-button px-4 py-1.5' }">
+        <UIcon name="i-lucide-mail" class="size-3.5 mr-1.5" />
+        每週電子報
+      </UBadge>
 
       <h2
         class="font-display tracking-[0.02em] leading-[0.95] text-pure-white text-4xl md:text-6xl"

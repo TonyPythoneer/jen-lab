@@ -46,7 +46,7 @@ const JEN_LIU_URL = "/jen-liu";
           src="/home/jen-knows-hero.webp"
           alt="Jen Knows — 榛知職涯身份"
           loading="lazy"
-          class="w-full h-full object-cover object-center"
+          class="w-full h-full object-cover"
         />
       </article>
 
@@ -57,7 +57,7 @@ const JEN_LIU_URL = "/jen-liu";
           src="/home/jen-liu-hero.webp"
           alt="Jen Liu — 榛知旅遊身份"
           loading="lazy"
-          class="w-full h-full object-cover object-center"
+          class="w-full h-full object-cover"
         />
       </article>
 
