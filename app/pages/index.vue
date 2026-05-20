@@ -21,8 +21,8 @@ useSeoMeta({
     <!-- Products dots preview (radial fade pattern) -->
     <HomeSectionProductDots />
 
-    <!-- Features: 2×2 diagonal layout -->
-    <HomeSectionFeatures />
+    <!-- Directions: dual-identity intro cards -->
+    <HomeSectionDirections />
 
     <!-- Bringing The Harbour Online -->
     <HomeSectionBringing />

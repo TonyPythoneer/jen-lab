@@ -19,10 +19,10 @@ After finishing a task, tick its box here and update `PROGRESS_<n>`.
 - [x] 04 — `/jen-knows` page
 - [x] 05 — `/jen-liu` page
 - [x] 06 — Update navigation + remove `/about`
-- [ ] 07 — Homepage §1: Hero (big-picture intro, mixed lang)
-- [ ] 08 — Homepage §2: "More Is More. Stack Sideways." dual-direction cards
-- [ ] 09 — Homepage §3: New-product spotlight (Australia travel book)
-- [ ] 10 — Homepage §4: Subscription (replace email form with Kit link)
-- [ ] 11 — Homepage §5: Soft support / donate section
+- [x] 07 — Homepage §1: Hero (big-picture intro, mixed lang)
+- [x] 08 — Homepage §2: "More Is More. Stack Sideways." dual-direction cards
+- [x] 09 — Homepage §3: New-product spotlight (Australia travel book)
+- [x] 10 — Homepage §4: Subscription (replace email form with Kit link)
+- [x] 11 — Homepage §5: Soft support / donate section
 - [ ] 12 — Assemble `index.vue` + retire fake sections
 - [ ] 13 — Validation (manual review + `vp check`)

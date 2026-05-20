@@ -1,29 +1,18 @@
 <script setup lang="ts">
+const JEN_KNOWS_URL = "/jen-knows";
+const JEN_LIU_URL = "/jen-liu";
+
 const heroDotField = { opacity: 0.08, spacing: 28 };
 
 const marqueeStrings = [
-  "Built in Sydney",
-  "Brewed at the bench",
-  "Cooked in Vue",
-  "Plated by Nuxt",
-  "Logged in markdown",
-  "Walked from Bondi to Coogee",
-  "Open in public",
+  "Sydney-based",
+  "職涯 × 旅遊",
+  "NextSteps Academy",
+  "澳洲旅遊作家",
+  "Walk Like A Local",
+  "中英雙語創作",
+  "Open for reading",
 ];
-
-const { data: latestPost } = useLazyAsyncData(
-  "hero-latest-post",
-  () => fetchPosts({ perPage: 1 }).then((r) => r.data[0] ?? null),
-  { server: false },
-);
-
-function badgeDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
 </script>
 
 <template>
@@ -41,15 +30,6 @@ function badgeDate(dateStr: string) {
       <span class="size-2 rounded-full bg-digital-orange animate-pulse" />
       <span class="text-xs uppercase tracking-widest text-abyssal-ink/70">Online</span>
     </div>
-    <NuxtLink
-      v-if="latestPost"
-      to="#blog"
-      class="absolute top-6 right-6 hidden md:inline-flex items-center gap-2 bg-abyssal-ink text-pure-white rounded-button px-3 py-1.5 text-xs hover:bg-digital-orange transition-colors"
-    >
-      <span class="size-1.5 rounded-full bg-pixel-glare" />
-      New post · {{ badgeDate(latestPost.date) }}
-      <UIcon name="i-lucide-arrow-up-right" class="size-3.5" />
-    </NuxtLink>
 
     <div
       class="relative z-10 px-6 md:px-12 pt-24 md:pt-28 pb-16 md:pb-20 max-w-[1100px] mx-auto text-center space-y-8"
@@ -57,20 +37,19 @@ function badgeDate(dateStr: string) {
       <div class="flex justify-center">
         <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
           <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
-          Sydney → World · Living lab
+          Sydney · Career × Travel
         </UBadge>
       </div>
 
       <h1
         class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-6xl sm:text-7xl md:text-8xl lg:text-[148px]"
       >
-        The Living Lab
-        <span class="block text-digital-orange">Of Jen.</span>
+        Two Worlds.
+        <span class="block text-digital-orange">One Jen.</span>
       </h1>
 
       <p class="text-base md:text-xl text-abyssal-ink/75 max-w-2xl mx-auto leading-relaxed">
-        A personal sandbox where ideas, restaurants and writing share one harbour. Brewed in Sydney,
-        served everywhere — half workbench, half tasting menu.
+        從澳洲職場到雪梨街頭——一個人，兩個身份，用中文記錄走過的每一步。
       </p>
 
       <div class="flex flex-wrap justify-center gap-2.5 pt-2">
@@ -78,19 +57,20 @@ function badgeDate(dateStr: string) {
           color="primary"
           size="xl"
           :ui="{ base: 'rounded-button px-8' }"
-          to="/my-best-restaurants-search-in-sydney"
+          :to="JEN_KNOWS_URL"
           trailing-icon="i-lucide-arrow-right"
         >
-          Explore Restaurants
+          探索 Jen Knows
         </UButton>
         <UButton
           color="neutral"
           variant="outline"
           size="xl"
           :ui="{ base: 'rounded-button px-8' }"
-          to="#blog"
+          :to="JEN_LIU_URL"
+          trailing-icon="i-lucide-arrow-right"
         >
-          Read The Notebook
+          探索 Jen Liu
         </UButton>
       </div>
     </div>
@@ -107,8 +87,8 @@ function badgeDate(dateStr: string) {
         >
           {{ s }}
           <span
-            class="size-1.5 rounded-full bg-cyber-violet"
             v-if="i < marqueeStrings.length - 1"
+            class="size-1.5 rounded-full bg-cyber-violet"
           />
         </span>
       </UMarquee>

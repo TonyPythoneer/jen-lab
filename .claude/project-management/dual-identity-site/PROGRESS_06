@@ -1,8 +1,0 @@
-Task 06 — navigation + remove /about
-Status: DONE
-
-Nav routes already fixed in Task 05 commit.
-Removed About Jen button from SectionHero.vue.
-Removed /about button from SectionFeatures.vue.
-Deleted app/pages/about.vue.
-No remaining /about links in codebase.
