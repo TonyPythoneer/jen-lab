@@ -14,7 +14,7 @@ const contactDotField = {
   },
 };
 
-const { email: subscribeEmail, onSubscribe } = useNewsletterSubscribe();
+const KIT_URL = "https://jen-nextsteps.kit.com/60463af80d";
 </script>
 
 <template>
@@ -74,24 +74,18 @@ const { email: subscribeEmail, onSubscribe } = useNewsletterSubscribe();
             summaries.
           </p>
         </div>
-        <form class="flex flex-col sm:flex-row items-stretch gap-2.5" @submit.prevent="onSubscribe">
-          <input
-            v-model="subscribeEmail"
-            type="email"
-            required
-            placeholder="you@harbour.au"
-            class="flex-1 bg-transparent border border-abyssal-ink/25 text-abyssal-ink placeholder:text-abyssal-ink/40 rounded-input px-6 py-4 focus:outline-none focus:border-abyssal-ink focus:ring-2 focus:ring-abyssal-ink/20 transition-colors text-sm"
-          />
-          <UButton
-            type="submit"
-            color="primary"
-            size="xl"
-            :ui="{ base: 'rounded-button px-8 justify-center' }"
-            trailing-icon="i-lucide-arrow-right"
-          >
-            Subscribe
-          </UButton>
-        </form>
+        <UButton
+          as="a"
+          :href="KIT_URL"
+          target="_blank"
+          rel="noopener"
+          color="primary"
+          size="xl"
+          :ui="{ base: 'rounded-button px-8 self-start' }"
+          trailing-icon="i-lucide-arrow-right"
+        >
+          訂閱電子報
+        </UButton>
       </div>
     </div>
   </section>
