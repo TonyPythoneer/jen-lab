@@ -27,7 +27,9 @@ function badgeDate(dateStr: string) {
 </script>
 
 <template>
-  <section class="relative bg-ash-white rounded-card overflow-hidden">
+  <section
+    class="relative bg-ash-white rounded-card overflow-hidden min-h-screen flex flex-col justify-between"
+  >
     <HomeBackgroundDots v-bind="heroDotField" />
 
     <HomeOperaHouseSvg

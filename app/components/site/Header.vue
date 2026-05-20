@@ -1,4 +1,19 @@
 <script setup lang="ts">
+const headerEl = useTemplateRef<HTMLElement>("root");
+
+onMounted(() => {
+  const el = headerEl.value;
+  if (!el) return;
+  const ro = new ResizeObserver(([entry]) => {
+    document.documentElement.style.setProperty(
+      "--site-header-h",
+      `${entry.borderBoxSize[0].blockSize}px`,
+    );
+  });
+  ro.observe(el);
+  onUnmounted(() => ro.disconnect());
+});
+
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
@@ -20,7 +35,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 px-4 pt-3">
+  <header ref="root" class="fixed top-0 left-0 right-0 w-full z-50 px-4 pt-3">
     <!-- Pill/bar wrapper — full-width bar by default, collapses to centered pill on scroll -->
     <div
       class="mx-auto flex items-center gap-4"

@@ -33,7 +33,7 @@ const now =
     <UPageHero
       orientation="horizontal"
       :ui="{
-        root: 'bg-ash-white rounded-card overflow-hidden',
+        root: 'bg-ash-white rounded-card overflow-hidden min-h-[var(--first-section-h)]',
         container: 'p-10',
         title:
           'font-display tracking-[0.02em] leading-[0.94] text-5xl md:text-7xl text-abyssal-ink',

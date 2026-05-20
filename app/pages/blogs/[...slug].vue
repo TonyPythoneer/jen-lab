@@ -1,21 +1,21 @@
 <template>
   <SitePageContainer>
-    <!-- Back navigation -->
-    <NuxtLink
-      :to="{ path: '/blogs', query: lastQuery }"
-      class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
-    >
-      <UIcon name="i-lucide-arrow-left" class="size-4" />
-      返回部落格
-    </NuxtLink>
+    <!-- First section: back-nav + post header together fill the viewport -->
+    <div class="min-h-[var(--first-section-h)] flex flex-col justify-center gap-6">
+      <NuxtLink
+        :to="{ path: '/blogs', query: lastQuery }"
+        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
+      >
+        <UIcon name="i-lucide-arrow-left" class="size-4" />
+        返回部落格
+      </NuxtLink>
 
-    <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
-      {{ pending ? "載入中..." : "找不到文章" }}
-    </div>
+      <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
+        {{ pending ? "載入中..." : "找不到文章" }}
+      </div>
 
-    <template v-else>
-      <!-- Post header -->
       <UPageHeader
+        v-else
         :title="meta.title"
         :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
       >
@@ -27,8 +27,10 @@
           </span>
         </template>
       </UPageHeader>
+    </div>
 
-      <!-- Featured image -->
+    <!-- Featured image + post content (below the fold) -->
+    <template v-if="post">
       <img
         v-if="meta.image"
         :src="meta.image"
@@ -36,7 +38,6 @@
         class="w-full aspect-video object-cover rounded-card"
       />
 
-      <!-- Post content -->
       <article
         class="prose prose-neutral max-w-none wp-content bg-ash-white rounded-card p-10"
         v-html="post.content.rendered"

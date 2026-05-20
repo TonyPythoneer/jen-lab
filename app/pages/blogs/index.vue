@@ -4,7 +4,7 @@
     <UPageHeader
       title="Notes From The Notebook."
       description="Observations, experiments, and dispatches from the margins."
-      class="font-display"
+      class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
     />
 
     <!-- Search / filter bar -->

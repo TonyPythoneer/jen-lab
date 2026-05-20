@@ -60,61 +60,63 @@ const resultLabel = computed(() => {
 <template>
   <div>
     <!-- Hero -->
-    <div class="container mx-auto max-w-[1200px] px-4 pt-6 pb-0">
-      <div
-        class="bg-ash-white rounded-card overflow-hidden relative min-h-[220px] flex items-stretch"
-      >
-        <!-- Left: copy -->
-        <div class="flex-1 p-8 md:p-12 flex flex-col justify-between gap-6 relative z-10">
-          <div class="space-y-3">
-            <p
-              class="text-[11px] font-semibold uppercase tracking-[0.18em] text-abyssal-ink/40 select-none"
-            >
-              Sydney · Personal Log
-            </p>
-            <h1
-              class="font-display text-5xl md:text-7xl text-abyssal-ink leading-[0.94] tracking-[0.02em] text-wrap-balance"
-            >
-              Sydney's Best Plates.
-            </h1>
-            <p class="text-abyssal-ink/60 text-base max-w-sm">
-              120+ restaurants. 11 suburbs. Every entry is a personal visit — no scraped reviews, no
-              SEO bait.
-            </p>
-          </div>
-
-          <!-- Stats chips -->
-          <div class="flex flex-wrap gap-2">
-            <span
-              class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
-            >
-              <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
-              120+ logged
-            </span>
-            <span
-              class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
-            >
-              <UIcon name="i-lucide-map" class="w-3 h-3" />
-              11 suburbs
-            </span>
-            <span
-              class="inline-flex items-center gap-1.5 bg-digital-orange/10 rounded-full px-3 py-1.5 text-xs font-medium text-digital-orange"
-            >
-              <UIcon name="i-lucide-star" class="w-3 h-3" />
-              Personal picks only
-            </span>
-          </div>
-        </div>
-
-        <!-- Right: decorative bridge SVG -->
+    <section class="min-h-screen flex flex-col justify-center pt-[var(--site-header-h)]">
+      <div class="container mx-auto max-w-[1200px] px-4 pt-6 pb-0">
         <div
-          class="hidden md:flex items-end justify-end w-72 shrink-0 pr-2 opacity-30 pointer-events-none select-none"
-          aria-hidden="true"
+          class="bg-ash-white rounded-card overflow-hidden relative min-h-[220px] flex items-stretch"
         >
-          <HomeHarbourBridgeSvg class="w-full" />
+          <!-- Left: copy -->
+          <div class="flex-1 p-8 md:p-12 flex flex-col justify-between gap-6 relative z-10">
+            <div class="space-y-3">
+              <p
+                class="text-[11px] font-semibold uppercase tracking-[0.18em] text-abyssal-ink/40 select-none"
+              >
+                Sydney · Personal Log
+              </p>
+              <h1
+                class="font-display text-5xl md:text-7xl text-abyssal-ink leading-[0.94] tracking-[0.02em] text-wrap-balance"
+              >
+                Sydney's Best Plates.
+              </h1>
+              <p class="text-abyssal-ink/60 text-base max-w-sm">
+                120+ restaurants. 11 suburbs. Every entry is a personal visit — no scraped reviews,
+                no SEO bait.
+              </p>
+            </div>
+
+            <!-- Stats chips -->
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
+              >
+                <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
+                120+ logged
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
+              >
+                <UIcon name="i-lucide-map" class="w-3 h-3" />
+                11 suburbs
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 bg-digital-orange/10 rounded-full px-3 py-1.5 text-xs font-medium text-digital-orange"
+              >
+                <UIcon name="i-lucide-star" class="w-3 h-3" />
+                Personal picks only
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: decorative bridge SVG -->
+          <div
+            class="hidden md:flex items-end justify-end w-72 shrink-0 pr-2 opacity-30 pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            <HomeHarbourBridgeSvg class="w-full" />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Split layout: list (left) + map (right) -->
     <div class="lg:flex lg:items-start">

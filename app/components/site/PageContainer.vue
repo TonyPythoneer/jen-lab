@@ -3,10 +3,14 @@ defineProps<{ breakout?: boolean }>();
 </script>
 
 <template>
-  <div v-if="breakout" class="page-breakout py-2.5">
+  <div v-if="breakout" class="page-breakout pb-2.5" style="--page-inset-top: 0px">
     <slot />
   </div>
-  <div v-else class="container mx-auto max-w-[1200px] px-4 py-10 space-y-10">
+  <div
+    v-else
+    class="container mx-auto max-w-[1200px] px-4 pt-[calc(var(--site-header-h)_+_2.5rem)] pb-10 space-y-10"
+    style="--page-inset-top: 2.5rem"
+  >
     <slot />
   </div>
 </template>

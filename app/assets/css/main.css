@@ -13,6 +13,13 @@
 }
 
 @layer base {
+  :root {
+    --site-header-h: 64px; /* SSR fallback; overwritten by ResizeObserver in SiteHeader */
+    /* Composite var: viewport minus header minus any container top inset.
+       Containers override --page-inset-top; pages without a container use 0px. */
+    --page-inset-top: 0px;
+    --first-section-h: calc(100dvh - var(--site-header-h) - var(--page-inset-top));
+  }
   html {
     background: var(--color-basalt-canvas);
     color: var(--color-abyssal-ink);
