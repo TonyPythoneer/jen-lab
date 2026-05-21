@@ -1,28 +1,37 @@
 <template>
-  <div class="blog3dv2-root" :style="`--n: ${n}; --dur: ${props.spinDuration}s`">
-    <div class="blog3dv2-body">
-      <main class="blog3dv2-scene">
-        <section
-          ref="assemblyRef"
-          class="blog3dv2-assembly"
-          @pointerenter="markFrontCard"
-          @pointerleave="clearFrontCard"
-        >
-          <article
-            v-for="(item, i) in items"
-            :key="i"
-            :style="`--i: ${i}; --url: url(${item.url})`"
+  <div class="blog3dv2-wrapper">
+    <!-- Header -->
+    <h2
+      class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl shrink-0"
+    >
+      My Stories
+    </h2>
+
+    <div class="blog3dv2-root" :style="`--n: ${n}; --dur: ${props.spinDuration}s`">
+      <div class="blog3dv2-body">
+        <main class="blog3dv2-scene">
+          <section
+            ref="assemblyRef"
+            class="blog3dv2-assembly"
+            @pointerenter="markFrontCard"
+            @pointerleave="clearFrontCard"
           >
-            <header>
-              <h3>{{ item.title }}</h3>
-            </header>
-            <figure>
-              <img :src="item.url" :alt="item.alt" loading="lazy" />
-              <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">閱讀全文</NuxtLink>
-            </figure>
-          </article>
-        </section>
-      </main>
+            <article
+              v-for="(item, i) in items"
+              :key="i"
+              :style="`--i: ${i}; --url: url(${item.url})`"
+            >
+              <header>
+                <h3>{{ item.title }}</h3>
+              </header>
+              <figure>
+                <img :src="item.url" :alt="item.alt" loading="lazy" />
+                <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">閱讀全文</NuxtLink>
+              </figure>
+            </article>
+          </section>
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -123,8 +132,13 @@ function clearFrontCard() {
 </script>
 
 <style scoped>
-.blog3dv2-root {
+.blog3dv2-wrapper {
   position: relative;
+  width: 100%;
+  height: 100svh;
+}
+
+.blog3dv2-root {
   width: 100%;
   height: 100svh;
   overflow: hidden;

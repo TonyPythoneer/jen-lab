@@ -32,7 +32,7 @@ defineProps<{ breakout?: boolean }>();
     [content-start] min(calc(100% - 2rem), 1200px)
     [content-end] minmax(0, 1fr)
     [full-end];
-  row-gap: 0.625rem; /* gap-2.5 */
+  row-gap: 4rem; /* gap-16 */
 }
 
 .page-breakout > :deep(*) {
