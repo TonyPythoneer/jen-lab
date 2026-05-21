@@ -13,18 +13,29 @@
           <section
             ref="assemblyRef"
             class="blog3dv2-assembly"
-            @pointerenter="markFrontCard"
-            @pointerleave="clearFrontCard"
+            :class="{ 'is-paused': activeIndex !== null }"
           >
             <article
               v-for="(item, i) in items"
               :key="i"
+              :class="{ 'is-active': activeIndex === i }"
               :style="`--i: ${i}; --url: url(${item.url})`"
+              @click="activateCard(i, $event)"
+              @focusin="activateCard(i, $event)"
             >
               <header>
                 <h3>{{ item.title }}</h3>
               </header>
               <figure>
+                <button
+                  v-if="activeIndex === i"
+                  type="button"
+                  class="card-close"
+                  aria-label="關閉"
+                  @click.stop="deactivate"
+                >
+                  ×
+                </button>
                 <img :src="item.url" :alt="item.alt" loading="lazy" />
                 <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">閱讀全文</NuxtLink>
               </figure>
@@ -94,12 +105,13 @@ const items = computed(() =>
 
 const n = computed(() => Math.max(items.value.length, 1));
 
-// Only front-facing cards are hover-flippable. Stops mis-flips on far/side cards,
-// since CSS 3D hit-testing isn't depth-sorted. The spin is CSS linear-infinite and
-// pauses on hover, so the front card(s) are picked once on pointerenter — no
-// per-frame work. Heuristic: a front card has the widest projected box under
-// perspective, avoiding fragile angle/sign math.
+// Only front-facing cards are clickable-to-flip. Stops mis-clicks on far/side cards,
+// since CSS 3D hit-testing isn't depth-sorted. Clicking a front card flips it and
+// pauses the spin (enters detail); exit via the X button, Escape, or click-outside.
+// Heuristic: a front card has the widest projected box under perspective, avoiding
+// fragile angle/sign math.
 const assemblyRef = ref<HTMLElement>();
+const activeIndex = ref<number | null>(null);
 
 // Front-ness tolerance (tunable): a card counts as front (flippable) when its
 // projected width >= widest card x FRONT_RATIO.
@@ -108,27 +120,29 @@ const assemblyRef = ref<HTMLElement>();
 //   ~0.5  several front cards flip (current); too low lets side cards flip again
 const FRONT_RATIO = 0.475;
 
-function markFrontCard() {
+function isFrontCard(card: HTMLElement): boolean {
   const cards = assemblyRef.value?.querySelectorAll<HTMLElement>("article");
-  if (!cards?.length) return;
-  const widths = new Map<HTMLElement, number>();
+  if (!cards?.length) return false;
   let maxWidth = 0;
-  for (const card of cards) {
-    const width = card.getBoundingClientRect().width;
-    widths.set(card, width);
+  for (const c of cards) {
+    const width = c.getBoundingClientRect().width;
     if (width > maxWidth) maxWidth = width;
   }
-  const threshold = maxWidth * FRONT_RATIO;
-  for (const card of cards) {
-    card.classList.toggle("is-front", (widths.get(card) ?? 0) >= threshold);
-  }
+  return card.getBoundingClientRect().width >= maxWidth * FRONT_RATIO;
 }
 
-function clearFrontCard() {
-  assemblyRef.value
-    ?.querySelectorAll("article")
-    .forEach((card) => card.classList.remove("is-front"));
+function activateCard(i: number, event: Event) {
+  const card = event.currentTarget as HTMLElement;
+  if (!isFrontCard(card)) return;
+  activeIndex.value = i;
 }
+
+function deactivate() {
+  activeIndex.value = null;
+}
+
+onClickOutside(assemblyRef, deactivate);
+onKeyStroke("Escape", deactivate);
 </script>
 
 <style scoped>
@@ -183,7 +197,7 @@ function clearFrontCard() {
   translate: 0 0 var(--z);
 
   animation: blog3dv2-spin var(--dur) linear infinite;
-  &:hover {
+  &.is-paused {
     animation-play-state: paused;
   }
 }
@@ -196,12 +210,12 @@ article {
   width: var(--w);
   aspect-ratio: 2 / 3;
   grid-area: 1 / 1;
+  cursor: pointer;
   transform: rotatey(calc(var(--i) * 1turn / var(--n))) translatez(var(--z));
 
-  /* Flip only on JS-marked front cards (.is-front). Other cards stay hoverable
-     (so pause still works) but never flip — kills far/side mis-flips and double-flips. */
-  &.is-front:hover,
-  &.is-front:focus-within {
+  /* Flip only the JS-activated front card (.is-active), set on click/focus. Other
+     cards stay clickable but never flip — kills far/side mis-flips and double-flips. */
+  &.is-active {
     --hov: 1;
   }
   /* Two-face flip: header (title) and figure (image) sit back-to-back; --hov adds a
@@ -235,10 +249,8 @@ article header {
   align-content: end;
 }
 
-article.is-front:hover header,
-article.is-front:focus-within header,
-article.is-front:hover figure,
-article.is-front:focus-within figure {
+article.is-active header,
+article.is-active figure {
   border-color: #f48c06;
 }
 
@@ -289,6 +301,36 @@ img {
   font-size: 0.9em;
   text-decoration: none;
   transition: background 0.2s ease-out;
+
+  &:hover {
+    background: #f48c06;
+    color: #fff;
+  }
+}
+
+/* Close button: sits on the title face (visible after flip), top-right, fully round.
+   Lives inside <header>, which is backface-hidden, so it's only hittable when flipped. */
+.card-close {
+  position: absolute;
+  top: 0.6em;
+  right: 0.6em;
+  z-index: 2;
+  width: 1.8em;
+  height: 1.8em;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
+  font-size: 1em;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px #0006;
+  transition:
+    background 0.2s ease-out,
+    color 0.2s ease-out;
 
   &:hover {
     background: #f48c06;

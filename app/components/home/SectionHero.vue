@@ -52,7 +52,7 @@ const liuStyle = computed(() => ({
         >
           <h1
             ref="title"
-            class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-7xl md:text-8xl"
+            class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-7xl"
           >
             Two Worlds
             <span class="block text-digital-orange">One Jen</span>
