@@ -12,10 +12,26 @@ const props = withDefaults(
     ctaClass: string;
     ctaTo: string;
     coloredSide?: "left" | "right";
+    scrollProgress?: number;
   }>(),
   {
     coloredSide: "left",
+    scrollProgress: 0,
   },
+);
+
+const EXIT_VW = 80;
+const imageStyle = computed(() => {
+  const dir = props.coloredSide === "right" ? 1 : -1;
+  return { transform: `translateX(${dir * props.scrollProgress * EXIT_VW}vw)` };
+});
+
+// Mobile: white card slides in from the same side as its desktop position
+// coloredSide="right" → white is on the left in desktop → slides in from left (-x)
+// coloredSide="left"  → white is on the right in desktop → slides in from right (+x)
+const isOpen = ref(false);
+const panelHiddenClass = computed(() =>
+  props.coloredSide === "right" ? "-translate-x-full" : "translate-x-full",
 );
 </script>
 
@@ -33,14 +49,61 @@ const props = withDefaults(
         :src="imageSrc"
         :alt="imageAlt"
         loading="lazy"
-        class="absolute inset-0 w-full h-full object-contain p-6"
+        :style="imageStyle"
+        class="absolute inset-0 w-full h-full object-contain p-6 will-change-transform"
       />
+
+      <!-- Mobile: open button — only shown when panel is closed -->
+      <button
+        v-if="!isOpen"
+        class="md:hidden absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white"
+        aria-label="查看詳情"
+        @click="isOpen = true"
+      >
+        <UIcon name="i-lucide-info" class="size-5" />
+      </button>
+
+      <!-- Mobile: white card panel slides over the colored card -->
+      <div
+        class="md:hidden absolute inset-0 rounded-card bg-ash-white flex flex-col justify-center items-center text-center gap-8 p-8 transition-transform duration-300 ease-in-out"
+        :class="isOpen ? 'translate-x-0' : panelHiddenClass"
+      >
+        <!-- Close: Desktop: hidden; Mobile: top-right of the panel -->
+        <button
+          class="absolute top-3 right-3 w-9 h-9 rounded-full bg-abyssal-ink/10 flex items-center justify-center"
+          aria-label="關閉"
+          @click="isOpen = false"
+        >
+          <UIcon name="i-lucide-x" class="size-5 text-abyssal-ink" />
+        </button>
+
+        <div class="space-y-3">
+          <h3 class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl">
+            {{ title }}
+            <span :class="['block', subtitleClass]">{{ subtitle }}</span>
+          </h3>
+          <p class="text-sm text-abyssal-ink/75 leading-relaxed max-w-prose">
+            {{ description }}
+          </p>
+        </div>
+
+        <UButton
+          color="neutral"
+          size="md"
+          :class="['text-white text-base font-medium transition-colors', ctaClass]"
+          :ui="{ base: 'rounded-button px-8 py-3' }"
+          :to="ctaTo"
+          trailing-icon="i-lucide-arrow-right"
+        >
+          {{ ctaLabel }}
+        </UButton>
+      </div>
     </article>
 
-    <!-- White card: always below colored card on mobile -->
+    <!-- White card: desktop only -->
     <article
       :class="[
-        'md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-center items-center text-center gap-8 min-h-[360px]',
+        'hidden md:flex md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex-col justify-center items-center text-center gap-8 min-h-[360px]',
         coloredSide === 'right' ? 'order-2 md:order-1' : 'order-2',
       ]"
     >
