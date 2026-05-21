@@ -115,6 +115,13 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
         >
           {{ item.label }}
         </NuxtLink>
+        <!-- Mobile: CTA -->
+        <a
+          href="#footer"
+          class="block px-4 py-2 text-sm font-medium text-center bg-digital-orange text-pure-white rounded-card transition-colors hover:bg-[#e34800]"
+        >
+          Get in Touch
+        </a>
       </div>
     </Transition>
   </header>
