@@ -23,7 +23,7 @@ const marqueeStrings = [
 
     <HomeOperaHouseSvg
       aria-hidden="true"
-      class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[140%] opacity-15 pointer-events-none"
+      class="absolute inset-0 w-full h-full z-0 pointer-events-none"
     />
 
     <div
@@ -31,7 +31,7 @@ const marqueeStrings = [
     >
       <h1
         ref="title"
-        class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-6xl sm:text-7xl md:text-8xl lg:text-[148px]"
+        class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-7xl md:text-8xl"
       >
         Two Worlds
         <span class="block text-digital-orange">One Jen</span>
@@ -42,6 +42,11 @@ const marqueeStrings = [
       >
         從澳洲職場到雪梨巷弄<br />一個人，兩個身份<br />用中文記錄走過的每一步
       </p>
+
+      <div class="relative z-10 flex flex-row flex-nowrap items-center justify-center">
+        <img src="/home/jen-knows.png" class="h-[252px] w-auto" />
+        <img src="/home/jen-liu.png" class="h-[252px] w-auto" />
+      </div>
     </div>
 
     <div
