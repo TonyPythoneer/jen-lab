@@ -8,8 +8,6 @@ const navItems = [
   ...(import.meta.dev ? [{ label: "Unused", to: "/unused" }] : []),
 ];
 
-const SUBSCRIBE_URL = "https://jen-nextsteps.kit.com/60463af80d";
-
 const route = useRoute();
 const { y } = useWindowScroll();
 const scrolled = computed(() => y.value > 80);
@@ -78,13 +76,11 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       <div class="flex items-center gap-2 shrink-0">
         <!-- Desktop: CTA button (shorter height when scrolled) -->
         <a
-          :href="SUBSCRIBE_URL"
-          target="_blank"
-          rel="noopener"
+          href="#footer"
           class="hidden md:inline-flex items-center px-4 text-sm font-medium bg-digital-orange text-pure-white rounded-button transition-colors duration-[180ms] hover:bg-[#e34800]"
           :class="scrolled ? 'h-8' : 'h-10'"
         >
-          訂閱電子報
+          Get in Touch
         </a>
 
         <!-- Mobile: hamburger toggle -->

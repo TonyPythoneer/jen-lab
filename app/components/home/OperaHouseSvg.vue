@@ -38,6 +38,7 @@
         <div class="top_18"></div>
       </div>
     </div>
+    <div class="water"></div>
   </div>
 </template>
 
@@ -52,6 +53,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.water {
+  background: dodgerblue;
+  height: 150px;
+  z-index: 1;
 }
 
 .sydney_opera_house {
