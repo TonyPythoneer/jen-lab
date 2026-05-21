@@ -6,36 +6,38 @@
 <template>
   <div class="canvas" aria-hidden="true" role="img" aria-label="CSS Sydney Opera House silhouette">
     <div class="sydney_opera_house">
-      <div class="base"></div>
-      <div class="body">
-        <div class="body_1"></div>
-        <div class="body_2"></div>
-        <div class="body_3"></div>
-        <div class="body_4"></div>
-        <div class="body_5"></div>
-        <div class="body_6"></div>
-        <div class="body_7"></div>
-        <div class="body_8"></div>
-      </div>
-      <div class="top">
-        <div class="top_1"></div>
-        <div class="top_2"></div>
-        <div class="top_3"></div>
-        <div class="top_4"></div>
-        <div class="top_5"></div>
-        <div class="top_6"></div>
-        <div class="top_7"></div>
-        <div class="top_8"></div>
-        <div class="top_9"></div>
-        <div class="top_10"></div>
-        <div class="top_11"></div>
-        <div class="top_12"></div>
-        <div class="top_13"></div>
-        <div class="top_14"></div>
-        <div class="top_15"></div>
-        <div class="top_16"></div>
-        <div class="top_17"></div>
-        <div class="top_18"></div>
+      <div class="building">
+        <div class="base"></div>
+        <div class="body">
+          <div class="body_1"></div>
+          <div class="body_2"></div>
+          <div class="body_3"></div>
+          <div class="body_4"></div>
+          <div class="body_5"></div>
+          <div class="body_6"></div>
+          <div class="body_7"></div>
+          <div class="body_8"></div>
+        </div>
+        <div class="top">
+          <div class="top_1"></div>
+          <div class="top_2"></div>
+          <div class="top_3"></div>
+          <div class="top_4"></div>
+          <div class="top_5"></div>
+          <div class="top_6"></div>
+          <div class="top_7"></div>
+          <div class="top_8"></div>
+          <div class="top_9"></div>
+          <div class="top_10"></div>
+          <div class="top_11"></div>
+          <div class="top_12"></div>
+          <div class="top_13"></div>
+          <div class="top_14"></div>
+          <div class="top_15"></div>
+          <div class="top_16"></div>
+          <div class="top_17"></div>
+          <div class="top_18"></div>
+        </div>
       </div>
     </div>
     <div class="water"></div>
@@ -68,6 +70,20 @@
   flex-direction: column-reverse;
   align-items: center;
   --body-background: #fffaf5;
+}
+
+.building {
+  display: contents;
+}
+
+@media (max-width: 767px) {
+  .building {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    transform: scaleX(0.5);
+    transform-origin: bottom center;
+  }
 }
 
 .base {
