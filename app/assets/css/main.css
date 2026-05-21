@@ -14,7 +14,7 @@
 
 @layer base {
   :root {
-    --site-header-h: 64px; /* SSR fallback; overwritten by ResizeObserver in SiteHeader */
+    --site-header-h: 4.75rem; /* header pt-3 + pill py-3 + h-10 content = 76px */
     /* Composite var: viewport minus header minus any container top inset.
        Containers override --page-inset-top; pages without a container use 0px. */
     --page-inset-top: 0px;
@@ -37,6 +37,20 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/*
+ * Nuxt UI utility overrides (non-layered → beats all @layer utilities)
+ * This project uses a near-full-circle pill shape (800px) for all buttons,
+ * so rounded-button must always win. Nuxt UI injects rounded-md into UButton's
+ * base class list; when both appear, layer source order lets rounded-md win.
+ * Declaring these rules outside any @layer overrides that without !important.
+ */
+.rounded-button {
+  border-radius: var(--radius-button);
+}
+.rounded-input {
+  border-radius: var(--radius-input);
 }
 
 /*

@@ -20,7 +20,7 @@ const marqueeStrings = [
 
 <template>
   <section
-    class="relative bg-ash-white rounded-card overflow-hidden min-h-screen flex flex-col justify-between"
+    class="relative bg-ash-white rounded-card overflow-hidden mt-[var(--site-header-h)] min-h-[calc(100vh_-_var(--site-header-h))] flex flex-col justify-between"
   >
     <HomeBackgroundDots v-bind="heroDotField" />
 
@@ -35,7 +35,7 @@ const marqueeStrings = [
     </div>
 
     <div
-      class="relative z-10 px-6 md:px-12 pt-24 md:pt-28 pb-16 md:pb-20 max-w-[1100px] mx-auto text-center space-y-8"
+      class="relative z-10 px-6 md:px-12 pt-10 md:pt-14 pb-16 md:pb-20 max-w-[1100px] mx-auto text-center space-y-8"
     >
       <UBadge color="secondary" variant="soft" :ui="{ base: 'rounded-button px-4 py-1.5' }">
         <UIcon name="i-lucide-sparkles" class="size-3.5 mr-1.5" />
