@@ -22,11 +22,8 @@ useSeoMeta({
     <!-- Blog carousel (full-bleed: carousel peeks beyond 1200px) -->
     <HomeSectionBlog class="full-bleed" />
 
-    <!-- 3D rotating blog carousel: 6 cards with 12-card geometry for smooth arc -->
-    <!-- <HomeSectionBlog3D :display-count="10" post-size="lg" :debug="true" />
-
-    <!-- Blog3DV2: CSS scroll-driven infinite circular gallery (visual comparison) -->
-    <HomeSectionBlog3DV2 :post-count="10" :spin-duration="120" />
+    <!-- 3D rotating blog carousel (CSS preserve-3d, GPU spin) -->
+    <HomeSectionBlog3DV2 :post-count="10" :spin-duration="90" />
 
     <!-- Subscribe -->
     <HomeSectionNewsletter />

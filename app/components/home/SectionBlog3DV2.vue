@@ -2,7 +2,12 @@
   <div class="blog3dv2-root" :style="`--n: ${n}; --dur: ${props.spinDuration}s`">
     <div class="blog3dv2-body">
       <main class="blog3dv2-scene">
-        <section class="blog3dv2-assembly">
+        <section
+          ref="assemblyRef"
+          class="blog3dv2-assembly"
+          @pointerenter="markFrontCard"
+          @pointerleave="clearFrontCard"
+        >
           <article
             v-for="(item, i) in items"
             :key="i"
@@ -28,9 +33,9 @@ import { fetchPosts, stripHtml } from "~/utils/wpApi";
 
 const props = withDefaults(
   defineProps<{
-    /** 取出幾篇 WP 文章，同時決定環上卡片數量 */
+    /** Number of WP posts to fetch; also the card count around the ring */
     postCount?: number;
-    /** 自動旋轉一圈的秒數 */
+    /** Seconds for one full rotation */
     spinDuration?: number;
   }>(),
   {
@@ -43,22 +48,14 @@ const { data: postsPage } = await useLazyAsyncData("blog3dv2-posts", () =>
   fetchPosts({ perPage: props.postCount }),
 );
 
-// ── 圖片尺寸調校（內部參數：手動改下面 PHOTON_FIT 來感受效果與資源消耗）──────
-//
-// 卡片 <article> 是 2/3 直式，圖片用 object-fit: cover（裁切填滿圖框，來源比例不符
-// 時會裁掉溢出的邊，不留白）。圖片走 Jetpack Photon（*.wp.com），用 URL 的
-// fit=寬,高 在 CDN 端就回傳縮好的小圖，texture 越小、旋轉時 GPU 記憶體壓力越低。
-//
-// 卡片尺寸已鎖定桌機最大值（--w: 18em + 字級 1.5em）→ 固定 432×648，不再隨視窗縮。
-// 因此圖片需求也固定，PHOTON_FIT 只是「清晰度 vs 資源」的取捨階梯（cover）：
-//
-//   PHOTON_FIT     對應          說明
-//   ───────────    ──────────    ───────────────────
-//   "432,648"      1x            最省，HiDPI 螢幕會略糊
-//   "640,960"      ~1.5x         目前值，平衡
-//   "864,1296"     2x retina     最清晰，最吃傳輸/GPU
-//
-// fit 越大 → 越清晰但越吃資源；越小 → 越省。手動改下面這行字串即可。
+// Image sizing knob — tune PHOTON_FIT below.
+// Cards are 2/3 portrait, locked to desktop max 432x648 (--w: 18em + 1.5em font),
+// rendered with object-fit: cover (crop to fill). Source images come through Jetpack
+// Photon (*.wp.com); its fit=W,H query resizes at the CDN, so a smaller fit means a
+// smaller GPU texture and less stutter while the ring spins.
+//   "432,648"   1x         lightest, slightly soft on HiDPI
+//   "640,960"   ~1.5x      current, balanced
+//   "864,1296"  2x retina  sharpest, heaviest
 const PHOTON_FIT = "640,960";
 function downscalePhoton(url: string): string {
   try {
@@ -88,6 +85,42 @@ const items = computed(() =>
 );
 
 const n = computed(() => Math.max(items.value.length, 1));
+
+// Only front-facing cards are hover-flippable. Stops mis-flips on far/side cards,
+// since CSS 3D hit-testing isn't depth-sorted. The spin is CSS linear-infinite and
+// pauses on hover, so the front card(s) are picked once on pointerenter — no
+// per-frame work. Heuristic: a front card has the widest projected box under
+// perspective, avoiding fragile angle/sign math.
+const assemblyRef = ref<HTMLElement>();
+
+// Front-ness tolerance (tunable): a card counts as front (flippable) when its
+// projected width >= widest card x FRONT_RATIO.
+//   1.0   strictest — only the centre card flips
+//   lower looser — more near-front cards flip
+//   ~0.5  several front cards flip (current); too low lets side cards flip again
+const FRONT_RATIO = 0.475;
+
+function markFrontCard() {
+  const cards = assemblyRef.value?.querySelectorAll<HTMLElement>("article");
+  if (!cards?.length) return;
+  const widths = new Map<HTMLElement, number>();
+  let maxWidth = 0;
+  for (const card of cards) {
+    const width = card.getBoundingClientRect().width;
+    widths.set(card, width);
+    if (width > maxWidth) maxWidth = width;
+  }
+  const threshold = maxWidth * FRONT_RATIO;
+  for (const card of cards) {
+    card.classList.toggle("is-front", (widths.get(card) ?? 0) >= threshold);
+  }
+}
+
+function clearFrontCard() {
+  assemblyRef.value
+    ?.querySelectorAll("article")
+    .forEach((card) => card.classList.remove("is-front"));
+}
 </script>
 
 <style scoped>
@@ -97,7 +130,7 @@ const n = computed(() => Math.max(items.value.length, 1));
   height: 100svh;
   overflow: hidden;
   color: #dedede;
-  /* 字級固定為桌機值（原 clamp(.., 3vmin, 1.5em) 會隨視窗縮 → 手機整個旋轉門變小） */
+  /* Fixed desktop font size; a vw/vmin clamp here would shrink the whole ring on mobile */
   font:
     1.5em / 1.25 saira,
     sans-serif;
@@ -128,8 +161,10 @@ const n = computed(() => Math.max(items.value.length, 1));
   display: grid;
   transform-style: preserve-3d;
 
-  /* 卡片寬鎖定桌機最大值（原 clamp(.., min(50vh,25vw), ..) 會隨視窗縮 → 手機變小） */
+  /* Card width locked to desktop max; a vw/vh clamp would shrink it on mobile */
   --w: 18em;
+  /* Cylinder radius = regular-polygon apothem: (w/2) / tan(pi/n).
+     Negative => convex ring (card fronts face outward); 1.25 widens it a touch. */
   --z: calc(1.25 * -0.5 * var(--w) / tan(0.5turn / var(--n)));
   place-self: center;
   translate: 0 0 var(--z);
@@ -150,10 +185,14 @@ article {
   grid-area: 1 / 1;
   transform: rotatey(calc(var(--i) * 1turn / var(--n))) translatez(var(--z));
 
-  &:hover,
-  &:focus-within {
+  /* Flip only on JS-marked front cards (.is-front). Other cards stay hoverable
+     (so pause still works) but never flip — kills far/side mis-flips and double-flips. */
+  &.is-front:hover,
+  &.is-front:focus-within {
     --hov: 1;
   }
+  /* Two-face flip: header (title) and figure (image) sit back-to-back; --hov adds a
+     half-turn so hovering swaps which face the viewer sees (figure default, header on hover). */
   & header {
     rotate: y calc((1 + var(--hov)) * 0.5turn);
   }
@@ -176,16 +215,16 @@ figure {
   grid-area: 1 / 1;
 }
 
-/* 只有 header（背面標題卡）需要圖片底；figure 的圖由 <img> 呈現，
-   背景圖會被 img 全蓋而冗餘，移除可省下每張卡一份 GPU texture */
+/* Only header (the title back-face) needs an image background; figure shows the
+   image via <img>, so a figure background would be redundant — one less GPU texture. */
 article header {
   background: var(--url) 50% / cover #121212;
 }
 
-article:hover header,
-article:focus-within header,
-article:hover figure,
-article:focus-within figure {
+article.is-front:hover header,
+article.is-front:focus-within header,
+article.is-front:hover figure,
+article.is-front:focus-within figure {
   border-color: #f48c06;
 }
 
@@ -201,11 +240,12 @@ h3 {
 }
 
 figure {
-  display: grid;
-  grid-area: 1 / 1;
+  /* display/grid-area already set via `article header, figure`; only the flip differs */
   rotate: y calc(var(--hov) * 0.5turn);
 }
 
+/* Make card content the hit area (drives :hover; the title face holds hover after the
+   flip so it doesn't jitter). Whether a card flips is gated by .is-front above. */
 h3,
 em,
 img,
