@@ -18,7 +18,7 @@
             </header>
             <figure>
               <img :src="item.url" :alt="item.alt" loading="lazy" />
-              <a class="card-cta" :href="item.link" target="_blank">閱讀全文</a>
+              <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">閱讀全文</NuxtLink>
             </figure>
           </article>
         </section>
@@ -73,13 +73,13 @@ function downscalePhoton(url: string): string {
 
 const items = computed(() =>
   (postsPage.value?.data ?? []).map((post) => ({
+    id: post.id,
     title: stripHtml(post.title.rendered),
     subtitle: stripHtml(post.excerpt.rendered).slice(0, 60) + "…",
     url: post.jetpack_featured_media_url
       ? downscalePhoton(post.jetpack_featured_media_url)
       : "https://images.unsplash.com/photo-1583499871880-de841d1ace2a?h=900",
     alt: stripHtml(post.title.rendered),
-    link: post.link,
   })),
 );
 
