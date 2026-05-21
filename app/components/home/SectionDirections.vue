@@ -12,7 +12,7 @@ const JEN_LIU_URL = "/jen-liu";
       <span class="block">Stack Sideways.</span>
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:grid-rows-2 md:auto-rows-fr">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5">
       <!-- Row 1: Jen Knows -->
       <!-- Cell A: text card (5/12) -->
       <article
@@ -29,35 +29,41 @@ const JEN_LIU_URL = "/jen-liu";
             陪你找到在澳洲的下一步——求職、職場文化、職涯諮詢，以中文深入講清楚。
           </p>
         </div>
-        <UButton
-          color="primary"
-          size="sm"
-          :ui="{ base: 'rounded-button px-5 self-start' }"
-          :to="JEN_KNOWS_URL"
-          trailing-icon="i-lucide-arrow-right"
-        >
-          進入 Jen Knows
-        </UButton>
+        <FxAurora color="orange" class="self-start">
+          <UButton
+            color="primary"
+            size="sm"
+            :ui="{ base: 'rounded-button px-5 relative z-[1]' }"
+            :to="JEN_KNOWS_URL"
+            trailing-icon="i-lucide-arrow-right"
+          >
+            進入 Jen Knows
+          </UButton>
+        </FxAurora>
       </article>
 
       <!-- Cell B: image card, cyber-violet (7/12) -->
-      <article class="md:col-span-7 bg-cyber-violet rounded-card overflow-hidden min-h-[360px]">
+      <article
+        class="relative md:col-span-7 bg-cyber-violet rounded-card overflow-hidden min-h-[360px]"
+      >
         <img
           src="/home/jen-knows-hero.webp"
           alt="Jen Knows — 榛知職涯身份"
           loading="lazy"
-          class="w-full h-full object-cover"
+          class="absolute inset-0 w-full h-full object-cover"
         />
       </article>
 
       <!-- Row 2: Jen Liu (image card first for alternating rhythm) -->
       <!-- Cell C: image card, digital-orange (7/12) -->
-      <article class="md:col-span-7 bg-digital-orange rounded-card overflow-hidden min-h-[360px]">
+      <article
+        class="relative md:col-span-7 bg-digital-orange rounded-card overflow-hidden min-h-[360px]"
+      >
         <img
           src="/home/jen-liu-hero.webp"
           alt="Jen Liu — 榛知旅遊身份"
           loading="lazy"
-          class="w-full h-full object-cover"
+          class="absolute inset-0 w-full h-full object-cover"
         />
       </article>
 
@@ -76,16 +82,18 @@ const JEN_LIU_URL = "/jen-liu";
             雪梨在地視角，帶你探索澳洲旅遊、美食與自助旅行的大小事。
           </p>
         </div>
-        <UButton
-          color="neutral"
-          variant="outline"
-          size="sm"
-          :ui="{ base: 'rounded-button px-5 self-start' }"
-          :to="JEN_LIU_URL"
-          trailing-icon="i-lucide-arrow-right"
-        >
-          進入 Jen Liu
-        </UButton>
+        <FxAurora color="violet" class="self-start">
+          <UButton
+            color="neutral"
+            variant="outline"
+            size="sm"
+            :ui="{ base: 'rounded-button px-5 relative z-[1]' }"
+            :to="JEN_LIU_URL"
+            trailing-icon="i-lucide-arrow-right"
+          >
+            進入 Jen Liu
+          </UButton>
+        </FxAurora>
       </article>
     </div>
   </section>
