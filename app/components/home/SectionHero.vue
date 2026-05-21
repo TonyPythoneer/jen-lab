@@ -15,21 +15,14 @@ const marqueeStrings = [
 ];
 
 // #region Scroll-pinned exit animation
-// Outer wrapper is taller than the viewport; the inner panel is `sticky`, so it
-// pins while the extra runway scrolls past. We map that runway to 0→1 progress
-// and drive the two portraits off-screen (knows → left, liu → right) before the
-// next section is allowed to scroll in.
+// Wrapper is taller than the viewport; the inner panel is `sticky`, so it pins
+// while the extra runway scrolls past. useScrollProgress turns that runway into
+// 0→1 progress; here we map it to drive the portraits off-screen (knows → left,
+// liu → right) before the next section is allowed to scroll in.
 const pinWrapper = useTemplateRef<HTMLElement>("pinWrapper");
-const { top, height } = useElementBounding(pinWrapper);
-const { height: viewportH } = useWindowSize();
+const { progress } = useScrollProgress(pinWrapper);
 
 const EXIT_DISTANCE = 75; // vw each portrait travels — enough to clear the viewport edge
-
-const progress = computed(() => {
-  const runway = height.value - viewportH.value;
-  if (runway <= 0) return 0;
-  return Math.min(Math.max(-top.value / runway, 0), 1);
-});
 
 const knowsStyle = computed(() => ({
   transform: `translateX(${-progress.value * EXIT_DISTANCE}vw)`,
