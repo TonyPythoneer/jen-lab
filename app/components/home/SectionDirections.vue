@@ -8,15 +8,13 @@ const JEN_LIU_URL = "/jen-liu";
     <h2
       class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
     >
-      More Is More.
-      <span class="block">Stack Sideways.</span>
+      Jen is Jen.
+      <span class="block">Jen is always me.</span>
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5">
-      <!-- Row 1: Jen Knows -->
-      <!-- Cell A: text card (5/12) -->
       <article
-        class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-between gap-8 min-h-[360px]"
+        class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-center items-center text-center gap-8 min-h-[360px]"
       >
         <div class="space-y-3">
           <h3
@@ -29,20 +27,19 @@ const JEN_LIU_URL = "/jen-liu";
             陪你找到在澳洲的下一步——求職、職場文化、職涯諮詢，以中文深入講清楚。
           </p>
         </div>
-        <FxAurora color="orange" class="self-start">
-          <UButton
-            color="primary"
-            size="sm"
-            :ui="{ base: 'rounded-button px-5 relative z-[1]' }"
-            :to="JEN_KNOWS_URL"
-            trailing-icon="i-lucide-arrow-right"
-          >
-            進入 Jen Knows
-          </UButton>
-        </FxAurora>
+
+        <UButton
+          color="neutral"
+          size="md"
+          class="bg-cyber-violet text-white hover:bg-cyber-violet/90 text-base font-medium transition-colors"
+          :ui="{ base: 'rounded-button px-8 py-3' }"
+          :to="JEN_KNOWS_URL"
+          trailing-icon="i-lucide-arrow-right"
+        >
+          進入 Jen Knows
+        </UButton>
       </article>
 
-      <!-- Cell B: image card, cyber-violet (7/12) -->
       <article
         class="relative md:col-span-7 bg-cyber-violet rounded-card overflow-hidden min-h-[360px]"
       >
@@ -54,8 +51,6 @@ const JEN_LIU_URL = "/jen-liu";
         />
       </article>
 
-      <!-- Row 2: Jen Liu (image card first for alternating rhythm) -->
-      <!-- Cell C: image card, digital-orange (7/12) -->
       <article
         class="relative md:col-span-7 bg-digital-orange rounded-card overflow-hidden min-h-[360px]"
       >
@@ -67,9 +62,8 @@ const JEN_LIU_URL = "/jen-liu";
         />
       </article>
 
-      <!-- Cell D: text card (5/12) -->
       <article
-        class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-between gap-8 min-h-[360px]"
+        class="md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex flex-col justify-center items-center text-center gap-8 min-h-[360px]"
       >
         <div class="space-y-3">
           <h3
@@ -82,18 +76,17 @@ const JEN_LIU_URL = "/jen-liu";
             雪梨在地視角，帶你探索澳洲旅遊、美食與自助旅行的大小事。
           </p>
         </div>
-        <FxAurora color="violet" class="self-start">
-          <UButton
-            color="neutral"
-            variant="outline"
-            size="sm"
-            :ui="{ base: 'rounded-button px-5 relative z-[1]' }"
-            :to="JEN_LIU_URL"
-            trailing-icon="i-lucide-arrow-right"
-          >
-            進入 Jen Liu
-          </UButton>
-        </FxAurora>
+
+        <UButton
+          color="neutral"
+          size="md"
+          class="bg-digital-orange text-white hover:bg-digital-orange/90 text-base font-medium transition-colors"
+          :ui="{ base: 'rounded-button px-8 py-3' }"
+          :to="JEN_LIU_URL"
+          trailing-icon="i-lucide-arrow-right"
+        >
+          進入 Jen Liu
+        </UButton>
       </article>
     </div>
   </section>

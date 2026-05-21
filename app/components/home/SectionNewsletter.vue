@@ -27,27 +27,25 @@ const newsletterDotField = {
     <HomeBackgroundDots v-bind="newsletterDotField" />
 
     <div class="relative z-10 max-w-2xl mx-auto space-y-6">
-      <UBadge color="secondary" variant="solid" :ui="{ base: 'rounded-button px-4 py-1.5' }">
-        <UIcon name="i-lucide-mail" class="size-3.5 mr-1.5" />
-        每週電子報
-      </UBadge>
-
       <h2
-        class="font-display tracking-[0.02em] leading-[0.95] text-pure-white text-4xl md:text-6xl"
+        class="font-display font-bold tracking-[0.02em] leading-tight text-pure-white text-3xl md:text-5xl"
       >
-        職涯 × 旅遊
-        <span class="block text-digital-orange">每週一封。</span>
+        這是一份邀請
+        <span class="block text-digital-orange mt-2"> 走進個人<br />真實思考空間 </span>
       </h2>
 
-      <p class="text-pure-white/75 leading-relaxed">
-        收到榛知關於澳洲職場與旅遊的最新分享——一鍵到 Kit 完成訂閱，隨時可退訂。
-      </p>
+      <h3
+        class="font-sans font-normal tracking-wide text-pure-white/80 text-xl md:text-2xl leading-relaxed mt-6 md:mt-8"
+      >
+        <i>也寫給同樣正在努力向前的你</i>
+      </h3>
 
       <!-- Animated envelope -->
       <HomeEnvelopeAnimation />
 
       <UButton
         as="a"
+        class="mt-8 ring-2 ring-white ring-offset-2 ring-offset-slate-900"
         :href="KIT_URL"
         target="_blank"
         rel="noopener"

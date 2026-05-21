@@ -118,6 +118,10 @@ All in `app/components/home/` — Sydney / Australia motif, two-tone (`cyber-vio
 
 - `mdc.highlight: false` and `content.build.markdown.highlight: false` in `nuxt.config.ts` — markdown has no fenced code blocks, so Shiki's oniguruma WASM (~600 KB) and language grammars (~900 KB) are skipped from the client bundle. Re-enable if a code block is ever introduced into `content/**.md`.
 
+## Dev Server
+
+**Never start, restart, or kill the dev server.** The user manages `pnpm dev` themselves. Assume it is already running on `http://localhost:3500` when UI verification is needed.
+
 ## UI Testing
 
 All UI verification must use a **headless browser running in the background** — never rely on computer-use screenshots or manual browser navigation.

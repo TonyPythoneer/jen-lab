@@ -16,12 +16,6 @@ useSeoMeta({
     <!-- Directions: dual-identity intro cards -->
     <HomeSectionDirections />
 
-    <!-- New product spotlight -->
-    <HomeSectionNewProduct />
-
-    <!-- Blog carousel (full-bleed: carousel peeks beyond 1200px) -->
-    <HomeSectionBlog class="full-bleed" />
-
     <!-- 3D rotating blog carousel (CSS preserve-3d, GPU spin) -->
     <HomeSectionBlog3DV2 :post-count="10" :spin-duration="90" />
 

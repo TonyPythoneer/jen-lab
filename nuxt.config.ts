@@ -33,7 +33,7 @@ const moduleSettings: NuxtConfig = {
       // English body — fallback
       { name: "Inter", provider: "google", weights: [400, 500, 700] },
       // Chinese body — neutral modern (recommended default)
-      { name: "Noto Sans TC", provider: "google", weights: [400, 500, 700] },
+      { name: "Noto Sans TC", provider: "google", weights: [400, 500, 700, 900] },
       // Chinese body — rounded friendly
       // { name: "Zen Maru Gothic", provider: "google", weights: [400, 500, 700] },
       // Chinese body — geometric, close to Inter feel

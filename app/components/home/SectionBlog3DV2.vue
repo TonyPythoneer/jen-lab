@@ -15,11 +15,10 @@
           >
             <header>
               <h3>{{ item.title }}</h3>
-              <em>{{ item.subtitle }}</em>
             </header>
             <figure>
               <img :src="item.url" :alt="item.alt" loading="lazy" />
-              <figcaption><a :href="item.link" target="_blank">閱讀全文</a></figcaption>
+              <a class="card-cta" :href="item.link" target="_blank">閱讀全文</a>
             </figure>
           </article>
         </section>
@@ -219,6 +218,7 @@ figure {
    image via <img>, so a figure background would be redundant — one less GPU texture. */
 article header {
   background: var(--url) 50% / cover #121212;
+  align-content: end;
 }
 
 article.is-front:hover header,
@@ -228,15 +228,20 @@ article.is-front:focus-within figure {
   border-color: #f48c06;
 }
 
-h3,
-em,
-figcaption {
-  text-shadow: 1px 1px 1px #0006;
-}
-
 h3 {
-  font-size: 1.125em;
-  padding: 0.3em 0.4em 0;
+  font-size: 0.9em;
+  font-weight: 700;
+  padding: 0.4em 1em;
+  background: #fff;
+  color: #000;
+  border-radius: 9999px;
+  margin: 0 1em 1em;
+  align-self: end;
+  justify-self: center;
+  max-width: calc(100% - 2em);
+  text-align: center;
+  text-wrap: balance;
+  text-shadow: none;
 }
 
 figure {
@@ -247,7 +252,6 @@ figure {
 /* Make card content the hit area (drives :hover; the title face holds hover after the
    flip so it doesn't jitter). Whether a card flips is gated by .is-front above. */
 h3,
-em,
 img,
 a {
   pointer-events: auto;
@@ -260,17 +264,21 @@ img {
   grid-area: 1 / 1;
 }
 
-figcaption {
+.card-cta {
   grid-area: 1 / 1;
-  align-self: end;
-  padding: 0.5em;
-  background: #fff3;
-  color: #040404;
-  font-size: Max(0.75rem, 0.75em);
-  text-align: right;
+  place-self: center;
+  padding: 0.5em 1.4em;
+  background: #fff;
+  color: #000;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.9em;
+  text-decoration: none;
+  transition: background 0.2s ease-out;
 
-  a {
-    color: #370617;
+  &:hover {
+    background: #f48c06;
+    color: #fff;
   }
 }
 </style>
