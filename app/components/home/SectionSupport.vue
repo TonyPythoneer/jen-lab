@@ -6,10 +6,8 @@ const JEN_LIU_SUPPORT_URL = "https://portaly.cc/jenliuau/support";
 <template>
   <section class="py-[72px] sm:py-[140px]">
     <div class="bg-ash-white rounded-card p-8 md:p-16 text-center max-w-2xl mx-auto space-y-6">
-      <UIcon
-        name="fluent-emoji-high-contrast:bubble-tea"
-        class="size-12 text-digital-orange mx-auto"
-      />
+      <!-- CSS bubble tea -->
+      <HomeBubbleTeaCss />
 
       <h2
         class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-3xl md:text-4xl"
