@@ -36,11 +36,11 @@ const panelHiddenClass = computed(() =>
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+  <div class="h-full grid grid-cols-1 md:grid-cols-12 md:grid-rows-[1fr] gap-2.5">
     <!-- Colored card: always on top on mobile; left or right on desktop via order -->
     <article
       :class="[
-        'relative md:col-span-7 rounded-card overflow-hidden min-h-[360px] p-6',
+        'relative md:col-span-7 rounded-card overflow-hidden min-h-[200px] md:min-h-0 p-6',
         colorBg,
         coloredSide === 'right' ? 'order-1 md:order-2' : 'order-1',
       ]"
@@ -103,7 +103,7 @@ const panelHiddenClass = computed(() =>
     <!-- White card: desktop only -->
     <article
       :class="[
-        'hidden md:flex md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex-col justify-center items-center text-center gap-8 min-h-[360px]',
+        'hidden md:flex md:col-span-5 bg-ash-white rounded-card p-8 md:p-10 flex-col justify-center items-center text-center gap-8',
         coloredSide === 'right' ? 'order-2 md:order-1' : 'order-2',
       ]"
     >

@@ -22,6 +22,7 @@ const props = withDefaults(
     :style="{
       backgroundImage: `radial-gradient(circle, ${props.color} ${props.size}px, transparent ${props.size + 0.5}px)`,
       backgroundSize: `${props.spacing}px ${props.spacing}px`,
+      backgroundPosition: 'center',
       opacity: props.opacity,
     }"
   />

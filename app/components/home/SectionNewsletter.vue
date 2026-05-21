@@ -22,7 +22,7 @@ const newsletterDotField = {
   >
     <HomeOperaHouseSvg
       aria-hidden="true"
-      class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none rotate-12"
+      class="absolute -right-40 -top-20 w-[700px] opacity-15 pointer-events-none"
     />
     <HomeBackgroundDots v-bind="newsletterDotField" />
 

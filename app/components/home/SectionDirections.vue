@@ -10,17 +10,18 @@ const { progress } = useScrollProgress(pinWrapper);
   <!-- Outer section is the scroll runway; inner div pins while runway scrolls past -->
   <section ref="pinWrapper" class="h-[250vh]">
     <div
-      class="sticky top-[var(--site-header-h)] h-[calc(100vh_-_var(--site-header-h))] overflow-hidden space-y-8"
+      class="sticky top-[var(--site-header-h)] h-[calc(100vh_-_var(--site-header-h))] overflow-hidden flex flex-col gap-6"
     >
       <h2
-        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl"
+        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl shrink-0"
       >
         Jen is Jen.
         <span class="block">Jen is always me.</span>
       </h2>
 
-      <div class="space-y-2.5">
+      <div class="flex-1 min-h-0 flex flex-col gap-2.5">
         <HomeDirectionPair
+          class="flex-1 min-h-0"
           color-bg="bg-cyber-violet"
           image-src="/home/jen-knows-hero.webp"
           image-alt="Jen Knows — 榛知職涯身份"
@@ -36,6 +37,7 @@ const { progress } = useScrollProgress(pinWrapper);
         />
 
         <HomeDirectionPair
+          class="flex-1 min-h-0"
           color-bg="bg-digital-orange"
           image-src="/home/jen-liu-hero.webp"
           image-alt="Jen Liu — 榛知旅遊身份"
