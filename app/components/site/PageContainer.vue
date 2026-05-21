@@ -8,7 +8,7 @@ defineProps<{ breakout?: boolean }>();
   </div>
   <div
     v-else
-    class="container mx-auto max-w-[1200px] px-4 pt-[calc(var(--site-header-h)_+_2.5rem)] pb-10 space-y-10"
+    class="container mx-auto max-w-[1200px] px-4 pt-10 pb-10 space-y-10"
     style="--page-inset-top: 2.5rem"
   >
     <slot />

@@ -21,7 +21,7 @@ const JEN_LIU_URL = "/jen-liu";
             class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl md:text-4xl"
           >
             Jen Knows
-            <span class="block text-digital-orange">職涯 × 職場</span>
+            <span class="block text-cyber-violet">職涯 × 職場</span>
           </h3>
           <p class="text-sm md:text-base text-abyssal-ink/75 leading-relaxed max-w-prose">
             陪你找到在澳洲的下一步——求職、職場文化、職涯諮詢，以中文深入講清楚。
@@ -41,24 +41,24 @@ const JEN_LIU_URL = "/jen-liu";
       </article>
 
       <article
-        class="relative md:col-span-7 bg-cyber-violet rounded-card overflow-hidden min-h-[360px]"
+        class="relative md:col-span-7 bg-cyber-violet rounded-card overflow-hidden min-h-[360px] p-6"
       >
         <img
           src="/home/jen-knows-hero.webp"
           alt="Jen Knows — 榛知職涯身份"
           loading="lazy"
-          class="absolute inset-0 w-full h-full object-cover"
+          class="absolute inset-0 w-full h-full object-contain p-6"
         />
       </article>
 
       <article
-        class="relative md:col-span-7 bg-digital-orange rounded-card overflow-hidden min-h-[360px]"
+        class="relative md:col-span-7 bg-digital-orange rounded-card overflow-hidden min-h-[360px] p-6"
       >
         <img
           src="/home/jen-liu-hero.webp"
           alt="Jen Liu — 榛知旅遊身份"
           loading="lazy"
-          class="absolute inset-0 w-full h-full object-cover"
+          class="absolute inset-0 w-full h-full object-contain p-6"
         />
       </article>
 
@@ -70,7 +70,7 @@ const JEN_LIU_URL = "/jen-liu";
             class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-3xl md:text-4xl"
           >
             Jen Liu
-            <span class="block text-cyber-violet">旅遊 × 美食</span>
+            <span class="block text-digital-orange">旅遊 × 美食</span>
           </h3>
           <p class="text-sm md:text-base text-abyssal-ink/75 leading-relaxed max-w-prose">
             雪梨在地視角，帶你探索澳洲旅遊、美食與自助旅行的大小事。

@@ -60,7 +60,7 @@ const resultLabel = computed(() => {
 <template>
   <div>
     <!-- Hero -->
-    <section class="min-h-screen flex flex-col justify-center pt-[var(--site-header-h)]">
+    <section class="min-h-[var(--first-section-h)] flex flex-col justify-center">
       <div class="container mx-auto max-w-[1200px] px-4 pt-6 pb-0">
         <div
           class="bg-ash-white rounded-card overflow-hidden relative min-h-[220px] flex items-stretch"

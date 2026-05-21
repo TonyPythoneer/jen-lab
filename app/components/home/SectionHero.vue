@@ -17,7 +17,7 @@ const marqueeStrings = [
 
 <template>
   <section
-    class="relative bg-ash-white rounded-card overflow-hidden mt-[var(--site-header-h)] min-h-[calc(100vh_-_var(--site-header-h))] flex flex-col"
+    class="relative bg-ash-white rounded-card overflow-hidden min-h-[calc(100vh_-_var(--site-header-h))] flex flex-col"
   >
     <HomeBackgroundDots v-bind="heroDotField" />
 
@@ -40,7 +40,7 @@ const marqueeStrings = [
       <p
         class="text-base md:text-xl font-black text-abyssal-ink/85 max-w-2xl mx-auto leading-relaxed"
       >
-        從澳洲職場到雪梨巷弄<br />一個人，兩個身份，用中文記錄走過的每一步
+        從澳洲職場到雪梨巷弄<br />一個人，兩個身份<br />用中文記錄走過的每一步
       </p>
     </div>
 
