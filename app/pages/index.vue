@@ -26,7 +26,7 @@ useSeoMeta({
     <!-- <HomeSectionBlog3D :display-count="10" post-size="lg" :debug="true" />
 
     <!-- Blog3DV2: CSS scroll-driven infinite circular gallery (visual comparison) -->
-    <HomeSectionBlog3DV2 :post-count="18" :spin-duration="120" />
+    <HomeSectionBlog3DV2 :post-count="10" :spin-duration="120" />
 
     <!-- Subscribe -->
     <HomeSectionNewsletter />
