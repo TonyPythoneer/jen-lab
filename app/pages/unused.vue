@@ -11,7 +11,6 @@
     <HomeSectionUseCases />
     <HomeSectionBuiltOn />
     <HomeSectionTestimonials />
-    <HomeSectionBlog />
     <HomeSectionCommunity />
     <HomeSectionContact />
   </SitePageContainer>

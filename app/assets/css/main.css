@@ -14,16 +14,22 @@
 
 @layer base {
   :root {
-    --site-header-h: 4.75rem; /* header pt-3 + pill py-3 + h-10 content = 76px */
+    --site-header-h: 4.75rem;
+    /* header pt-3 + pill py-3 + h-10 content = 76px */
     /* Composite var: viewport minus header minus any container top inset.
        Containers override --page-inset-top; pages without a container use 0px. */
     --page-inset-top: 0px;
     --first-section-h: calc(100dvh - var(--site-header-h) - var(--page-inset-top));
+    /* Single source of truth for vertical rhythm: header→section→…→footer.
+       Drives breakout grid row-gap + layout top/bottom padding. */
+    --section-gap: clamp(3rem, 6vw, 7rem);
   }
+
   html {
     background: var(--color-basalt-canvas);
     color: var(--color-abyssal-ink);
   }
+
   :where(h1, h2, h3, [id]) {
     scroll-margin-top: 5rem;
   }
@@ -49,6 +55,7 @@
 .rounded-button {
   border-radius: var(--radius-button);
 }
+
 .rounded-input {
   border-radius: var(--radius-input);
 }
@@ -74,6 +81,7 @@
 .fade-leave-active {
   transition: opacity 0.18s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

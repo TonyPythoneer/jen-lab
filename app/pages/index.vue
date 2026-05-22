@@ -14,7 +14,7 @@ useSeoMeta({
     <HomeSectionHero />
 
     <!-- Directions: dual-identity intro cards -->
-    <HomeSectionDirections class="mt-16 md:mt-24 lg:mt-32" />
+    <HomeSectionDirections />
 
     <!-- 3D rotating blog carousel (CSS preserve-3d, GPU spin) -->
     <HomeSectionBlog3DV2 :post-count="10" :spin-duration="90" />
