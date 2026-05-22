@@ -1,0 +1,64 @@
+/*
+ * .neon-arc — reusable spinning conic-gradient border arc (pure CSS, no JS).
+ *
+ * Add the class to any element; the effect is painted on its ::before, masked to
+ * a uniform-width ring that hugs the host's rounded corners. Two arcs sit
+ * diagonally opposite (0% and 50%) and spin together via the @property angle.
+ *
+ * The host must be a positioning context — `position: relative` is set here, but
+ * a `transform`/`filter` ancestor box also works (e.g. a 3D card).
+ *
+ * Tunable per host via custom properties (defaults in parentheses):
+ *   --neon-arc-ring    line thickness            (8px)
+ *   --neon-arc-len     arc length, % of the ring (25%)
+ *   --neon-arc-radius  host corner radius        (0.5em)
+ *   --neon-arc-dur     one full rotation         (4s)
+ *   --neon-arc-c1/2/3  gradient colours          (orange / pink / violet)
+ */
+@property --neon-arc-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neon-arc-spin {
+  to {
+    --neon-arc-angle: 1turn;
+  }
+}
+
+.neon-arc {
+  position: relative;
+}
+
+.neon-arc::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--neon-arc-ring, 8px));
+  /* Outer radius = host radius + ring width, so the masked hole's radius equals
+     the host corner and the ring keeps a uniform width around corners. */
+  border-radius: calc(var(--neon-arc-radius, 0.5em) + var(--neon-arc-ring, 8px));
+  padding: var(--neon-arc-ring, 8px);
+  background: conic-gradient(
+    from var(--neon-arc-angle),
+    transparent 0,
+    var(--neon-arc-c1, #f48c06) calc(var(--neon-arc-len, 25%) * 0.25),
+    var(--neon-arc-c2, #ff2d78) calc(var(--neon-arc-len, 25%) * 0.5),
+    var(--neon-arc-c3, #7c3aed) calc(var(--neon-arc-len, 25%) * 0.75),
+    transparent var(--neon-arc-len, 25%),
+    transparent 50%,
+    var(--neon-arc-c1, #f48c06) calc(50% + var(--neon-arc-len, 25%) * 0.25),
+    var(--neon-arc-c2, #ff2d78) calc(50% + var(--neon-arc-len, 25%) * 0.5),
+    var(--neon-arc-c3, #7c3aed) calc(50% + var(--neon-arc-len, 25%) * 0.75),
+    transparent calc(50% + var(--neon-arc-len, 25%))
+  );
+  /* Fill the box, then mask out the interior so only the padding ring remains —
+     z-order-independent, so a 3D-rotated host face still shows through. */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: neon-arc-spin var(--neon-arc-dur, 4s) linear infinite;
+}

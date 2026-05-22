@@ -18,7 +18,7 @@
             <article
               v-for="(item, i) in items"
               :key="i"
-              :class="{ 'is-active': activeIndex === i }"
+              :class="{ 'is-active': activeIndex === i, 'neon-arc': activeIndex === i }"
               :style="`--i: ${i}; --url: url(${item.url})`"
               @click="activateCard(i, $event)"
               @focusin="activateCard(i, $event)"
@@ -145,6 +145,10 @@ onClickOutside(assemblyRef, deactivate);
 onKeyStroke("Escape", deactivate);
 </script>
 
+<!-- Shared neon-arc utility, imported here (not globally) so it ships only in
+     this component's chunk. Must stay non-scoped: `.neon-arc` is a global class. -->
+<style src="~/assets/css/effects/neon-arc.css"></style>
+
 <style scoped>
 .blog3dv2-wrapper {
   position: relative;
@@ -181,19 +185,6 @@ onKeyStroke("Escape", deactivate);
 @keyframes blog3dv2-spin {
   to {
     rotate: 0 1 0 -1turn;
-  }
-}
-
-/* Animated angle for the neon surround on the flipped card; @property makes the
-   angle interpolable so the conic-gradient can spin with pure CSS (no JS). */
-@property --blog3dv2-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes blog3dv2-border-spin {
-  to {
-    --blog3dv2-angle: 1turn;
   }
 }
 
@@ -266,48 +257,17 @@ article header {
   align-content: end;
 }
 
-/* Neon surround on the flipped (active) card: the spinning gradient ring is the
-   ::before below. Drop the default offset drop-shadow here — its bottom-right
-   #000 blur would paint over the thin arc on those edges. */
+/* Neon surround on the flipped (active) card. The spinning arc comes from the
+   shared `.neon-arc` utility (assets/css/neon-arc.css); only the per-card tuning
+   lives here. Drop the default offset drop-shadow — its bottom-right #000 blur
+   would paint over the thin arc on those edges. */
+article.is-active {
+  --neon-arc-ring: 12px;
+}
 article.is-active header,
 article.is-active figure {
   border-color: transparent;
   box-shadow: none;
-}
-
-/* Animated conic-gradient frame: fill the box, then mask out the interior so only
-   a 4px ring remains — z-order-independent, so the 3D-rotated face shows through.
-   Driven entirely by --blog3dv2-angle, no JS. */
-article.is-active::before {
-  content: "";
-  position: absolute;
-  /* --ring = line thickness (one knob); --arc = arc length around the ring. */
-  --ring: 8px;
-  --arc: 25%;
-  inset: calc(-1 * var(--ring));
-  border-radius: 0.7em;
-  padding: var(--ring);
-  /* Two arcs, one at 0% and one at 50% (diagonally opposite), spin together. */
-  background: conic-gradient(
-    from var(--blog3dv2-angle),
-    transparent 0,
-    #f48c06 calc(var(--arc) * 0.25),
-    #ff2d78 calc(var(--arc) * 0.5),
-    #7c3aed calc(var(--arc) * 0.75),
-    transparent var(--arc),
-    transparent 50%,
-    #f48c06 calc(50% + var(--arc) * 0.25),
-    #ff2d78 calc(50% + var(--arc) * 0.5),
-    #7c3aed calc(50% + var(--arc) * 0.75),
-    transparent calc(50% + var(--arc))
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  animation: blog3dv2-border-spin 4s linear infinite;
 }
 
 h3 {
