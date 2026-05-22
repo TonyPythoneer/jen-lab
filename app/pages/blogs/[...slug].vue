@@ -38,10 +38,7 @@
         class="w-full aspect-video object-cover rounded-card"
       />
 
-      <article
-        class="prose prose-neutral max-w-none wp-content bg-ash-white rounded-card p-10"
-        v-html="post.content.rendered"
-      />
+      <article class="wp-content bg-ash-white rounded-card p-10" v-html="post.content.rendered" />
     </template>
 
     <ScrollToTopButton />
@@ -88,6 +85,11 @@ useSeoMeta({
 
 <style scoped>
 @reference "~/assets/css/main.css";
+@plugin "@tailwindcss/typography";
+
+.wp-content {
+  @apply prose prose-neutral max-w-none;
+}
 
 .wp-content :deep(.wp-block-gallery) {
   @apply flex flex-wrap gap-4 my-8 p-0 list-none;

@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "./theme.css";
-@plugin "@tailwindcss/typography";
 
 @theme {
   --radius-card: var(--radius-caldera-card);
