@@ -49,7 +49,7 @@ const builtOn = [
 </script>
 
 <template>
-  <section class="py-[72px] sm:py-[140px] space-y-6">
+  <section class="space-y-6">
     <div class="flex items-end justify-between gap-4 px-1">
       <div class="space-y-2">
         <span class="text-cyber-violet text-xs uppercase tracking-widest">Built on</span>

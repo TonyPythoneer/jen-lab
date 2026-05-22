@@ -22,7 +22,7 @@ const currentYear = new Date().getFullYear();
   <!-- Mobile: single column stack; Desktop: two equal columns -->
   <footer
     id="footer"
-    class="mx-auto w-[min(calc(100%-2rem),1200px)] grid md:grid-cols-2 gap-2.5 pb-2.5 pt-40"
+    class="mx-auto w-[min(calc(100%-2rem),1200px)] grid md:grid-cols-2 gap-2.5 pb-2.5"
   >
     <!-- Left: dark brand card — fixed min-height on all breakpoints -->
     <div

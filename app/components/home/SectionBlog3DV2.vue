@@ -184,6 +184,19 @@ onKeyStroke("Escape", deactivate);
   }
 }
 
+/* Animated angle for the neon surround on the flipped card; @property makes the
+   angle interpolable so the conic-gradient can spin with pure CSS (no JS). */
+@property --blog3dv2-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes blog3dv2-border-spin {
+  to {
+    --blog3dv2-angle: 1turn;
+  }
+}
+
 .blog3dv2-assembly {
   display: grid;
   transform-style: preserve-3d;
@@ -217,6 +230,10 @@ article {
      cards stay clickable but never flip — kills far/side mis-flips and double-flips. */
   &.is-active {
     --hov: 1;
+    /* Lift the active card outward along its own normal (toward the camera) so
+       neighbour cards stop occluding its side/bottom edges — otherwise the
+       spinning border arc vanishes wherever a neighbour overlaps it. */
+    transform: rotatey(calc(var(--i) * 1turn / var(--n))) translatez(calc(var(--z) - 6em));
   }
   /* Two-face flip: header (title) and figure (image) sit back-to-back; --hov adds a
      half-turn so hovering swaps which face the viewer sees (figure default, header on hover). */
@@ -249,9 +266,48 @@ article header {
   align-content: end;
 }
 
+/* Neon surround on the flipped (active) card: the spinning gradient ring is the
+   ::before below. Drop the default offset drop-shadow here — its bottom-right
+   #000 blur would paint over the thin arc on those edges. */
 article.is-active header,
 article.is-active figure {
-  border-color: #f48c06;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Animated conic-gradient frame: fill the box, then mask out the interior so only
+   a 4px ring remains — z-order-independent, so the 3D-rotated face shows through.
+   Driven entirely by --blog3dv2-angle, no JS. */
+article.is-active::before {
+  content: "";
+  position: absolute;
+  /* --ring = line thickness (one knob); --arc = arc length around the ring. */
+  --ring: 8px;
+  --arc: 25%;
+  inset: calc(-1 * var(--ring));
+  border-radius: 0.7em;
+  padding: var(--ring);
+  /* Two arcs, one at 0% and one at 50% (diagonally opposite), spin together. */
+  background: conic-gradient(
+    from var(--blog3dv2-angle),
+    transparent 0,
+    #f48c06 calc(var(--arc) * 0.25),
+    #ff2d78 calc(var(--arc) * 0.5),
+    #7c3aed calc(var(--arc) * 0.75),
+    transparent var(--arc),
+    transparent 50%,
+    #f48c06 calc(50% + var(--arc) * 0.25),
+    #ff2d78 calc(50% + var(--arc) * 0.5),
+    #7c3aed calc(50% + var(--arc) * 0.75),
+    transparent calc(50% + var(--arc))
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: blog3dv2-border-spin 4s linear infinite;
 }
 
 h3 {

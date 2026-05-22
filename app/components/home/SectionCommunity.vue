@@ -15,9 +15,7 @@ const communityDotField = {
 </script>
 
 <template>
-  <section
-    class="relative overflow-hidden py-[72px] sm:py-[140px] flex flex-col items-center gap-8"
-  >
+  <section class="relative overflow-hidden flex flex-col items-center gap-8">
     <HomeBackgroundDots v-bind="communityDotField" />
 
     <h2

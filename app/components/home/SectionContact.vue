@@ -18,7 +18,7 @@ const KIT_URL = "https://jen-nextsteps.kit.com/60463af80d";
 </script>
 
 <template>
-  <section class="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5 py-[72px] sm:py-[140px]">
+  <section class="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-2.5">
     <!-- Left: dark brand card -->
     <div
       class="relative bg-abyssal-ink text-pure-white rounded-card p-10 flex flex-col justify-between gap-10 min-h-[360px] overflow-hidden"

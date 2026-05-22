@@ -14,7 +14,7 @@ const highlights = [
 </script>
 
 <template>
-  <section class="py-[72px] sm:py-[140px]">
+  <section class="">
     <div class="bg-ash-white rounded-card overflow-hidden grid md:grid-cols-2">
       <!-- Banner -->
       <div class="relative min-h-[300px] md:min-h-[420px]">

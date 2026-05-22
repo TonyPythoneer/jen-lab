@@ -43,7 +43,7 @@ function scrollBlogNext() {
 </script>
 
 <template>
-  <section id="blog" class="py-[72px] sm:py-[140px] space-y-6">
+  <section id="blog" class="space-y-6">
     <!-- px aligns header to the 1200px content column when section is full-bleed -->
     <div class="flex items-end justify-between gap-4 px-[max(1rem,calc((100vw-1200px)/2+1rem))]">
       <h2

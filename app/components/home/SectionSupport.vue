@@ -4,7 +4,7 @@ const JEN_LIU_SUPPORT_URL = "https://portaly.cc/jenliuau/support";
 </script>
 
 <template>
-  <section class="py-[72px] sm:py-[140px]">
+  <section class="">
     <div class="bg-ash-white rounded-card p-8 md:p-16 text-center max-w-2xl mx-auto space-y-6">
       <!-- CSS bubble tea -->
       <HomeBubbleTeaCss />

@@ -40,7 +40,7 @@ const activeItem = computed(() => bringItems.find((i) => i.value === activeAccor
 </script>
 
 <template>
-  <section class="py-[72px] sm:py-[140px] flex flex-col items-center gap-10">
+  <section class="flex flex-col items-center gap-10">
     <h2
       class="font-display tracking-[0.02em] leading-[0.95] text-abyssal-ink text-center text-5xl md:text-6xl lg:text-7xl"
     >

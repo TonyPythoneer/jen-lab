@@ -30,7 +30,7 @@ const testimonials = [
 </script>
 
 <template>
-  <section class="py-[72px] sm:py-[140px] space-y-8">
+  <section class="space-y-8">
     <div class="text-center space-y-3 max-w-2xl mx-auto">
       <span class="text-cyber-violet text-xs uppercase tracking-widest">Echoes</span>
       <h2
