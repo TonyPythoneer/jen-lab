@@ -1,7 +1,4 @@
 <script setup lang="ts">
-const titleRef = useTemplateRef<HTMLHeadingElement>("title");
-useTextReveal(titleRef);
-
 const heroDotField = { opacity: 0.08, spacing: 28 };
 
 const marqueeStrings = [
@@ -41,19 +38,16 @@ const liuStyle = computed(() => ({
       class="sticky top-[var(--site-header-h)] h-[calc(100vh_-_var(--site-header-h))] bg-[skyblue] rounded-card overflow-hidden flex flex-col"
     >
       <!-- Content area: Opera House fills only this flex-1 zone, not the marquee -->
-      <div class="relative flex-1 overflow-hidden">
+      <div class="relative flex-1 overflow-hidden flex items-center justify-center">
         <HomeOperaHouseSvg
           aria-hidden="true"
           class="absolute inset-0 w-full h-full z-0 pointer-events-none"
         />
 
         <div
-          class="relative z-10 px-6 md:px-12 pt-10 md:pt-14 pb-16 md:pb-20 max-w-[1100px] w-full h-full mx-auto text-center space-y-8 flex flex-col justify-center items-center"
+          class="relative z-10 px-6 md:px-12 max-w-[1100px] w-full text-center space-y-8 flex flex-col items-center"
         >
-          <h1
-            ref="title"
-            class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-7xl"
-          >
+          <h1 class="font-display tracking-[0.02em] leading-[0.88] text-abyssal-ink text-7xl">
             Two Worlds
             <span class="block text-digital-orange">One Jen</span>
           </h1>
