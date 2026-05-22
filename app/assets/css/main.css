@@ -20,8 +20,18 @@
     --page-inset-top: 0px;
     --first-section-h: calc(100dvh - var(--site-header-h) - var(--page-inset-top));
     /* Single source of truth for vertical rhythm: header→section→…→footer.
-       Drives breakout grid row-gap + layout top/bottom padding. */
-    --section-gap: clamp(3rem, 6vw, 7rem);
+           Drives breakout grid row-gap + layout top/bottom padding.
+
+           clamp(MIN, PREFERRED, MAX) resolves to max(MIN, min(PREFERRED, MAX)):
+             MIN  3rem = 48px   floor — never tighter than this on small phones
+             PREF 12vw          12% of viewport width — fluid, scales with screen
+             MAX  7rem = 112px  ceiling — never looser than this on wide screens
+
+           Crossover widths (where 12vw equals a bound: width = boundPx / 0.12):
+             <= 400px : 12vw <= 48px  -> pinned to MIN  (48px)
+             400-933px: 12vw fluid     -> e.g. 768px -> 92px, 900px -> 108px
+             >= 933px : 12vw >= 112px -> pinned to MAX (112px); most desktops land here */
+    --section-gap: clamp(3rem, 12vw, 7rem);
   }
 
   html {
