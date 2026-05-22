@@ -1,41 +1,48 @@
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-10">
-    <header
-      class="flex items-center justify-between gap-4 mb-10 pb-6 border-b border-neutral-200 dark:border-neutral-800"
-    >
+  <SitePageContainer>
+    <!-- First section: back-nav + post header together fill the viewport -->
+    <div class="min-h-[var(--first-section-h)] flex flex-col justify-center gap-6">
       <NuxtLink
         :to="{ path: '/blogs', query: lastQuery }"
-        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-600 shrink-0"
+        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
       >
         <UIcon name="i-lucide-arrow-left" class="size-4" />
         返回部落格
       </NuxtLink>
-      <NuxtLink
-        :to="{ path: '/blogs', query: lastQuery }"
-        class="text-right hover:opacity-80 transition-opacity"
-      >
-        <h2 class="text-xl md:text-2xl font-bold tracking-tight">{{ blog.title }}</h2>
-        <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400">{{ blog.brief }}</p>
-      </NuxtLink>
-    </header>
 
-    <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
-      {{ pending ? "載入中..." : "找不到文章" }}
+      <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
+        {{ pending ? "載入中..." : "找不到文章" }}
+      </div>
+
+      <UPageHeader
+        v-else
+        :title="meta.title"
+        :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
+      >
+        <template #description>
+          <span
+            class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-ash-white text-abyssal-ink border border-neutral-200"
+          >
+            {{ formatDate(post.date) }}
+          </span>
+        </template>
+      </UPageHeader>
     </div>
 
-    <article v-else>
-      <div class="text-center border-b border-neutral-200 dark:border-neutral-800 pb-8 mb-10">
-        <h1 class="text-4xl md:text-5xl font-bold leading-tight" v-html="post.title.rendered" />
-        <p class="text-sm text-neutral-400 mb-4">{{ formatDate(post.date) }}</p>
-      </div>
-      <!-- prose enables @tailwindcss/typography; wp-content targets WP Gutenberg block selectors via :deep() -->
-      <div
-        class="prose prose-neutral dark:prose-invert max-w-none prose-img:rounded-none wp-content"
-        v-html="post.content.rendered"
+    <!-- Featured image + post content (below the fold) -->
+    <template v-if="post">
+      <img
+        v-if="meta.image"
+        :src="meta.image"
+        :alt="meta.title"
+        class="w-full aspect-video object-cover rounded-card"
       />
-    </article>
+
+      <article class="wp-content bg-ash-white rounded-card p-10" v-html="post.content.rendered" />
+    </template>
+
     <ScrollToTopButton />
-  </div>
+  </SitePageContainer>
 </template>
 
 <script setup lang="ts">
@@ -78,6 +85,11 @@ useSeoMeta({
 
 <style scoped>
 @reference "~/assets/css/main.css";
+@plugin "@tailwindcss/typography";
+
+.wp-content {
+  @apply prose prose-neutral max-w-none;
+}
 
 .wp-content :deep(.wp-block-gallery) {
   @apply flex flex-wrap gap-4 my-8 p-0 list-none;

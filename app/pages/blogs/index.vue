@@ -1,7 +1,14 @@
 <template>
-  <!-- `fixed inset-0` escapes UMain's `min-h-[calc(100vh-...)]`; the bottom pagination then pins to the visible viewport edge on mobile/desktop alike. -->
-  <div class="fixed inset-0 z-10 flex flex-col overflow-hidden bg-white dark:bg-neutral-900">
-    <BlogTopBar class="shrink-0">
+  <SitePageContainer>
+    <!-- Header -->
+    <UPageHeader
+      title="Notes From The Notebook."
+      description="Observations, experiments, and dispatches from the margins."
+      class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
+    />
+
+    <!-- Search / filter bar -->
+    <BlogTopBar>
       <template #left>
         <UButton
           to="/"
@@ -43,13 +50,13 @@
                 @click="clearAllFilters"
               />
             </UFieldGroup>
-            <h1
+            <h2
               v-else
               key="title"
               class="absolute inset-0 flex items-center justify-center text-base md:text-lg font-semibold tracking-tight truncate"
             >
               {{ blog.title }}
-            </h1>
+            </h2>
           </Transition>
         </div>
       </template>
@@ -61,49 +68,43 @@
             :variant="!filtersReady || searchOpen ? 'soft' : 'solid'"
             :icon="searchOpen ? 'i-lucide-x' : 'i-lucide-search'"
             :aria-label="searchOpen ? '關閉搜尋' : '開啟搜尋'"
-            @click="searchOpen = !searchOpen"
             class="rounded-full"
+            @click="searchOpen = !searchOpen"
           />
         </ClientOnly>
       </template>
     </BlogTopBar>
 
-    <!-- Scrollable content body. Pagination drives navigation; one page rendered at a time. -->
-    <div ref="scrollEl" class="flex-1 overflow-y-auto">
-      <div class="max-w-5xl mx-auto px-4 py-6">
-        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
-        </div>
-
-        <div v-else-if="error" class="text-center py-20">
-          <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
-          <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
-        </div>
-
-        <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BlogPostCard
-            v-for="post in posts"
-            :key="post.id"
-            :post="post"
-            :to="{
-              name: 'blogs-slug',
-              params: { slug: [String(post.id)] },
-              query: { title: post.slug },
-            }"
-            :tag-map="tagMap"
-          />
-        </div>
-
-        <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
-
-        <ScrollToTopButton />
+    <!-- Posts grid -->
+    <div ref="scrollEl">
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
+        <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
       </div>
+
+      <div v-else-if="error" class="text-center py-20">
+        <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
+        <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
+      </div>
+
+      <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
+        <BlogPostCard
+          v-for="post in posts"
+          :key="post.id"
+          :post="post"
+          :to="{
+            name: 'blogs-slug',
+            params: { slug: [String(post.id)] },
+            query: { title: post.slug },
+          }"
+          :tag-map="tagMap"
+        />
+      </div>
+
+      <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
     </div>
 
-    <!-- Pagination pinned to bottom -->
-    <div
-      class="shrink-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur px-4 py-3 flex justify-center"
-    >
+    <!-- Pagination -->
+    <div class="flex justify-center border-t border-neutral-200 pt-6">
       <UPagination
         :page="currentPage"
         :total="totalPages * PER_PAGE"
@@ -112,7 +113,9 @@
         @update:page="currentPage = $event"
       />
     </div>
-  </div>
+
+    <ScrollToTopButton />
+  </SitePageContainer>
 </template>
 
 <script setup lang="ts">
@@ -122,7 +125,10 @@ const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
 const { blog } = useAppConfig();
-useSeoMeta({ title: `${blog.title} - ${blog.brief}`, description: blog.brief });
+useSeoMeta({
+  title: "Blog — Jen Lab",
+  description: "Long-form posts about what I learned the hard way.",
+});
 
 const route = useRoute();
 const router = useRouter();

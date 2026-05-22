@@ -1,6 +1,73 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
-@plugin "@tailwindcss/typography";
+@import "./theme.css";
+
+@theme {
+  --radius-card: var(--radius-caldera-card);
+  --radius-input: var(--radius-caldera-input);
+  --radius-button: var(--radius-caldera-pill);
+
+  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    --site-header-h: 4.75rem;
+    /* header pt-3 + pill py-3 + h-10 content = 76px */
+    /* Composite var: viewport minus header minus any container top inset.
+       Containers override --page-inset-top; pages without a container use 0px. */
+    --page-inset-top: 0px;
+    --first-section-h: calc(100dvh - var(--site-header-h) - var(--page-inset-top));
+    /* Single source of truth for vertical rhythm: header→section→…→footer.
+           Drives breakout grid row-gap + layout top/bottom padding.
+
+           clamp(MIN, PREFERRED, MAX) resolves to max(MIN, min(PREFERRED, MAX)):
+             MIN  3rem = 48px   floor — never tighter than this on small phones
+             PREF 12vw          12% of viewport width — fluid, scales with screen
+             MAX  7rem = 112px  ceiling — never looser than this on wide screens
+
+           Crossover widths (where 12vw equals a bound: width = boundPx / 0.12):
+             <= 400px : 12vw <= 48px  -> pinned to MIN  (48px)
+             400-933px: 12vw fluid     -> e.g. 768px -> 92px, 900px -> 108px
+             >= 933px : 12vw >= 112px -> pinned to MAX (112px); most desktops land here */
+    --section-gap: clamp(3rem, 12vw, 7rem);
+  }
+
+  html {
+    background: var(--color-basalt-canvas);
+    color: var(--color-abyssal-ink);
+  }
+
+  :where(h1, h2, h3, [id]) {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Nuxt UI utility overrides (non-layered → beats all @layer utilities)
+ * This project uses a near-full-circle pill shape (800px) for all buttons,
+ * so rounded-button must always win. Nuxt UI injects rounded-md into UButton's
+ * base class list; when both appear, layer source order lets rounded-md win.
+ * Declaring these rules outside any @layer overrides that without !important.
+ */
+.rounded-button {
+  border-radius: var(--radius-button);
+}
+
+.rounded-input {
+  border-radius: var(--radius-input);
+}
 
 /*
  * Project z-index layer policy
@@ -18,3 +85,13 @@
  *
  *  Modal/popover layers come from @nuxt/ui — do not redeclare here.
  */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

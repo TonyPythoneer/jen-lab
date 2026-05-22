@@ -1,191 +1,385 @@
-<template>
-  <!-- Override @nuxt/ui's default container width to 4xl for this page's wider map layout. -->
-  <UPage style="--ui-container: var(--container-4xl)">
-    <!-- Page is a fixed-height column (search / map / list / footer); only the list scrolls. -->
-    <div class="h-dvh flex flex-col overflow-hidden relative">
-      <!-- TOP: search input + filter modal trigger -->
-      <div class="px-6 py-5 space-y-3 shrink-0">
-        <div class="flex items-center gap-2">
-          <UInput
-            v-model="searchedName"
-            class="flex-1"
-            placeholder="榛知雪梨美食地圖搜尋引擎"
-            icon="i-lucide-search"
-            :ui="{ trailing: 'pe-1' }"
-          >
-            <template v-if="searchedName" #trailing>
-              <UButton
-                color="neutral"
-                variant="link"
-                size="sm"
-                icon="i-lucide-circle-x"
-                aria-label="Clear input"
-                @click="searchedName = ''"
-              />
-            </template>
-          </UInput>
-
-          <UChip
-            :text="activeFilterCount"
-            :show="activeFilterCount > 0"
-            color="error"
-            size="3xl"
-            :ui="{ base: 'text-gray-300 font-bold' }"
-          >
-            <UButton
-              icon="i-lucide-sliders-horizontal"
-              label="Filters"
-              color="neutral"
-              variant="outline"
-              :disabled="!isDataReady"
-              :class="activeFilterCount ? 'text-teal-600 font-bold' : ''"
-              @click="filterModalOpen = true"
-            />
-          </UChip>
-        </div>
-
-        <UModal
-          v-model:open="filterModalOpen"
-          :ui="{ content: 'sm:max-w-2xl max-h-[70dvh] overflow-y-auto' }"
-        >
-          <template #header>
-            <div class="flex items-center justify-between w-full">
-              <p class="font-semibold text-gray-300">篩選</p>
-              <div class="flex items-center gap-2">
-                <button
-                  :disabled="!activeFilterCount"
-                  class="text-sm transition-colors"
-                  :class="
-                    activeFilterCount
-                      ? 'text-gray-300 hover:text-red-500 cursor-pointer'
-                      : 'text-gray-500 cursor-not-allowed'
-                  "
-                  @click="clearFilters"
-                >
-                  ↺ 重置
-                </button>
-                <UButton
-                  color="neutral"
-                  variant="ghost"
-                  icon="i-lucide-x"
-                  size="sm"
-                  @click="filterModalOpen = false"
-                />
-              </div>
-            </div>
-          </template>
-          <template #body>
-            <div class="space-y-4 pb-2">
-              <FilterGroup title="地區" :items="areaItems" v-model="selectedArea" />
-              <FilterGroup title="類別" :items="categoryItems" v-model="selectedCategoryId" />
-            </div>
-          </template>
-        </UModal>
-      </div>
-
-      <!-- MIDDLE: Leaflet map. ClientOnly avoids SSR (Leaflet needs window). -->
-      <div class="relative h-72 shrink-0">
-        <ClientOnly>
-          <MapView
-            :restaurants="filteredRestaurantList"
-            :selected-restaurant="selectedRestaurant"
-            v-model:ready="isMapReady"
-            @select="(r) => (selectedRestaurantId = r.id)"
-            @unpin="selectedRestaurantId = null"
-          />
-        </ClientOnly>
-
-        <!-- Loading overlay. 1s leave-delay lets tiles paint in before the spinner fades. -->
-        <Transition
-          leave-active-class="transition-opacity duration-300 delay-[1000ms] ease-in-out"
-          leave-to-class="opacity-0"
-        >
-          <div
-            v-if="!isMapReady && !isDataReady"
-            class="absolute inset-0 flex items-center justify-center bg-gray-50"
-          >
-            <div
-              class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-500 animate-spin"
-            />
-          </div>
-        </Transition>
-      </div>
-
-      <!-- BOTTOM: scrollable restaurant list. The selected card is pinned at the top via the ref + scrollTo watcher. -->
-      <div ref="listEl" class="flex-1 overflow-y-auto">
-        <div class="px-6 pt-4 pb-6 flex flex-col gap-3">
-          <!-- Pinned card: render the selected restaurant at the top, ring-highlighted. -->
-          <RestaurantCard
-            v-if="selectedRestaurant"
-            :restaurant="selectedRestaurant"
-            class="relative ring-2 ring-teal-500"
-          />
-
-          <!-- The remaining list, with the pinned card filtered out to avoid duplication. -->
-          <template v-for="restaurant in filteredRestaurantList" :key="restaurant.id">
-            <RestaurantCard
-              v-if="restaurant.id !== selectedRestaurantId"
-              :restaurant="restaurant"
-              @select="selectedRestaurantId = restaurant.id"
-            />
-          </template>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="shrink-0 px-6 py-3 border-t border-gray-100 flex flex-col items-center gap-1.5">
-        <div class="flex items-center gap-3">
-          <ContactLinks link-class="text-gray-400" icon-class="w-4 h-4" />
-        </div>
-        <p class="text-[10px] text-gray-400">
-          © {{ new Date().getFullYear() }}
-          <a class="hover:text-blue-800" href="https://github.com/TonyPythoneer">tonypythoneer</a> ·
-          Data powered by Jen Knows
-        </p>
-      </div>
-
-      <!-- Dark mode toggle. z-1100 sits above any in-map z-1000 overlays. -->
-      <UColorModeButton class="fixed bottom-4 right-4 z-1100" />
-    </div>
-  </UPage>
-</template>
-
 <script setup lang="ts">
+import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+
 useSeoMeta({
-  title: "榛知雪梨美食地圖",
-  description: "榛知雪梨精選的雪梨美食地圖，可依地區與類別篩選的互動地圖與清單。",
-  ogTitle: "榛知雪梨美食地圖",
-  ogDescription: "榛知雪梨精選的雪梨美食地圖，可依地區與類別篩選的互動地圖與清單。",
+  title: "Best Restaurants in Sydney — Jen Lab",
+  description:
+    "120+ restaurants logged across Sydney. Personal visits only — no scraped reviews, no SEO bait.",
+  ogTitle: "Best Restaurants in Sydney — Jen Lab",
+  ogDescription: "120+ restaurants logged across Sydney. Personal visits only.",
 });
 
-const isMapReady = ref(false);
-const listEl = ref<HTMLDivElement | null>(null);
-const filterModalOpen = ref(false);
-const activeFilterCount = computed(
-  () => [selectedArea.value, selectedCategoryId.value].filter(Boolean).length,
-);
-
 const {
-  categories,
-  restaurantAreaSet,
-  filteredRestaurantList,
-  selectedRestaurant,
   selectedArea,
   selectedCategoryId,
   searchedName,
   selectedRestaurantId,
-  isReady: isDataReady,
+  isReady,
+  categories,
+  restaurantAreaSet,
+  filteredRestaurantList,
+  selectedRestaurant,
   clearFilters,
 } = useRestaurants();
 
-const areaItems = computed(() =>
-  [...restaurantAreaSet.value].map((area) => ({ value: area, label: area })),
-);
-const categoryItems = computed(() =>
-  categories.value.map((c) => ({ value: c.id, label: c.name, dotColor: c.color })),
+const showMobileMap = ref(false);
+const mapReady = ref(false);
+
+const hasActiveFilter = computed(
+  () => !!(selectedArea.value || selectedCategoryId.value || searchedName.value),
 );
 
-watch(selectedRestaurantId, (id) => {
-  if (id) nextTick(() => listEl.value?.scrollTo({ top: 0, behavior: "smooth" }));
+const areaList = computed(() => [...restaurantAreaSet.value].sort((a, b) => a.localeCompare(b)));
+
+const categoryOptions = computed(() =>
+  categories.value.map((c) => ({ label: c.name, value: c.id })),
+);
+
+function selectRestaurant(r: EnrichedRestaurant) {
+  selectedRestaurantId.value = selectedRestaurantId.value === r.id ? null : r.id;
+}
+
+function unselectRestaurant() {
+  selectedRestaurantId.value = null;
+}
+
+// Selected restaurant pinned to top of list
+const sortedList = computed<EnrichedRestaurant[]>(() => {
+  const list = filteredRestaurantList.value;
+  const sel = selectedRestaurant.value;
+  if (!sel) return list;
+  return [sel, ...list.filter((r) => r.id !== sel.id)];
+});
+
+const resultLabel = computed(() => {
+  const n = filteredRestaurantList.value.length;
+  return n === 1 ? "1 間餐廳" : `${n} 間餐廳`;
 });
 </script>
+
+<template>
+  <div>
+    <!-- Hero -->
+    <section class="min-h-[var(--first-section-h)] flex flex-col justify-center">
+      <div class="container mx-auto max-w-[1200px] px-4 pt-6 pb-0">
+        <div
+          class="bg-ash-white rounded-card overflow-hidden relative min-h-[220px] flex items-stretch"
+        >
+          <!-- Left: copy -->
+          <div class="flex-1 p-8 md:p-12 flex flex-col justify-between gap-6 relative z-10">
+            <div class="space-y-3">
+              <p
+                class="text-[11px] font-semibold uppercase tracking-[0.18em] text-abyssal-ink/40 select-none"
+              >
+                Sydney · Personal Log
+              </p>
+              <h1
+                class="font-display text-5xl md:text-7xl text-abyssal-ink leading-[0.94] tracking-[0.02em] text-wrap-balance"
+              >
+                Sydney's Best Plates.
+              </h1>
+              <p class="text-abyssal-ink/60 text-base max-w-sm">
+                120+ restaurants. 11 suburbs. Every entry is a personal visit — no scraped reviews,
+                no SEO bait.
+              </p>
+            </div>
+
+            <!-- Stats chips -->
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
+              >
+                <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
+                120+ logged
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 bg-abyssal-ink/6 rounded-full px-3 py-1.5 text-xs font-medium text-abyssal-ink/70"
+              >
+                <UIcon name="i-lucide-map" class="w-3 h-3" />
+                11 suburbs
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 bg-digital-orange/10 rounded-full px-3 py-1.5 text-xs font-medium text-digital-orange"
+              >
+                <UIcon name="i-lucide-star" class="w-3 h-3" />
+                Personal picks only
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: decorative bridge SVG -->
+          <div
+            class="hidden md:flex items-end justify-end w-72 shrink-0 pr-2 opacity-30 pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            <HomeHarbourBridgeSvg class="w-full" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Split layout: list (left) + map (right) -->
+    <div class="lg:flex lg:items-start">
+      <!-- Left: filter + list -->
+      <div class="lg:w-1/2 xl:w-[55%]">
+        <!-- Sticky filter bar -->
+        <div
+          class="sticky top-16 z-30 bg-basalt-canvas/90 backdrop-blur-sm border-b border-abyssal-ink/8 py-3 px-4"
+        >
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Search -->
+            <div class="relative flex-1 min-w-[160px] max-w-[240px]">
+              <UIcon
+                name="i-lucide-search"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-abyssal-ink/30 pointer-events-none"
+              />
+              <input
+                v-model="searchedName"
+                type="search"
+                placeholder="搜尋餐廳…"
+                class="w-full h-9 pl-8 pr-3 text-sm bg-ash-white rounded-full border border-abyssal-ink/12 text-abyssal-ink placeholder:text-abyssal-ink/30 focus:outline-none focus:border-cyber-violet/50 focus:ring-2 focus:ring-cyber-violet/20 transition-[border-color,box-shadow] duration-150"
+              />
+            </div>
+
+            <!-- Area pills (scrollable row) -->
+            <div class="relative flex-1 min-w-0">
+              <div
+                class="area-pill-fade pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10"
+              />
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pr-6">
+                <button
+                  class="shrink-0 h-9 px-3 rounded-full text-xs font-medium transition-[background-color,color,box-shadow] duration-150 active:scale-[0.96] cursor-pointer"
+                  :class="
+                    selectedArea === null
+                      ? 'bg-cyber-violet text-pure-white shadow-sm'
+                      : 'bg-ash-white text-abyssal-ink/60 hover:bg-abyssal-ink/6'
+                  "
+                  @click="selectedArea = null"
+                >
+                  全區
+                </button>
+                <button
+                  v-for="area in areaList"
+                  :key="area"
+                  class="shrink-0 h-9 px-3 rounded-full text-xs font-medium transition-[background-color,color,box-shadow] duration-150 active:scale-[0.96] cursor-pointer"
+                  :class="
+                    selectedArea === area
+                      ? 'bg-cyber-violet text-pure-white shadow-sm'
+                      : 'bg-ash-white text-abyssal-ink/60 hover:bg-abyssal-ink/6'
+                  "
+                  @click="selectedArea = area"
+                >
+                  {{ area }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Category select -->
+            <select
+              v-model="selectedCategoryId"
+              class="category-select h-9 pl-3 pr-7 rounded-full text-xs font-medium bg-ash-white border border-abyssal-ink/12 text-abyssal-ink/70 focus:outline-none focus:border-cyber-violet/50 focus:ring-2 focus:ring-cyber-violet/20 transition-[border-color,box-shadow] duration-150 cursor-pointer appearance-none"
+            >
+              <option :value="null">所有料理</option>
+              <option v-for="opt in categoryOptions" :key="opt.value" :value="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
+
+            <!-- Clear -->
+            <Transition name="fade-clear">
+              <button
+                v-if="hasActiveFilter"
+                class="h-9 px-3 rounded-full text-xs font-medium text-digital-orange bg-digital-orange/8 hover:bg-digital-orange/15 transition-[background-color] duration-150 active:scale-[0.96] cursor-pointer shrink-0"
+                @click="clearFilters"
+              >
+                清除
+              </button>
+            </Transition>
+          </div>
+        </div>
+
+        <!-- Result count + list -->
+        <div class="px-4 pt-5 pb-10 space-y-3">
+          <div class="flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.12em] text-abyssal-ink/40 tabular-nums"
+            >
+              <template v-if="isReady">{{ resultLabel }}</template>
+              <template v-else>載入中…</template>
+            </p>
+            <p v-if="selectedRestaurant" class="text-xs text-abyssal-ink/40">已選取 · 地圖已定位</p>
+          </div>
+
+          <!-- Loading skeleton -->
+          <template v-if="!isReady">
+            <div
+              v-for="i in 6"
+              :key="i"
+              class="bg-ash-white rounded-[20px] h-28 animate-pulse"
+              :style="{ animationDelay: `${i * 80}ms` }"
+            />
+          </template>
+
+          <!-- Restaurant cards -->
+          <TransitionGroup v-else tag="div" name="list" class="space-y-3">
+            <RestaurantCard
+              v-for="r in sortedList"
+              :key="r.id"
+              :restaurant="r"
+              :selected="r.id === selectedRestaurantId"
+              @select="selectRestaurant(r)"
+            />
+          </TransitionGroup>
+
+          <!-- Empty state -->
+          <div
+            v-if="isReady && sortedList.length === 0"
+            class="bg-ash-white rounded-[20px] p-10 text-center space-y-2"
+          >
+            <p class="font-display text-3xl text-abyssal-ink/20">沒有結果</p>
+            <p class="text-sm text-abyssal-ink/40">試試其他關鍵字或清除篩選條件</p>
+            <button
+              class="mt-2 text-xs font-medium text-cyber-violet hover:underline cursor-pointer"
+              @click="clearFilters"
+            >
+              清除篩選
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: sticky map -->
+      <div
+        class="hidden lg:block lg:w-1/2 xl:w-[45%] sticky top-16 h-[calc(100dvh-4rem)] overflow-hidden"
+      >
+        <ClientOnly>
+          <MapView
+            v-model:ready="mapReady"
+            :restaurants="filteredRestaurantList"
+            :selected-restaurant="selectedRestaurant"
+            @select="selectRestaurant"
+            @unpin="unselectRestaurant"
+          />
+          <template #fallback>
+            <div class="w-full h-full bg-ash-white flex items-center justify-center">
+              <p class="text-abyssal-ink/30 text-sm">地圖載入中…</p>
+            </div>
+          </template>
+        </ClientOnly>
+      </div>
+    </div>
+
+    <!-- Mobile: floating map/list toggle -->
+    <Transition name="fab">
+      <button
+        v-if="isReady"
+        class="fixed bottom-6 right-6 z-50 lg:hidden flex items-center gap-2 h-12 px-5 bg-abyssal-ink text-pure-white rounded-full shadow-lg text-sm font-medium active:scale-[0.96] transition-[transform,box-shadow] duration-150 cursor-pointer"
+        @click="showMobileMap = !showMobileMap"
+      >
+        <UIcon :name="showMobileMap ? 'i-lucide-list' : 'i-lucide-map'" class="w-4 h-4 shrink-0" />
+        {{ showMobileMap ? "列表" : "地圖" }}
+      </button>
+    </Transition>
+
+    <!-- Mobile map overlay -->
+    <Transition name="slide-up">
+      <div
+        v-if="showMobileMap"
+        class="fixed inset-0 z-40 lg:hidden bg-basalt-canvas"
+        style="top: 4rem"
+      >
+        <ClientOnly>
+          <MapView
+            v-model:ready="mapReady"
+            :restaurants="filteredRestaurantList"
+            :selected-restaurant="selectedRestaurant"
+            @select="selectRestaurant"
+            @unpin="unselectRestaurant"
+          />
+        </ClientOnly>
+      </div>
+    </Transition>
+  </div>
+</template>
+
+<style scoped>
+/* Area pill row: right-side fade hint */
+.area-pill-fade {
+  background: linear-gradient(to right, transparent, var(--color-basalt-canvas));
+}
+
+/* Category select custom chevron */
+.category-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23070607' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* Scrollable pill row: hide scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Clear button fade */
+.fade-clear-enter-active,
+.fade-clear-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.fade-clear-enter-from,
+.fade-clear-leave-to {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+/* List card stagger */
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+.list-leave-active {
+  position: absolute;
+  width: 100%;
+}
+
+/* FAB enter/exit */
+.fab-enter-active,
+.fab-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.fab-enter-from,
+.fab-leave-to {
+  opacity: 0;
+  transform: translateY(12px) scale(0.9);
+}
+
+/* Mobile map slide up */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+    opacity 0.3s ease;
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+</style>
