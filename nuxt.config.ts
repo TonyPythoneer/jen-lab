@@ -5,8 +5,6 @@ import linkAttrs from "markdown-it-link-attributes";
 import { analyzer } from "vite-bundle-analyzer";
 import { WP_BASE } from "./shared/wp";
 
-const isD1 = process.env.NUXT_CONTENT_DB === "d1";
-
 // Build-time markdown renderer for product description fields.
 // Runs only inside content:file:afterParse on the server during the
 // content build, so this lib never ships to the client.
@@ -69,7 +67,7 @@ const moduleSettings: NuxtConfig = {
     experimental: {
       sqliteConnector: "native",
     },
-    database: isD1 ? { type: "d1", bindingName: "DB" } : { type: "sqlite", filename: ":memory:" },
+    database: { type: "sqlite", filename: ":memory:" },
   },
 };
 
@@ -81,6 +79,12 @@ const cloudflareSettings: NuxtConfig = {
       deployConfig: true,
       nodeCompat: true,
     },
+  },
+  routeRules: {
+    "/": { prerender: true },
+    "/jen-liu": { prerender: true },
+    "/jen-knows": { prerender: true },
+    "/blogs": { prerender: true },
   },
 };
 
