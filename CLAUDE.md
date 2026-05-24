@@ -127,8 +127,6 @@ All in `app/components/home/` — Sydney / Australia motif, two-tone (`cyber-vio
 All UI verification must use a **headless browser running in the background** — never rely on computer-use screenshots or manual browser navigation.
 
 ```bash
-# Preferred: Playwright (install once if missing)
-pnpm dlx playwright install --with-deps chromium
 node -e "
 const { chromium } = require('playwright');
 (async () => {
@@ -140,24 +138,10 @@ const { chromium } = require('playwright');
   await b.close();
 })();
 "
-# Then read /tmp/verify.png with the Read tool.
-
-# Alternative: Puppeteer
-node -e "
-const puppeteer = require('puppeteer');
-(async () => {
-  const b = await puppeteer.launch({ args: ['--no-sandbox'] });
-  const p = await b.newPage();
-  await p.goto('http://localhost:3000/YOUR_ROUTE', { waitUntil: 'networkidle0' });
-  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
-  await b.close();
-})();
-"
 ```
 
 - Always run the screenshot command with `run_in_background: false` so the image is ready before reading.
 - Read `/tmp/verify.png` with the Read tool to inspect the result visually.
-- If neither Playwright nor Puppeteer is installed, install on the fly with `pnpm dlx` — never skip headless verification.
 
 ## Library Docs
 
