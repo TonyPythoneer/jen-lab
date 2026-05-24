@@ -41,5 +41,11 @@ logs
 # ci/cd
 analyze.client.*.json
 .claude/screenshots/
+
+# agent context / skills / plugins
 .antigravitycli
 .superpowers
+entities.json
+
+# MemPalace per-project files (issue #185)
+mempalace.yaml
