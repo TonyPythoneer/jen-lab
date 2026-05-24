@@ -159,6 +159,15 @@ const puppeteer = require('puppeteer');
 - Read `/tmp/verify.png` with the Read tool to inspect the result visually.
 - If neither Playwright nor Puppeteer is installed, install on the fly with `pnpm dlx` — never skip headless verification.
 
+## Library Docs
+
+Never access the internet to read documentation. Read the library source directly instead:
+
+- Node.js project: `./node_modules/<package>`
+- Python project: `./venv`
+
+If something is unclear, grep or read the relevant module folder.
+
 ## Data fetching
 
 Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI render until the request resolves — slow networks stall the page shell. Use `useLazyAsyncData` (non-blocking, paints shell first, fills data when ready) or fetch imperatively inside event handlers / `onMounted`.
