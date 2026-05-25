@@ -4,31 +4,22 @@ Guidance for Claude Code (claude.ai/code) in this repo.
 
 ## Reminders
 
-See `docs/claude/reminders.md` for session-level reminders (language, behaviour constraints).
+- **Language** — always respond in the language configured in `~/.claude/settings.json` (`language` field). Never override it.
 
 ## Commands
 
-This project uses [Vite+](https://viteplus.dev/guide/) (`vp`) as unified toolchain. Run `vp help` for full command list.
-
 ```bash
-# Development
-pnpm dev          # Start Nuxt dev server at http://localhost:3500
+# Nuxt / pnpm
+pnpm dev          # Dev server at :3500 — user runs it; NEVER start/kill, assume already running
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages
-pnpm analyze      # Bundle analyzer (no serve)
-
-# Validation (run before committing)
-vp install        # Install dependencies
-vp check          # Lint + format + typecheck in one pass
-vp test           # Run tests (Vitest)
-
-# Other
-pnpm typecheck    # Nuxt typecheck only (also covered by vp check)
 pnpm sync:wp      # Sync WordPress content
-```
 
-> `vp dev` / `vp build` do NOT replace `pnpm dev` / `pnpm build` — Nuxt has its own pipeline.
+# Validation (run after changes)
+pnpm check        # Lint + format + typecheck
+pnpm test         # Run tests (Vitest)
+```
 
 ## Architecture
 
@@ -42,30 +33,9 @@ Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four 
 - `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
 - Light mode only — dark mode disabled in `app.config.ts`.
 
-## Dev Server
-
-**Never start, restart, or kill the dev server.** The user manages `pnpm dev` themselves. Assume it is already running on `http://localhost:3500` when UI verification is needed.
-
 ## UI Testing
 
-All UI verification must use a **headless browser running in the background** — never rely on computer-use screenshots or manual browser navigation.
-
-```bash
-node -e "
-const { chromium } = require('playwright');
-(async () => {
-  const b = await chromium.launch();
-  const p = await b.newPage();
-  await p.goto('http://localhost:3000/YOUR_ROUTE');
-  await p.waitForLoadState('networkidle');
-  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
-  await b.close();
-})();
-"
-```
-
-- Always run the screenshot command with `run_in_background: false` so the image is ready before reading.
-- Read `/tmp/verify.png` with the Read tool to inspect the result visually.
+Run `pnpm ai:screenshot <route>` to capture the page to `/tmp/verify.png` (e.g. `pnpm ai:screenshot /blogs`), then Read that file to verify visually. Always run it with `run_in_background: false` so the image is ready before reading. Never rely on computer-use screenshots or manual browser navigation.
 
 ## Library Docs
 

@@ -15,6 +15,7 @@
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types",
     "sync:wp": "node --experimental-strip-types scripts/sync-wp.ts",
+    "ai:screenshot": "node --experimental-strip-types scripts/screenshot.ts",
     "prepare": "vp config"
   },
   "dependencies": {
