@@ -2,7 +2,6 @@ import type { NuxtConfig } from "nuxt/schema";
 import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
 import linkAttrs from "markdown-it-link-attributes";
-import { analyzer } from "vite-bundle-analyzer";
 import { WP_BASE } from "./shared/wp";
 
 // Build-time markdown renderer for product description fields.
@@ -104,7 +103,6 @@ const devSettings: NuxtConfig = {
         "leaflet", // CJS
       ],
     },
-    plugins: [analyzer({ analyzerMode: "json", fileName: "stats" }) as any],
     // Build-time constants (string-replaced into bundle, zero runtime overhead)
     define: {
       __WP_BASE__: JSON.stringify(WP_BASE),
