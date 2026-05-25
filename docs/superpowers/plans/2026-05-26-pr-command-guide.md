@@ -33,7 +33,7 @@ Create `.github/workflows/pr-command-guide.yml`:
 ```yaml
 # Auto-posts a comment listing the available slash commands when a PR is opened.
 # The commands themselves live in .github/workflows/cmd-*.yml and are owner-only.
-# When you add a new cmd-*.yml command, add a matching bullet to COMMENT_BODY below.
+# When you add a new cmd-*.yml command, add a matching bullet to the body list below.
 
 name: PR Command Guide
 
