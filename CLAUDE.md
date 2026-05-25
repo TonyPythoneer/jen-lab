@@ -2,6 +2,10 @@
 
 Guidance for Claude Code (claude.ai/code) in this repo.
 
+## Reminders
+
+See `docs/claude/reminders.md` for session-level reminders (language, behaviour constraints).
+
 ## Commands
 
 This project uses [Vite+](https://viteplus.dev/guide/) (`vp`) as unified toolchain. Run `vp help` for full command list.
