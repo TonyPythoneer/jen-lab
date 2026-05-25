@@ -1,0 +1,118 @@
+# Owner-only PR command: comment "/delete-preview" to delete all Cloudflare
+# Pages preview deployments for the PR's branch, then report the count on the PR.
+#
+# REQUIRED REPO SECRETS (Settings -> Secrets and variables -> Actions):
+#   CLOUDFLARE_API_TOKEN   token with the "Cloudflare Pages: Edit" permission
+#   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
+# Both are read automatically by wrangler from the environment.
+
+name: Command - Delete Preview
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  delete-preview:
+    if: >
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == github.repository_owner &&
+      startsWith(github.event.comment.body, '/delete-preview')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acknowledge with reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: "eyes",
+            });
+
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Resolve PR branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "BRANCH=$(gh pr view ${{ github.event.issue.number }} --json headRefName -q .headRefName)" >> "$GITHUB_ENV"
+
+      - id: delete
+        run: |
+          pnpm exec wrangler pages deployment list --environment preview --json > deployments.json
+          node --experimental-strip-types scripts/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt || true
+          deleted=0; failed=0
+          while read -r id; do
+            if [ -n "$id" ] && pnpm exec wrangler pages deployment delete "$id" --force; then
+              deleted=$((deleted+1))
+            else
+              failed=$((failed+1))
+            fi
+          done < ids.txt
+          echo "deleted=$deleted" >> "$GITHUB_ENV"
+          echo "failed=$failed" >> "$GITHUB_ENV"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Upsert PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = "<!-- cmd-delete-preview -->";
+            const success = "${{ steps.delete.outcome }}" === "success";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            const branch = process.env.BRANCH || "(unknown)";
+            const deleted = process.env.deleted || "0";
+            const failed = process.env.failed || "0";
+
+            const body = success
+              ? `${marker}\n🗑️ Deleted ${deleted} preview deployment(s) for ` +
+                `branch \`${branch}\`.` +
+                (failed !== "0" ? ` ${failed} could not be deleted.` : "")
+              : `${marker}\n❌ Delete-preview failed. ` +
+                `See the [workflow run](${runUrl}).`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
