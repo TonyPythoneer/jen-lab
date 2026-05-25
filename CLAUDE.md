@@ -104,6 +104,14 @@ If none of the above hold, **inline it**. A linear `<script setup>` of 100–200
 
 When extraction is justified, follow VueUse's split: a **pure** composable (only `ref`/`reactive`/`computed`/`watch`/plain JS, accepts refs/values as parameters via `MaybeRefOrGetter`) is preferred over a **Nuxt-bound** one (calls setup-only APIs like `useRoute`, `useAsyncData`, `useState`). When both concerns exist, keep the Nuxt-bound calls in the consuming page and feed their refs into the pure composable as arguments. This keeps the pure layer testable with plain Vitest, no `@nuxt/test-utils` setup.
 
+## Working Preferences
+
+- **UI verification** — always verify visual changes with a headless browser screenshot before declaring done; typecheck/grep alone is not sufficient.
+- **Parallel components** — when asked to create a NEW or parallel component, create it standalone; never read or modify the existing component unless explicitly told to.
+- **No fake fixes** — never mask a bug (e.g. hardcoding a colour to hide a transparency issue); diagnose and fix the actual root cause.
+- **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
+- **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
+
 ## Region comments for long `<script setup>`
 
 When a page's `<script setup>` grows past ~80 lines and still belongs to a single concern, group related state/logic with `// #region <Name>` ... `// #endregion` blocks instead of extracting composables prematurely. The IDE folds them, readers can scan section headers as a table of contents, and the data flow stays linear in one file. Typical regions for a CRUD-style page: `Filter state`, `Taxonomies`, `Pagination + posts`, `URL sync`, `UI state`, `Helpers`. See `app/pages/blogs/index.vue` for reference.
