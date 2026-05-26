@@ -138,7 +138,10 @@ async function writeItemsToDir<T extends { wpId: number; name: string }>(dir: UR
 async function main() {
   console.log(`[sync-wp] source: ${WP_BASE}`);
 
-  const configs = [TAG_CONFIG, CATEGORY_CONFIG];
+  const configs: Array<TaxonomyConfig<{ wpId: number; name: string }>> = [
+    TAG_CONFIG,
+    CATEGORY_CONFIG,
+  ];
   const results = await Promise.all(configs.map((c) => syncTaxonomy(c)));
 
   let hadFailure = false;
