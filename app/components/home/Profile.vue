@@ -10,7 +10,7 @@
       class="sprite-outer-right absolute top-1/2 right-0 -z-10 pointer-events-none max-sm:hidden"
     />
     <div
-      class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-[#f7f7f7]"
+      class="flex flex-col gap-3 rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden pb-4 bg-ash-white"
     >
       <!-- Banner -->
       <div class="relative h-28 bg-[rgb(107,187,224)] overflow-hidden">
@@ -31,7 +31,7 @@
             loading="lazy"
             class="w-28 h-28 rounded-full object-cover border-3 border-white shadow"
           />
-          <h1 class="text-xl font-bold text-gray-800">{{ profile.name }}</h1>
+          <h1 class="text-xl font-bold text-abyssal-ink">{{ profile.name }}</h1>
         </div>
         <div class="flex flex-col gap-2 items-end">
           <UButton
@@ -39,7 +39,7 @@
             color="neutral"
             variant="outline"
             size="sm"
-            class="border-gray-300 text-gray-700 hover:bg-gray-50"
+            class="border-abyssal-ink/20 text-abyssal-ink/70 hover:bg-basalt-canvas"
             as="a"
             href="https://jen-nextsteps.kit.com/60463af80d"
             target="_blank"
@@ -52,7 +52,7 @@
             variant="outline"
             icon="fluent-emoji-high-contrast:bubble-tea"
             size="sm"
-            class="border-gray-300 text-gray-700 hover:bg-gray-50"
+            class="border-abyssal-ink/20 text-abyssal-ink/70 hover:bg-basalt-canvas"
             as="a"
             href="https://portaly.cc/jenknowsau/support"
             target="_blank"
@@ -70,7 +70,7 @@
         size="sm"
         class="w-full tabs-profile px-6"
       />
-      <p class="text-sm text-gray-600 leading-relaxed text-left whitespace-pre-line px-6">
+      <p class="text-sm text-abyssal-ink/60 leading-relaxed text-left whitespace-pre-line px-6">
         {{ activeBio }}
       </p>
       <!-- Contacts -->
