@@ -4,12 +4,16 @@
 
 - Professionalism
   - Must use **plain English** in code & comments regardless of how complex the logic is, as if writing for a 15–18-year-old.
-  - When adding or modifying code & comments, refine any existing ones in the same scope to **plain English** if they aren't already.
-- Must respond in the language based on `language` field from `~/.claude/settings.json`.
+    - **WHY** - so any human can step in without explanation
+  - Must refine any code & comments I write to **plain English**.
+  - Must stop inflating code and comments as you must validate them and ensure they are concise and succinct
+  - Must review your output and simplify it as much as possible through self-reflection and rumination.
 - UI testing
   - Must predict **style** & **animation** by calculating. No computer-use or headless browser for help.
   - Must use headless browser to verify **UI interactions** if debugging is inefficient or involves too much back and forth.
   - Must verify all visual changes before declaring done in changing styles, animations, or UI interactions.
+- Else
+  - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
 ## Commands
 
@@ -49,8 +53,10 @@ Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four 
     - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
     - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
 
+- RWD: desktop and mobile only — no tablet breakpoints. On elements visible only on mobile (e.g. `md:hidden`), add `<!-- Mobile -->`; no comment means it serves all breakpoints.
+
 - Else
-- - [Region comment] When a `<script setup>` gets long but still does one thing, use `// #region <Name>` ... `// #endregion` to group related logic instead of splitting it into composables too early.
+  - [Region comment] When a `<script setup>` gets long but still does one thing, use `// #region <Name>` ... `// #endregion` to group related logic instead of splitting it into composables too early.
   - Ask approval from the user to read `./node_modules/<package>` for the latest info if you can't figure it out, as you must not access the internet.
 
 ## Code Style
