@@ -35,7 +35,7 @@ const liuStyle = computed(() => ({
 <template>
   <section ref="pinWrapper" class="relative h-[200vh]">
     <div
-      class="sticky top-[var(--site-header-h)] h-[calc(100vh_-_var(--site-header-h))] bg-[skyblue] rounded-card overflow-hidden flex flex-col"
+      class="sticky top-[var(--site-header-h)] h-[calc(100dvh_-_var(--site-header-h))] bg-sydney-sky rounded-card overflow-hidden flex flex-col"
     >
       <!-- Content area: Opera House fills only this flex-1 zone, not the marquee -->
       <div class="relative flex-1 overflow-hidden flex items-center justify-center">
@@ -53,7 +53,7 @@ const liuStyle = computed(() => ({
           </h1>
 
           <p
-            class="text-base md:text-xl font-black text-abyssal-ink/85 max-w-2xl mx-auto leading-relaxed"
+            class="text-base md:text-xl font-semibold text-abyssal-ink/85 max-w-2xl mx-auto leading-relaxed"
           >
             從澳洲職場到雪梨巷弄<br />一個人，兩個身份<br />用中文記錄走過的每一步
           </p>
@@ -63,12 +63,12 @@ const liuStyle = computed(() => ({
             <img
               src="/home/jen-knows.png"
               :style="knowsStyle"
-              class="h-[252px] w-auto will-change-transform"
+              class="h-[180px] md:h-[252px] w-auto will-change-transform"
             />
             <img
               src="/home/jen-liu.png"
               :style="liuStyle"
-              class="h-[252px] w-auto will-change-transform"
+              class="h-[180px] md:h-[252px] w-auto will-change-transform"
             />
           </div>
         </div>
