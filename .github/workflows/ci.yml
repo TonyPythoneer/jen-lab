@@ -2,8 +2,40 @@ name: CI
 
 on:
   pull_request:
+    paths:
+      - "app/**"
+      - "server/**"
+      - "shared/**"
+      - "content/**"
+      - "public/**"
+      - "scripts/**"
+      - "tests/**"
+      - "nuxt.config.ts"
+      - "content.config.ts"
+      - "vite.config.ts"
+      - "wrangler.jsonc"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "tsconfig*.json"
+      - ".github/workflows/**"
   push:
     branches: [main]
+    paths:
+      - "app/**"
+      - "server/**"
+      - "shared/**"
+      - "content/**"
+      - "public/**"
+      - "scripts/**"
+      - "tests/**"
+      - "nuxt.config.ts"
+      - "content.config.ts"
+      - "vite.config.ts"
+      - "wrangler.jsonc"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "tsconfig*.json"
+      - ".github/workflows/**"
 
 jobs:
   check:

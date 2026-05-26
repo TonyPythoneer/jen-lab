@@ -1,176 +1,63 @@
 # CLAUDE.md
 
-Guidance for Claude Code (claude.ai/code) in this repo.
+## Constitution
+
+- Professionalism
+  - Must use **plain English** in code & comments regardless of how complex the logic is, as if writing for a 15–18-year-old.
+    - **WHY** - so any human can step in without explanation
+  - Must refine any code & comments I write to **plain English**.
+  - Must stop inflating code and comments as you must validate them and ensure they are concise and succinct
+  - Must review your output and simplify it as much as possible through self-reflection and rumination.
+- UI testing
+  - Must predict **style** & **animation** by calculating. No computer-use or headless browser for help.
+  - Must use headless browser to verify **UI interactions** if debugging is inefficient or involves too much back and forth.
+  - Must verify all visual changes before declaring done in changing styles, animations, or UI interactions.
+- Else
+  - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
 ## Commands
 
-This project uses [Vite+](https://viteplus.dev/guide/) (`vp`) as unified toolchain. Run `vp help` for full command list.
-
 ```bash
-# Development
-pnpm dev          # Start Nuxt dev server at http://localhost:3000
+# Vue/Nuxt development
+pnpm dev          # Dev server at :3500 — user runs it; NEVER start/kill, assume it's already running
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages
-pnpm analyze      # Bundle analyzer (no serve)
 
-# Validation (run before committing)
-vp install        # Install dependencies
-vp check          # Lint + format + typecheck in one pass
-vp test           # Run tests (Vitest)
+# development scripts
+pnpm sync:wp      # Sync tags and categories from WordPress
+pnpm ai:screenshot <route>  # Capture the page to /tmp/verify.png — always run_in_background: false, then Read the file
 
-# Other
-pnpm typecheck    # Nuxt typecheck only (also covered by vp check)
-pnpm sync:wp      # Sync WordPress content
+# Validation (run after changes)
+pnpm check        # Lint + format + typecheck
+pnpm test         # Run tests (Vitest)
 ```
-
-> `vp dev` / `vp build` do NOT replace `pnpm dev` / `pnpm build` — Nuxt has its own pipeline.
 
 ## Architecture
 
-**jen-lab** = Nuxt 4 personal site for "榛知雪梨". Four top-level routes:
+Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/my-best-restaurants-search-in-sydney` (Leaflet map).
 
-- `/` — Caldera-styled landing page.
-- `/about` — single-page bio.
-- `/blogs` + `/blogs/[...slug]` — WordPress-backed blog list + detail.
-- `/my-best-restaurants-search-in-sydney` — Sydney restaurant map.
+**Non-obvious constraints:**
 
-Deploys to **Cloudflare Pages** via Wrangler, `cloudflare-pages` Nitro preset. `@nuxt/content` uses D1 in production (`NUXT_CONTENT_DB=d1`), in-memory SQLite in dev (powers `wpCategories` / `wpTags` collections synced via `pnpm sync:wp`).
+- `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
+- `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
+- `MapView.vue` — Leaflet must stay inside `<ClientOnly>` (SSR-unsafe).
+- `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
+- Light mode only — dark mode disabled in `app.config.ts`.
 
-### Landing page (`/`)
+## AI Development
 
-`app/pages/index.vue` — Caldera-vocabulary landing assembled from Nuxt UI v4 primitives + custom decorative SVGs:
+- Nuxt
+  - Must use `useLazyAsyncData` instead of `useAsyncData` to avoid blocking UI rendering.
+  - Composables
+    - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
+    - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
 
-- **Hero** — `UPageHero` variant with Opera House SVG watermark + `UMarquee` bottom strip.
-- **Stats** — `UPageGrid` of `UPageCard` (4-col → 2 → 1).
-- **Features** — asymmetric `md:grid-cols-12` two-row layout (`HomeHarbourBridgeSvg` / `HomeOperaHouseSvg`).
-- **Use-case tabs** — `UTabs` with `HomeGlyphSvg` illustration panel per tab.
-- **Tech stack** — `UPageGrid` of icon + caption cards.
-- **Testimonials** — 3-col `UPageGrid` with `HomeGlyphSvg` avatars.
-- **Blog carousel** — `SnapCarousel` (custom scroll component) pulling live WP posts via `fetchPosts`.
-- **Newsletter** — bare `<form>` inside a dark `UPageSection`-style band.
+- RWD: desktop and mobile only — no tablet breakpoints. On elements visible only on mobile (e.g. `md:hidden`), add `<!-- Mobile -->`; no comment means it serves all breakpoints.
 
-All wrapped in a single `container mx-auto max-w-[1200px]` div (no `SitePageContainer` — homepage has full-bleed sub-sections that need to break out).
-
-### About (`/about`)
-
-`app/pages/about.vue` — Caldera-styled bio page using `<SitePageContainer>`:
-
-- `UPageHero` (horizontal, ash-white) + `HomeOperaHouseSvg`.
-- `UPageGrid` 3 facet cards (Origin / Workshop / Outside) with `HomeGlyphSvg`.
-- Dark "Now" band.
-- `UPageHero` CTA strip (cyber-violet).
-
-### Blog (`/blogs`, `/blogs/[...slug]`)
-
-Restored from `app/pages_backup/blogs/` and restyled. Data comes from the **WordPress REST API** (`~/utils/wpApi`) — not `@nuxt/content`. Both pages use `<SitePageContainer>`.
-
-- `app/pages/blogs/index.vue` — `UPageHeader` + `BlogTopBar` (search/filter) + `BlogPostCard` grid + `UPagination`. Filter state managed by `useBlogList` composable; taxonomy data from `wpCategories` / `wpTags` content collections.
-- `app/pages/blogs/[...slug].vue` — `UPageHeader` with date pill + optional featured image + `<article class="prose wp-content">` rendered via `v-html`.
-
-### Restaurants
-
-- `app/assets/data/pages/restaurants.ts` — static `categories[]` + `restaurants[]` dataset.
-- `app/composables/useRestaurants.ts` — central state. **Intentional** `useLazyAsyncData` + `await import('...restaurants')`: Vite emits the dataset as its own chunk, kept out of the route chunk; the page shell paints before the dataset arrives. Do NOT replace with a static top-level import.
-- `app/pages/my-best-restaurants-search-in-sydney.vue` — search bar + filter modal (area/category) + Leaflet map + scrollable list. Selected restaurant pinned to list top with teal ring.
-- `app/components/MapView.vue` — Leaflet map in `<ClientOnly>` (SSR-safe). Emits `select` on marker click.
-- `app/components/RestaurantCard.vue` — card UI.
-- `app/components/FilterItem.vue` — reusable filter pill.
-
-### Design tokens
-
-Caldera-derived tokens live in `app/assets/css/theme.css` (extracted from caldera.xyz; three `tracking-*` values patched from `px → em`). `app/assets/css/main.css` layers semantic aliases on top:
-
-```css
---radius-card   → --radius-caldera-card
---radius-input  → --radius-caldera-input
---radius-button → --radius-caldera-pill
---font-display  → "Bebas Neue" (self-hosted via @nuxt/fonts)
---font-sans     → "Inter"      (self-hosted via @nuxt/fonts)
-```
-
-Nuxt UI color slots mapped in `app/app.config.ts`: `primary = digital-orange`, `secondary = cyber-violet`, `neutral = abyssal-ink`. Light mode only — dark mode disabled.
-
-### Shared layout components
-
-- `app/layouts/default.vue` — sticky animated nav (collapses to pill on scroll) + `SiteFooter` + skip-to-main link.
-- `app/components/site/Footer.vue` — dark `bg-abyssal-ink` footer with `UFooterColumns` + social buttons from `appConfig.contacts`.
-- `app/components/site/PageContainer.vue` — `container mx-auto max-w-[1200px] px-4 py-10 space-y-10` wrapper. Used by `/about`, `/blogs`, `/blogs/[...slug]`. Do **not** use on the homepage (it manages its own container to support full-bleed sections).
-
-### Decorative SVGs
-
-All in `app/components/home/` — Sydney / Australia motif, two-tone (`cyber-violet` + `digital-orange`), always `aria-hidden="true"`:
-
-- `HomeOperaHouseSvg` — Opera House sails silhouette.
-- `HomeHarbourBridgeSvg` — Harbour Bridge arc.
-- `HomeWaveSvg` — wave.
-- `HomeGlyphSvg` — icon set (`kind`: `gum-leaf | terminal | book | compass | coffee | surf | ferris | sail`).
-
-### UI stack
-
-- **@nuxt/ui v4** (Reka UI) + **Tailwind CSS v4**.
-- **Leaflet** for the map; always wrapped in `<ClientOnly>`.
-- `app/assets/css/main.css` — global CSS entry point.
-- `app/app.config.ts` — `ui` color slots + `contacts[]` (label/url/icon/hoverClass) + `blog` metadata.
-- Auto-imports follow directory: `app/components/home/GlyphSvg.vue` → `<HomeGlyphSvg>`.
-
-### MDC bundle hygiene
-
-- `mdc.highlight: false` and `content.build.markdown.highlight: false` in `nuxt.config.ts` — markdown has no fenced code blocks, so Shiki's oniguruma WASM (~600 KB) and language grammars (~900 KB) are skipped from the client bundle. Re-enable if a code block is ever introduced into `content/**.md`.
-
-## Dev Server
-
-**Never start, restart, or kill the dev server.** The user manages `pnpm dev` themselves. Assume it is already running on `http://localhost:3500` when UI verification is needed.
-
-## UI Testing
-
-All UI verification must use a **headless browser running in the background** — never rely on computer-use screenshots or manual browser navigation.
-
-```bash
-# Preferred: Playwright (install once if missing)
-pnpm dlx playwright install --with-deps chromium
-node -e "
-const { chromium } = require('playwright');
-(async () => {
-  const b = await chromium.launch();
-  const p = await b.newPage();
-  await p.goto('http://localhost:3000/YOUR_ROUTE');
-  await p.waitForLoadState('networkidle');
-  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
-  await b.close();
-})();
-"
-# Then read /tmp/verify.png with the Read tool.
-
-# Alternative: Puppeteer
-node -e "
-const puppeteer = require('puppeteer');
-(async () => {
-  const b = await puppeteer.launch({ args: ['--no-sandbox'] });
-  const p = await b.newPage();
-  await p.goto('http://localhost:3000/YOUR_ROUTE', { waitUntil: 'networkidle0' });
-  await p.screenshot({ path: '/tmp/verify.png', fullPage: true });
-  await b.close();
-})();
-"
-```
-
-- Always run the screenshot command with `run_in_background: false` so the image is ready before reading.
-- Read `/tmp/verify.png` with the Read tool to inspect the result visually.
-- If neither Playwright nor Puppeteer is installed, install on the fly with `pnpm dlx` — never skip headless verification.
-
-## Library Docs
-
-Never access the internet to read documentation. Read the library source directly instead:
-
-- Node.js project: `./node_modules/<package>`
-- Python project: `./venv`
-
-If something is unclear, grep or read the relevant module folder.
-
-## Data fetching
-
-Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI render until the request resolves — slow networks stall the page shell. Use `useLazyAsyncData` (non-blocking, paints shell first, fills data when ready) or fetch imperatively inside event handlers / `onMounted`.
+- Else
+  - [Region comment] When a `<script setup>` gets long but still does one thing, use `// #region <Name>` ... `// #endregion` to group related logic instead of splitting it into composables too early.
+  - Ask approval from the user to read `./node_modules/<package>` for the latest info if you can't figure it out, as you must not access the internet.
 
 ## Code Style
 
@@ -181,21 +68,9 @@ Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI r
 - Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/home/Profile.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
 
-## When to extract a composable
+## Working Preferences
 
-Composables exist to serve **reuse, testability, or team coordination** — not to make a single page's `<script setup>` feel shorter. Aesthetic clutter is solved with `// #region` blocks (see below), not with abstraction.
-
-**Extract a composable only when at least one of these is true:**
-
-1. A second consumer (page or component) needs the same state/logic.
-2. The logic deserves unit tests independent of the rendering page.
-3. The team has multiple people editing the same area and needs ownership boundaries.
-4. The file has crossed ~250 lines of `<script setup>` and grouping by region is no longer enough.
-
-If none of the above hold, **inline it**. A linear `<script setup>` of 100–200 lines that reads top-to-bottom is more maintainable than three composables that force cross-file jumps to trace one cause-and-effect chain (e.g. "filter changes → cache wipes → posts refetch"). Indirection has a real cost: every hidden watcher inside a composable is invisible to the page reader.
-
-When extraction is justified, follow VueUse's split: a **pure** composable (only `ref`/`reactive`/`computed`/`watch`/plain JS, accepts refs/values as parameters via `MaybeRefOrGetter`) is preferred over a **Nuxt-bound** one (calls setup-only APIs like `useRoute`, `useAsyncData`, `useState`). When both concerns exist, keep the Nuxt-bound calls in the consuming page and feed their refs into the pure composable as arguments. This keeps the pure layer testable with plain Vitest, no `@nuxt/test-utils` setup.
-
-## Region comments for long `<script setup>`
-
-When a page's `<script setup>` grows past ~80 lines and still belongs to a single concern, group related state/logic with `// #region <Name>` ... `// #endregion` blocks instead of extracting composables prematurely. The IDE folds them, readers can scan section headers as a table of contents, and the data flow stays linear in one file. Typical regions for a CRUD-style page: `Filter state`, `Taxonomies`, `Pagination + posts`, `URL sync`, `UI state`, `Helpers`. See `app/pages/blogs/index.vue` for reference.
+- **Parallel components** — when asked to create a NEW or parallel component, create it standalone; never read or modify the existing component unless explicitly told to.
+- **No fake fixes** — never mask a bug (e.g. hardcoding a colour to hide a transparency issue); diagnose and fix the actual root cause.
+- **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
+- **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
