@@ -11,7 +11,10 @@
 - UI testing
   - Must predict **style** & **animation** by calculating. No computer-use or headless browser for help.
   - Must use headless browser to verify **UI interactions** if debugging is inefficient or involves too much back and forth.
-  - Must verify all visual changes before declaring done in changing styles, animations, or UI interactions.
+  - Must verify visual changes by running `pnpm ai:screenshot <route>` and then `Read /tmp/verify.png` before declaring done. Typecheck, grep, lint, and code-reading do **not** count as visual verification. Applies to: style edits, layout/proportion changes, new components rendered on a page, animation end-states, and any change a user would notice with their eyes.
+    - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without screenshotting the route.
+    - **Violation**: building a click-to-flip card and stopping at "the code compiles" without ever rendering it.
+  - If the change has no visible route, say so explicitly and ask which route to screenshot — do not skip verification silently.
 - Else
   - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
@@ -58,6 +61,11 @@ Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four 
 - Else
   - [Region comment] When a `<script setup>` gets long but still does one thing, use `// #region <Name>` ... `// #endregion` to group related logic instead of splitting it into composables too early.
   - Ask approval from the user to read `./node_modules/<package>` for the latest info if you can't figure it out, as you must not access the internet.
+  - **Ambiguous visual terms** — before editing, resolve any spatial/visual term that has more than one plausible CSS mapping. Restate your interpretation in one line and proceed only if it is unambiguous; otherwise ask.
+    - Chinese spatial words to always pin down: `粗` (wider stroke vs. longer span?), `厚` (border vs. padding vs. shadow?), `重` (font-weight vs. color contrast?), `濃` (saturation vs. opacity?), `高` (height vs. z-index?), `滿` (full-bleed vs. 100% width?), `跑掉` (overflow vs. wrap vs. position drift?).
+    - **Violation**: user says "弧線太粗", Claude lengthens the arc instead of increasing `stroke-width`.
+    - **Violation**: user says "顏色疊在一起", Claude changes colors when the real issue is a layout height bug.
+    - When a complaint could be layout _or_ color _or_ z-index, screenshot first, identify the actual symptom, then act.
 
 ## Code Style
 
@@ -70,7 +78,13 @@ Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four 
 
 ## Working Preferences
 
-- **Parallel components** — when asked to create a NEW or parallel component, create it standalone; never read or modify the existing component unless explicitly told to.
-- **No fake fixes** — never mask a bug (e.g. hardcoding a colour to hide a transparency issue); diagnose and fix the actual root cause.
+- **Parallel components** — when asked to create a NEW or parallel component, create it standalone. Do **not** Read, Grep, or open the original file — not even "for reference" — unless the user explicitly says so.
+  - **Violation**: user says "做一個 SectionBlog3D2", Claude opens `SectionBlog3D.vue` to copy structure.
+  - If a shared type or constant is genuinely needed from the original, ask first; do not read preemptively.
+- **No fake fixes (偷吃步)** — never mask a symptom to make a screenshot look right; diagnose the actual root cause.
+  - **Violation**: cup renders with wrong transparency, Claude sets `background-color` to match the page background instead of fixing alpha/blend mode.
+  - **Violation**: text overflows, Claude shortens the text instead of fixing the container.
+  - **Violation**: hardcoding a computed value (color, position, size) that should come from a token, prop, or layout rule, just to ship.
+  - If you are about to write a literal value that papers over a real bug, stop and surface the root cause to the user.
 - **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
 - **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
