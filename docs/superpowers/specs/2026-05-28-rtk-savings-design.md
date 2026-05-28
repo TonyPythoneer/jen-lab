@@ -121,14 +121,14 @@ RTK%     0.33%    0.21%    —         —      —      —
 
 | Row  | Col1                                          | Col2                                                                  | Col3                    | Col4 | Col5 | Col6 |
 | ---- | --------------------------------------------- | --------------------------------------------------------------------- | ----------------------- | ---- | ---- | ---- |
-| RTK  | `rtkSavedOpus$` (real model breakdown price)  | `rtkSavedSonnet$` (savedTokens × 3/1M)                                | savedTokens (humanized) | —    | —    | —    |
-| RTK% | `rtkSavedOpus$ / (rtkSavedOpus$ + cloudBill)` | `rtkSavedOpus$ / (rtkSavedOpus$ + localOpusHypothetical + cloudBill)` | —                       | —    | —    | —    |
+| RTK  | `rtkSavedReal$` (real model breakdown price)  | `rtkSavedSonnet$` (savedTokens × 3/1M)                                | savedTokens (humanized) | —    | —    | —    |
+| RTK% | `rtkSavedReal$ / (rtkSavedReal$ + cloudBill)` | `rtkSavedReal$ / (rtkSavedReal$ + localOpusHypothetical + cloudBill)` | —                       | —    | —    | —    |
 
 ### Calculation Details
 
-- **rtkSavedOpus$ (Col1)**: RTK saved tokens按 ccusage model breakdown 的真實價格計算（opus $5/MTok, sonnet $3/MTok, 按實際比例加權）
-- **rtkSavedSonnet$ (Col2)**: `savedTokens × 3/1M`（local model 強制視為 sonnet input）
-- **rtkSavedOpus$ (Col1 for RTK%)**: `savedTokens × 5/1M`（local model 強制視為 opus input）
+- **rtkSavedReal$ (RTK row Col1)**: RTK saved tokens 按 ccusage model breakdown 的真實價格計算（opus $5/MTok, sonnet $3/MTok, 按實際比例加權）
+- **rtkSavedSonnet$ (RTK row Col2)**: `savedTokens × 3/1M`（local model 強制視為 sonnet input）
+- **rtkSavedReal$ (RTK% row Col1/Col2)**: 同 RTK row Col1，用於百分比計算
 - **cloudBill**: `.overall.totals.cost`（ccusage 實際 cloud 支出）
 - **localOpusHypothetical**: `.overall.totals.costAsOpus - .overall.totals.cost`
 
