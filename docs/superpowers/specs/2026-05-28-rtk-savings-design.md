@@ -104,6 +104,49 @@ aggregate result (which depends on the completed SQLite sync).
 | `_ai_usage_render`               | Accept optional RTK section at bottom                |
 | `_ai_usage_render_summary_block` | Accept optional RTK row in OVERALL                   |
 
+## Open: RTK% Row Format (unresolved)
+
+### Problem
+
+1. **cacheSaveRate 來源錯誤** — current impl uses `overall.totals.cacheSaveRate`, but RTK
+   intercepts Claude Code tool output (cloud only). Should use `cloud.totals.cacheSaveRate`.
+
+2. **No bill comparison** — RTK savings row shows dollars and tokens but no % of actual bill.
+
+### What to show
+
+- Savings $ (weighted by cloud cacheSaveRate)
+- Savings as % of cloud-only bill (opus and sonnet separately)
+- Savings as % of cloud+local hypothetical bill (opus and sonnet separately)
+
+### Proposed table options
+
+**Option A — one RTK row, remap col2 to dollar savings:**
+
+```
+OVERALL  $636.72  $783.45  $724.76  1.06B   97.2%  94.9%
+LOCAL%   —        18.7%    12.1%    —       —      —
+RTK      $2.58    0.33%    0.21%    3.74M   0.27%  0.18%
+```
+
+col2=savings$, col3/4=% of cloud bill (opus/sonnet),
+col5=saved tokens, col6/7=% of overall bill (opus/sonnet)
+
+**Option B — RTK as a separate mini-section** with its own header and column labels.
+Most explicit, but breaks the unified table block.
+
+**Option C — one row, cloud% only:**
+
+```
+RTK  $2.58  0.33%  0.21%  3.74M  —  —
+```
+
+Drop overall%. `$2.58 saved = 0.33% of Opus cloud bill` is sufficient insight.
+
+### Status
+
+User not satisfied with any option yet. Needs further discussion before implementing.
+
 ## Constraints
 
 - `_RTK_TMP` must be cleaned up (`rm -f`) after each top-level command.
