@@ -143,6 +143,36 @@ RTK%     0.33%    0.21%    —         —      —      —
 
 Resolved. User approved this format.
 
+### Open Questions (for next model)
+
+1. **RTK% row numerator ambiguity**
+   - Current proposal: RTK% Col2 numerator = `rtkSavedReal$ + localOpusHypothetical$`
+   - Problem: If numerator includes localOpusHypothetical, the percentage will be close to 100% (since denominator = numerator + cloudBill). This doesn't show "RTK savings as % of total bill" — it shows "RTK + local as % of total bill".
+   - Question: Should RTK% Col2 numerator be just `rtkSavedReal$` (RTK savings only), or `rtkSavedReal$ + localOpusHypothetical$` (RTK + local combined)?
+   - Same question applies to Col3.
+
+2. **rtkSavedReal$ calculation formula**
+   - Spec says "按 ccusage model breakdown 的真實價格計算（opus $5/MTok, sonnet $3/MTok, 按實際比例加權）"
+   - Question: How to get the model breakdown ratio from `rtk gain --json`? The current RTK JSON only has `saved_tokens` (total), not split by model.
+   - Option A: Use ccusage model breakdown ratio (cloud model mix) as proxy for RTK intercepted tokens' model distribution.
+   - Option B: RTK has its own model tracking — check if `rtk gain --json` can be extended to include model breakdown.
+   - Option C: Simplify — assume all RTK intercepted tokens are opus (conservative estimate).
+
+3. **RTK row Col2/Col3 definition**
+   - Current: Col2 = `rtkSavedReal$ + localOpusHypothetical$`, Col3 = `rtkSavedReal$ + localSonnetHypothetical$`
+   - Question: Why add local hypothetical to RTK row? The RTK row should show RTK savings only. Adding local hypothetical mixes two different concepts.
+   - Alternative: Col2 = `rtkSavedOpus$` (savedTokens × 5/1M), Col3 = `rtkSavedSonnet$` (savedTokens × 3/1M). This shows "what if all RTK tokens were opus/sonnet".
+
+4. **RTK% Col1 denominator**
+   - Current: `rtkSavedReal$ + cloudBill`
+   - Question: `cloudBill` = `.overall.totals.cost` includes both actual cloud cost AND local cost repriced to cloud prices. Should denominator be:
+     - Option A: `rtkSavedReal$ + actualCloudBill` (only real cloud spend)
+     - Option B: `rtkSavedReal$ + .overall.totals.cost` (cloud + local repriced)
+
+5. **localOpusHypothetical calculation**
+   - Current: `.overall.totals.costAsOpus - .overall.totals.cost`
+   - Question: Is this correct? `.overall.totals.costAsOpus` = cloudBill + localOpusHypothetical. So `costAsOpus - cost` = localOpusHypothetical. This assumes `.overall.totals.cost` = cloudBill + localActualCost. Verify this matches the jq logic in `_AI_USAGE_JQ`.
+
 ## Constraints
 
 - `_RTK_TMP` must be cleaned up (`rm -f`) after each top-level command.
