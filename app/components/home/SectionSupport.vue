@@ -1,16 +1,9 @@
 <script setup lang="ts">
-type Brand = "jen-liu" | "jen-knows";
+import { visibleSupports, type SupportBrand } from "./sectionSupport";
 
-const props = defineProps<{ brand?: Brand }>();
+const props = defineProps<{ brand?: SupportBrand }>();
 
-const SUPPORTS = [
-  { brand: "jen-knows", label: "支持 Jen Knows", url: "https://portaly.cc/jenknowsau/support" },
-  { brand: "jen-liu", label: "支持 Jen Liu", url: "https://portaly.cc/jenliuau/support" },
-] as const;
-
-const visibleSupports = computed(() =>
-  props.brand ? SUPPORTS.filter((s) => s.brand === props.brand) : SUPPORTS,
-);
+const visible = computed(() => visibleSupports(props.brand));
 </script>
 
 <template>
@@ -31,7 +24,7 @@ const visibleSupports = computed(() =>
 
       <div class="flex flex-wrap justify-center gap-3 pt-2">
         <UButton
-          v-for="s in visibleSupports"
+          v-for="s in visible"
           :key="s.brand"
           as="a"
           :href="s.url"
