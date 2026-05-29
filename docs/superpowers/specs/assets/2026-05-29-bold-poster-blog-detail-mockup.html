@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>雪梨必吃的十間特色早午餐 | Jen Liu</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --basalt-canvas: #e2e2df;
+        --ash-white: #f7f6f2;
+        --abyssal-ink: #070607;
+        --pure-white: #ffffff;
+        --digital-orange: #fc5000;
+        --cyber-violet: #524ae9;
+        --pixel-glare: #f5f28e;
+        --sydney-sky: #87ceeb;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background-color: var(--basalt-canvas);
+        color: var(--abyssal-ink);
+        font-family: "DM Sans", sans-serif;
+        line-height: 1.6;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Header/Nav */
+      header {
+        background-color: var(--ash-white);
+        padding: 16px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid rgba(7, 6, 7, 0.1);
+      }
+
+      .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: var(--digital-orange);
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        color: var(--abyssal-ink);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--digital-orange);
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* Main Content */
+      main {
+        flex: 1;
+        max-width: 1280px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0 32px;
+      }
+
+      /* Back Link */
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: rgba(7, 6, 7, 0.6);
+        text-decoration: none;
+        margin-top: 40px;
+        margin-bottom: 32px;
+        transition: color 0.2s;
+      }
+
+      .back-link:hover {
+        color: var(--digital-orange);
+      }
+
+      /* Article Header Section */
+      .article-header {
+        margin-bottom: 48px;
+        border-left: 12px solid var(--digital-orange);
+        padding-left: 24px;
+      }
+
+      .article-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 80px;
+        line-height: 0.9;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--abyssal-ink);
+        margin-bottom: 24px;
+        word-break: break-word;
+        overflow: hidden;
+      }
+
+      .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .date-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--ash-white);
+        color: var(--abyssal-ink);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(7, 6, 7, 0.15);
+      }
+
+      /* Featured Image */
+      .featured-image-wrapper {
+        position: relative;
+        margin-bottom: 48px;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+      }
+
+      .featured-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .featured-frame {
+        position: absolute;
+        inset: 0;
+        border: 14px solid var(--ash-white);
+        pointer-events: none;
+        box-shadow: 6px 6px 0px rgba(7, 6, 7, 0.8);
+      }
+
+      /* Article Content Card */
+      .article-content-card {
+        background-color: var(--ash-white);
+        border-radius: 40px;
+        border-left: 10px solid var(--cyber-violet);
+        padding: 48px;
+        line-height: 1.8;
+      }
+
+      .article-body {
+        max-width: 65ch;
+        margin: 0 auto;
+        color: var(--abyssal-ink);
+      }
+
+      .article-body p {
+        margin-bottom: 24px;
+        font-size: 16px;
+        letter-spacing: 0.01em;
+      }
+
+      .article-body h2 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 36px;
+        line-height: 0.95;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--abyssal-ink);
+        margin: 40px 0 24px 0;
+      }
+
+      .article-body blockquote {
+        margin: 32px 0;
+        padding-left: 24px;
+        border-left: 6px solid var(--digital-orange);
+        font-style: italic;
+        color: rgba(7, 6, 7, 0.75);
+        font-size: 16px;
+      }
+
+      .article-body ul {
+        margin: 24px 0 24px 24px;
+        padding-left: 0;
+      }
+
+      .article-body li {
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .article-body li::marker {
+        color: var(--digital-orange);
+        font-weight: 600;
+      }
+
+      .inline-image-wrapper {
+        margin: 32px 0;
+        text-align: center;
+      }
+
+      .inline-image-wrapper img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(7, 6, 7, 0.12);
+      }
+
+      .image-caption {
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        color: rgba(7, 6, 7, 0.5);
+        margin-top: 12px;
+        font-style: italic;
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--ash-white);
+        padding: 40px 32px;
+        text-align: center;
+        border-top: 1px solid rgba(7, 6, 7, 0.1);
+        margin-top: 80px;
+      }
+
+      .footer-text {
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: rgba(7, 6, 7, 0.6);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        main {
+          padding: 0 24px;
+        }
+
+        .article-title {
+          font-size: 64px;
+        }
+
+        .article-content-card {
+          padding: 40px;
+        }
+
+        .article-body {
+          max-width: 100%;
+        }
+
+        .article-body p {
+          font-size: 16px;
+        }
+
+        .article-body h2 {
+          font-size: 32px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-inner {
+          padding: 0 16px;
+        }
+
+        main {
+          padding: 0 16px;
+        }
+
+        .back-link {
+          margin-top: 24px;
+          margin-bottom: 24px;
+        }
+
+        .article-header {
+          margin-bottom: 32px;
+          padding-left: 16px;
+          border-left-width: 8px;
+        }
+
+        .article-title {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+
+        .date-chip {
+          font-size: 12px;
+          padding: 6px 12px;
+        }
+
+        .featured-image-wrapper {
+          margin-bottom: 32px;
+        }
+
+        .featured-frame {
+          border-width: 10px;
+          box-shadow: 4px 4px 0px rgba(7, 6, 7, 0.6);
+        }
+
+        .article-content-card {
+          padding: 28px;
+          border-radius: 32px;
+          border-left-width: 8px;
+        }
+
+        .article-body p {
+          font-size: 15px;
+        }
+
+        .article-body h2 {
+          font-size: 28px;
+          margin: 32px 0 16px 0;
+        }
+
+        .article-body blockquote {
+          margin: 24px 0;
+          padding-left: 16px;
+          border-left-width: 4px;
+          font-size: 15px;
+        }
+
+        .article-body ul {
+          margin: 20px 0 20px 20px;
+        }
+
+        .article-body li {
+          font-size: 15px;
+          margin-bottom: 10px;
+        }
+
+        footer {
+          padding: 32px 16px;
+          margin-top: 60px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="header-inner">
+        <div class="logo">JEN</div>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#products">Products</a></li>
+          <li><a href="/#links">Connect</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Back Link -->
+      <a href="#" class="back-link">← 返回部落格</a>
+
+      <!-- Article Header -->
+      <section class="article-header">
+        <h1 class="article-title">雪梨必吃的十間特色早午餐</h1>
+        <div class="article-meta">
+          <span class="date-chip">2026年5月20日</span>
+        </div>
+      </section>
+
+      <!-- Featured Image -->
+      <div class="featured-image-wrapper">
+        <img
+          class="featured-image"
+          src="https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=1200&h=675&fit=crop"
+          alt="雪梨特色早午餐"
+        />
+        <div class="featured-frame"></div>
+      </div>
+
+      <!-- Article Content -->
+      <article class="article-content-card">
+        <div class="article-body">
+          <p>
+            雪梨的早午餐文化已成為城市生活的一部分。每個週末，咖啡館和餐廳都擠滿了尋求完美早餐體驗的食客。今年我走遍了雪梨市區、邦迪灣到內西區，精選了十間最具特色的早午餐廳，每一間都值得你專程造訪。
+          </p>
+
+          <p>
+            這些餐廳不只是提供食物，更代表著雪梨多元文化的融合。你會在這裡找到經典澳洲風味的漆油麵包配酪梨，也能嚐到亞洲特色的創意料理。讓我帶你一一探索。
+          </p>
+
+          <h2>1. Black Plate Coffee</h2>
+
+          <p>
+            位於帕丁頓的 Black Plate Coffee
+            以其簡約的北歐風設計和精心烹製的咖啡而聞名。他們的招牌菜「香脆漆油麵包配綠番茄和費達起司」使用自製的酸麵包，每天早上現烤。咖啡來自當地烘焙師，每一杯都能喝出用心。
+          </p>
+
+          <div class="inline-image-wrapper">
+            <img
+              src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=400&fit=crop"
+              alt="Black Plate Coffee 的招牌早午餐"
+            />
+            <p class="image-caption">Black Plate 的漆油麵包配綠番茄是必點</p>
+          </div>
+
+          <blockquote>
+            「雪梨的早午餐之所以特別，在於廚師們對食材的尊重。每一片麵包、每一顆蛋都經過精挑細選。」—
+            當地美食評論家
+          </blockquote>
+
+          <h2>2-10. 其他必吃餐廳</h2>
+
+          <p>
+            除了 Black
+            Plate，還有許多值得探索的地方。這包括了位於蘇利灣的海景咖啡廳、邦迪灣的創意素食餐廳，以及內西區充滿藝術氣息的小眾咖啡館。每一間都有獨特的故事和風味。
+          </p>
+
+          <ul>
+            <li><strong>Speedos Cafe</strong> - 邦迪灣的標誌性咖啡廳，以海景和新鮮果汁著稱</li>
+            <li><strong>Paramount House Cafe</strong> - 蘇利灣，以健康餐點和無麩質選項聞名</li>
+            <li><strong>Sonoma Bakery</strong> - 帕丁頓，手工麵包和有機咖啡的完美搭配</li>
+            <li><strong>Rising Sun Workshop</strong> - 內西區，工業風設計與素食創意料理</li>
+            <li><strong>Lantana Cafe</strong> - 環形碼頭，澳洲本土食材的現代詮釋</li>
+            <li><strong>Black Skirt</strong> - 薩里山，隱藏版美食天堂</li>
+            <li><strong>Cornersmith</strong> - 馬利維克，手工糕點和新鮮沙拉的結合</li>
+          </ul>
+
+          <p>
+            無論你是雪梨的長期居民還是遊客，這些早午餐廳都能提供獨特的飲食體驗。每間餐廳都反映了雪梨的多元特性，以及廚師們對美食的熱愛。下次來雪梨時，不妨留出一個週末，逐一造訪這些地方，親身體驗為什麼雪梨被譽為世界早午餐之都。
+          </p>
+
+          <p>
+            從咖啡的溫度到麵包的烤度，從食材的新鮮度到擺盤的細節，這些看似簡單的早午餐，實際上凝聚了廚師們對手藝的執著。希望這份名單能幫助你發現屬於自己的最愛，並在每一次用餐中，感受到雪梨的美食靈魂。
+          </p>
+        </div>
+      </article>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p class="footer-text">© 2026 Jen Liu. All rights reserved. | 榛知雪梨</p>
+    </footer>
+  </body>
+</html>

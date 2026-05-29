@@ -1,8 +1,6 @@
 # Inner Pages → Production-Level Design (Direction A: Bold Poster)
 
-> **Status: brainstorming checkpoint (resume here).** Design direction is LOCKED.
-> Profile-page mockup approved. Blog mockups + spec finalisation + implementation plan are still TODO.
-> Saved 2026-05-29 because the session was running out of tokens. A fresh agent can continue from "Next Steps".
+> **Status: ready for user review.** Design direction is LOCKED (Bold Poster). Profile + blog mockups approved, and the blog-search interaction is designed and verified in a real browser. Awaiting the user's sign-off on this spec before `writing-plans`. Brainstorming HARD-GATE still applies: no implementation until approved.
 
 ## Goal
 
@@ -42,14 +40,39 @@ Use ONLY existing tokens — no new colors/fonts. Tokens live in `app/assets/css
 3. **Do NOT modify the header or footer styles** — `app/components/site/Header.vue` and `app/components/site/Footer.vue` are off-limits.
 4. **Use Nuxt UI (`@nuxt/ui` v4) components** to build the UI wherever a component fits (see the `nuxt-ui` skill). Don't hand-roll what Nuxt UI already provides.
 
-### Open questions for the resuming agent (confirm with user)
+### Resolved decisions (confirmed by user 2026-05-29)
 
-- The hero's `訂閱電子報` (newsletter) CTA is removed per refinement #1. There IS a reusable `HomeSectionNewsletter` (`app/components/home/SectionNewsletter.vue`). **User did not ask to re-place the newsletter anywhere** — leave it out unless the user requests it. Confirm before adding.
-- `SectionSupport.vue` hard-codes BOTH "支持 Jen Knows" and "支持 Jen Liu" buttons. On the jen-liu / jen-knows profile pages, should it show only the matching brand's support button? Currently it shows both. Confirm desired behaviour (may need a prop).
+- **Newsletter:** the removed `訂閱電子報` CTA is NOT re-placed anywhere. `HomeSectionNewsletter` is not used on these pages.
+- **Support button per brand:** `HomeSectionSupport` must show ONLY the matching brand's button — `支持 Jen Liu` on `/jen-liu`, `支持 Jen Knows` on `/jen-knows`. `SectionSupport.vue` currently hard-codes both; add a prop (e.g. `brand: 'jen-liu' | 'jen-knows'`) so each page renders only its own button. The homepage usage (if any) keeps both — make the prop optional, defaulting to "both".
+
+## Blog search — final design (supersedes any earlier in-page search-bar notes)
+
+Search is triggered from the GLOBAL header, not an in-page bar.
+
+- **Header trigger:** a plain magnifier icon button in the header's right group, BEFORE "Get in Touch" (order `[search] [Get in Touch] [burger]`). Shown on ALL pages. `aria-label="搜尋文章"`.
+- **Slide-down modal overlay:** clicking it opens a white sheet that slides down from the top (translateY(-100%)→0, ~340ms) covering the header; the rest of the page dims behind a scrim (modal). Close via "Close ✕", Esc, or clicking the scrim. Auto-focus the input on open; lock body scroll while open.
+- **Overlay contents — vertical stack:**
+  1. Text input, placeholder exactly `Type for blog search`, with an underline + magnifier icon at the right.
+  2. **分類 (categories) filter** — directly below the input.
+  3. **標籤 (tags) filter** — below 分類.
+     These live INSIDE the overlay, stacked under the input — NOT on the blog page body. (This supersedes the earlier "filters stay on page body" decision.)
+- **Submit → URL:** applying search/filters does `navigateTo('/blogs?q=<term>&cat=<ids>&tag=<ids>')` and closes the overlay. The blog index already reads `q`/`cat`/`tag`/`page` from the URL via `useBlogList(route.query)` and syncs state↔URL — so the data layer is essentially unchanged; the URL is the hand-off channel (no shared `useState` needed).
+- **Taxonomies for the overlay:** load category/tag lists via `queryCollection('wpCategories' / 'wpTags')` (client-only, lazy on first open) in a small composable e.g. `useBlogTaxonomies()`. Cheap (local content collections).
+- **Blog list page body:** `UPageHeader` masthead + post grid + pagination only; no in-page search/filter bar. The masthead scrolls away normally.
+
+### Header change is authorized
+
+This OVERRIDES the earlier "do not touch header styles" constraint, but ONLY to add the search icon + overlay trigger. Keep the header's existing pill + scroll-collapse styling otherwise. Footer stays untouched.
+
+### Implementation notes (carry into the plan)
+
+- Build the overlay with Nuxt UI **`UModal`** (or a top slideover). UModal handles focus trap, Esc, scroll-lock, and backdrop pointer-events correctly.
+- **Pointer-events trap (verified bug):** if hand-rolling instead of UModal, the closed scrim MUST be `pointer-events: none` — `opacity:0` alone is NOT enough; a transparent `inset:0; pointer-events:auto` scrim silently eats clicks on the whole page (including the trigger). UModal avoids this.
+- Visual reference (verified working): `docs/superpowers/specs/assets/2026-05-29-header-search-overlay-mockup.html`. Open it via a plain static server (`python3 -m http.server` in that dir) — the brainstorm companion cannot run interactive full-document mockups.
 
 ## Scope guardrails
 
-- **Blog data/search layer stays as-is.** Keep WP API (`~/utils/wpApi`), `useBlogList`, taxonomies (`queryCollection` wpCategories/wpTags), pagination, URL sync, caching. This is **visual/UX restyle only** — the user is "lazy to deal with the search/data process". Do not refactor the data flow.
+- **Blog data flow preserved.** Keep WP API (`~/utils/wpApi`), `useBlogList`, taxonomies (`queryCollection` wpCategories/wpTags), pagination, URL sync, caching. The search/filter UI MOVES to the header overlay (see "Blog search"), but still drives the existing URL params — so the data flow is unchanged. Do not refactor it.
 - Respect repo constraints in `CLAUDE.md`: light mode only; `SitePageContainer` on all non-home pages; `useLazyAsyncData` (not `useAsyncData`); plain-English comments; no hardcoded domain strings in templates (use `<script setup>` constants); verify visual changes with webwright (dev server runs at :3500, user-managed — never start/kill).
 
 ## Where things are
@@ -61,12 +84,10 @@ Use ONLY existing tokens — no new colors/fonts. Tokens live in `app/assets/css
 
 ## Next Steps (resume here)
 
-1. Restart the visual companion if you want to keep showing mockups (optional). Generate **blog index + blog detail** mockups in the Bold Poster direction; get user confirmation. (Profile is already approved.)
-2. Finalise this spec (resolve the two open questions with the user), then run the **spec self-review** (placeholders / consistency / scope / ambiguity).
-3. Ask the user to review the spec.
-4. Invoke the **writing-plans** skill to produce the implementation plan (per-file: ProfilePage.vue restyle + remove CTAs + append HomeSectionSupport; blogs index + detail restyle with Nuxt UI; keep data layer untouched; webwright visual verification).
-5. Implement (TDD where it applies), verify each route in webwright, then `requesting-code-review` / finish-branch.
+1. **User reviews this spec** (current step). Resolve the remaining open question (per-brand support button) + confirm newsletter placement.
+2. Invoke the **writing-plans** skill: ProfilePage.vue restyle (Bold Poster) + remove hero CTAs + append `HomeSectionSupport` before footer; header search icon + `UModal` overlay (text input + 分類/標籤) routing to `/blogs?q=`; blog index + detail restyle with Nuxt UI; data flow untouched; webwright visual verification.
+3. Implement (TDD where it applies), verify each route in webwright, then `requesting-code-review` / finish-branch.
 
 ## Brainstorming process state
 
-Checklist progress: (1) explore ✅ (2) visual companion ✅ (3) clarify — direction picked via gallery ✅, two open questions remain (4) propose approaches ✅ (workflow: 5 concepts → judge → top 3) (5) present design — profile approved; blog pending (6) write spec — this doc, finalise after blog mockups (7) user reviews spec — pending (8) writing-plans — pending. **Do NOT start implementation until the spec is approved (brainstorming HARD-GATE).**
+Checklist progress: (1) explore ✅ (2) visual companion ✅ (3) clarify ✅ (4) propose approaches ✅ (5) present design ✅ (profile + blog + blog-search all shown; blog-search verified in-browser) (6) write spec ✅ (this doc) (7) **user reviews spec — IN PROGRESS** (8) writing-plans — next. **Do NOT start implementation until the spec is approved (brainstorming HARD-GATE).**
