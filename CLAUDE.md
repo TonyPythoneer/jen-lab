@@ -9,12 +9,12 @@
   - Must stop inflating code and comments as you must validate them and ensure they are concise and succinct
   - Must review your output and simplify it as much as possible through self-reflection and rumination.
 - UI testing
-  - Must predict **style** & **animation** by calculating. No computer-use or headless browser for help.
-  - Must use headless browser to verify **UI interactions** if debugging is inefficient or involves too much back and forth.
-  - Must verify visual changes by running `pnpm ai:screenshot <route>` and then `Read /tmp/verify.png` before declaring done. Typecheck, grep, lint, and code-reading do **not** count as visual verification. Applies to: style edits, layout/proportion changes, new components rendered on a page, animation end-states, and any change a user would notice with their eyes.
-    - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without screenshotting the route.
+  - Must predict **style** & **animation** by calculating first. No browser when the resulting screen is calculable.
+  - When you **cannot** predict the resulting screen by calculation, driving **webwright / Playwright in the background** is your last step. This is the single path for **all** visual verification — style, animation, and interaction alike. Use the **webwright** skill (`/webwright:run` for one-shot, `/webwright:craft` for reusable); it drives a local Playwright browser and saves screenshots + an action log as evidence.
+  - Verify the change in webwright and `Read` the captured screenshot before declaring done. Typecheck, grep, lint, and code-reading do **not** count as visual verification. Applies to: style edits, layout/proportion changes, new components rendered on a page, animation end-states, interactions (hover, click, scroll, form-fill, modals), and any change a user would notice with their eyes.
+    - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without verifying the route in webwright.
     - **Violation**: building a click-to-flip card and stopping at "the code compiles" without ever rendering it.
-  - If the change has no visible route, say so explicitly and ask which route to screenshot — do not skip verification silently.
+  - If the change has no visible route, say so explicitly and ask which route to verify — do not skip verification silently.
 - Else
   - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
@@ -29,7 +29,7 @@ pnpm deploy       # Build + deploy to Cloudflare Pages
 
 # development scripts
 pnpm sync:wp      # Sync tags and categories from WordPress
-pnpm ai:screenshot <route>  # Capture the page to /tmp/verify.png — always run_in_background: false, then Read the file
+# Visual verification: drive webwright/Playwright in the background, then Read the captured screenshot (see "UI testing")
 
 # Validation (run after changes)
 pnpm check        # Lint + format + typecheck

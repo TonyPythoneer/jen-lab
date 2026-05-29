@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #f2e8ce;
+  --foreground: #3d2817;
+  --card: #f2e8ce;
+  --card-foreground: #3d2817;
+  --popover: #f2e8ce;
+  --popover-foreground: #3d2817;
+  --primary: #fbf6e7;
+  --primary-foreground: #3d2817;
+  --secondary: #e4ccb2;
+  --secondary-foreground: #0a0a0a;
+  --muted: #e9dec5;
+  --muted-foreground: #857560;
+  --accent: #993c1d;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #993c1d;
+  --chart-1: #993c1d;
+  --chart-2: #fbf6e7;
+  --chart-3: #e4ccb2;
+  --chart-4: #9d3e1e;
+  --chart-5: #e8d6b8;
+  --sidebar: #ebe0c7;
+  --sidebar-foreground: #3d2817;
+  --sidebar-primary: #fbf6e7;
+  --sidebar-primary-foreground: #3d2817;
+  --sidebar-accent: #993c1d;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #993c1d;
+  --font-sans:
+    "Crimson Pro", "Shippori Mincho", "Noto Serif TC", "Noto Serif JP", serif, ui-sans-serif,
+    system-ui, sans-serif;
+  --font-serif: "Shippori Mincho", ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.18;
+  --shadow-color: hsl(29.2 27.2% 27.2%);
+  --shadow-2xs: 0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.09);
+  --shadow-xs: 0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.09);
+  --shadow-sm:
+    0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.18), 0px 1px 2px -1px hsl(29.2 27.2% 27.2% / 0.18);
+  --shadow:
+    0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.18), 0px 1px 2px -1px hsl(29.2 27.2% 27.2% / 0.18);
+  --shadow-md:
+    0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.18), 0px 2px 4px -1px hsl(29.2 27.2% 27.2% / 0.18);
+  --shadow-lg:
+    0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.18), 0px 4px 6px -1px hsl(29.2 27.2% 27.2% / 0.18);
+  --shadow-xl:
+    0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.18), 0px 8px 10px -1px hsl(29.2 27.2% 27.2% / 0.18);
+  --shadow-2xl: 0px 2px 3px 0px hsl(29.2 27.2% 27.2% / 0.45);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: #171715;
+  --foreground: #f5f5f4;
+  --card: #272725;
+  --card-foreground: #f5f5f4;
+  --popover: #272725;
+  --popover-foreground: #f5f5f4;
+  --primary: #fbf6e7;
+  --primary-foreground: #3d2817;
+  --secondary: #3c2c24;
+  --secondary-foreground: #ffffff;
+  --muted: #2d2d2b;
+  --muted-foreground: #9c9c9b;
+  --accent: #b36d56;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #434342;
+  --input: #434342;
+  --ring: #b36d56;
+  --chart-1: #b36d56;
+  --chart-2: #fbf6e7;
+  --chart-3: #3c2c24;
+  --chart-4: #9d3e1e;
+  --chart-5: #e8d6b8;
+  --sidebar: #222220;
+  --sidebar-foreground: #f5f5f4;
+  --sidebar-primary: #fbf6e7;
+  --sidebar-primary-foreground: #3d2817;
+  --sidebar-accent: #b36d56;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #434342;
+  --sidebar-ring: #b36d56;
+  --font-sans:
+    "Crimson Pro", "Shippori Mincho", "Noto Serif TC", "Noto Serif JP", serif, ui-sans-serif,
+    system-ui, sans-serif;
+  --font-serif: "Shippori Mincho", ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.18;
+  --shadow-color: hsl(0 0% 5%);
+  --shadow-2xs: 0px 2px 3px 0px hsl(0 0% 5% / 0.09);
+  --shadow-xs: 0px 2px 3px 0px hsl(0 0% 5% / 0.09);
+  --shadow-sm: 0px 2px 3px 0px hsl(0 0% 5% / 0.18), 0px 1px 2px -1px hsl(0 0% 5% / 0.18);
+  --shadow: 0px 2px 3px 0px hsl(0 0% 5% / 0.18), 0px 1px 2px -1px hsl(0 0% 5% / 0.18);
+  --shadow-md: 0px 2px 3px 0px hsl(0 0% 5% / 0.18), 0px 2px 4px -1px hsl(0 0% 5% / 0.18);
+  --shadow-lg: 0px 2px 3px 0px hsl(0 0% 5% / 0.18), 0px 4px 6px -1px hsl(0 0% 5% / 0.18);
+  --shadow-xl: 0px 2px 3px 0px hsl(0 0% 5% / 0.18), 0px 8px 10px -1px hsl(0 0% 5% / 0.18);
+  --shadow-2xl: 0px 2px 3px 0px hsl(0 0% 5% / 0.45);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
