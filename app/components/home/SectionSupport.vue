@@ -1,6 +1,16 @@
 <script setup lang="ts">
-const JEN_KNOWS_SUPPORT_URL = "https://portaly.cc/jenknowsau/support";
-const JEN_LIU_SUPPORT_URL = "https://portaly.cc/jenliuau/support";
+type Brand = "jen-liu" | "jen-knows";
+
+const props = defineProps<{ brand?: Brand }>();
+
+const SUPPORTS = [
+  { brand: "jen-knows", label: "支持 Jen Knows", url: "https://portaly.cc/jenknowsau/support" },
+  { brand: "jen-liu", label: "支持 Jen Liu", url: "https://portaly.cc/jenliuau/support" },
+] as const;
+
+const visibleSupports = computed(() =>
+  props.brand ? SUPPORTS.filter((s) => s.brand === props.brand) : SUPPORTS,
+);
 </script>
 
 <template>
@@ -21,8 +31,10 @@ const JEN_LIU_SUPPORT_URL = "https://portaly.cc/jenliuau/support";
 
       <div class="flex flex-wrap justify-center gap-3 pt-2">
         <UButton
+          v-for="s in visibleSupports"
+          :key="s.brand"
           as="a"
-          :href="JEN_KNOWS_SUPPORT_URL"
+          :href="s.url"
           target="_blank"
           rel="noopener"
           color="neutral"
@@ -31,20 +43,7 @@ const JEN_LIU_SUPPORT_URL = "https://portaly.cc/jenliuau/support";
           :ui="{ base: 'rounded-button' }"
           icon="fluent-emoji-high-contrast:bubble-tea"
         >
-          支持 Jen Knows
-        </UButton>
-        <UButton
-          as="a"
-          :href="JEN_LIU_SUPPORT_URL"
-          target="_blank"
-          rel="noopener"
-          color="neutral"
-          variant="outline"
-          size="md"
-          :ui="{ base: 'rounded-button' }"
-          icon="fluent-emoji-high-contrast:bubble-tea"
-        >
-          支持 Jen Liu
+          {{ s.label }}
         </UButton>
       </div>
     </div>
