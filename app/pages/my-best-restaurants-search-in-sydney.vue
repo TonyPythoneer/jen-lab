@@ -222,7 +222,7 @@ const resultLabel = computed(() => {
 
           <!-- Restaurant cards -->
           <TransitionGroup v-else tag="div" name="list" class="space-y-3">
-            <RestaurantCard
+            <RestaurantsRestaurantCard
               v-for="r in sortedList"
               :key="r.id"
               :restaurant="r"
@@ -253,7 +253,7 @@ const resultLabel = computed(() => {
         class="hidden lg:block lg:w-1/2 xl:w-[45%] sticky top-16 h-[calc(100dvh-4rem)] overflow-hidden"
       >
         <ClientOnly>
-          <MapView
+          <RestaurantsMapView
             v-model:ready="mapReady"
             :restaurants="filteredRestaurantList"
             :selected-restaurant="selectedRestaurant"
@@ -289,7 +289,7 @@ const resultLabel = computed(() => {
         style="top: 4rem"
       >
         <ClientOnly>
-          <MapView
+          <RestaurantsMapView
             v-model:ready="mapReady"
             :restaurants="filteredRestaurantList"
             :selected-restaurant="selectedRestaurant"
