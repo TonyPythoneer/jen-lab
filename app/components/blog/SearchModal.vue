@@ -18,35 +18,26 @@
           />
         </div>
 
-        <!-- Search input -->
-        <div class="mb-8">
-          <UInput
+        <!-- Search input: mockup style — large text, bottom underline, magnifier at the right -->
+        <div class="relative mb-6">
+          <input
+            ref="searchInput"
             v-model="q"
             :placeholder="PLACEHOLDER"
-            autofocus
-            class="text-lg"
+            class="w-full border-0 bg-transparent py-3 pr-10 text-2xl font-medium text-abyssal-ink outline-none placeholder:text-abyssal-ink/40 md:text-3xl"
             @keyup.enter="submit"
           />
+          <UIcon
+            name="i-lucide-search"
+            class="absolute right-0 top-1/2 size-6 -translate-y-1/2 text-abyssal-ink/60"
+          />
+          <div class="absolute inset-x-0 bottom-0 h-px bg-abyssal-ink" />
         </div>
 
-        <!-- Category filter -->
-        <div class="mb-6">
-          <BlogFilterButton
-            v-model="selectedCategoryIds"
-            label="分類"
-            icon="i-lucide-folder"
-            :items="categoryTree"
-          />
-        </div>
-
-        <!-- Tag filter -->
-        <div class="mb-8">
-          <BlogFilterButton
-            v-model="selectedTagIds"
-            label="標籤"
-            icon="i-lucide-tag"
-            :items="tagTree"
-          />
+        <!-- Filters: 分類 + 標籤 side by side, below the input -->
+        <div class="mb-8 flex flex-wrap gap-3">
+          <BlogFilterButton v-model="selectedCategoryIds" label="分類" :items="categoryTree" />
+          <BlogFilterButton v-model="selectedTagIds" label="標籤" :items="tagTree" />
         </div>
 
         <!-- Submit button -->
@@ -69,6 +60,14 @@ const { categoryTree, tagTree } = useBlogTaxonomies();
 const q = ref("");
 const selectedCategoryIds = ref<number[]>([]);
 const selectedTagIds = ref<number[]>([]);
+
+// Focus the input when the modal opens — native autofocus is unreliable for a slideover-mounted input.
+const searchInput = ref<HTMLInputElement | null>(null);
+watch(open, async (isOpen) => {
+  if (!isOpen) return;
+  await nextTick();
+  searchInput.value?.focus();
+});
 
 async function submit() {
   await navigateTo(
