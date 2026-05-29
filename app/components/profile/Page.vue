@@ -6,7 +6,7 @@
     <!-- Header -->
     <div class="flex flex-col gap-6">
       <h1
-        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
+        class="font-display tracking-[0.03em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
       >
         {{ displayName }}
       </h1>
@@ -36,34 +36,6 @@
               {{ activeBio }}
             </p>
           </template>
-
-          <div class="flex flex-wrap gap-3">
-            <UButton
-              as="a"
-              :href="subscribeUrl"
-              target="_blank"
-              rel="noopener"
-              color="primary"
-              size="md"
-              icon="i-lucide-rss"
-              class="rounded-button"
-            >
-              {{ SUBSCRIBE_LABEL }}
-            </UButton>
-            <UButton
-              as="a"
-              :href="supportUrl"
-              target="_blank"
-              rel="noopener"
-              color="neutral"
-              variant="outline"
-              size="md"
-              icon="fluent-emoji-high-contrast:bubble-tea"
-              class="rounded-button"
-            >
-              {{ SUPPORT_LABEL }}
-            </UButton>
-          </div>
         </div>
       </div>
     </div>
@@ -119,20 +91,19 @@
         </div>
       </template>
     </section>
+
+    <!-- Support: bubble-tea section, brand-specific, sits before the page footer -->
+    <HomeSectionSupport :brand="props.brand" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Collections } from "@nuxt/content";
 
-const SUBSCRIBE_LABEL = "訂閱電子報";
-const SUPPORT_LABEL = "請我喝奶茶";
-
 const props = defineProps<{
   page: Collections["home"];
-  subscribeUrl: string;
-  supportUrl: string;
   displayName: string;
+  brand: "jen-liu" | "jen-knows";
 }>();
 
 const tabItems = computed(() =>
