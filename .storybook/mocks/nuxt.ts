@@ -24,7 +24,7 @@ export const useRuntimeConfig = () => ({ public: {} as Record<string, unknown> }
 export const useState = <T>(_key: string, init?: () => T) => ref(init ? init() : undefined);
 export const useLazyAsyncData = <T>(_key: string, handler?: () => Promise<T> | T) => {
   const data = ref<T | null>(null);
-  Promise.resolve(handler?.()).then((v) => (data.value = (v as T) ?? null));
+  void Promise.resolve(handler?.()).then((v) => (data.value = (v as T) ?? null));
   return {
     data,
     pending: ref(false),
