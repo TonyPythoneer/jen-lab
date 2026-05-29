@@ -18,6 +18,8 @@ watch(
   () => (mobileOpen.value = false),
 );
 
+const { openSearch } = useBlogSearch();
+
 const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 </script>
 
@@ -74,6 +76,17 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 
       <!-- Socials + CTA + burger -->
       <div class="flex items-center gap-2 shrink-0">
+        <!-- Search icon button -->
+        <UButton
+          color="neutral"
+          variant="ghost"
+          icon="i-lucide-search"
+          aria-label="搜尋文章"
+          class="rounded-button"
+          :class="scrolled ? 'size-8' : 'size-10'"
+          @click="openSearch"
+        />
+
         <!-- Desktop: CTA button (shorter height when scrolled) -->
         <a
           href="#footer"

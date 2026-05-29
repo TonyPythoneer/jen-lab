@@ -7,5 +7,7 @@
     </div>
 
     <SiteFooter />
+
+    <BlogSearchModal />
   </div>
 </template>
