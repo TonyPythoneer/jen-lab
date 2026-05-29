@@ -41,7 +41,7 @@
       <article class="wp-content bg-ash-white rounded-card p-10" v-html="post.content.rendered" />
     </template>
 
-    <ScrollToTopButton />
+    <SharedScrollToTopButton />
   </SitePageContainer>
 </template>
 

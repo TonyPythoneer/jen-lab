@@ -47,7 +47,7 @@
       />
     </div>
 
-    <ScrollToTopButton />
+    <SharedScrollToTopButton />
   </SitePageContainer>
 </template>
 
