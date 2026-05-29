@@ -3,40 +3,42 @@
        sections get Caldera font-display headings, and portal/product sections
        use responsive 2-col grids. -->
   <div class="flex flex-col gap-12">
-    <!-- Header -->
-    <div class="flex flex-col gap-6">
-      <h1
-        class="font-display tracking-[0.03em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
-      >
-        {{ displayName }}
-      </h1>
-
-      <div class="flex flex-col sm:flex-row gap-6 items-start">
+    <!-- Header: full viewport height, centered column — img → name → bio.
+         Negative margins cancel SitePageContainer's pt-10 and px-4 so the
+         hero truly fills edge-to-edge from just below the site header. -->
+    <div
+      class="flex items-center justify-center h-[calc(100dvh-var(--site-header-h))] -mt-10 -mx-4 sm:-mx-6 lg:-mx-8"
+    >
+      <div class="flex flex-col items-center gap-5 text-center px-4 max-w-lg">
         <img
           :src="page.profile.avatar"
           :alt="page.profile.name"
           width="96"
           height="96"
           loading="lazy"
-          class="w-24 h-24 rounded-full object-cover border-2 border-abyssal-ink/10 shrink-0"
+          class="w-24 h-24 rounded-full object-cover border-2 border-abyssal-ink/10"
         />
 
-        <div class="flex flex-col gap-4 flex-1">
-          <!-- Single bio: render directly -->
-          <p
-            v-if="page.profile.tabs.length === 1"
-            class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line"
-          >
-            {{ page.profile.tabs[0]!.bio }}
+        <h1
+          class="font-display tracking-[0.03em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
+        >
+          {{ displayName }}
+        </h1>
+
+        <!-- Single bio: render directly -->
+        <p
+          v-if="page.profile.tabs.length === 1"
+          class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line"
+        >
+          {{ page.profile.tabs[0]!.bio }}
+        </p>
+        <!-- Multiple tabs: UTabs navigation + reactive bio below -->
+        <template v-else>
+          <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
+          <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
+            {{ activeBio }}
           </p>
-          <!-- Multiple tabs: UTabs navigation + reactive bio below -->
-          <template v-else>
-            <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
-            <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
-              {{ activeBio }}
-            </p>
-          </template>
-        </div>
+        </template>
       </div>
     </div>
 
