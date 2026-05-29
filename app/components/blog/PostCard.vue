@@ -1,14 +1,10 @@
 <template>
   <NuxtLink
     :to="to"
-    class="group rounded-card overflow-hidden transition-transform hover:translate-y-[-4px]"
-    :style="{
-      backgroundColor: 'var(--color-ash-white)',
-      borderLeft: '12px solid var(--color-digital-orange)',
-    }"
+    class="group rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
   >
-    <!-- Image with frame border. -->
-    <div class="relative aspect-[4/3] overflow-hidden">
+    <!-- Fixed-height media box reserves space before the image decodes (no CLS). -->
+    <div class="relative h-48">
       <img
         v-if="post.jetpack_featured_media_url"
         :src="post.jetpack_featured_media_url"
@@ -18,42 +14,38 @@
       />
       <div
         v-else
-        class="w-full h-full flex items-center justify-center"
-        :style="{
-          backgroundImage: 'linear-gradient(to bottom right, var(--color-basalt-canvas), #d1d5db)',
-        }"
+        class="w-full h-full flex items-center justify-center bg-linear-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900"
       >
-        <UIcon name="i-lucide-newspaper" class="size-12" style="color: #6b7280" />
+        <UIcon name="i-lucide-newspaper" class="size-12 text-neutral-400" />
       </div>
-      <!-- Frame effect: absolutely positioned border with offset shadow. -->
-      <div
-        class="absolute inset-0 pointer-events-none"
-        :style="{
-          border: '12px solid var(--color-ash-white)',
-          boxShadow: '6px 6px 0 rgba(7, 6, 7, 0.8)',
-        }"
-      />
-    </div>
-
-    <!-- Content. -->
-    <div class="flex flex-col gap-2 flex-1 p-7">
-      <p
-        class="text-xs font-semibold uppercase tracking-[0.04em]"
-        :style="{ color: 'var(--color-digital-orange)' }"
+      <span
+        v-if="isNew"
+        class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-rose-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow"
       >
-        {{ tagMap[post.tags?.[0]] ?? "—" }}
-      </p>
+        <UIcon name="i-lucide-sparkles" class="size-3" />
+        New!
+      </span>
+    </div>
+    <div class="flex flex-col gap-2 flex-1 p-4">
+      <p class="text-xs text-neutral-400">{{ formatDate(post.date) }}</p>
       <h2
-        class="font-semibold text-lg leading-snug"
-        :style="{ color: 'var(--color-abyssal-ink)' }"
+        class="text-base font-semibold leading-snug group-hover:text-primary-500 transition-colors"
         v-html="post.title.rendered"
       />
-      <p class="text-sm" :style="{ color: 'rgba(7, 6, 7, 0.6)' }">
-        {{ formatDate(post.date) }}
-      </p>
-      <p class="text-sm line-clamp-2 flex-1" :style="{ color: 'rgba(7, 6, 7, 0.7)' }">
+      <p class="text-sm text-neutral-500 line-clamp-3">
         {{ stripHtml(post.excerpt.rendered) }}
       </p>
+      <div class="flex flex-wrap gap-1 mt-auto pt-2">
+        <UBadge
+          v-for="tagId in post.tags.slice(0, 3)"
+          :key="tagId"
+          color="neutral"
+          variant="outline"
+          size="xs"
+        >
+          {{ tagMap[tagId] ?? tagId }}
+        </UBadge>
+      </div>
     </div>
   </NuxtLink>
 </template>
