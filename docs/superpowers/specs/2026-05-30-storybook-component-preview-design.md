@@ -57,9 +57,20 @@
 
 - `framework: '@storybook/vue3-vite'`
 - `stories`: `['../app/components/**/*.stories.@(ts)']`
-- `addons`: Essentials（controls / docs / actions）+ Viewport
-- `viteFinal`: 加入 `@nuxt/ui/vite` 的 `ui()` plugin；補上路徑 alias `~` / `@` → `app/`、
-  並把 `#imports` 等 Nuxt 虛擬模組指向 mock（見 4.3）。
+- viewport / controls / docs：Storybook 9+ 已內建於 core，用 `parameters` 設定即可，**不需**另裝 addon 套件。
+- `viteFinal` 必須補齊 Nuxt 的自動匯入（standalone Vite 不會有），否則大多數元件無法編譯：
+  - `@nuxt/ui/vite` 的 `ui()` plugin，並傳入與 `app.config` 同源的 `ui` 主題（見 4.4）。
+  - **`unplugin-auto-import`**：Vue API（`ref`/`computed`/`watch`…，18 個元件用到）、VueUse、
+    `app/composables/*`，以及指向 mock 的 Nuxt composables（見 4.3）。
+  - **`unplugin-vue-components`**：用 `directoryAsNamespace` 還原 Nuxt 的元件命名
+    （`home/Sprite.vue` → `<HomeSprite>`，12 個元件互相參照）。
+  - 路徑 alias `~` / `@` → `app/`；`@nuxt/content`、Nuxt composables 指向 4.3 的 mock。
+
+### 4.4 @nuxt/ui 主題（DRY）
+
+`app.config.ts` 的 `ui.colors`（`digital-orange`/`cyber-violet`/`abyssal-ink`）與 `button` compoundVariants
+是 @nuxt/ui 主題來源。standalone 沒有 app.config，需把同一份設定餵給 `@nuxt/ui/vite`。為避免漂移，
+把 `ui` / `blog` / `contacts` 抽到純模組 `app/config/site.ts`，由 `app.config.ts` 與 Storybook 共用。
 
 ### 4.2 `preview.ts` 要點
 
@@ -71,10 +82,12 @@
 
 ### 4.3 Nuxt composables mock（Phase 3）
 
-針對 5 個用 `useRoute`/`useState` 等的元件，提供最小 mock 模組，由 `viteFinal` alias 指過去：
+針對用 Nuxt composables 的元件，提供最小 mock 模組，由 `viteFinal` alias / auto-import 指過去：
 
 - `useRoute()` → 回傳可在 story 用 args 覆寫的假 route
-- `useState()` → 退化成本地 `ref`
+- `useAppConfig()` → 回傳 `app/config/site.ts`（含 `blog` / `contacts`）
+- `useLazyAsyncData()` → 立即 resolve 的退化版；`useState()` → 本地 `ref`
+- `@nuxt/content` 的 `queryCollection` → 回傳空/假資料的 stub
 - 其餘按實際用到的逐一補；用不到的不補。
 
 ## 5. Story 撰寫慣例
