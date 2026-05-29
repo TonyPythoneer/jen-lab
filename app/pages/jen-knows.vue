@@ -1,19 +1,11 @@
 <template>
   <SitePageContainer>
-    <ProfilePage
-      v-if="page"
-      :page="page"
-      :display-name="DISPLAY_NAME"
-      :subscribe-url="SUBSCRIBE_URL"
-      :support-url="SUPPORT_URL"
-    />
+    <ProfilePage v-if="page" :page="page" :display-name="DISPLAY_NAME" brand="jen-knows" />
   </SitePageContainer>
 </template>
 
 <script setup lang="ts">
 const DISPLAY_NAME = "Jen Knows";
-const SUBSCRIBE_URL = "https://jen-nextsteps.kit.com/60463af80d";
-const SUPPORT_URL = "https://portaly.cc/jenknowsau/support";
 const HEAD_TITLE = "榛知 | NextSteps Academy";
 
 const { data: page } = useLazyAsyncData("profile:jen-knows", () =>
