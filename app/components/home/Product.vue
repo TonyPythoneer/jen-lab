@@ -2,33 +2,17 @@
   <div
     class="relative rounded-card shadow-sm overflow-hidden bg-ash-white border border-abyssal-ink/8"
   >
-    <!-- Banner placeholder. basalt-canvas shows while the lazy image is decoding or if `banner` is unset. -->
-    <div class="relative h-40 sm:h-56 bg-basalt-canvas">
+    <!-- Image fills the whole card. basalt-canvas shows while it decodes or if `banner` is unset.
+         Title/brief/purchase moved off the card (detail in the info drawer, buying in the buy
+         button), so the image takes over the height the detail block used to occupy. -->
+    <div class="relative aspect-[2/1] bg-basalt-canvas">
       <img
         v-if="banner"
         :src="banner"
         :alt="title"
-        class="absolute inset-0 w-full h-full object-cover"
+        class="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />
-    </div>
-    <div class="flex flex-col gap-3 p-5">
-      <h2 class="text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h2>
-      <!-- Brief subtitle. The full intro now lives in the info drawer (top-right). -->
-      <div class="flex items-center gap-1.5 text-sm text-abyssal-ink/60">
-        <UIcon name="i-lucide-chevron-right" class="size-4 shrink-0" />
-        <span>{{ brief }}</span>
-      </div>
-      <UButton
-        :to="purchaseUrl"
-        target="_blank"
-        rel="noopener"
-        size="lg"
-        block
-        class="mt-1 rounded-button font-semibold bg-digital-orange text-pure-white hover:bg-[#e34800]"
-      >
-        {{ purchaseLabel }}
-      </UButton>
     </div>
 
     <!-- Info toggle: stays on top so it is visible over the banner photo and the open drawer. -->
