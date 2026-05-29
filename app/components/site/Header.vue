@@ -5,7 +5,6 @@ const navItems = [
   { label: "Jen Liu", to: "/jen-liu" },
   // { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
   { label: "Blogs", to: "/blogs" },
-  ...(import.meta.dev ? [{ label: "Unused", to: "/unused" }] : []),
 ];
 
 const route = useRoute();
