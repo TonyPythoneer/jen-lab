@@ -10,7 +10,7 @@
         :key="section.id"
         class="scroll-mt-4 flex flex-col gap-5"
       >
-        <CollapsibleSeparator :label="section.label" default-open>
+        <SharedCollapsibleSeparator :label="section.label" default-open>
           <!-- Section type → component dispatch. The schema discriminator is `section.component`. -->
           <template v-if="section.component === 'portal-list'">
             <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
@@ -49,7 +49,7 @@
               v-bind="product"
             />
           </template>
-        </CollapsibleSeparator>
+        </SharedCollapsibleSeparator>
       </section>
     </div>
   </Transition>
