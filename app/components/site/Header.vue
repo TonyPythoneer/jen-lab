@@ -91,7 +91,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
           aria-label="搜尋文章"
           class="rounded-button"
           :class="collapsed ? 'size-8' : 'size-10'"
-          @click="() => openSearch()"
+          @click="openSearch"
         />
 
         <!-- Desktop: CTA button (shorter height when scrolled) -->

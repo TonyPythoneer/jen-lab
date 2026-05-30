@@ -3,7 +3,11 @@ export function useBlogSearch() {
   const open = useState("blog-search-open", () => false);
   return {
     open,
-    openSearch: () => (open.value = true),
-    closeSearch: () => (open.value = false),
+    openSearch: () => {
+      open.value = true;
+    },
+    closeSearch: () => {
+      open.value = false;
+    },
   };
 }
