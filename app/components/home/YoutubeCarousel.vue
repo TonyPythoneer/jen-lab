@@ -1,9 +1,15 @@
 <template>
   <ClientOnly>
     <div class="flex flex-col gap-3">
-      <UCarousel v-slot="{ item }" dots :items="videos" class="w-full mb-8">
+      <UCarousel
+        v-slot="{ item }"
+        dots
+        :items="videos"
+        :ui="{ item: 'sm:basis-1/2' }"
+        class="w-full mb-8"
+      >
         <button class="flex flex-col gap-1.5 group w-full text-left" @click="openVideo(item)">
-          <div class="relative rounded-4xl overflow-hidden aspect-video bg-gray-100">
+          <div class="relative rounded-card overflow-hidden aspect-[2/1] bg-gray-100">
             <img
               :src="`https://img.youtube.com/vi/${item.id}/mqdefault.jpg`"
               :alt="item.title"

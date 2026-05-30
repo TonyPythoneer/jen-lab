@@ -16,6 +16,9 @@
     },
     {
       "path": "./tsconfig.test.json" // tests/ — see file header
+    },
+    {
+      "path": "./tsconfig.scripts.json" // scripts/ + shared/ — see file header
     }
   ]
 }

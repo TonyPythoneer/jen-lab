@@ -36,7 +36,7 @@ sections:
           👉 一個連結，終身更新。
 
           讓你的雪梨之旅的每一餐都不踩雷，吃到翻肚才回家！
-        purchaseUrl: https://buy.stripe.com/28EdR8cEe5lE3aCbOo2VG00
+        purchaseUrl: https://portaly.cc/jenliuau/product/EnDXJiD2Mu0PXf4Om2kY
         purchaseLabel: 馬上領取
       - banner: /home/jen-liu/products/starting-your-solo-trip-in-australia.webp
         title: 開始在澳洲自助旅行

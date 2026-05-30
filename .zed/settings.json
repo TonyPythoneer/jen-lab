@@ -24,7 +24,13 @@
       "tab_size": 2,
       "hard_tabs": false,
       "preferred_line_length": 100,
-      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."]
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."],
+      "inlay_hints": {
+        "enabled": true,
+        "show_parameter_hints": false,
+        "show_other_hints": true,
+        "show_type_hints": true
+      }
     },
     "TypeScript": {
       "tab_size": 2,
@@ -66,7 +72,6 @@
     "**/.svn",
     "**/.hg",
     "**/node_modules",
-    "**/.nuxt",
     "**/.output",
     "**/.wrangler",
     "**/.data",

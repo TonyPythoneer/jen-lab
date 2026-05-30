@@ -87,6 +87,40 @@ const homeSchema = z.object({
   ),
 });
 
+const sectionHeroSchema = z.object({
+  component: z.literal("section-hero"),
+});
+
+const sectionDirectionsSchema = z.object({
+  component: z.literal("section-directions"),
+});
+
+const sectionBlogSchema = z.object({
+  component: z.literal("section-blog"),
+  postCount: z.number().optional(),
+  spinDuration: z.number().optional(),
+});
+
+const sectionNewsletterSchema = z.object({
+  component: z.literal("section-newsletter"),
+});
+
+const sectionSupportSchema = z.object({
+  component: z.literal("section-support"),
+});
+
+const pagesLayoutSchema = z.object({
+  sections: z.array(
+    z.discriminatedUnion("component", [
+      sectionHeroSchema,
+      sectionDirectionsSchema,
+      sectionBlogSchema,
+      sectionNewsletterSchema,
+      sectionSupportSchema,
+    ]),
+  ),
+});
+
 const wpTagSchema = z.object({
   wpId: z.number(),
   slug: z.string(),
@@ -113,6 +147,11 @@ export default defineContentConfig({
       type: "page",
       source: "home/*.md",
       schema: homeSchema,
+    }),
+    pagesLayout: defineCollection({
+      type: "page",
+      source: "pages-layout/*.md",
+      schema: pagesLayoutSchema,
     }),
     wpTags: defineCollection({
       type: "data",

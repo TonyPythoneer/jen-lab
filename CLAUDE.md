@@ -1,78 +1,89 @@
 # CLAUDE.md
 
-Guidance for Claude Code (claude.ai/code) in this repo.
+## Constitution
+
+- Professionalism
+  - Must use **plain English** in code & comments regardless of how complex the logic is, as if writing for a 15–18-year-old.
+    - **WHY** - so any human can step in without explanation
+  - Must refine any code & comments I write to **plain English**.
+  - Must stop inflating code and comments as you must validate them and ensure they are concise and succinct
+  - Must review your output and simplify it as much as possible through self-reflection and rumination.
+- UI testing
+  - Must predict **style** & **animation** by calculating first. No browser when the resulting screen is calculable.
+  - When you **cannot** predict the resulting screen by calculation, driving **webwright / Playwright in the background** is your last step. This is the single path for **all** visual verification — style, animation, and interaction alike. Use the **webwright** skill (`/webwright:run` for one-shot, `/webwright:craft` for reusable); it drives a local Playwright browser and saves screenshots + an action log as evidence.
+  - Verify the change in webwright and `Read` the captured screenshot before declaring done. Typecheck, grep, lint, and code-reading do **not** count as visual verification. Applies to: style edits, layout/proportion changes, new components rendered on a page, animation end-states, interactions (hover, click, scroll, form-fill, modals), and any change a user would notice with their eyes.
+    - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without verifying the route in webwright.
+    - **Violation**: building a click-to-flip card and stopping at "the code compiles" without ever rendering it.
+  - If the change has no visible route, say so explicitly and ask which route to verify — do not skip verification silently.
+- Else
+  - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
 ## Commands
 
-This project uses [Vite+](https://viteplus.dev/guide/) (`vp`) as unified toolchain. Run `vp help` for full command list.
-
 ```bash
-# Development
-pnpm dev          # Start Nuxt dev server at http://localhost:3000
+# Vue/Nuxt development
+pnpm dev          # Dev server at :3500 — user runs it; NEVER start/kill, assume it's already running
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages
-pnpm analyze      # Bundle analyzer (no serve)
 
-# Validation (run before committing)
-vp install        # Install dependencies
-vp check          # Lint + format + typecheck in one pass
-vp test           # Run tests (Vitest)
+# development scripts
+pnpm sync:wp      # Sync tags and categories from WordPress
+# Visual verification: drive webwright/Playwright in the background, then Read the captured screenshot (see "UI testing")
 
-# Other
-pnpm typecheck    # Nuxt typecheck only (also covered by vp check)
-pnpm sync:wp      # Sync WordPress content
+# Validation (run after changes)
+pnpm check        # Lint + format + typecheck
+pnpm test         # Run tests (Vitest)
 ```
-
-> `vp dev` / `vp build` do NOT replace `pnpm dev` / `pnpm build` — Nuxt has its own pipeline.
 
 ## Architecture
 
-**jen-lab** = Nuxt 4 personal site for "榛知雪梨". Two top-level surfaces:
+Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/my-best-restaurants-search-in-sydney` (Leaflet map).
 
-- `/` — profile site (Jen Knows / Jen Liu profile tabs, content-driven via `@nuxt/content`).
-- `/my-best-restaurants-search-in-sydney` — Sydney restaurant map (filterable Leaflet map + list).
+**Non-obvious constraints:**
 
-Deploys to **Cloudflare Pages** via Wrangler, `cloudflare-pages` Nitro preset. `@nuxt/content` uses D1 in production (`NUXT_CONTENT_DB=d1`), in-memory SQLite in dev.
+- `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
+- `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
+- `MapView.vue` — Leaflet must stay inside `<ClientOnly>` (SSR-unsafe).
+- `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
+- Light mode only — dark mode disabled in `app.config.ts`.
 
-### Home (profile site)
+## Component Organization
 
-- `app/pages/index.vue` — profile switcher (`UTabs`) + `HomeProfile` card + `HomeContentBody` + `HomeToc` rail. Pre-fetches both profiles via `useLazyAsyncData` keyed `profile:<key>` so tab switching is instant.
-- `content/home/jen-knows.md`, `content/home/jen-liu.md` — markdown front-matter drives a typed `home` collection (see `content.config.ts`).
-- `content.config.ts` — `homeSchema` defines `profile` + `sections[]` as a discriminated union on `section.component`:
-  - `portal-list` → `<HomePortal>` link cards
-  - `youtube-carousel` → `<HomeYoutubeCarousel>` (clickable thumbnails → fullscreen iframe modal)
-  - `image-carousel` → `<HomeImageCarousel>` (zoom modal)
-  - `product-list` → `<HomeProduct>` (collapsible markdown description + CTA)
-- `app/components/home/ContentBody.vue` — section dispatch by `section.component`.
-- `app/components/home/Toc.vue` — `UContentToc` with `highlight`. Dual-mode layout (sm+ fixed rail, max-sm sticky strip) achieved via `:deep` slot-display swap with `!important` overrides; required because `UContentToc` ships a single mobile-first disclosure markup.
-- `app/pages/index.vue:94-97` — watches `navLinks`; calls `nuxtApp.callHook('page:transition:finish')` on profile switch so `UContentToc`'s internal scroll-spy re-measures section offsets after the section list changes.
-- `nuxt.config.ts` `content:file:afterParse` hook — pre-renders `product.description` (markdown) → `descriptionHtml` at build time via `markdown-it`. Keeps the parser out of the client bundle; component `v-html`s the trusted local HTML.
+**Directory = route domain.** Each subdirectory maps to the route it serves. Nuxt auto-import uses the directory as the component prefix.
 
-### Restaurants
+| Directory      | Serves                                  |
+| -------------- | --------------------------------------- |
+| `site/`        | All pages (global layout)               |
+| `home/`        | `/`                                     |
+| `blog/`        | `/blogs`, `/blogs/[slug]`               |
+| `restaurants/` | `/my-best-restaurants-search-in-sydney` |
+| `profile/`     | `/about`                                |
+| `shared/`      | Cross-domain reusable primitives        |
+| `fx/`          | Visual effects consumed by components   |
 
-- `app/assets/data/pages/restaurants.ts` — static `categories[]` + `restaurants[]` dataset.
-- `app/composables/useRestaurants.ts` — central state. **Intentional** `useLazyAsyncData` + `await import('...restaurants')`: Vite emits the dataset as its own chunk, kept out of the route chunk; the page shell paints before the dataset arrives. Do NOT replace with a static top-level import.
-- `app/pages/my-best-restaurants-search-in-sydney.vue` — search bar + filter modal (area/category) + Leaflet map + scrollable list. Selected restaurant pinned to list top with teal ring.
-- `app/components/MapView.vue` — Leaflet map in `<ClientOnly>` (SSR-safe). Emits `select` on marker click.
-- `app/components/RestaurantCard.vue` — card UI.
-- `app/components/FilterItem.vue` — reusable filter pill.
+**`Section` prefix = page consumes it directly.** A `Section*` component is a full-width block rendered inside `pages/`. No prefix = sub-component consumed by another component, not a page.
 
-### UI stack
+**No version suffixes.** Never use `V2`, `V3` in filenames. Use a feature branch for parallel versions during development.
 
-- **@nuxt/ui v4** (Reka UI) + **Tailwind CSS v4**.
-- **Leaflet** for the map; always wrapped in `<ClientOnly>`.
-- `app/assets/css/main.css` — global CSS entry point.
-- `app.config.ts` — `contacts[]` (label/url/icon/hoverClass) consumed by `HomeProfile`.
-- Auto-imports follow directory: `app/components/home/Sprite.vue` → `<HomeSprite>`.
+## AI Development
 
-### MDC bundle hygiene
+- Nuxt
+  - Must use `useLazyAsyncData` instead of `useAsyncData` to avoid blocking UI rendering.
+  - Composables
+    - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
+    - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
 
-- `mdc.highlight: false` and `content.build.markdown.highlight: false` in `nuxt.config.ts` — markdown has no fenced code blocks, so Shiki's oniguruma WASM (~600 KB) and language grammars (~900 KB) are skipped from the client bundle. Re-enable if a code block is ever introduced into `content/**.md` or product descriptions.
+- RWD: desktop and mobile only — no tablet breakpoints. On elements visible only on mobile (e.g. `md:hidden`), add `<!-- Mobile -->`; no comment means it serves all breakpoints.
 
-## Data fetching
-
-Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI render until the request resolves — slow networks stall the page shell. Use `useLazyAsyncData` (non-blocking, paints shell first, fills data when ready) or fetch imperatively inside event handlers / `onMounted`.
+- Else
+  - [Region comment] When a `<script setup>` gets long but still does one thing, use `// #region <Name>` ... `// #endregion` to group related logic instead of splitting it into composables too early.
+  - Ask approval from the user to read `./node_modules/<package>` for the latest info if you can't figure it out, as you must not access the internet.
+  - **Ambiguous visual terms** — before editing, resolve any spatial/visual term that has more than one plausible CSS mapping. Restate your interpretation in one line and proceed only if it is unambiguous; otherwise ask.
+    - Chinese spatial words to always pin down: `粗` (wider stroke vs. longer span?), `厚` (border vs. padding vs. shadow?), `重` (font-weight vs. color contrast?), `濃` (saturation vs. opacity?), `高` (height vs. z-index?), `滿` (full-bleed vs. 100% width?), `跑掉` (overflow vs. wrap vs. position drift?).
+    - **Violation**: user says "弧線太粗", Claude lengthens the arc instead of increasing `stroke-width`.
+    - **Violation**: user says "顏色疊在一起", Claude changes colors when the real issue is a layout height bug.
+    - When a complaint could be layout _or_ color _or_ z-index, screenshot first, identify the actual symptom, then act.
 
 ## Code Style
 
@@ -80,23 +91,18 @@ Do **NOT** use `useAsyncData`. It awaits during `<script setup>` and blocks UI r
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
 - No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<UButton color="neutral">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
 - Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
-- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/home/Profile.vue`.
+- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Profile.vue`.
+- For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
 
-## When to extract a composable
+## Working Preferences
 
-Composables exist to serve **reuse, testability, or team coordination** — not to make a single page's `<script setup>` feel shorter. Aesthetic clutter is solved with `// #region` blocks (see below), not with abstraction.
-
-**Extract a composable only when at least one of these is true:**
-
-1. A second consumer (page or component) needs the same state/logic.
-2. The logic deserves unit tests independent of the rendering page.
-3. The team has multiple people editing the same area and needs ownership boundaries.
-4. The file has crossed ~250 lines of `<script setup>` and grouping by region is no longer enough.
-
-If none of the above hold, **inline it**. A linear `<script setup>` of 100–200 lines that reads top-to-bottom is more maintainable than three composables that force cross-file jumps to trace one cause-and-effect chain (e.g. "filter changes → cache wipes → posts refetch"). Indirection has a real cost: every hidden watcher inside a composable is invisible to the page reader.
-
-When extraction is justified, follow VueUse's split: a **pure** composable (only `ref`/`reactive`/`computed`/`watch`/plain JS, accepts refs/values as parameters via `MaybeRefOrGetter`) is preferred over a **Nuxt-bound** one (calls setup-only APIs like `useRoute`, `useAsyncData`, `useState`). When both concerns exist, keep the Nuxt-bound calls in the consuming page and feed their refs into the pure composable as arguments. This keeps the pure layer testable with plain Vitest, no `@nuxt/test-utils` setup.
-
-## Region comments for long `<script setup>`
-
-When a page's `<script setup>` grows past ~80 lines and still belongs to a single concern, group related state/logic with `// #region <Name>` ... `// #endregion` blocks instead of extracting composables prematurely. The IDE folds them, readers can scan section headers as a table of contents, and the data flow stays linear in one file. Typical regions for a CRUD-style page: `Filter state`, `Taxonomies`, `Pagination + posts`, `URL sync`, `UI state`, `Helpers`. See `app/pages/blogs/index.vue` for reference.
+- **Parallel components** — when asked to create a NEW or parallel component, create it standalone. Do **not** Read, Grep, or open the original file — not even "for reference" — unless the user explicitly says so.
+  - **Violation**: user says "做一個 SectionBlog3D2", Claude opens `SectionBlog3D.vue` to copy structure.
+  - If a shared type or constant is genuinely needed from the original, ask first; do not read preemptively.
+- **No fake fixes (偷吃步)** — never mask a symptom to make a screenshot look right; diagnose the actual root cause.
+  - **Violation**: cup renders with wrong transparency, Claude sets `background-color` to match the page background instead of fixing alpha/blend mode.
+  - **Violation**: text overflows, Claude shortens the text instead of fixing the container.
+  - **Violation**: hardcoding a computed value (color, position, size) that should come from a token, prop, or layout rule, just to ship.
+  - If you are about to write a literal value that papers over a real bug, stop and surface the root cause to the user.
+- **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
+- **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.

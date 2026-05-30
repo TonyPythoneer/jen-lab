@@ -1,58 +1,66 @@
 <template>
-  <div class="rounded-4xl shadow-[6px_6px_0px_rgba(0,0,0,0.7)] overflow-hidden bg-[#f7f7f7]">
-    <!-- Banner placeholder. Teal background shows while the lazy image is decoding or if `banner` is unset. -->
-    <div class="relative h-40 sm:h-56 bg-teal-400">
+  <div
+    class="relative rounded-card shadow-sm overflow-hidden bg-ash-white border border-abyssal-ink/8"
+  >
+    <!-- Image fills the whole card. basalt-canvas shows while it decodes or if `banner` is unset.
+         Title/brief/purchase moved off the card (detail in the info drawer, buying in the buy
+         button), so the image takes over the height the detail block used to occupy. -->
+    <div class="relative aspect-[2/1] bg-basalt-canvas">
       <img
         v-if="banner"
         :src="banner"
         :alt="title"
-        class="absolute inset-0 w-full h-full object-cover"
+        class="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />
     </div>
-    <div class="flex flex-col gap-3 p-5">
-      <h2 class="text-lg font-bold text-gray-900">{{ title }}</h2>
-      <!--
-        Collapsible: brief copy is always shown; full description toggles open.
-        `class="group"` enables the chevron rotate via group-data-[state=open] in the UI override below.
-      -->
-      <UCollapsible class="group">
-        <div class="flex items-center gap-1 -ml-1">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            leading-icon="i-lucide-chevron-right"
-            :ui="{
-              leadingIcon: 'group-data-[state=open]:rotate-90 transition-transform duration-200',
-              base: 'hover:bg-transparent',
-            }"
-          />
-          <span class="text-sm text-gray-500">{{ brief }}</span>
-        </div>
-        <template #content>
-          <!-- descriptionHtml is pre-rendered at build time by markdown-it inside
-               the content:file:afterParse hook (see nuxt.config.ts). v-html ships
-               zero markdown parser to the client; source is trusted local content. -->
-          <div
-            v-if="descriptionHtml"
-            class="text-sm text-gray-600 leading-relaxed mt-2 pl-5 product-description"
-            v-html="descriptionHtml"
-          />
-        </template>
-      </UCollapsible>
-      <UButton
-        :to="purchaseUrl"
-        target="_blank"
-        rel="noopener"
-        color="primary"
-        size="lg"
-        block
-        class="rounded-full font-semibold mt-1"
+
+    <!-- Info toggle: stays on top so it is visible over the banner photo and the open drawer. -->
+    <button
+      type="button"
+      :aria-label="open ? '關閉介紹' : '查看介紹'"
+      class="absolute right-3 top-3 z-20 grid size-9 place-items-center rounded-full bg-pure-white/80 text-abyssal-ink shadow-sm backdrop-blur-sm transition-colors hover:bg-pure-white"
+      @click="open = !open"
+    >
+      <UIcon :name="open ? 'i-lucide-x' : 'i-lucide-info'" class="size-5" />
+    </button>
+
+    <!-- Buy: sits directly below the info button; opens the buy interstitial. -->
+    <button
+      type="button"
+      aria-label="購買"
+      class="absolute right-3 top-14 z-20 grid size-9 place-items-center rounded-full bg-digital-orange text-pure-white shadow-sm transition-colors hover:bg-[#e34800]"
+      @click="buyOpen = true"
+    >
+      <UIcon name="i-streamline-freehand:e-commerce-click-buy" class="size-5" />
+    </button>
+
+    <!-- Info drawer: slides in left-to-right over the whole card; scrolls to read. -->
+    <Transition
+      enter-active-class="transition-transform duration-300 ease-out"
+      enter-from-class="-translate-x-full"
+      enter-to-class="translate-x-0"
+      leave-active-class="transition-transform duration-200 ease-in"
+      leave-from-class="translate-x-0"
+      leave-to-class="-translate-x-full"
+    >
+      <div
+        v-if="open"
+        class="product-drawer absolute inset-0 z-10 overflow-y-auto overscroll-contain bg-ash-white px-5 pb-5 pt-14"
       >
-        {{ purchaseLabel }}
-      </UButton>
-    </div>
+        <h3 class="mb-3 text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h3>
+        <!-- descriptionHtml is pre-rendered at build by markdown-it (see nuxt.config.ts
+             content:file:afterParse). v-html ships no parser to the client; source is trusted local content. -->
+        <div
+          v-if="descriptionHtml"
+          class="product-description text-sm leading-relaxed text-abyssal-ink/70"
+          v-html="descriptionHtml"
+        />
+      </div>
+    </Transition>
+
+    <!-- Buy interstitial: countdown ring + sparks, then redirects to the store. -->
+    <HomeBuyButton v-model:open="buyOpen" :purchase-url="purchaseUrl" />
   </div>
 </template>
 
@@ -69,9 +77,28 @@ defineProps<{
   purchaseUrl: string;
   purchaseLabel: string;
 }>();
+
+// Info drawer toggle (top-right button) and the buy interstitial toggle
+// (handed to HomeBuyButton, which owns the countdown + redirect).
+const open = ref(false);
+const buyOpen = ref(false);
 </script>
 
 <style scoped>
+/* Keep the drawer's scrollbar visible whenever the detail overflows the card —
+ * macOS overlay scrollbars otherwise stay hidden until the user scrolls. */
+.product-drawer {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-abyssal-ink) 30%, transparent) transparent;
+}
+.product-drawer::-webkit-scrollbar {
+  width: 8px;
+}
+.product-drawer::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--color-abyssal-ink) 30%, transparent);
+  border-radius: 9999px;
+}
+
 /* Restores defaults for tags markdown-it emits — Tailwind Preflight resets
  * them. `:deep()` because the markup comes from v-html, not the template. */
 .product-description :deep(a) {

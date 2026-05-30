@@ -1,147 +1,96 @@
 <template>
-  <!-- `fixed inset-0` escapes UMain's `min-h-[calc(100vh-...)]`; the bottom pagination then pins to the visible viewport edge on mobile/desktop alike. -->
-  <div class="fixed inset-0 z-10 flex flex-col overflow-hidden bg-white dark:bg-neutral-900">
-    <BlogTopBar class="shrink-0">
-      <template #left>
-        <UButton
-          to="/"
-          variant="ghost"
-          color="neutral"
-          icon="i-lucide-house"
-          aria-label="返回首頁"
-          class="rounded-full"
-        />
-      </template>
-      <template #center>
-        <div class="relative h-8 overflow-hidden">
-          <Transition name="topbar-swap">
-            <UFieldGroup v-if="searchOpen" key="search" class="absolute inset-0 w-full">
-              <BlogFilterButton
-                v-model="selectedCategoryIds"
-                label="分類"
-                icon="i-lucide-folder"
-                :items="categoryTree"
-              />
-              <BlogFilterButton
-                v-model="selectedTagIds"
-                label="標籤"
-                icon="i-lucide-tag"
-                :items="tagTree"
-              />
-              <UInput
-                v-model="searchInput"
-                placeholder="🔍 Search"
-                class="flex-1 min-w-0"
-                @keyup.enter="submitSearch"
-              />
-              <UButton
-                v-if="hasActiveFilters"
-                icon="i-lucide-eraser"
-                color="neutral"
-                variant="outline"
-                aria-label="清除全部篩選"
-                @click="clearAllFilters"
-              />
-            </UFieldGroup>
-            <h1
-              v-else
-              key="title"
-              class="absolute inset-0 flex items-center justify-center text-base md:text-lg font-semibold tracking-tight truncate"
-            >
-              {{ blog.title }}
-            </h1>
-          </Transition>
-        </div>
-      </template>
-      <template #right>
-        <ClientOnly>
-          <UButton
-            :disabled="!filtersReady"
-            :color="!filtersReady ? 'neutral' : searchOpen ? 'neutral' : 'primary'"
-            :variant="!filtersReady || searchOpen ? 'soft' : 'solid'"
-            :icon="searchOpen ? 'i-lucide-x' : 'i-lucide-search'"
-            :aria-label="searchOpen ? '關閉搜尋' : '開啟搜尋'"
-            @click="searchOpen = !searchOpen"
-            class="rounded-full"
-          />
-        </ClientOnly>
-      </template>
-    </BlogTopBar>
+  <SitePageContainer>
+    <!-- Header -->
+    <UPageHeader
+      title="Notes From The Notebook."
+      description="Collected one day, one thought, one note at a time."
+      class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
+      :ui="{ title: 'font-display uppercase text-6xl sm:text-8xl leading-[0.9] tracking-[0.03em]' }"
+    />
 
-    <!-- Scrollable content body. Pagination drives navigation; one page rendered at a time. -->
-    <div ref="scrollEl" class="flex-1 overflow-y-auto">
-      <div class="max-w-5xl mx-auto px-4 py-6">
-        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
-        </div>
-
-        <div v-else-if="error" class="text-center py-20">
-          <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
-          <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
-        </div>
-
-        <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BlogPostCard
-            v-for="post in posts"
-            :key="post.id"
-            :post="post"
-            :to="{
-              name: 'blogs-slug',
-              params: { slug: [String(post.id)] },
-              query: { title: post.slug },
-            }"
-            :tag-map="tagMap"
-          />
-        </div>
-
-        <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
-
-        <ScrollToTopButton />
+    <!-- Posts grid -->
+    <div ref="scrollEl">
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
+        <BlogPostCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
       </div>
+
+      <div v-else-if="error" class="text-center py-20">
+        <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
+        <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
+      </div>
+
+      <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
+        <BlogPostCard
+          v-for="post in posts"
+          :key="post.id"
+          :post="post"
+          :to="{
+            name: 'blogs-slug',
+            params: { slug: [String(post.id)] },
+            query: { title: post.slug },
+          }"
+          :tag-map="tagMap"
+        />
+      </div>
+
+      <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
     </div>
 
-    <!-- Pagination pinned to bottom -->
-    <div
-      class="shrink-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur px-4 py-3 flex justify-center"
-    >
+    <!-- Pagination -->
+    <div class="flex justify-center border-t border-neutral-200 pt-6">
       <UPagination
         :page="currentPage"
         :total="totalPages * PER_PAGE"
         :items-per-page="PER_PAGE"
         :disabled="loading || totalPages <= 1"
         @update:page="currentPage = $event"
-      />
+      >
+        <!-- Active page: orange fill via raw token (Nuxt UI `primary` semantic is not wired to digital-orange). -->
+        <template #item="{ item, page: activePage }">
+          <UButton
+            v-if="item.type === 'page'"
+            :label="String(item.value)"
+            square
+            color="neutral"
+            variant="outline"
+            :ui="{ label: 'min-w-5 text-center' }"
+            :class="
+              item.value === activePage
+                ? 'bg-digital-orange text-pure-white shadow-none hover:bg-digital-orange hover:text-pure-white disabled:bg-digital-orange aria-disabled:bg-digital-orange'
+                : undefined
+            "
+          />
+          <span v-else class="px-1.5 text-sm text-neutral-400">…</span>
+        </template>
+      </UPagination>
     </div>
-  </div>
+
+    <SharedScrollToTopButton />
+  </SitePageContainer>
 </template>
 
 <script setup lang="ts">
 import { fetchPosts } from "~/utils/wpApi";
+import { csvToIds } from "~/utils/csvToIds";
 
 const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
 const { blog } = useAppConfig();
-useSeoMeta({ title: `${blog.title} - ${blog.brief}`, description: blog.brief });
+useSeoMeta({
+  title: "Blog — Jen Lab",
+  description: "Long-form posts about what I learned the hard way.",
+});
 
 const route = useRoute();
 const router = useRouter();
 const initialQuery = route.query;
 
-// Cache: hit memory before re-fetching (Nuxt payload during hydration, then static.data on client)
-const cached = (key: string, app: ReturnType<typeof useNuxtApp>) =>
-  app.payload.data[key] ?? app.static.data[key];
-
 // Filters, pagination + per-scope page cache (pure, see useBlogList).
 const {
   search,
-  searchInput,
   selectedCategoryIds,
   selectedTagIds,
-  hasActiveFilters,
-  searchOpen,
-  submitSearch,
-  clearAllFilters,
   currentPage,
   fullKey,
   pageCache,
@@ -149,30 +98,10 @@ const {
   recordResult,
 } = useBlogList(initialQuery);
 
-// #region Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`)
+// Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`).
 // Client-only: defers taxonomy fetch off SSR/hydration critical path.
-const { data: categories } = useLazyAsyncData(
-  "wp-categories",
-  () => queryCollection("wpCategories").order("wpId", "DESC").all(),
-  { server: false, getCachedData: cached },
-);
-const { data: tags } = useLazyAsyncData(
-  "wp-tags",
-  () => queryCollection("wpTags").order("count", "DESC").order("wpId", "DESC").all(),
-  { server: false, getCachedData: cached },
-);
-
-const filtersReady = computed(() => !!categories.value && !!tags.value);
+const { tags } = useBlogTaxonomies();
 const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
-const categoryTree = computed(() =>
-  (categories.value ?? []).map((c) => ({
-    label: c.name,
-    value: c.wpId,
-    children: c.children?.map((ch) => ({ label: ch.name, value: ch.wpId })),
-  })),
-);
-const tagTree = computed(() => (tags.value ?? []).map((t) => ({ label: t.name, value: t.wpId })));
-// #endregion
 
 // #region Posts
 const scrollEl = ref<HTMLDivElement | null>(null);
@@ -229,22 +158,19 @@ watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
 
 // Capture initial URL into lastQuery (covers fresh load / back-from-detail)
 lastQuery.value = { ...initialQuery } as Record<string, string>;
+
+// URL → state (handles same-route navigateTo from SearchModal when already on /blogs)
+watch(
+  () => route.query,
+  (q) => {
+    const newSearch = typeof q.q === "string" ? q.q : "";
+    const newCats = csvToIds(q.cat);
+    const newTags = csvToIds(q.tag);
+    if (newSearch !== search.value) search.value = newSearch;
+    if (newCats.join(",") !== selectedCategoryIds.value.join(","))
+      selectedCategoryIds.value = newCats;
+    if (newTags.join(",") !== selectedTagIds.value.join(",")) selectedTagIds.value = newTags;
+  },
+);
 // #endregion
 </script>
-
-<style scoped>
-.topbar-swap-enter-active,
-.topbar-swap-leave-active {
-  transition:
-    transform 250ms ease,
-    opacity 250ms ease;
-}
-.topbar-swap-enter-from {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-.topbar-swap-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
-}
-</style>

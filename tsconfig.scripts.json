@@ -1,0 +1,13 @@
+{
+  // scripts/ aren't covered by Nuxt's generated tsconfigs.
+  // - extends node config: inherit Bundler resolution + .ts-extension imports
+  // - types: ["node"] — node config clears types to [], so re-add the
+  //   `process`/`node:*` globals these CLI scripts rely on
+  "extends": "./.nuxt/tsconfig.node.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts", "shared/**/*.ts"]
+}

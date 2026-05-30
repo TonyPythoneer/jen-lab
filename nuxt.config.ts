@@ -2,10 +2,8 @@ import type { NuxtConfig } from "nuxt/schema";
 import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
 import linkAttrs from "markdown-it-link-attributes";
-import { analyzer } from "vite-bundle-analyzer";
 import { WP_BASE } from "./shared/wp";
-
-const isD1 = process.env.NUXT_CONTENT_DB === "d1";
+import { DEV_PORT } from "./shared/dev";
 
 // Build-time markdown renderer for product description fields.
 // Runs only inside content:file:afterParse on the server during the
@@ -16,7 +14,36 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(link
 });
 
 const moduleSettings: NuxtConfig = {
-  modules: ["@nuxtjs/mdc", "@nuxt/content", "nitro-cloudflare-dev", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: [
+    "@nuxtjs/mdc",
+    "@nuxt/content",
+    "nitro-cloudflare-dev",
+    "@nuxt/ui",
+    "@nuxt/fonts",
+    "@vueuse/nuxt",
+  ],
+  fonts: {
+    families: [
+      // English display — bold condensed headlines
+      { name: "Bebas Neue", provider: "google", weights: [400] },
+      // English body — humanist, matching caldera reference
+      { name: "DM Sans", provider: "google", weights: [400, 500, 700] },
+      // English body — fallback
+      { name: "Inter", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — neutral modern (recommended default)
+      { name: "Noto Sans TC", provider: "google", weights: [400, 500, 700, 900] },
+      // Chinese body — rounded friendly
+      // { name: "Zen Maru Gothic", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — geometric, close to Inter feel
+      // { name: "Murecho", provider: "google", weights: [400, 500, 700] },
+      // Chinese body — handwritten, personal blog vibe
+      // { name: "LXGW WenKai TC", provider: "google", weights: [400, 700] },
+      // Chinese body — clean, legible
+      // { name: "BIZ UDPGothic", provider: "google", weights: [400, 700] },
+      // Chinese body — serif, elegant
+      // { name: "Noto Serif TC", provider: "google", weights: [400, 500, 700] },
+    ],
+  },
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "light",
@@ -40,7 +67,7 @@ const moduleSettings: NuxtConfig = {
     experimental: {
       sqliteConnector: "native",
     },
-    database: isD1 ? { type: "d1", bindingName: "DB" } : { type: "sqlite", filename: ":memory:" },
+    database: { type: "sqlite", filename: ":memory:" },
   },
 };
 
@@ -53,6 +80,12 @@ const cloudflareSettings: NuxtConfig = {
       nodeCompat: true,
     },
   },
+  routeRules: {
+    "/": { prerender: true },
+    "/jen-liu": { prerender: true },
+    "/jen-knows": { prerender: true },
+    "/blogs": { prerender: true },
+  },
 };
 
 const devSettings: NuxtConfig = {
@@ -63,7 +96,7 @@ const devSettings: NuxtConfig = {
     },
   },
   devServer: {
-    port: 3500,
+    port: DEV_PORT,
   },
   vite: {
     optimizeDeps: {
@@ -71,7 +104,6 @@ const devSettings: NuxtConfig = {
         "leaflet", // CJS
       ],
     },
-    plugins: [analyzer({ analyzerMode: "json", fileName: "stats" }) as any],
     // Build-time constants (string-replaced into bundle, zero runtime overhead)
     define: {
       __WP_BASE__: JSON.stringify(WP_BASE),
