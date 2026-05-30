@@ -48,6 +48,7 @@
         <!-- Active page: orange fill via raw token (Nuxt UI `primary` semantic is not wired to digital-orange). -->
         <template #item="{ item, page: activePage }">
           <UButton
+            v-if="item.type === 'page'"
             :label="String(item.value)"
             square
             color="neutral"
@@ -59,6 +60,7 @@
                 : undefined
             "
           />
+          <span v-else class="px-1.5 text-sm text-neutral-400">…</span>
         </template>
       </UPagination>
     </div>
