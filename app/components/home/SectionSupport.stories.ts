@@ -54,3 +54,13 @@ export const NoBrand: Story = {
     `,
   }),
 };
+
+export const InPage: Story = {
+  parameters: { layout: "fullscreen" },
+  render: (args) => ({
+    components: { SectionSupport },
+    setup: () => ({ args }),
+    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionSupport v-bind="args" /></div>`,
+  }),
+  args: {},
+};

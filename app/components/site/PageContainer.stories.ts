@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { PageContainer },
     setup: () => ({ args }),
     template: `
@@ -27,7 +27,7 @@ export const Default: Story = {
 };
 
 export const Breakout: Story = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { PageContainer },
     setup: () => ({ args }),
     template: `

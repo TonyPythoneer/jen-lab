@@ -22,3 +22,13 @@ export const Default: Story = {
       '<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionBlog3D v-bind="args" /></div>',
   }),
 };
+
+export const InPage: Story = {
+  parameters: { layout: "fullscreen" },
+  render: (args) => ({
+    components: { SectionBlog3D },
+    setup: () => ({ args }),
+    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionBlog3D v-bind="args" /></div>`,
+  }),
+  args: {},
+};

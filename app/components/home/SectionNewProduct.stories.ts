@@ -22,3 +22,13 @@ export const Default: Story = {
     `,
   }),
 };
+
+export const InPage: Story = {
+  parameters: { layout: "fullscreen" },
+  render: (args) => ({
+    components: { SectionNewProduct },
+    setup: () => ({ args }),
+    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionNewProduct v-bind="args" /></div>`,
+  }),
+  args: {},
+};

@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Aurora },
     setup: () => ({ args }),
     template: `<div class="w-40 h-40 flex items-center justify-center"><Aurora v-bind="args"><span class="text-sm font-semibold text-gray-700">Content</span></Aurora></div>`,
@@ -23,7 +23,7 @@ export const Default: Story = {
 };
 
 export const Violet: Story = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Aurora },
     setup: () => ({ args }),
     template: `<div class="w-40 h-40 flex items-center justify-center"><Aurora v-bind="args"><span class="text-sm font-semibold text-gray-700">Content</span></Aurora></div>`,
@@ -35,7 +35,7 @@ export const Violet: Story = {
 };
 
 export const LargeRounded: Story = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Aurora },
     setup: () => ({ args }),
     template: `<div class="w-48 h-48 flex items-center justify-center"><Aurora v-bind="args"><span class="text-sm font-semibold text-gray-700">Large</span></Aurora></div>`,
