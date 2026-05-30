@@ -27,6 +27,10 @@ pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages
 
+# Storybook — component preview (standalone, not connected to Nuxt)
+pnpm storybook        # Component preview at :6006
+pnpm build-storybook  # Build static Storybook to storybook-static/
+
 # development scripts
 pnpm sync:wp      # Sync tags and categories from WordPress
 # Visual verification: drive webwright/Playwright in the background, then Read the captured screenshot (see "UI testing")
@@ -47,6 +51,19 @@ Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four 
 - `MapView.vue` — Leaflet must stay inside `<ClientOnly>` (SSR-unsafe).
 - `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
 - Light mode only — dark mode disabled in `app.config.ts`.
+
+## Storybook
+
+Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the project's vite-plus/rolldown toolchain. `.storybook/main.ts` folds auto-import and component config into `@nuxt/ui/vite`'s own options (it bundles both plugins; a second instance throws). `@vitejs/plugin-vue` is explicitly registered because vite-plus doesn't add it automatically.
+
+- **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"`.
+- **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus/Nuxt's TS setup; stories are dev-only.
+- **Import from `@storybook/vue3-vite`** (not `@storybook/vue3`).
+- **`Section*` components** get a `Default` story + an `InPage` story (`parameters: { layout: "fullscreen" }`, wrapped in `min-h-dvh bg-[var(--color-basalt-canvas)]`) for RWD viewport testing.
+- **Theme colors** in `main.ts` use Tailwind palette names (`orange`, `violet`, `zinc`) not brand token names — `@nuxt/ui` generates palette shades only for Tailwind colors. Brand tokens (`--color-digital-orange`, etc.) still load via `theme.css`.
+- **Single source for site config**: `app/config/site.ts` — both `app.config.ts` and `main.ts` import from here. Change colors/contacts there only.
+- **`app/storybook/StoryWrapper.vue`** wraps every story in `<UApp>` via the global decorator.
+- **`pnpm build-storybook` known limitation**: fails on `shared/SnapCarousel.vue` because that component uses Vue 3.3 generic SFC syntax (`lang="ts" generic="T extends ..."`), which rolldown (the workspace vite-plus build engine) cannot compile in production mode. The **dev server** (`pnpm storybook`) handles it fine via the incremental compiler. No fix until rolldown adds generic SFC support.
 
 ## Component Organization
 
