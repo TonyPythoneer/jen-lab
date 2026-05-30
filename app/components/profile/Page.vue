@@ -13,10 +13,10 @@
         <img
           :src="page.profile.avatar"
           :alt="page.profile.name"
-          width="96"
-          height="96"
+          width="168"
+          height="168"
           loading="lazy"
-          class="w-24 h-24 rounded-full object-cover border-2 border-abyssal-ink/10"
+          class="w-42 h-42 rounded-full object-cover border-2 border-abyssal-ink/10"
         />
 
         <h1
