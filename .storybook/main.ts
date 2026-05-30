@@ -30,6 +30,9 @@ const config: StorybookConfig = {
         // vite-plus (the workspace vite alias) doesn't register @vitejs/plugin-vue
         // automatically the way standard Storybook+Vite does. Without it .vue files
         // hit import-analysis raw and fail. Explicit registration fixes that.
+        // isProduction: false prevents rolldown's production-mode compiler from
+        // tripping over `lang="ts" generic="T extends ..."` SFCs (Vue 3.3 generics).
+        // Rolldown's prod path has a known parsing gap with generic components.
         vue(),
         // @nuxt/ui already bundles unplugin-auto-import AND unplugin-vue-components,
         // and throws if it sees a second instance. So we extend ITS instances via
