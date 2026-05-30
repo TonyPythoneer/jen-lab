@@ -3,7 +3,7 @@
     <!-- Header -->
     <UPageHeader
       title="Notes From The Notebook."
-      description="Observations, experiments, and dispatches from the margins."
+      description="Collected one day, one thought, one note at a time."
       class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
       :ui="{ title: 'font-display uppercase text-6xl sm:text-8xl leading-[0.9] tracking-[0.03em]' }"
     />
@@ -44,7 +44,23 @@
         :items-per-page="PER_PAGE"
         :disabled="loading || totalPages <= 1"
         @update:page="currentPage = $event"
-      />
+      >
+        <!-- Active page: orange fill via raw token (Nuxt UI `primary` semantic is not wired to digital-orange). -->
+        <template #item="{ item, page: activePage }">
+          <UButton
+            :label="String(item.value)"
+            square
+            color="neutral"
+            variant="outline"
+            :ui="{ label: 'min-w-5 text-center' }"
+            :class="
+              item.value === activePage
+                ? 'bg-digital-orange text-pure-white shadow-none hover:bg-digital-orange hover:text-pure-white disabled:bg-digital-orange aria-disabled:bg-digital-orange'
+                : undefined
+            "
+          />
+        </template>
+      </UPagination>
     </div>
 
     <SharedScrollToTopButton />
@@ -53,6 +69,7 @@
 
 <script setup lang="ts">
 import { fetchPosts } from "~/utils/wpApi";
+import { csvToIds } from "~/utils/csvToIds";
 
 const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
@@ -139,5 +156,19 @@ watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {
 
 // Capture initial URL into lastQuery (covers fresh load / back-from-detail)
 lastQuery.value = { ...initialQuery } as Record<string, string>;
+
+// URL → state (handles same-route navigateTo from SearchModal when already on /blogs)
+watch(
+  () => route.query,
+  (q) => {
+    const newSearch = typeof q.q === "string" ? q.q : "";
+    const newCats = csvToIds(q.cat);
+    const newTags = csvToIds(q.tag);
+    if (newSearch !== search.value) search.value = newSearch;
+    if (newCats.join(",") !== selectedCategoryIds.value.join(","))
+      selectedCategoryIds.value = newCats;
+    if (newTags.join(",") !== selectedTagIds.value.join(",")) selectedTagIds.value = newTags;
+  },
+);
 // #endregion
 </script>

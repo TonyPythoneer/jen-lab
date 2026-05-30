@@ -1,25 +1,27 @@
 <template>
   <UPopover>
-    <UButton
-      variant="outline"
-      color="neutral"
-      :icon="icon"
+    <button
+      type="button"
+      class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition-colors"
+      :class="
+        modelValue.length
+          ? 'border-abyssal-ink bg-abyssal-ink text-pure-white'
+          : 'border-abyssal-ink/25 text-abyssal-ink hover:border-abyssal-ink'
+      "
       :aria-label="label"
-      :class="modelValue.length ? 'ring-2 ring-primary-500' : ''"
     >
-      <template v-if="!icon">{{ label }}</template>
-      <template #trailing>
-        <span
-          v-if="modelValue.length"
-          class="rounded-full size-5 inline-flex items-center justify-center text-xs font-semibold bg-primary-500 text-white"
-        >
-          {{ modelValue.length }}
-        </span>
-        <UIcon v-else name="i-lucide-chevron-down" />
-      </template>
-    </UButton>
+      <UIcon v-if="icon" :name="icon" class="size-4" />
+      <span v-else>{{ label }}</span>
+      <span
+        v-if="modelValue.length"
+        class="inline-flex size-4 items-center justify-center rounded-full bg-digital-orange text-[10px] font-bold leading-none text-pure-white"
+      >
+        {{ modelValue.length }}
+      </span>
+      <UIcon v-else name="i-lucide-chevron-down" class="size-3 opacity-50" />
+    </button>
     <template #content>
-      <div class="w-56 p-2 max-h-64 overflow-y-auto">
+      <div class="w-52 max-h-60 overflow-y-auto p-1.5">
         <UTree
           v-model="selectedTree"
           :items="items"
@@ -27,15 +29,23 @@
           multiple
           propagate-select
           bubble-select
-          @select="onSelect"
         >
-          <template #item-leading="{ selected, indeterminate, handleSelect }">
-            <UCheckbox
-              :model-value="indeterminate ? 'indeterminate' : selected"
-              tabindex="-1"
-              @change="handleSelect"
-              @click.stop
-            />
+          <template #item-leading="{ selected, indeterminate }">
+            <div
+              class="size-4 shrink-0 rounded-sm border flex items-center justify-center transition-colors"
+              :class="
+                selected || indeterminate
+                  ? 'border-abyssal-ink bg-abyssal-ink'
+                  : 'border-neutral-300'
+              "
+            >
+              <UIcon v-if="selected" name="i-lucide-check" class="size-3 text-pure-white" />
+              <UIcon
+                v-else-if="indeterminate"
+                name="i-lucide-minus"
+                class="size-3 text-pure-white"
+              />
+            </div>
           </template>
         </UTree>
       </div>
@@ -77,10 +87,4 @@ const selectedTree = computed<FilterTreeItem[]>({
     emit("change");
   },
 });
-
-function onSelect(e: { detail: { originalEvent: Event }; preventDefault: () => void }) {
-  if (e.detail.originalEvent.type === "click") {
-    e.preventDefault();
-  }
-}
 </script>
