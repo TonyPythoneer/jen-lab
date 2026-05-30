@@ -1,8 +1,14 @@
 <template>
   <ClientOnly>
-    <UCarousel v-slot="{ item }" dots :items="images" class="w-full mb-8">
+    <UCarousel
+      v-slot="{ item }"
+      dots
+      :items="images"
+      :ui="{ item: 'sm:basis-1/2' }"
+      class="w-full mb-8"
+    >
       <div
-        class="relative rounded-card overflow-hidden h-112 bg-gray-100 group cursor-zoom-in"
+        class="relative rounded-card overflow-hidden aspect-[2/1] bg-gray-100 group cursor-zoom-in"
         @click="openImage(item)"
       >
         <img

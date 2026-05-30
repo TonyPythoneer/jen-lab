@@ -76,7 +76,7 @@
       <!-- Contacts -->
       <USeparator label="Contacts" class="px-6" />
       <div class="flex justify-center gap-4 py-2 px-6">
-        <ContactLinks />
+        <SharedContactLinks />
       </div>
     </div>
   </div>

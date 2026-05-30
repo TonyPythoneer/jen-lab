@@ -2,7 +2,7 @@
 const COMPONENT_MAP: Record<string, ReturnType<typeof resolveComponent>> = {
   "section-hero": resolveComponent("HomeSectionHero"),
   "section-directions": resolveComponent("HomeSectionDirections"),
-  "section-blog": resolveComponent("HomeSectionBlog3DV2"),
+  "section-blog": resolveComponent("HomeSectionBlog3D"),
   "section-newsletter": resolveComponent("HomeSectionNewsletter"),
   "section-support": resolveComponent("HomeSectionSupport"),
 };

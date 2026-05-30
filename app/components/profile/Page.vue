@@ -3,68 +3,42 @@
        sections get Caldera font-display headings, and portal/product sections
        use responsive 2-col grids. -->
   <div class="flex flex-col gap-12">
-    <!-- Header -->
-    <div class="flex flex-col gap-6">
-      <h1
-        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
-      >
-        {{ displayName }}
-      </h1>
-
-      <div class="flex flex-col sm:flex-row gap-6 items-start">
+    <!-- Header: full viewport height, centered column — img → name → bio.
+         Negative margins cancel SitePageContainer's pt-10 and px-4 so the
+         hero truly fills edge-to-edge from just below the site header. -->
+    <div
+      class="flex items-center justify-center h-[calc(100dvh-var(--site-header-h))] -mt-10 -mx-4 sm:-mx-6 lg:-mx-8"
+    >
+      <div class="flex flex-col items-center gap-5 text-center px-4 max-w-lg">
         <img
           :src="page.profile.avatar"
           :alt="page.profile.name"
-          width="96"
-          height="96"
+          width="168"
+          height="168"
           loading="lazy"
-          class="w-24 h-24 rounded-full object-cover border-2 border-abyssal-ink/10 shrink-0"
+          class="w-42 h-42 rounded-full object-cover border-2 border-abyssal-ink/10"
         />
 
-        <div class="flex flex-col gap-4 flex-1">
-          <!-- Single bio: render directly -->
-          <p
-            v-if="page.profile.tabs.length === 1"
-            class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line"
-          >
-            {{ page.profile.tabs[0]!.bio }}
-          </p>
-          <!-- Multiple tabs: UTabs navigation + reactive bio below -->
-          <template v-else>
-            <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
-            <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
-              {{ activeBio }}
-            </p>
-          </template>
+        <h1
+          class="font-display tracking-[0.03em] leading-[0.9] text-abyssal-ink text-7xl sm:text-9xl uppercase"
+        >
+          {{ displayName }}
+        </h1>
 
-          <div class="flex flex-wrap gap-3">
-            <UButton
-              as="a"
-              :href="subscribeUrl"
-              target="_blank"
-              rel="noopener"
-              color="primary"
-              size="md"
-              icon="i-lucide-rss"
-              class="rounded-button"
-            >
-              {{ SUBSCRIBE_LABEL }}
-            </UButton>
-            <UButton
-              as="a"
-              :href="supportUrl"
-              target="_blank"
-              rel="noopener"
-              color="neutral"
-              variant="outline"
-              size="md"
-              icon="fluent-emoji-high-contrast:bubble-tea"
-              class="rounded-button"
-            >
-              {{ SUPPORT_LABEL }}
-            </UButton>
-          </div>
-        </div>
+        <!-- Single bio: render directly -->
+        <p
+          v-if="page.profile.tabs.length === 1"
+          class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line"
+        >
+          {{ page.profile.tabs[0]!.bio }}
+        </p>
+        <!-- Multiple tabs: UTabs navigation + reactive bio below -->
+        <template v-else>
+          <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
+          <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
+            {{ activeBio }}
+          </p>
+        </template>
       </div>
     </div>
 
@@ -119,20 +93,19 @@
         </div>
       </template>
     </section>
+
+    <!-- Support: bubble-tea section, brand-specific, sits before the page footer -->
+    <HomeSectionSupport :brand="props.brand" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Collections } from "@nuxt/content";
 
-const SUBSCRIBE_LABEL = "訂閱電子報";
-const SUPPORT_LABEL = "請我喝奶茶";
-
 const props = defineProps<{
   page: Collections["home"];
-  subscribeUrl: string;
-  supportUrl: string;
   displayName: string;
+  brand: "jen-liu" | "jen-knows";
 }>();
 
 const tabItems = computed(() =>
