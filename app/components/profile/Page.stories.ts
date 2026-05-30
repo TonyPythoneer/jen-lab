@@ -1,7 +1,6 @@
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Page from "./Page.vue";
-import type { Collections } from "@nuxt/content";
 
 const meta = {
   title: "profile/Page",
