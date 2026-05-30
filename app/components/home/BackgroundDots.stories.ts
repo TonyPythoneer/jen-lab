@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import BackgroundDots from "./BackgroundDots.vue";
 
 const meta = {
@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
     template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,
@@ -25,7 +25,7 @@ export const Default: Story = {
 };
 
 export const Sparse: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
     template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,
@@ -39,7 +39,7 @@ export const Sparse: Story = {
 };
 
 export const Dense: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
     template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,

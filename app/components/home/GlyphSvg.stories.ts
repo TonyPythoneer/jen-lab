@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import GlyphSvg from "./GlyphSvg.vue";
 
 const meta = {
@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const GumLeaf: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -22,7 +22,7 @@ export const GumLeaf: Story = {
 };
 
 export const Terminal: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -33,7 +33,7 @@ export const Terminal: Story = {
 };
 
 export const Book: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -44,7 +44,7 @@ export const Book: Story = {
 };
 
 export const Compass: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -55,7 +55,7 @@ export const Compass: Story = {
 };
 
 export const Coffee: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -66,7 +66,7 @@ export const Coffee: Story = {
 };
 
 export const Surf: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -77,7 +77,7 @@ export const Surf: Story = {
 };
 
 export const Ferris: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,
@@ -88,7 +88,7 @@ export const Ferris: Story = {
 };
 
 export const Sail: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { GlyphSvg },
     setup: () => ({ args }),
     template: `<div class="w-24 h-24"><GlyphSvg v-bind="args" /></div>`,

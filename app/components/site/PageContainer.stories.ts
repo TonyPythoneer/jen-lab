@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import PageContainer from "./PageContainer.vue";
 
 const meta = {
@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { PageContainer },
     setup: () => ({ args }),
     template: `
@@ -27,7 +27,7 @@ export const Default: Story = {
 };
 
 export const Breakout: Story = {
-  render: (args: any) => ({
+  render: (args) => ({
     components: { PageContainer },
     setup: () => ({ args }),
     template: `
