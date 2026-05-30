@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import SectionSupport from "./SectionSupport.vue";
 
 const meta = {
@@ -23,18 +23,6 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
-
-export const InPage: Story = {
-  parameters: { layout: "fullscreen" },
-  render: (args) => ({
-    components: { SectionSupport },
-    setup: () => ({ args }),
-    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionSupport v-bind="args" /></div>`,
-  }),
-  args: {
-    brand: "jen-knows",
-  },
 };
 
 export const JenLiu: Story = {

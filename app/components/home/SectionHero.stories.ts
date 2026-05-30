@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import SectionHero from "./SectionHero.vue";
 
 const meta = {
@@ -21,14 +21,4 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
-
-export const InPage: Story = {
-  parameters: { layout: "fullscreen" },
-  render: (args) => ({
-    components: { SectionHero },
-    setup: () => ({ args }),
-    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionHero v-bind="args" /></div>`,
-  }),
-  args: {},
 };

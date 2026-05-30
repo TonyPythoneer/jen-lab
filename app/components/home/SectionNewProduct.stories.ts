@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import SectionNewProduct from "./SectionNewProduct.vue";
 
 const meta = {
@@ -21,14 +21,4 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
-
-export const InPage: Story = {
-  parameters: { layout: "fullscreen" },
-  render: (args) => ({
-    components: { SectionNewProduct },
-    setup: () => ({ args }),
-    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionNewProduct v-bind="args" /></div>`,
-  }),
-  args: {},
 };
