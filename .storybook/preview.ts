@@ -1,9 +1,9 @@
-// @ts-expect-error - Storybook types not fully resolving in this context
-import type { Preview } from "@storybook/vue3";
-// @ts-expect-error - Storybook types not fully resolving in this context
-import { setup } from "@storybook/vue3";
+import type { Preview } from "@storybook/vue3-vite";
+import { setup } from "@storybook/vue3-vite";
 import { h, type App } from "vue";
 import ui from "@nuxt/ui/vue-plugin";
+// @ts-expect-error — tsconfig doesn't cover .storybook/ context, but runtime works fine
+import StoryWrapper from "../app/storybook/StoryWrapper.vue";
 // @ts-expect-error - CSS import resolution in Storybook context
 import "../app/assets/css/main.css";
 
@@ -38,7 +38,10 @@ setup((app: App) => {
 
 const preview: Preview = {
   decorators: [
-    (story: any) => ({ components: { story }, template: '<UApp class="isolate"><story /></UApp>' }),
+    (story: any) => ({
+      components: { StoryWrapper, story },
+      template: "<StoryWrapper><story /></StoryWrapper>",
+    }),
   ],
   parameters: {
     layout: "fullscreen",

@@ -1,20 +1,13 @@
-// @ts-expect-error - Storybook types
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
+// @ts-expect-error — tsconfig doesn't cover .storybook/ context, but runtime works fine
+import Smoke from "../app/storybook/Smoke.vue";
 
-const meta: Meta = {
+const meta = {
   title: "_smoke/Theme",
-  render: () => ({
-    template: `
-      <div class="p-8 flex flex-col gap-4 items-start font-sans">
-        <h1 class="text-heading font-display">Storybook is up</h1>
-        <UButton color="primary">Primary (digital-orange)</UButton>
-        <UButton color="neutral" variant="outline">Ghost neutral</UButton>
-        <UBadge color="secondary">secondary</UBadge>
-      </div>
-    `,
-  }),
-};
+  component: Smoke,
+} satisfies Meta<typeof Smoke>;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
+
 export const Default: Story = {};
