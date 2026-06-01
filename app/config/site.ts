@@ -20,11 +20,6 @@ export const uiConfig = {
   },
 };
 
-export const blogConfig = {
-  title: "榛知部落格",
-  brief: "深入淺出的中文澳洲知識庫",
-};
-
 export const contacts = [
   {
     label: "Threads",

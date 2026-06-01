@@ -207,5 +207,39 @@ export default defineContentConfig({
         nav: z.array(z.object({ label: z.string(), to: z.string() })),
       }),
     }),
+    // Blog page wording (titles, button/state text, SEO). Separate from `site`
+    // because the shape differs — do NOT glob both into one schema. Query with
+    // `.first()`, never `.path()` (the data-collection path bug).
+    siteBlogs: defineCollection({
+      type: "data",
+      source: "site/blogs.yml",
+      schema: z.object({
+        listPage: z.object({
+          title: z.string(),
+          subtitle: z.string(),
+          loadingErrorMessage: z.string(),
+          loadingErrorRetryButton: z.string(),
+          noResultsMessage: z.string(),
+          seoTitle: z.string(),
+          seoDescription: z.string(),
+        }),
+        detailPage: z.object({
+          backLink: z.string(),
+          loadingMessage: z.string(),
+          notFoundMessage: z.string(),
+          // "{{title}}" is replaced with the post title at render time.
+          seoTitleTemplate: z.string(),
+        }),
+        search: z.object({
+          placeholder: z.string(),
+          categoryLabel: z.string(),
+          tagLabel: z.string(),
+        }),
+        postCard: z.object({
+          newBadgeText: z.string(),
+          newPostDaysThreshold: z.number(),
+        }),
+      }),
+    }),
   },
 });

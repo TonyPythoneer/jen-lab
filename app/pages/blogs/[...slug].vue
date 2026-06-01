@@ -7,11 +7,11 @@
         class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
       >
         <UIcon name="i-lucide-arrow-left" class="size-4" />
-        返回部落格
+        {{ chrome?.detailPage.backLink }}
       </NuxtLink>
 
       <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
-        {{ pending ? "載入中..." : "找不到文章" }}
+        {{ pending ? chrome?.detailPage.loadingMessage : chrome?.detailPage.notFoundMessage }}
       </div>
 
       <UPageHeader
@@ -50,7 +50,11 @@ import { fetchPost, stripHtml, formatDate } from "~/utils/wpApi";
 
 const route = useRoute();
 const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
-const { blog } = useAppConfig();
+
+// Page wording comes from content/site/blogs.yml (single source of truth).
+const { data: chrome } = await useAsyncData("site:blogs", () =>
+  queryCollection("siteBlogs").first(),
+);
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
 const postId = Number(route.params.slug?.[0]);
@@ -74,7 +78,7 @@ const meta = computed(() => {
 });
 
 useSeoMeta({
-  title: () => `${meta.value.title} | Jen Liu`,
+  title: () => chrome.value?.detailPage.seoTitleTemplate.replace("{{title}}", meta.value.title),
   description: () => meta.value.description,
   ogTitle: () => meta.value.title,
   ogDescription: () => meta.value.description,
