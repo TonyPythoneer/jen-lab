@@ -1281,3 +1281,5 @@ export const restaurants = [
     photoUrl: "https://picsum.photos/seed/nbbt6/800/600",
   },
 ] as const;
+
+export type Category = (typeof categories)[number];

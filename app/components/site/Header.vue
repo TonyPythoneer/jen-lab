@@ -1,11 +1,8 @@
 <script setup lang="ts">
-const navItems = [
-  { label: "Home", to: "/" },
-  { label: "Jen Knows", to: "/jen-knows" },
-  { label: "Jen Liu", to: "/jen-liu" },
-  // { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
-  { label: "Blogs", to: "/blogs" },
-];
+const { data: siteHeader } = await useAsyncData("site-header", () =>
+  queryCollection("site").path("/site/header").first(),
+);
+const navItems = computed(() => siteHeader.value?.nav ?? []);
 
 const route = useRoute();
 const { y } = useWindowScroll();
