@@ -2,7 +2,17 @@
 
 - **Date**: 2026-06-02
 - **Branch / Worktree**: `feat/content-cms-sync` (based on `feat/food-map`), at `.claude/worktrees/content-cms-sync`
-- **Status**: Design — awaiting user review before plan/implementation
+- **Status**: Phase 0 ✅ shipped · Phase 1 ✅ shipped & verified · Phase 2 ⏸ deferred (needs a design decision — see below). Awaiting user review.
+
+## Build status (autonomous run, 2026-06-02)
+
+| Phase                         | Result                                                                                                                                                                                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Phase 0 — dead product fields | ✅ Committed. `pnpm check` clean. No-op visually (fields were never rendered).                                                                                                                                                                                           |
+| Phase 1 — homepage CMS-driven | ✅ Committed. `pnpm check` clean. Verified in a browser (worktree dev server :3510): every section's copy renders from `content/pages-layout/home.md` (h1, marquee ×7, direction cards, blog heading, newsletter, SEO title); hero screenshot identical to the original. |
+| Phase 2 — blog chrome         | ⏸ Deferred. Low value (blog posts already live in WordPress) **and** a genuine fork on where chrome should live (new `content/site/blogs.yml` vs the existing `blogConfig` in `app/config/site.ts`). Not shipping a guess.                                               |
+
+**Pre-existing issue observed (NOT caused by this work, out of scope):** the site header navigation is empty in **dev mode** on `feat/food-map` — `Header.vue` calls `queryCollection("site").path("/site/header")`, and `.path()` on a single-file _data_ collection throws `no such column: "path"` in the dev SQLite engine. Confirmed identical on the user's own :3500 server, so it predates this branch's content work. `Header.vue`/`header.yml` were untouched here. Worth a separate look (verify whether prod prerender is affected).
 
 ## Problem
 
@@ -182,7 +192,14 @@ Each existing section block gains its copy fields (values copied verbatim from t
 
 ---
 
-## Phase 2 — Blog page chrome → CMS
+## Phase 2 — Blog page chrome → CMS (DEFERRED)
+
+> **Deferred pending a decision.** Blog chrome is low-value UI microcopy (real blog content is already non-tech-editable in WordPress). More importantly, the repo already has a `blogConfig` (`app/config/site.ts`, surfaced as `useAppConfig().blog`) that is currently **vestigial** — the blog page header copy ("Notes From The Notebook.") is hardcoded in `index.vue` and does not read `blogConfig`. So before extracting, decide the single home for blog chrome:
+>
+> - **Option A — `content/site/blogs.yml`** (new data collection): honours the "CMS in `content/`" goal. Must query with `.first()`/`.all()` — NOT `.path()` (see the pre-existing dev bug above).
+> - **Option B — consolidate into `blogConfig`** (`app/config/site.ts`): the repo's established blog-config pattern, Storybook-safe, lowest risk, but it is code, not `content/`.
+>
+> Recommendation: Option A to match intent, but confirm with the user since it means migrating/retiring `blogConfig`. The schema/sample below is the Option-A draft.
 
 Blog **posts** stay on the WordPress API. Only the page chrome (titles, states, filter labels, SEO) moves to content.
 
