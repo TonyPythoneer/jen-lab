@@ -8,13 +8,11 @@ useSeoMeta({
   description: "An atlas of personally visited restaurants across Sydney.",
 });
 
-const isDev = import.meta.dev;
 const { categories, filteredRestaurantList, isReady } = useRestaurants();
 </script>
 
 <template>
   <div class="food-map-page">
-    <SiteHeader v-if="isDev" />
     <FoodMapApp v-if="isReady" :restaurants="filteredRestaurantList" :categories="categories" />
   </div>
 </template>

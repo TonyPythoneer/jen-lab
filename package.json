@@ -17,6 +17,7 @@
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types",
     "sync:wp": "node --experimental-strip-types scripts/sync-wp.ts",
+    "sync:ferries": "node --experimental-strip-types scripts/sync-ferries.ts",
     "ai:screenshot": "node --experimental-strip-types scripts/screenshot.ts",
     "prepare": "vp config"
   },
@@ -44,6 +45,7 @@
     "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vueuse/core": "^14.3.0",
+    "fflate": "^0.8.2",
     "markdown-it": "^14.1.1",
     "markdown-it-link-attributes": "^4.0.1",
     "nitro-cloudflare-dev": "^0.2.2",

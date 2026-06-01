@@ -210,13 +210,15 @@
   gap: 9px;
   padding: 9px 16px;
   background: var(--paper);
-  border: 1px solid var(--foreground);
+  border: 1px solid var(--border-strong);
   border-radius: 9999px;
+  font-family: var(--font-serif);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--foreground);
   box-shadow: 0 2px 10px rgba(61, 40, 23, 0.16);
+  transition: background 120ms;
 }
 .theme-menu__trigger svg {
   color: var(--accent);
@@ -230,9 +232,9 @@
   top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  width: 300px;
+  width: 320px;
   background: var(--paper);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 12px 36px rgba(61, 40, 23, 0.26);
@@ -272,28 +274,6 @@
   flex-shrink: 0;
   background-size: cover;
 }
-/* mini previews of each theme's land/water grade */
-.theme-menu__swatch[data-theme="parchment"] {
-  background: linear-gradient(135deg, #e5d3a8 0 60%, #cdbb8c 60% 100%);
-}
-.theme-menu__swatch[data-theme="engraving"] {
-  background: linear-gradient(135deg, #f3eede 0 52%, #2c241a 52% 100%);
-}
-.theme-menu__swatch[data-theme="handtint"] {
-  background: linear-gradient(125deg, #ead9bb 0 42%, #c08a72 42% 70%, #9fb6c0 70% 100%);
-}
-.theme-menu__swatch[data-theme="voyager"] {
-  background: linear-gradient(135deg, #e7dcc0 0 58%, #8fb6d4 58% 100%);
-}
-.theme-menu__swatch[data-theme="satellite"] {
-  background: linear-gradient(135deg, #3f5a3a 0 45%, #2f4f63 45% 78%, #1f3a4a 78% 100%);
-}
-.theme-menu__swatch[data-theme="topographic"] {
-  background: linear-gradient(135deg, #ddca9c 0 55%, #b7a06f 55% 78%, #9bb1bf 78% 100%);
-}
-.theme-menu__swatch[data-theme="cool"] {
-  background: linear-gradient(135deg, #dfe0d2 0 58%, #93b3bf 58% 100%);
-}
 
 .theme-menu__meta {
   display: flex;
@@ -302,13 +282,61 @@
   min-width: 0;
 }
 .theme-menu__name {
+  font-family: var(--font-serif);
   font-size: 13px;
   font-weight: 600;
+  color: var(--foreground);
 }
 .theme-menu__note {
   font-size: 10px;
   color: var(--muted-foreground);
   letter-spacing: 0.02em;
+}
+
+/* ---- Animation section: divider + river-boats toggle ---- */
+.theme-menu__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 8px 4px;
+}
+.theme-menu__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 8px 8px;
+}
+.theme-menu__toggle-row .theme-menu__meta {
+  flex: 1;
+}
+
+/* pill track + sliding knob; ON state tinted with --accent */
+.theme-menu__switch {
+  flex-shrink: 0;
+  width: 40px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  position: relative;
+  transition: background 140ms ease;
+}
+.theme-menu__switch.is-on {
+  background: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.theme-menu__switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgba(61, 40, 23, 0.3);
+  transition: transform 140ms ease;
+}
+.theme-menu__switch.is-on .theme-menu__switch-knob {
+  transform: translateX(18px);
 }
 
 /* ===================== LIST DRAWER (left, collapsible) ===================== */
@@ -970,6 +998,24 @@
   white-space: nowrap;
   pointer-events: none;
   opacity: 0.9;
+}
+
+/* ---- river boats (ferry simulation markers) ---- */
+.river-boat-wrap {
+  /* Leaflet divIcon wrapper — strip default marker chrome. */
+  background: none;
+  border: none;
+  pointer-events: none;
+}
+.river-boat {
+  /* The engine sets an inline --boat-ink per theme; SVG fills currentColor. */
+  color: var(--boat-ink);
+  will-change: transform;
+  pointer-events: none;
+}
+.river-boat svg {
+  display: block;
+  fill: currentColor;
 }
 
 /* scrollbars */

@@ -4,9 +4,13 @@ import type { MapTheme } from "~/composables/useFoodMapTheme";
 const props = defineProps<{
   themes: MapTheme[];
   activeThemeId: string;
+  boatsEnabled: boolean;
 }>();
 
-const emit = defineEmits<{ select: [id: string] }>();
+const emit = defineEmits<{
+  select: [id: string];
+  "toggle-boats": [];
+}>();
 
 const open = ref(false);
 
@@ -17,7 +21,7 @@ function pick(id: string) {
 
 const activeTheme = computed(() => props.themes.find((t) => t.id === props.activeThemeId));
 
-function getSwatchGradient(themeId: string): string {
+function getSwatchGradient(themeId: string) {
   const gradients: Record<string, string> = {
     parchment: "linear-gradient(135deg, #e5d3a8 0 60%, #cdbb8c 60% 100%)",
     engraving: "linear-gradient(135deg, #f3eede 0 52%, #2c241a 52% 100%)",
@@ -32,13 +36,9 @@ function getSwatchGradient(themeId: string): string {
 </script>
 
 <template>
-  <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[650]">
-    <!-- Trigger button -->
-    <button
-      class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-900 rounded-full text-xs font-semibold tracking-wider text-gray-900 shadow-sm hover:bg-gray-50 transition-colors"
-      aria-label="Map theme"
-      @click="open = !open"
-    >
+  <div class="theme-menu">
+    <!-- Trigger -->
+    <button class="theme-menu__trigger" aria-label="Map theme" @click="open = !open">
       <svg
         width="15"
         height="15"
@@ -46,7 +46,6 @@ function getSwatchGradient(themeId: string): string {
         fill="none"
         stroke="currentColor"
         stroke-width="1.6"
-        class="text-orange-500"
       >
         <path d="M12 3 3 7.5 12 12l9-4.5L12 3Z" />
         <path
@@ -58,40 +57,46 @@ function getSwatchGradient(themeId: string): string {
       <span>{{ activeTheme?.name }}</span>
     </button>
 
-    <!-- Dropdown menu -->
-    <div
-      v-if="open"
-      class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white border border-gray-200 rounded-lg p-2 shadow-lg"
-    >
+    <!-- Dropdown -->
+    <div v-if="open" class="theme-menu__list">
       <!-- Heading -->
-      <div class="text-xs font-bold tracking-widest text-gray-400 uppercase px-2 py-1.5 pb-2">
-        地圖樣式 · Map Style
-      </div>
+      <div class="theme-menu__heading">地圖樣式 · Map Style</div>
 
-      <!-- Theme items -->
+      <!-- Theme rows -->
       <button
         v-for="t in props.themes"
         :key="t.id"
-        :class="[
-          'w-full flex items-center gap-3 px-2 py-2.5 rounded-md text-left transition-colors',
-          props.activeThemeId === t.id
-            ? 'bg-gray-100 ring-1 ring-inset ring-gray-200'
-            : 'hover:bg-gray-50',
-        ]"
+        class="theme-menu__item"
+        :class="{ 'is-active': props.activeThemeId === t.id }"
         @click="pick(t.id)"
       >
-        <!-- Swatch -->
-        <div
-          class="w-8.5 h-8.5 flex-shrink-0 rounded border border-gray-200 bg-cover"
-          :style="getSwatchGradient(t.id)"
-        />
-
-        <!-- Metadata -->
-        <div class="flex flex-col gap-0.5 min-w-0">
-          <div class="text-sm font-semibold text-gray-900">{{ t.name }} · {{ t.en }}</div>
-          <div class="text-xs text-gray-500 tracking-wider">{{ t.note }}</div>
+        <div class="theme-menu__swatch" :style="getSwatchGradient(t.id)" />
+        <div class="theme-menu__meta">
+          <div class="theme-menu__name">{{ t.name }} · {{ t.en }}</div>
+          <div class="theme-menu__note">{{ t.note }}</div>
         </div>
       </button>
+
+      <!-- Animation section -->
+      <div class="theme-menu__divider" />
+      <div class="theme-menu__heading">船隻 · Animation</div>
+
+      <div class="theme-menu__toggle-row">
+        <div class="theme-menu__meta">
+          <div class="theme-menu__name">河上船隻 · River boats</div>
+          <div class="theme-menu__note">Boats drift along the harbour routes</div>
+        </div>
+        <button
+          class="theme-menu__switch"
+          :class="{ 'is-on': props.boatsEnabled }"
+          role="switch"
+          :aria-checked="props.boatsEnabled"
+          aria-label="River boats"
+          @click="emit('toggle-boats')"
+        >
+          <span class="theme-menu__switch-knob" />
+        </button>
+      </div>
     </div>
   </div>
 </template>

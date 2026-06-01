@@ -3,12 +3,14 @@ import type { Map as LeafletMap, Marker, TileLayer, GeoJSON, LayerGroup } from "
 import type { EnrichedRestaurant } from "~/composables/useRestaurants";
 import type { MapTheme } from "~/composables/useFoodMapTheme";
 import { CATEGORY_ICON } from "~/utils/food-map-categories";
+import { createRiverBoats, type RiverBoatsController } from "~/composables/useRiverBoats";
 
 const props = defineProps<{
   restaurants: EnrichedRestaurant[];
   selectedRestaurantId: string | null;
   hoveredCategoryId: string | null;
   theme: MapTheme;
+  boatsEnabled: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -28,6 +30,7 @@ let map: LeafletMap | null = null;
 let tileLayer: TileLayer | null = null;
 let boundaryLayer: GeoJSON | null = null;
 let labelLayer: LayerGroup | null = null;
+let boats: RiverBoatsController | null = null;
 const markers: Record<string, Marker> = {};
 
 function applyTheme(theme: MapTheme) {
@@ -169,6 +172,10 @@ onMounted(async () => {
   loadBoundaries();
   buildMarkers(props.restaurants);
 
+  // Build the ferry network once; it lives across every theme (only re-tinted).
+  boats = createRiverBoats(map, L);
+  boats.setEnabled(props.boatsEnabled);
+
   const invalidate = () => map?.invalidateSize({ animate: false });
   window.addEventListener("resize", invalidate);
 
@@ -204,11 +211,20 @@ onMounted(async () => {
   watch(() => props.hoveredCategoryId, applyHover);
   watch(
     () => props.theme,
-    (t) => applyTheme(t),
+    (t) => {
+      applyTheme(t);
+      // One network across every style — theme only re-tints, never rebuilds.
+      boats?.refreshTheme();
+    },
+  );
+  watch(
+    () => props.boatsEnabled,
+    (on) => boats?.setEnabled(on),
   );
 
   onUnmounted(() => {
     window.removeEventListener("resize", invalidate);
+    boats?.destroy();
     map?.remove();
     map = null;
   });
