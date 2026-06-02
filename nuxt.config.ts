@@ -50,8 +50,13 @@ const moduleSettings: NuxtConfig = {
     "@vueuse/nuxt",
   ],
   fonts: {
+    // The food-map atlas declares its serif stack only inside the --font-serif
+    // CSS variable. @nuxt/fonts ignores CSS variables by default, so the CJK
+    // serif (Noto Serif TC) never loaded and Chinese fell back to a system font.
+    // Scanning CSS variables makes those fonts actually load, matching the source.
+    experimental: { processCSSVariables: true },
     families: [
-      // Food map atlas typography — serif-led parchment style
+      // Food map atlas typography — serif-led parchment style (matches source)
       {
         name: "Crimson Pro",
         provider: "google",
