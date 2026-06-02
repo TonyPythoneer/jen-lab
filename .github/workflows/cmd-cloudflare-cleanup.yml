@@ -20,6 +20,8 @@ permissions:
 
 jobs:
   all-cleanup:
+    # No github.event.issue.pull_request check on purpose: this prune is
+    # project-wide, so it is allowed from any issue or PR comment.
     if: >
       github.event.comment.user.login == github.repository_owner &&
       startsWith(github.event.comment.body, '/all-cleanup')
