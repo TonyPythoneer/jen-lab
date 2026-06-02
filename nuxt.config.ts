@@ -22,8 +22,10 @@ function getStaticRoutes(pagesDir: string): Set<string> {
       const rel = relative(pagesDir, full).replace(/\\/g, "/");
       // Skip dynamic segments — they can't appear in a static nav list.
       if (rel.includes("[")) continue;
-      const route = "/" + rel.replace(/(\/index)?\.vue$/, "") || "/";
-      routes.add(route === "/" ? "/" : route);
+      // Drop ".vue" and any "index" leaf so the root index.vue maps to "/".
+      // "index.vue" → "/", "blogs/index.vue" → "/blogs", "about.vue" → "/about".
+      const path = rel.replace(/\.vue$/, "").replace(/(^|\/)index$/, "");
+      routes.add("/" + path);
     }
   }
   walk(pagesDir);
