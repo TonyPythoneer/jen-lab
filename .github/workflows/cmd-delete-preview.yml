@@ -58,7 +58,7 @@ jobs:
       - id: delete
         run: |
           pnpm exec wrangler pages deployment list --environment preview --json > deployments.json
-          node --experimental-strip-types scripts/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt || true
+          node --experimental-strip-types scripts/github/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt || true
           deleted=0; failed=0
           while read -r id; do
             if [ -n "$id" ] && pnpm exec wrangler pages deployment delete "$id" --force; then
