@@ -1,8 +1,4 @@
 const TILE_SOURCES = {
-  voyager: {
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
-    options: { subdomains: "abcd", maxZoom: 19, attribution: "© OpenStreetMap · CARTO" },
-  },
   voyagerLabels: {
     url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     options: { subdomains: "abcd", maxZoom: 19, attribution: "© OpenStreetMap · CARTO" },
@@ -19,10 +15,6 @@ const TILE_SOURCES = {
   osm: {
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     options: { subdomains: "abc", maxZoom: 19, attribution: "© OpenStreetMap contributors" },
-  },
-  satellite: {
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    options: { maxZoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" },
   },
 } as const;
 
@@ -50,23 +42,6 @@ export interface MapTheme {
 }
 
 export const MAP_THEMES: MapTheme[] = [
-  {
-    id: "parchment",
-    name: "羊皮古地圖",
-    en: "Parchment Atlas",
-    note: "Warm monochrome — water reads as pale paper",
-    tiles: TILE_SOURCES.voyagerLabels,
-    filter: "sepia(0.36) saturate(0.98) hue-rotate(-10deg) brightness(1.03) contrast(1.12)",
-    wash: "rgba(238, 226, 196, 0.14)",
-    grain: 0.55,
-    vars: {
-      "--map-boundary": "#7c5d3a",
-      "--map-water-accent": "#b8a878",
-      "--map-label": "#6b4f2e",
-      "--boat-ink": "#5e4326",
-      "--boat-route": "rgba(111, 85, 54, 0.34)",
-    },
-  },
   {
     id: "engraving",
     name: "銅版雕刻",
@@ -135,47 +110,12 @@ export const MAP_THEMES: MapTheme[] = [
       "--boat-route": "rgba(90, 65, 38, 0.34)",
     },
   },
-  {
-    id: "cool",
-    name: "石板・薄霧",
-    en: "Slate & Mist",
-    note: "Cool study — slate-blue / muted-teal water",
-    tiles: TILE_SOURCES.voyager,
-    filter: "saturate(0.78) brightness(1.04) contrast(1.05) hue-rotate(6deg) sepia(0.12)",
-    wash: "rgba(214, 222, 224, 0.14)",
-    grain: 0.35,
-    vars: {
-      "--map-boundary": "#6b7a82",
-      "--map-water-accent": "#8fb0bc",
-      "--map-label": "#3f5159",
-      "--boat-ink": "#3f5159",
-      "--boat-route": "rgba(63, 81, 89, 0.36)",
-    },
-  },
-  {
-    id: "satellite",
-    name: "衛星影像",
-    en: "Satellite",
-    note: "Real aerial imagery",
-    tiles: TILE_SOURCES.satellite,
-    filter: "saturate(1.05) brightness(1.0) contrast(1.02)",
-    wash: "transparent",
-    grain: 0.0,
-    vars: {
-      "--map-boundary": "#f0e3c2",
-      "--map-water-accent": "#cfe0e6",
-      "--map-label": "#f6efdd",
-      "--label-halo": "rgba(8, 16, 22, 0.92)",
-      "--boat-ink": "#f7eed6",
-      "--boat-route": "rgba(247, 238, 214, 0.5)",
-    },
-  },
 ];
 
 const STORAGE_KEY = "atlas.mapTheme";
-const DEFAULT_THEME_ID = "parchment";
+const DEFAULT_THEME_ID = "engraving";
 
-// Module-level state — safe during SSR/prerender: themeId starts at "parchment"
+// Module-level state — safe during SSR/prerender: themeId starts at the default
 // and is never mutated server-side. initFromStorage() only runs in onMounted.
 // If called outside <ClientOnly> in a new route, revisit.
 const themeId = ref<string>(DEFAULT_THEME_ID);

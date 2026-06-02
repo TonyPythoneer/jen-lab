@@ -8,9 +8,10 @@
 // ── ONE NETWORK, EVERY MAP STYLE ─────────────────────────────────────────────
 // The route network is DATA, not decoration. The fleet + course lines + wharves
 // are built ONCE and live in one Leaflet layer group, present on every theme.
-// Switching the cartographic style never rebuilds or hides the network — only
-// its COLOURS change, via the CSS variables --boat-route / --boat-ink read off
-// the map container. FoodMapStage calls refreshTheme() after each style swap.
+// Switching the cartographic style never rebuilds or hides the network. The route
+// styling is DECOUPLED from the theme: colours are fixed in networkColors() so the
+// network reads identically on every basemap. (Per-theme tinting was the old bug —
+// a blue line on the blue-water style dropped out of sight.)
 //
 // ── VESSELS FOLLOW REAL ROUTE GEOMETRY (no free movement, no shortcuts) ───────
 // A vessel is parametrised by `pos` = metres travelled along its route polyline,
@@ -171,12 +172,13 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     return { lat, lng, dx };
   }
 
-  function themeColors(): { route: string; ink: string } {
-    const cs = getComputedStyle(map.getContainer());
-    return {
-      route: (cs.getPropertyValue("--boat-route") || "").trim() || "rgba(111,85,54,0.34)",
-      ink: (cs.getPropertyValue("--boat-ink") || "").trim() || "#5e4326",
-    };
+  // Ferry styling is DECOUPLED from the map theme on purpose. The route layer must
+  // read the same on every basemap — warm parchment, blue water, or topographic —
+  // so its colours are fixed here, not pulled from the theme's --boat-* vars. This
+  // is why some routes used to vanish on the blue "Harbour Blue" style: a per-theme
+  // blue line over blue water dropped out. A fixed dark ink shows on all of them.
+  function networkColors(): { route: string; ink: string } {
+    return { route: "rgba(46, 36, 26, 0.62)", ink: "#2c2418" };
   }
 
   // ── BUILD the whole network from CONFIG (runs once) ──────────────────────────
@@ -186,7 +188,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     courseLines = [];
     wharfDots = [];
 
-    const colors = themeColors();
+    const colors = networkColors();
 
     const measured: Measured[] = routes
       .map((r) => {
@@ -389,9 +391,11 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     }
   }
 
-  // ── THEME-ADAPTIVE RE-TINT (called after every map-style swap) ───────────────
+  // Called after every map-style swap. Colours are fixed (see networkColors), so
+  // this only re-asserts them and keeps the network on top — the route look is the
+  // same on every theme by design.
   function refreshTheme() {
-    const colors = themeColors();
+    const colors = networkColors();
     courseLines.forEach((pl) => pl.setStyle({ color: colors.route }));
     wharfDots.forEach((d) => d.setStyle({ color: colors.ink, fillColor: colors.ink }));
     vessels.forEach((v) => {

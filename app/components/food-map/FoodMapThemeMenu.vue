@@ -23,13 +23,10 @@ const activeTheme = computed(() => props.themes.find((t) => t.id === props.activ
 
 function getSwatchGradient(themeId: string) {
   const gradients: Record<string, string> = {
-    parchment: "linear-gradient(135deg, #e5d3a8 0 60%, #cdbb8c 60% 100%)",
     engraving: "linear-gradient(135deg, #f3eede 0 52%, #2c241a 52% 100%)",
     handtint: "linear-gradient(125deg, #ead9bb 0 42%, #c08a72 42% 70%, #9fb6c0 70% 100%)",
     voyager: "linear-gradient(135deg, #e7dcc0 0 58%, #8fb6d4 58% 100%)",
-    satellite: "linear-gradient(135deg, #3f5a3a 0 45%, #2f4f63 45% 78%, #1f3a4a 78% 100%)",
     topographic: "linear-gradient(135deg, #ddca9c 0 55%, #b7a06f 55% 78%, #9bb1bf 78% 100%)",
-    cool: "linear-gradient(135deg, #dfe0d2 0 58%, #93b3bf 58% 100%)",
   };
   return { backgroundImage: gradients[themeId] || "none" };
 }
