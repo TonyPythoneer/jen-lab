@@ -61,6 +61,18 @@ describe("planCleanup", () => {
     expect(report.total).toBe(4);
     expect(report.deletedCount).toBe(2);
   });
+
+  it("orders rows protected-first, then by most deleted", () => {
+    const deployments = [
+      dep("a1", "feat/a", "2026-01-01T00:00:00Z"),
+      dep("b1", "feat/b", "2026-01-01T00:00:00Z"),
+      dep("b2", "feat/b", "2026-02-01T00:00:00Z"),
+      dep("d1", "develop", "2026-01-01T00:00:00Z"),
+      dep("m1", "main", "2026-01-01T00:00:00Z"),
+    ];
+    const { report } = planCleanup(deployments, ["main", "develop"]);
+    expect(report.rows.map((r) => r.branch)).toEqual(["main", "develop", "feat/b", "feat/a"]);
+  });
 });
 
 describe("renderReport", () => {

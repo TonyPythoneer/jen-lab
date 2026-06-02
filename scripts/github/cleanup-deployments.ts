@@ -74,7 +74,9 @@ export function planCleanup(
       branch,
       total: list.length,
       kept: keep.length,
-      deleted: dropIds.length,
+      // Count every dropped deployment so total always equals kept + deleted,
+      // even if a malformed entry has no id to add to toDelete.
+      deleted: drop.length,
       keptId: kept?.id,
       keptDate: kept?.created_on,
     });
