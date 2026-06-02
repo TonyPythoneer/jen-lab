@@ -68,13 +68,32 @@ onMounted(() => {
 
     <div class="map-vignette" aria-hidden="true" />
 
-    <FoodMapThemeMenu
-      :themes="themes"
-      :active-theme-id="themeId"
-      :boats-enabled="boatsEnabled"
-      @select="setTheme"
-      @toggle-boats="toggleBoats"
-    />
+    <div class="map-topbar">
+      <!-- Home: sits to the left of the centred style menu, back to the site -->
+      <NuxtLink to="/" class="map-home" aria-label="Back to home">
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22V12h6v10" />
+        </svg>
+      </NuxtLink>
+
+      <FoodMapThemeMenu
+        :themes="themes"
+        :active-theme-id="themeId"
+        :boats-enabled="boatsEnabled"
+        @select="setTheme"
+        @toggle-boats="toggleBoats"
+      />
+    </div>
 
     <div class="map-controls">
       <div class="map-controls__group">
