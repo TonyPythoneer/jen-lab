@@ -98,7 +98,11 @@ const CONFIG = {
   // 0 (snappy) … 1 (very smooth) — eases the facing flip + spawn fade.
   animationSmoothness: 0.7,
 
-  routeLine: { weight: 1.3, dashArray: "1 6" }, // colour comes from theme
+  // Dash must read as a continuous line on ANY basemap. A very sparse dash (the
+  // old "1 6") only joins up over textured terrain; on the blue style's blank
+  // water the dots got lost, so routes looked like they vanished. Denser dash +
+  // slightly heavier weight keeps them legible on featureless water too.
+  routeLine: { weight: 1.5, dashArray: "5 4" },
   wharfRadius: 2.6,
 };
 
