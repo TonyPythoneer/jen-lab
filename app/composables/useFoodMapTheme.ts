@@ -112,12 +112,10 @@ export const MAP_THEMES: MapTheme[] = [
   },
 ];
 
-const STORAGE_KEY = "atlas.mapTheme";
 const DEFAULT_THEME_ID = "engraving";
 
 // Module-level state — safe during SSR/prerender: themeId starts at the default
-// and is never mutated server-side. initFromStorage() only runs in onMounted.
-// If called outside <ClientOnly> in a new route, revisit.
+// and is never mutated server-side (it only changes on user interaction).
 const themeId = ref<string>(DEFAULT_THEME_ID);
 
 export function useFoodMapTheme() {
@@ -127,18 +125,7 @@ export function useFoodMapTheme() {
 
   function setTheme(id: string) {
     themeId.value = id;
-    try {
-      localStorage.setItem(STORAGE_KEY, id);
-    } catch {}
   }
 
-  // Restore from localStorage on first client mount
-  function initFromStorage() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved && MAP_THEMES.some((t) => t.id === saved)) themeId.value = saved;
-    } catch {}
-  }
-
-  return { themeId, theme, themes: MAP_THEMES, setTheme, initFromStorage };
+  return { themeId, theme, themes: MAP_THEMES, setTheme };
 }

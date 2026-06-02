@@ -29,24 +29,10 @@ watch(
 
 const store = useFoodMapStore();
 
-const DRAWER_KEY = "atlas.listOpen";
-
-function getInitialOpenState() {
-  try {
-    const v = localStorage.getItem(DRAWER_KEY);
-    return v === null ? true : v === "1";
-  } catch {
-    return true;
-  }
-}
-
-const open = ref(getInitialOpenState());
+const open = ref(true);
 
 function toggle() {
   open.value = !open.value;
-  try {
-    localStorage.setItem(DRAWER_KEY, open.value ? "1" : "0");
-  } catch {}
   nextTick(() => setTimeout(() => emit("invalidateMap"), 360));
 }
 

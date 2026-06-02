@@ -10,23 +10,12 @@ const props = defineProps<{
 }>();
 
 const store = useFoodMapStore();
-const { theme, themeId, themes, setTheme, initFromStorage } = useFoodMapTheme();
+const { theme, themeId, themes, setTheme } = useFoodMapTheme();
 
-const BOATS_STORAGE_KEY = "atlas.boatsEnabled";
 const boatsEnabled = ref(true);
 
 function toggleBoats() {
   boatsEnabled.value = !boatsEnabled.value;
-  try {
-    localStorage.setItem(BOATS_STORAGE_KEY, boatsEnabled.value ? "1" : "0");
-  } catch {}
-}
-
-function initBoatsFromStorage() {
-  try {
-    const saved = localStorage.getItem(BOATS_STORAGE_KEY);
-    if (saved !== null) boatsEnabled.value = saved === "1";
-  } catch {}
 }
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
@@ -41,11 +30,6 @@ const mapControls = reactive<{
 function onStageReady(controls: typeof mapControls) {
   Object.assign(mapControls, controls);
 }
-
-onMounted(() => {
-  initFromStorage();
-  initBoatsFromStorage();
-});
 </script>
 
 <template>
