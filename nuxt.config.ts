@@ -4,8 +4,7 @@ import MarkdownIt from "markdown-it";
 import linkAttrs from "markdown-it-link-attributes";
 import { readdirSync, statSync } from "node:fs";
 import { join, relative, extname } from "node:path";
-import { WP_BASE } from "./shared/wp";
-import { DEV_PORT } from "./shared/dev";
+import { DEV_PORT } from "./app/config/app";
 
 // Derive the set of valid static routes from app/pages/ at config-load time.
 // Used by the content:file:afterParse hook to validate nav URLs in header.yml.
@@ -146,10 +145,6 @@ const devSettings: NuxtConfig = {
       include: [
         "leaflet", // CJS
       ],
-    },
-    // Build-time constants (string-replaced into bundle, zero runtime overhead)
-    define: {
-      __WP_BASE__: JSON.stringify(WP_BASE),
     },
   },
 };
