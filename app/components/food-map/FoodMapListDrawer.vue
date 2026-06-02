@@ -99,7 +99,8 @@ const selectedAreaName = computed(
     </button>
 
     <div class="list-drawer__panel">
-      <FoodMapHeader />
+      <!-- Brand hides once a place is picked, handing its space to the entry panel -->
+      <FoodMapHeader v-if="!selectedRestaurant" />
 
       <!-- Entry: collapsible details, merged from the old right drawer.
            Only exists once a place is picked. -->
