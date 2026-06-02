@@ -1,6 +1,14 @@
 // Plain, framework-free site config.
 // Imported by app.config.ts (Nuxt runtime) AND by Storybook (no app.config there).
 // Single source of truth so the @nuxt/ui theme never drifts between the two.
+
+// Canonical site identity — single source for the domain so it never drifts
+// across the WP API base (utils/wpApi.ts) and the contact link + email below.
+const SITE_DOMAIN = "jenliu.com.au";
+export const SITE_ORIGIN = `https://${SITE_DOMAIN}`;
+export const SITE_EMAIL = `jen@${SITE_DOMAIN}`;
+export const WP_BASE = `${SITE_ORIGIN}/wp-json/wp/v2`;
+
 export const uiConfig = {
   colors: {
     primary: "digital-orange",
@@ -41,7 +49,7 @@ export const contacts = [
   },
   {
     label: "Wordpress",
-    url: "https://jenliu.com.au/",
+    url: `${SITE_ORIGIN}/`,
     icon: "i-simple-icons-wordpress",
     hoverClass: "hover:text-blue-700",
   },
@@ -59,7 +67,7 @@ export const contacts = [
   },
   {
     label: "Email",
-    url: "mailto:jen@jenliu.com.au",
+    url: `mailto:${SITE_EMAIL}`,
     icon: "i-lucide-mail",
     hoverClass: "hover:text-blue-600",
   },

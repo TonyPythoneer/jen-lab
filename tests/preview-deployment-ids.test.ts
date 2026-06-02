@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { previewDeploymentIds } from "../scripts/preview-deployment-ids";
+import { previewDeploymentIds } from "../scripts/github/preview-deployment-ids";
 
 const SAMPLE = JSON.stringify([
   { id: "aaa", deployment_trigger: { metadata: { branch: "feat/x" } } },

@@ -1,5 +1,5 @@
-declare const __WP_BASE__: string;
-export const WP_BASE = __WP_BASE__;
+import { WP_BASE } from "~/config/site";
+export { WP_BASE };
 
 // Field whitelists keep payloads lean (WP defaults include many unused properties)
 const POST_LIST_FIELDS =

@@ -56,4 +56,17 @@ entities.json
 mempalace.yaml
 .playwright-mcp
 outputs/
-sydney-food-map.png
+
+# Stray images / screenshots at the repo root only — leading "/" keeps real
+# image assets under app/, public/, etc. tracked.
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+/*.avif
+/*.bmp
+/*.svg
+/*.ico
+/*.tif
+/*.tiff

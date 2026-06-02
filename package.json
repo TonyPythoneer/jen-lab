@@ -18,6 +18,7 @@
     "cf-typegen": "wrangler types",
     "sync:wp": "node --experimental-strip-types scripts/sync-wp.ts",
     "sync:ferries": "node --experimental-strip-types scripts/sync-ferries.ts",
+    "sync:ferries:osm": "node --experimental-strip-types scripts/sync-ferries-osm.ts",
     "ai:screenshot": "node --experimental-strip-types scripts/screenshot.ts",
     "prepare": "vp config"
   },

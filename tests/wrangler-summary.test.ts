@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { extractWranglerSummary } from "../scripts/wrangler-summary";
+import { extractWranglerSummary } from "../scripts/github/wrangler-summary";
 
 const SAMPLE_LOG = `> jen-lab@ deploy
 > npm run build && wrangler pages deploy

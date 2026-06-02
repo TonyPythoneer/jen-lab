@@ -27,6 +27,7 @@ jobs:
               "",
               "- `/preview` — Build this PR's branch and deploy it to Cloudflare Pages as a preview, then post the deployment URLs.",
               "- `/delete-preview` — Delete all Cloudflare Pages preview deployments for this PR's branch.",
+              "- `/all-cleanup` — Prune ALL Cloudflare Pages deployments project-wide, keeping only the latest `main` and latest `develop` build. Posts a report.",
             ].join("\n");
 
             const { data: comments } = await github.rest.issues.listComments({

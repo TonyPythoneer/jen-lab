@@ -10,23 +10,12 @@ const props = defineProps<{
 }>();
 
 const store = useFoodMapStore();
-const { theme, themeId, themes, setTheme, initFromStorage } = useFoodMapTheme();
+const { theme, themeId, themes, setTheme } = useFoodMapTheme();
 
-const BOATS_STORAGE_KEY = "atlas.boatsEnabled";
 const boatsEnabled = ref(true);
 
 function toggleBoats() {
   boatsEnabled.value = !boatsEnabled.value;
-  try {
-    localStorage.setItem(BOATS_STORAGE_KEY, boatsEnabled.value ? "1" : "0");
-  } catch {}
-}
-
-function initBoatsFromStorage() {
-  try {
-    const saved = localStorage.getItem(BOATS_STORAGE_KEY);
-    if (saved !== null) boatsEnabled.value = saved === "1";
-  } catch {}
 }
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
@@ -41,11 +30,6 @@ const mapControls = reactive<{
 function onStageReady(controls: typeof mapControls) {
   Object.assign(mapControls, controls);
 }
-
-onMounted(() => {
-  initFromStorage();
-  initBoatsFromStorage();
-});
 </script>
 
 <template>
@@ -68,13 +52,32 @@ onMounted(() => {
 
     <div class="map-vignette" aria-hidden="true" />
 
-    <FoodMapThemeMenu
-      :themes="themes"
-      :active-theme-id="themeId"
-      :boats-enabled="boatsEnabled"
-      @select="setTheme"
-      @toggle-boats="toggleBoats"
-    />
+    <div class="map-topbar">
+      <!-- Home: sits to the left of the centred style menu, back to the site -->
+      <NuxtLink to="/" class="map-home" aria-label="Back to home">
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22V12h6v10" />
+        </svg>
+      </NuxtLink>
+
+      <FoodMapThemeMenu
+        :themes="themes"
+        :active-theme-id="themeId"
+        :boats-enabled="boatsEnabled"
+        @select="setTheme"
+        @toggle-boats="toggleBoats"
+      />
+    </div>
 
     <div class="map-controls">
       <div class="map-controls__group">
@@ -104,9 +107,9 @@ onMounted(() => {
       :categories="categories"
       :restaurants="visibleRestaurants"
       :all-restaurants="props.restaurants"
+      :selected-restaurant="selectedRestaurant"
       @invalidate-map="mapControls.invalidate?.()"
+      @clear-selection="store.selectRestaurant(null)"
     />
-
-    <FoodMapDetailsDrawer :restaurant="selectedRestaurant" @close="store.selectRestaurant(null)" />
   </div>
 </template>

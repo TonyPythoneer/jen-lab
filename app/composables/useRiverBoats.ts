@@ -8,9 +8,10 @@
 // ── ONE NETWORK, EVERY MAP STYLE ─────────────────────────────────────────────
 // The route network is DATA, not decoration. The fleet + course lines + wharves
 // are built ONCE and live in one Leaflet layer group, present on every theme.
-// Switching the cartographic style never rebuilds or hides the network — only
-// its COLOURS change, via the CSS variables --boat-route / --boat-ink read off
-// the map container. FoodMapStage calls refreshTheme() after each style swap.
+// Switching the cartographic style never rebuilds or hides the network. The route
+// styling is DECOUPLED from the theme: colours are fixed in networkColors() so the
+// network reads identically on every basemap. (Per-theme tinting was the old bug —
+// a blue line on the blue-water style dropped out of sight.)
 //
 // ── VESSELS FOLLOW REAL ROUTE GEOMETRY (no free movement, no shortcuts) ───────
 // A vessel is parametrised by `pos` = metres travelled along its route polyline,
@@ -97,7 +98,11 @@ const CONFIG = {
   // 0 (snappy) … 1 (very smooth) — eases the facing flip + spawn fade.
   animationSmoothness: 0.7,
 
-  routeLine: { weight: 1.3, dashArray: "1 6" }, // colour comes from theme
+  // Dash must read as a continuous line on ANY basemap. A very sparse dash (the
+  // old "1 6") only joins up over textured terrain; on the blue style's blank
+  // water the dots got lost, so routes looked like they vanished. Denser dash +
+  // slightly heavier weight keeps them legible on featureless water too.
+  routeLine: { weight: 1.5, dashArray: "5 4" },
   wharfRadius: 2.6,
 };
 
@@ -171,12 +176,13 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     return { lat, lng, dx };
   }
 
-  function themeColors(): { route: string; ink: string } {
-    const cs = getComputedStyle(map.getContainer());
-    return {
-      route: (cs.getPropertyValue("--boat-route") || "").trim() || "rgba(111,85,54,0.34)",
-      ink: (cs.getPropertyValue("--boat-ink") || "").trim() || "#5e4326",
-    };
+  // Ferry styling is DECOUPLED from the map theme on purpose. The route layer must
+  // read the same on every basemap — warm parchment, blue water, or topographic —
+  // so its colours are fixed here, not pulled from the theme's --boat-* vars. This
+  // is why some routes used to vanish on the blue "Harbour Blue" style: a per-theme
+  // blue line over blue water dropped out. A fixed dark ink shows on all of them.
+  function networkColors(): { route: string; ink: string } {
+    return { route: "rgba(46, 36, 26, 0.62)", ink: "#2c2418" };
   }
 
   // ── BUILD the whole network from CONFIG (runs once) ──────────────────────────
@@ -186,7 +192,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     courseLines = [];
     wharfDots = [];
 
-    const colors = themeColors();
+    const colors = networkColors();
 
     const measured: Measured[] = routes
       .map((r) => {
@@ -227,25 +233,24 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       });
     });
 
-    // Allocate vessels: ~length/metresPerVessel, clamped, then trimmed to the
-    // global shipCount (longest routes keep their boats first).
-    const alloc = measured.map((m) =>
-      clamp(Math.round(m.total / CONFIG.metresPerVessel), 1, CONFIG.maxShipsPerRoute),
+    // Allocate vessels by route length, then fit the global shipCount budget,
+    // longest routes first. A route can get ZERO boats — its course line still
+    // draws. This matters because we carry every OSM ferry way (for parity with
+    // the basemap), including many short legs; without a 0 floor each tiny leg
+    // would force a boat and the fleet would explode past shipCount.
+    const desired = measured.map((m) =>
+      clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );
-    let sum = alloc.reduce((s, n) => s + n, 0);
-    while (sum > CONFIG.shipCount) {
-      // Reduce the route with the most vessels (but never below 1).
-      let idx = -1;
-      let best = 1;
-      measured.forEach((_, i) => {
-        if (alloc[i]! > best) {
-          best = alloc[i]!;
-          idx = i;
-        }
-      });
-      if (idx === -1) break;
-      alloc[idx]!--;
-      sum--;
+    const alloc = new Array<number>(measured.length).fill(0);
+    const longestFirst = measured
+      .map((_, i) => i)
+      .sort((a, b) => measured[b]!.total - measured[a]!.total);
+    let budget = CONFIG.shipCount;
+    for (const i of longestFirst) {
+      const n = Math.min(desired[i]!, budget);
+      alloc[i] = n;
+      budget -= n;
+      if (budget <= 0) break;
     }
 
     const flip = CONFIG.animationSmoothness;
@@ -351,6 +356,17 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
 
       const p = sampleAtDist(v.path, v.cum, v.total, v.pos);
       v.marker.setLatLng([p.lat, p.lng]);
+
+      // Resolve the boat element lazily. At build() the boats layer isn't on the
+      // map yet, so marker.getElement() returns null and v.el stays null — which
+      // silently disabled the left/right flip (the guard below skipped it). Grab
+      // the element on the first frame it exists and sync it to the current
+      // facing so subsequent direction changes animate the scaleX flip.
+      if (!v.el) {
+        v.el = (v.marker.getElement()?.querySelector(".river-boat") as HTMLElement) ?? null;
+        if (v.el) v.el.style.transform = v.facingRight ? "scaleX(1)" : "scaleX(-1)";
+      }
+
       const wantRight = (v.dir > 0 ? p.dx : -p.dx) >= 0;
       if (wantRight !== v.facingRight && v.el) {
         v.facingRight = wantRight;
@@ -389,9 +405,11 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     }
   }
 
-  // ── THEME-ADAPTIVE RE-TINT (called after every map-style swap) ───────────────
+  // Called after every map-style swap. Colours are fixed (see networkColors), so
+  // this only re-asserts them and keeps the network on top — the route look is the
+  // same on every theme by design.
   function refreshTheme() {
-    const colors = themeColors();
+    const colors = networkColors();
     courseLines.forEach((pl) => pl.setStyle({ color: colors.route }));
     wharfDots.forEach((d) => d.setStyle({ color: colors.ink, fillColor: colors.ink }));
     vessels.forEach((v) => {

@@ -4,8 +4,7 @@ import MarkdownIt from "markdown-it";
 import linkAttrs from "markdown-it-link-attributes";
 import { readdirSync, statSync } from "node:fs";
 import { join, relative, extname } from "node:path";
-import { WP_BASE } from "./shared/wp";
-import { DEV_PORT } from "./shared/dev";
+import { DEV_PORT } from "./app/config/app";
 
 // Derive the set of valid static routes from app/pages/ at config-load time.
 // Used by the content:file:afterParse hook to validate nav URLs in header.yml.
@@ -22,8 +21,10 @@ function getStaticRoutes(pagesDir: string): Set<string> {
       const rel = relative(pagesDir, full).replace(/\\/g, "/");
       // Skip dynamic segments — they can't appear in a static nav list.
       if (rel.includes("[")) continue;
-      const route = "/" + rel.replace(/(\/index)?\.vue$/, "") || "/";
-      routes.add(route === "/" ? "/" : route);
+      // Drop ".vue" and any "index" leaf so the root index.vue maps to "/".
+      // "index.vue" → "/", "blogs/index.vue" → "/blogs", "about.vue" → "/about".
+      const path = rel.replace(/\.vue$/, "").replace(/(^|\/)index$/, "");
+      routes.add("/" + path);
     }
   }
   walk(pagesDir);
@@ -50,8 +51,13 @@ const moduleSettings: NuxtConfig = {
     "@vueuse/nuxt",
   ],
   fonts: {
+    // The food-map atlas declares its serif stack only inside the --font-serif
+    // CSS variable. @nuxt/fonts ignores CSS variables by default, so the CJK
+    // serif (Noto Serif TC) never loaded and Chinese fell back to a system font.
+    // Scanning CSS variables makes those fonts actually load, matching the source.
+    experimental: { processCSSVariables: true },
     families: [
-      // Food map atlas typography — serif-led parchment style
+      // Food map atlas typography — serif-led parchment style (matches source)
       {
         name: "Crimson Pro",
         provider: "google",
@@ -139,10 +145,6 @@ const devSettings: NuxtConfig = {
       include: [
         "leaflet", // CJS
       ],
-    },
-    // Build-time constants (string-replaced into bundle, zero runtime overhead)
-    define: {
-      __WP_BASE__: JSON.stringify(WP_BASE),
     },
   },
 };

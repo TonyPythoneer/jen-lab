@@ -6,6 +6,14 @@
  * ========================================================================== */
 
 .food-map-page {
+  /* Mirror the prototype's html/body base: the whole atlas inherits the serif
+     stack. Without this, the page sits inside the global site layout and
+     inherits its sans-serif (DM Sans / Noto Sans TC), so the brand title, tabs,
+     and category names render in the wrong typeface. */
+  font-family: var(--font-serif);
+  font-feature-settings: "kern", "liga", "calt";
+  -webkit-font-smoothing: antialiased;
+
   /* CSS custom properties / tokens */
   --background: #f2e8ce;
   --foreground: #3d2817;
@@ -18,8 +26,10 @@
   --border-strong: #b8a17a;
   --paper: #fbf6e7;
   --map-bg: #e9dcbf;
-  --font-serif:
-    "Crimson Pro", "Shippori Mincho", "Noto Serif TC", "Noto Serif JP", ui-serif, Georgia, serif;
+  /* Match what the source actually renders: Latin = Crimson Pro, CJK = Noto Serif TC.
+     (The source lists Shippori Mincho first but never loads it, so it renders Noto
+     Serif TC; loading Shippori here would diverge and mis-render Traditional Chinese.) */
+  --font-serif: "Crimson Pro", "Noto Serif TC", ui-serif, Georgia, serif;
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   /* theme-driven (set on .map-surface by JS; defaults here as a fallback) */
@@ -43,7 +53,11 @@
   box-sizing: border-box;
 }
 
-.food-map-page button {
+/* Button reset kept at element-level specificity (0,0,1) via :where() so the
+   scoped component rules (.category-row, .theme-menu__item/__trigger, tabs, …)
+   still win. A plain `.food-map-page button` here is (0,1,1) and would clobber
+   every component's padding + border — exactly what broke the chrome vs source. */
+:where(.food-map-page) button {
   font-family: inherit;
   color: inherit;
   background: none;
@@ -51,8 +65,25 @@
   padding: 0;
   cursor: pointer;
 }
-.food-map-page a {
+:where(.food-map-page) a {
   color: inherit;
+}
+
+/* Nuxt UI token bridge. Nuxt UI components colour themselves from --ui-* design
+   tokens (the site's neutral palette). Re-point those tokens at the food-map
+   parchment tokens inside this scope so UButton / UInput / UBadge adopt the atlas
+   look with no per-component colour overrides. These tokens are static across all
+   four map themes (only the map tiles recolour), so this needs no theme wiring. */
+.food-map-page {
+  --ui-bg: var(--paper);
+  --ui-bg-elevated: var(--muted);
+  --ui-text: var(--foreground);
+  --ui-text-highlighted: var(--foreground);
+  --ui-text-muted: var(--muted-foreground);
+  --ui-text-dimmed: var(--muted-foreground);
+  --ui-border: var(--border);
+  --ui-border-accented: var(--foreground);
+  --ui-border-muted: var(--border-strong);
 }
 
 /* ===================== APP SHELL ===================== */
@@ -196,12 +227,40 @@
 
 /* ===================== THEME MENU ===================== */
 
-.theme-menu {
+/* Centred anchor: keeps the style menu dead-centre; Home floats to its left. */
+.map-topbar {
   position: absolute;
   top: 18px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 650;
+}
+
+.map-home {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  border: 1px solid var(--foreground);
+  border-radius: 9999px;
+  color: var(--foreground);
+  box-shadow: 0 2px 10px rgba(61, 40, 23, 0.16);
+  transition:
+    background 120ms,
+    color 120ms;
+}
+.map-home:hover {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.theme-menu {
+  position: relative;
 }
 
 .theme-menu__trigger {
@@ -210,7 +269,7 @@
   gap: 9px;
   padding: 9px 16px;
   background: var(--paper);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--foreground);
   border-radius: 9999px;
   font-family: var(--font-serif);
   font-size: 12px;
@@ -232,9 +291,9 @@
   top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  width: 320px;
+  width: 300px;
   background: var(--paper);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 12px 36px rgba(61, 40, 23, 0.26);
@@ -348,11 +407,15 @@
   bottom: 0;
   width: 348px;
   z-index: 700;
+  /* The container spans the drawer's full width even when collapsed. Let clicks
+     fall through its empty area to the map; only the panel and handle catch them. */
+  pointer-events: none;
 }
 
 .list-drawer__panel {
   position: absolute;
   inset: 0;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   background: var(--background);
@@ -372,6 +435,7 @@
   top: 50%;
   left: 100%;
   transform: translateY(-50%);
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -406,23 +470,6 @@
   padding: 20px 22px 16px;
   border-bottom: 1px solid var(--border-strong);
 }
-.drawer-brand__seal {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 7px;
-  white-space: nowrap;
-}
-.drawer-brand__seal .dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-}
 .drawer-brand__title {
   font-size: 27px;
   font-weight: 700;
@@ -436,24 +483,6 @@
   color: var(--muted-foreground);
   margin-top: 7px;
 }
-.drawer-brand__reset {
-  margin-top: 13px;
-  white-space: nowrap;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  padding: 6px 11px;
-  transition: all 120ms;
-}
-.drawer-brand__reset:hover {
-  color: var(--primary);
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
 .list-drawer__tabs {
   display: flex;
   border-bottom: 1px solid var(--border-strong);
@@ -474,34 +503,6 @@
 }
 .list-drawer__tabs button + button {
   border-left: 1px solid var(--border);
-}
-
-.search-field {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border-strong);
-  background: var(--paper);
-  border-radius: 5px;
-  padding: 9px 11px;
-  margin: 14px 18px 6px;
-}
-.search-field input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: var(--font-serif);
-  font-size: 14px;
-  color: var(--foreground);
-}
-.search-field input::placeholder {
-  color: var(--muted-foreground);
-}
-.search-field .icon {
-  width: 14px;
-  height: 14px;
-  color: var(--muted-foreground);
 }
 
 .drawer-section-label {
@@ -613,18 +614,6 @@
   border-radius: 9999px;
 }
 
-/* area group header */
-.area-group {
-  padding: 12px 20px 4px;
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-}
-
 /* restaurant rows */
 .restaurant-row {
   display: grid;
@@ -693,60 +682,100 @@
   letter-spacing: 0.06em;
 }
 
-/* ===================== DETAILS DRAWER (right, slide-in) ===================== */
+/* ============ ENTRY PANEL (collapsible details, under the brand) ============ */
 
-.details-drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 380px;
-  max-width: 92vw;
-  background: var(--background);
-  border-left: 1px solid var(--border-strong);
-  box-shadow: -8px 0 32px rgba(61, 40, 23, 0.22);
-  z-index: 720;
+.entry-panel {
+  border-bottom: 1px solid var(--border-strong);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+/* When open, the body may be tall — cap it so tabs and list stay visible. */
+.entry-panel.is-open {
+  max-height: 56%;
+}
+.entry-panel__bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px 6px 20px;
+}
+.entry-panel__toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  transition: color 120ms;
+}
+.entry-panel__toggle:hover {
+  color: var(--foreground);
+}
+.entry-panel__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entry-panel__close,
+.entry-panel__chevron-btn {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: var(--muted-foreground);
+  border-radius: 50%;
+  transition:
+    color 120ms,
+    background 120ms;
+}
+.entry-panel__close:hover,
+.entry-panel__chevron-btn:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+.entry-panel__chevron {
+  transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.entry-panel.is-open .entry-panel__chevron {
+  transform: rotate(90deg);
+}
+.entry-panel__body {
   overflow-y: auto;
-  transform: translateX(100%);
-  transition: transform 340ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 1px solid var(--border);
 }
-.details-drawer.is-open {
-  transform: translateX(0);
-}
-
 .detail {
-  padding: 22px 24px 36px;
+  padding: 20px 24px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.detail__topbar {
+.detail__title {
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.08;
+  margin: 0;
+}
+.detail__title-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 120ms;
 }
-.detail__close {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  line-height: 1;
-  border: 1px solid var(--border-strong);
-  border-radius: 50%;
-  color: var(--foreground);
-  transition: all 120ms;
+.detail__title-link:hover {
+  color: var(--accent);
 }
-.detail__close:hover {
-  background: var(--accent);
-  color: var(--primary);
-  border-color: var(--accent);
+.detail__title-clip {
+  flex-shrink: 0;
+  color: var(--accent);
 }
-
 .detail__chapter {
   font-size: 10px;
   letter-spacing: 0.3em;
@@ -762,45 +791,13 @@
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   filter: var(--ink-filter);
 }
-.detail__title {
-  font-size: 27px;
-  font-weight: 700;
-  line-height: 1.08;
-  margin: 0;
-}
-.detail__coords {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-
-.detail__meta {
-  display: flex;
-  gap: 18px;
-  padding: 10px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.detail__meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.detail__meta-item .lbl {
-  font-size: 9px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-.detail__meta-item .val {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--foreground);
-}
-.detail__meta-item.price .val {
-  color: var(--accent);
+.detail__chapter-price {
   font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+}
+.detail__chapter-price::before {
+  content: "·";
+  margin: 0 6px 0 2px;
 }
 
 .detail__summary {
@@ -846,59 +843,6 @@
   flex-wrap: wrap;
   gap: 6px;
 }
-.rec-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border: 1px solid var(--foreground);
-  border-radius: 9999px;
-  font-size: 12px;
-  background: var(--paper);
-}
-.rec-chip::before {
-  content: "✦";
-  color: var(--accent);
-  font-size: 10px;
-}
-.detail__actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex: 1;
-  padding: 11px 18px;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-radius: 5px;
-  border: 1px solid var(--accent);
-  background: var(--primary);
-  color: var(--foreground);
-  transition:
-    background 120ms,
-    color 120ms;
-}
-.btn:hover {
-  background: var(--accent);
-  color: var(--primary);
-}
-.btn.is-disabled {
-  opacity: 0.5;
-  cursor: default;
-  border-color: var(--border-strong);
-}
-.btn.is-disabled:hover {
-  background: var(--primary);
-  color: var(--foreground);
-}
-
 /* ===================== MAP MARKERS ===================== */
 
 .r-pin-wrap {
@@ -951,11 +895,34 @@
 .r-pin.is-active {
   border-width: 3px;
   border-color: var(--cat);
-  transform: rotate(-45deg) scale(1.22);
+  transform: rotate(-45deg) scale(2);
   box-shadow:
     0 0 0 4px rgba(153, 60, 29, 0.16),
     0 4px 9px rgba(61, 40, 23, 0.3);
   z-index: 1000;
+  /* Pop-in when a pin becomes selected — echoes the restaurant map's pin-hop.
+     The class is re-added on each new selection, so the animation replays. */
+  animation: r-pin-pop 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+/* Scale bounce ending at the active scale(2). The pin stays rotated -45deg,
+   so every frame keeps that rotation and only the scale changes. */
+@keyframes r-pin-pop {
+  0% {
+    transform: rotate(-45deg) scale(0.7);
+  }
+  40% {
+    transform: rotate(-45deg) scale(2.26);
+  }
+  60% {
+    transform: rotate(-45deg) scale(1.8);
+  }
+  80% {
+    transform: rotate(-45deg) scale(2.12);
+  }
+  100% {
+    transform: rotate(-45deg) scale(2);
+  }
 }
 
 .leaflet-tooltip.r-tip {
@@ -1006,11 +973,18 @@
   background: none;
   border: none;
   pointer-events: none;
+  width: 26px;
+  height: 26px;
 }
 .river-boat {
   /* The engine sets an inline --boat-ink per theme; SVG fills currentColor. */
   color: var(--boat-ink);
-  will-change: transform;
+  width: 26px;
+  height: 26px;
+  /* Flip about the centre so the scaleX(1)↔scaleX(-1) left/right turn pivots in
+     place. The engine sets an inline `transition: transform` so the turn eases. */
+  transform-origin: center;
+  will-change: transform, opacity;
   pointer-events: none;
 }
 .river-boat svg {
@@ -1020,16 +994,16 @@
 
 /* scrollbars */
 .drawer-list::-webkit-scrollbar,
-.details-drawer::-webkit-scrollbar {
+.entry-panel__body::-webkit-scrollbar {
   width: 8px;
 }
 .drawer-list::-webkit-scrollbar-thumb,
-.details-drawer::-webkit-scrollbar-thumb {
+.entry-panel__body::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   border-radius: 4px;
 }
 .drawer-list::-webkit-scrollbar-track,
-.details-drawer::-webkit-scrollbar-track {
+.entry-panel__body::-webkit-scrollbar-track {
   background: transparent;
 }
 
@@ -1038,9 +1012,6 @@
 @media (max-width: 640px) {
   .list-drawer {
     width: 86vw;
-  }
-  .details-drawer {
-    width: 100vw;
   }
   .theme-menu {
     left: 18px;

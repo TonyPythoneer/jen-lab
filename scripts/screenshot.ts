@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { DEV_PORT } from "../shared/dev.ts";
+import { DEV_PORT } from "../app/config/app.ts";
 
 const route = process.argv[2] ?? "/";
 const out = process.argv[3] ?? "/tmp/verify.png";
