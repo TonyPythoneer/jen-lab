@@ -1,6 +1,22 @@
 <script setup lang="ts">
-const KIT_URL = "https://jen-nextsteps.kit.com/60463af80d";
-const SUBSCRIBE_LABEL = "訂閱電子報";
+// Copy comes from content/pages-layout/home.md (section-newsletter block).
+// Defaults keep the component self-contained for Storybook and as a fallback.
+withDefaults(
+  defineProps<{
+    headline?: string;
+    accentLines?: string[];
+    subheading?: string;
+    buttonLabel?: string;
+    subscriptionUrl?: string;
+  }>(),
+  {
+    headline: "這是一份邀請",
+    accentLines: () => ["走進個人", "真實思考空間"],
+    subheading: "也寫給同樣正在努力向前的你",
+    buttonLabel: "訂閱電子報",
+    subscriptionUrl: "https://jen-nextsteps.kit.com/60463af80d",
+  },
+);
 
 const newsletterDotField = {
   color: "var(--color-pixel-glare)",
@@ -30,14 +46,18 @@ const newsletterDotField = {
       <h2
         class="font-display font-bold tracking-[0.02em] leading-tight text-pure-white text-3xl md:text-5xl"
       >
-        這是一份邀請
-        <span class="block text-digital-orange mt-2"> 走進個人<br />真實思考空間 </span>
+        {{ headline }}
+        <span class="block text-digital-orange mt-2">
+          <template v-for="(line, i) in accentLines" :key="i"
+            ><br v-if="i > 0" />{{ line }}</template
+          >
+        </span>
       </h2>
 
       <h3
         class="font-sans font-normal tracking-wide text-pure-white/80 text-xl md:text-2xl leading-relaxed mt-6 md:mt-8"
       >
-        <i>也寫給同樣正在努力向前的你</i>
+        <i>{{ subheading }}</i>
       </h3>
 
       <!-- Animated envelope -->
@@ -46,7 +66,7 @@ const newsletterDotField = {
       <UButton
         as="a"
         class="mt-8 ring-2 ring-white ring-offset-2 ring-offset-slate-900"
-        :href="KIT_URL"
+        :href="subscriptionUrl"
         target="_blank"
         rel="noopener"
         color="primary"
@@ -54,7 +74,7 @@ const newsletterDotField = {
         :ui="{ base: 'rounded-button px-8' }"
         trailing-icon="i-lucide-arrow-right"
       >
-        {{ SUBSCRIBE_LABEL }}
+        {{ buttonLabel }}
       </UButton>
     </div>
   </section>

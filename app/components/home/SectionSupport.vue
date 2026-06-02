@@ -1,9 +1,23 @@
 <script setup lang="ts">
-import { visibleSupports, type SupportBrand } from "./sectionSupport";
+type SupportBrand = "jen-liu" | "jen-knows";
+
+interface SupportLink {
+  brand: SupportBrand;
+  label: string;
+  url: string;
+}
+
+const SUPPORTS: readonly SupportLink[] = [
+  { brand: "jen-knows", label: "支持 Jen Knows", url: "https://portaly.cc/jenknowsau/support" },
+  { brand: "jen-liu", label: "支持 Jen Liu", url: "https://portaly.cc/jenliuau/support" },
+];
 
 const props = defineProps<{ brand?: SupportBrand }>();
 
-const visible = computed(() => visibleSupports(props.brand));
+// Show one brand's button, or all when no brand is given.
+const visible = computed(() =>
+  props.brand ? SUPPORTS.filter((s) => s.brand === props.brand) : SUPPORTS,
+);
 </script>
 
 <template>

@@ -1,0 +1,34 @@
+# Wording for the blog pages (/blogs and each post).
+# Edit the text on the right of each colon. Do NOT rename the keys on the left.
+# See blogs.tmpl in this folder for a plain-language guide.
+
+# The /blogs listing page
+listPage:
+  title: Notes From The Notebook.
+  subtitle: Collected one day, one thought, one note at a time.
+  loadingErrorMessage: 載入失敗，請稍後再試
+  loadingErrorRetryButton: 重新載入
+  noResultsMessage: 沒有找到相關文章
+  # Search-engine + social-share text (readers do not see this on the page)
+  seoTitle: Blog — Jen Lab
+  seoDescription: Long-form posts about what I learned the hard way.
+
+# A single blog post page
+detailPage:
+  backLink: 返回部落格
+  loadingMessage: 載入中...
+  notFoundMessage: 找不到文章
+  # "{{title}}" is swapped for the post's own title. Example: "My Trip | Jen Liu"
+  seoTitleTemplate: "{{title}} | Jen Liu"
+
+# The search box that drops down from the top
+search:
+  placeholder: Type for blog search
+  categoryLabel: 分類
+  tagLabel: 標籤
+
+# The little card shown for each post in the list
+postCard:
+  newBadgeText: New!
+  # A post shows the "New!" badge if it is younger than this many days
+  newPostDaysThreshold: 7

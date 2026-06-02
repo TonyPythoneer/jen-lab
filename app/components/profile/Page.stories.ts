@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Page from "./Page.vue";
 
 const meta = {
@@ -52,10 +52,8 @@ const mockPageData: any = {
           banner:
             "https://images.unsplash.com/photo-1507842872885-ce7c1d7ff17f?w=400&h=300&fit=crop",
           title: "Book Title",
-          brief: "A great book",
           descriptionHtml: "<p>Description of the book</p>",
           purchaseUrl: "https://example.com",
-          purchaseLabel: "Buy",
         },
       ],
     },

@@ -2,8 +2,8 @@
   <SitePageContainer>
     <!-- Header -->
     <UPageHeader
-      title="Notes From The Notebook."
-      description="Collected one day, one thought, one note at a time."
+      :title="chrome?.listPage.title"
+      :description="chrome?.listPage.subtitle"
       class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
       :ui="{ title: 'font-display uppercase text-6xl sm:text-8xl leading-[0.9] tracking-[0.03em]' }"
     />
@@ -15,8 +15,10 @@
       </div>
 
       <div v-else-if="error" class="text-center py-20">
-        <p class="text-neutral-400 mb-4">載入失敗，請稍後再試</p>
-        <UButton color="neutral" variant="outline" @click="refresh()">重新載入</UButton>
+        <p class="text-neutral-400 mb-4">{{ chrome?.listPage.loadingErrorMessage }}</p>
+        <UButton color="neutral" variant="outline" @click="refresh()">
+          {{ chrome?.listPage.loadingErrorRetryButton }}
+        </UButton>
       </div>
 
       <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
@@ -30,10 +32,14 @@
             query: { title: post.slug },
           }"
           :tag-map="tagMap"
+          :new-badge-text="chrome?.postCard.newBadgeText"
+          :new-post-days-threshold="chrome?.postCard.newPostDaysThreshold"
         />
       </div>
 
-      <div v-else class="text-center py-20 text-neutral-400">沒有找到相關文章</div>
+      <div v-else class="text-center py-20 text-neutral-400">
+        {{ chrome?.listPage.noResultsMessage }}
+      </div>
     </div>
 
     <!-- Pagination -->
@@ -76,10 +82,13 @@ import { csvToIds } from "~/utils/csvToIds";
 const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
-const { blog } = useAppConfig();
+// Page wording comes from content/site/blogs.yml (single source of truth).
+const { data: chrome } = await useAsyncData("site:blogs", () =>
+  queryCollection("siteBlogs").first(),
+);
 useSeoMeta({
-  title: "Blog — Jen Lab",
-  description: "Long-form posts about what I learned the hard way.",
+  title: () => chrome.value?.listPage.seoTitle,
+  description: () => chrome.value?.listPage.seoDescription,
 });
 
 const route = useRoute();

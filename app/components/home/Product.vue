@@ -71,11 +71,9 @@
 defineProps<{
   banner?: string;
   title: string;
-  brief: string;
   description?: string;
   descriptionHtml?: string;
   purchaseUrl: string;
-  purchaseLabel: string;
 }>();
 
 // Info drawer toggle (top-right button) and the buy interstitial toggle
