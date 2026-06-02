@@ -10,6 +10,7 @@ const state = reactive({
   tab: "food" as FoodMapTab,
   search: "",
   selectedCategoryId: null as string | null,
+  selectedArea: null as string | null,
   selectedRestaurantId: null as string | null,
   hoveredCategoryId: null as string | null,
 });
@@ -18,10 +19,15 @@ export function useFoodMapStore() {
   function setTab(t: FoodMapTab) {
     state.tab = t;
     state.selectedCategoryId = null;
+    state.selectedArea = null;
   }
 
   function selectCategory(id: string | null) {
     state.selectedCategoryId = id;
+  }
+
+  function selectArea(area: string | null) {
+    state.selectedArea = area;
   }
 
   function selectRestaurant(id: string | null) {
@@ -36,6 +42,7 @@ export function useFoodMapStore() {
     state.tab = "food";
     state.search = "";
     state.selectedCategoryId = null;
+    state.selectedArea = null;
     state.selectedRestaurantId = null;
     state.hoveredCategoryId = null;
   }
@@ -44,6 +51,8 @@ export function useFoodMapStore() {
     let list = all;
     if (state.tab === "food" && state.selectedCategoryId)
       list = list.filter((r) => r.categoryId === state.selectedCategoryId);
+    if (state.tab === "area" && state.selectedArea)
+      list = list.filter((r) => r.area === state.selectedArea);
     const q = state.search.trim().toLowerCase();
     if (q)
       list = list.filter(
@@ -63,6 +72,7 @@ export function useFoodMapStore() {
     state,
     setTab,
     selectCategory,
+    selectArea,
     selectRestaurant,
     setHovered,
     reset,

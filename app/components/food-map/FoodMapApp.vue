@@ -104,9 +104,9 @@ onMounted(() => {
       :categories="categories"
       :restaurants="visibleRestaurants"
       :all-restaurants="props.restaurants"
+      :selected-restaurant="selectedRestaurant"
       @invalidate-map="mapControls.invalidate?.()"
+      @clear-selection="store.selectRestaurant(null)"
     />
-
-    <FoodMapDetailsDrawer :restaurant="selectedRestaurant" @close="store.selectRestaurant(null)" />
   </div>
 </template>
