@@ -59,7 +59,7 @@ function loadBoundaries() {
     .then((data) => {
       if (!map || !L) return;
       const color = props.theme.vars["--map-boundary"] ?? "#7c5d3a";
-      boundaryLayer = L.geoJSON(data, {
+      boundaryLayer = L.geoJSON(data as Parameters<(typeof import("leaflet"))["geoJSON"]>[0], {
         style: {
           color,
           weight: 0.8,
