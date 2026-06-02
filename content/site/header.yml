@@ -1,0 +1,11 @@
+nav:
+  - label: Home
+    to: /
+  - label: Jen Knows
+    to: /jen-knows
+  - label: Jen Liu
+    to: /jen-liu
+  - label: Blogs
+    to: /blogs
+  - label: Sydney Food Map
+    to: /sydney-food-map
