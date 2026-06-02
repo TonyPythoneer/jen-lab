@@ -69,6 +69,23 @@
   color: inherit;
 }
 
+/* Nuxt UI token bridge. Nuxt UI components colour themselves from --ui-* design
+   tokens (the site's neutral palette). Re-point those tokens at the food-map
+   parchment tokens inside this scope so UButton / UInput / UBadge adopt the atlas
+   look with no per-component colour overrides. These tokens are static across all
+   four map themes (only the map tiles recolour), so this needs no theme wiring. */
+.food-map-page {
+  --ui-bg: var(--paper);
+  --ui-bg-elevated: var(--muted);
+  --ui-text: var(--foreground);
+  --ui-text-highlighted: var(--foreground);
+  --ui-text-muted: var(--muted-foreground);
+  --ui-text-dimmed: var(--muted-foreground);
+  --ui-border: var(--border);
+  --ui-border-accented: var(--foreground);
+  --ui-border-muted: var(--border-strong);
+}
+
 /* ===================== APP SHELL ===================== */
 
 .food-map-app {
@@ -488,34 +505,6 @@
   border-left: 1px solid var(--border);
 }
 
-.search-field {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border-strong);
-  background: var(--paper);
-  border-radius: 5px;
-  padding: 9px 11px;
-  margin: 14px 18px 6px;
-}
-.search-field input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: var(--font-serif);
-  font-size: 14px;
-  color: var(--foreground);
-}
-.search-field input::placeholder {
-  color: var(--muted-foreground);
-}
-.search-field .icon {
-  width: 14px;
-  height: 14px;
-  color: var(--muted-foreground);
-}
-
 .drawer-section-label {
   padding: 12px 20px 6px;
   font-size: 10px;
@@ -853,21 +842,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-}
-.rec-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border: 1px solid var(--foreground);
-  border-radius: 9999px;
-  font-size: 12px;
-  background: var(--paper);
-}
-.rec-chip::before {
-  content: "✦";
-  color: var(--accent);
-  font-size: 10px;
 }
 /* ===================== MAP MARKERS ===================== */
 

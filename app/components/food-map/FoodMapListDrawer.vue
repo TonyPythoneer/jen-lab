@@ -159,13 +159,16 @@ const selectedAreaName = computed(
         </button>
       </div>
 
-      <label class="search-field">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="11" cy="11" r="6.5" />
-          <path d="m16 16 4 4" stroke-linecap="round" />
-        </svg>
-        <input v-model="store.state.search" type="text" placeholder="尋找餐廳 — Search…" />
-      </label>
+      <UInput
+        v-model="store.state.search"
+        icon="i-lucide-search"
+        placeholder="尋找餐廳 — Search…"
+        :ui="{
+          root: 'flex mx-[18px] mt-[14px] mb-[6px]',
+          base: 'rounded-[5px] ring-[var(--border-strong)] px-[11px] py-[9px] text-[14px]',
+          leadingIcon: 'size-[14px]',
+        }"
+      />
 
       <!-- Food: category list -->
       <template v-if="store.state.tab === 'food' && !store.state.selectedCategoryId">

@@ -13,7 +13,7 @@ export function previewDeploymentIds(json: string, branch: string): string[] {
     .filter((id): id is string => typeof id === "string");
 }
 
-// CLI: `node --experimental-strip-types scripts/preview-deployment-ids.ts <json-file> <branch>`
+// CLI: `node --experimental-strip-types scripts/github/preview-deployment-ids.ts <json-file> <branch>`
 // Prints one matching deployment id per line.
 if (process.argv[1]?.endsWith("preview-deployment-ids.ts")) {
   const [, , path, branch] = process.argv;
