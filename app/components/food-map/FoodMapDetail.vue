@@ -55,9 +55,16 @@ defineProps<{
     <div v-if="restaurant.recommendations?.length" class="detail__block">
       <div class="detail__section-label">推薦 · Recommended</div>
       <div class="detail__recs">
-        <span v-for="(rec, i) in restaurant.recommendations" :key="i" class="rec-chip">{{
-          rec
-        }}</span>
+        <UBadge
+          v-for="(rec, i) in restaurant.recommendations"
+          :key="i"
+          color="neutral"
+          variant="outline"
+          class="rounded-full px-[10px] py-[6px] text-[12px] bg-[var(--paper)] font-normal"
+          :ui="{ base: 'ring-[var(--foreground)]' }"
+        >
+          <span class="me-[6px] text-[10px] text-[var(--accent)]">✦</span>{{ rec }}
+        </UBadge>
       </div>
     </div>
   </div>
