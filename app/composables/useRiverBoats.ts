@@ -233,25 +233,24 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       });
     });
 
-    // Allocate vessels: ~length/metresPerVessel, clamped, then trimmed to the
-    // global shipCount (longest routes keep their boats first).
-    const alloc = measured.map((m) =>
-      clamp(Math.round(m.total / CONFIG.metresPerVessel), 1, CONFIG.maxShipsPerRoute),
+    // Allocate vessels by route length, then fit the global shipCount budget,
+    // longest routes first. A route can get ZERO boats — its course line still
+    // draws. This matters because we carry every OSM ferry way (for parity with
+    // the basemap), including many short legs; without a 0 floor each tiny leg
+    // would force a boat and the fleet would explode past shipCount.
+    const desired = measured.map((m) =>
+      clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );
-    let sum = alloc.reduce((s, n) => s + n, 0);
-    while (sum > CONFIG.shipCount) {
-      // Reduce the route with the most vessels (but never below 1).
-      let idx = -1;
-      let best = 1;
-      measured.forEach((_, i) => {
-        if (alloc[i]! > best) {
-          best = alloc[i]!;
-          idx = i;
-        }
-      });
-      if (idx === -1) break;
-      alloc[idx]!--;
-      sum--;
+    const alloc = new Array<number>(measured.length).fill(0);
+    const longestFirst = measured
+      .map((_, i) => i)
+      .sort((a, b) => measured[b]!.total - measured[a]!.total);
+    let budget = CONFIG.shipCount;
+    for (const i of longestFirst) {
+      const n = Math.min(desired[i]!, budget);
+      alloc[i] = n;
+      budget -= n;
+      if (budget <= 0) break;
     }
 
     const flip = CONFIG.animationSmoothness;
@@ -357,6 +356,17 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
 
       const p = sampleAtDist(v.path, v.cum, v.total, v.pos);
       v.marker.setLatLng([p.lat, p.lng]);
+
+      // Resolve the boat element lazily. At build() the boats layer isn't on the
+      // map yet, so marker.getElement() returns null and v.el stays null — which
+      // silently disabled the left/right flip (the guard below skipped it). Grab
+      // the element on the first frame it exists and sync it to the current
+      // facing so subsequent direction changes animate the scaleX flip.
+      if (!v.el) {
+        v.el = (v.marker.getElement()?.querySelector(".river-boat") as HTMLElement) ?? null;
+        if (v.el) v.el.style.transform = v.facingRight ? "scaleX(1)" : "scaleX(-1)";
+      }
+
       const wantRight = (v.dir > 0 ? p.dx : -p.dx) >= 0;
       if (wantRight !== v.facingRight && v.el) {
         v.facingRight = wantRight;
