@@ -2,37 +2,8 @@ import type { NuxtConfig } from "nuxt/schema";
 import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
 import linkAttrs from "markdown-it-link-attributes";
-import { readdirSync, statSync } from "node:fs";
-import { join, relative, extname } from "node:path";
 import { WP_BASE } from "./shared/wp";
 import { DEV_PORT } from "./shared/dev";
-
-// Derive the set of valid static routes from app/pages/ at config-load time.
-// Used by the content:file:afterParse hook to validate nav URLs in header.yml.
-function getStaticRoutes(pagesDir: string): Set<string> {
-  const routes = new Set<string>();
-  function walk(dir: string) {
-    for (const entry of readdirSync(dir)) {
-      const full = join(dir, entry);
-      if (statSync(full).isDirectory()) {
-        walk(full);
-        continue;
-      }
-      if (extname(entry) !== ".vue") continue;
-      const rel = relative(pagesDir, full).replace(/\\/g, "/");
-      // Skip dynamic segments — they can't appear in a static nav list.
-      if (rel.includes("[")) continue;
-      // Drop ".vue" and any "index" leaf so the root index.vue maps to "/".
-      // "index.vue" → "/", "blogs/index.vue" → "/blogs", "about.vue" → "/about".
-      const path = rel.replace(/\.vue$/, "").replace(/(^|\/)index$/, "");
-      routes.add("/" + path);
-    }
-  }
-  walk(pagesDir);
-  return routes;
-}
-
-const VALID_ROUTES = getStaticRoutes(join(__dirname, "app/pages"));
 
 // Build-time markdown renderer for product description fields.
 // Runs only inside content:file:afterParse on the server during the
@@ -52,20 +23,7 @@ const moduleSettings: NuxtConfig = {
     "@vueuse/nuxt",
   ],
   fonts: {
-    // The food-map atlas declares its serif stack only inside the --font-serif
-    // CSS variable. @nuxt/fonts ignores CSS variables by default, so the CJK
-    // serif (Noto Serif TC) never loaded and Chinese fell back to a system font.
-    // Scanning CSS variables makes those fonts actually load, matching the source.
-    experimental: { processCSSVariables: true },
     families: [
-      // Food map atlas typography — serif-led parchment style (matches source)
-      {
-        name: "Crimson Pro",
-        provider: "google",
-        weights: [400, 500, 600, 700],
-        styles: ["normal", "italic"],
-      },
-      { name: "Noto Serif TC", provider: "google", weights: [400, 500, 600, 700] },
       // English display — bold condensed headlines
       { name: "Bebas Neue", provider: "google", weights: [400] },
       // English body — humanist, matching caldera reference
@@ -127,7 +85,6 @@ const cloudflareSettings: NuxtConfig = {
     "/jen-liu": { prerender: true },
     "/jen-knows": { prerender: true },
     "/blogs": { prerender: true },
-    "/sydney-food-map": { prerender: true },
   },
 };
 
@@ -167,25 +124,11 @@ const lifecycleHookstSettings: NuxtConfig = {
     // shipping markdown-it to the client. Scoped to the `home` collection;
     // hook fires per parsed file (e.g. content/home/jen-knows.md).
     "content:file:afterParse"({ collection, content }) {
-      if (collection.name === "home") {
-        for (const section of (content as any).sections ?? []) {
-          if (section.component !== "product-list") continue;
-          for (const product of section.products) {
-            product.descriptionHtml = md.render(product.description);
-          }
-        }
-      }
-
-      // Validate that every nav URL in content/site/header.yml is a real Nuxt route.
-      // Throws at build time so a typo can never ship a broken link.
-      if (collection.name === "site") {
-        for (const item of (content as any).nav ?? []) {
-          if (!VALID_ROUTES.has(item.to)) {
-            throw new Error(
-              `content/site/header.yml: nav item "${item.label}" has url "${item.to}" which is not a valid route.\n` +
-                `Valid static routes: ${[...VALID_ROUTES].sort().join(", ")}`,
-            );
-          }
+      if (collection.name !== "home") return;
+      for (const section of (content as any).sections ?? []) {
+        if (section.component !== "product-list") continue;
+        for (const product of section.products) {
+          product.descriptionHtml = md.render(product.description);
         }
       }
     },

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import SectionNewsletter from "./SectionNewsletter.vue";
 
 const meta = {

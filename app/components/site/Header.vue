@@ -1,10 +1,11 @@
 <script setup lang="ts">
-// `site` is a `type: "data"` collection — data items have no `path` column
-// (that only exists for `type: "page"`), so query the single file directly.
-const { data: siteHeader } = await useAsyncData("site-header", () =>
-  queryCollection("site").first(),
-);
-const navItems = computed(() => siteHeader.value?.nav ?? []);
+const navItems = [
+  { label: "Home", to: "/" },
+  { label: "Jen Knows", to: "/jen-knows" },
+  { label: "Jen Liu", to: "/jen-liu" },
+  // { label: "Restaurants", to: "/my-best-restaurants-search-in-sydney" },
+  { label: "Blogs", to: "/blogs" },
+];
 
 const route = useRoute();
 const { y } = useWindowScroll();
