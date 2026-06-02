@@ -51,7 +51,31 @@ Required secrets (already configured): `CLOUDFLARE_API_TOKEN`,
 Thin workflows over one shared, unit-tested planning function. The retention
 rule and report format live in exactly one place.
 
-### Shared helper — `scripts/cleanup-deployments.ts`
+### Reorganize CI scripts into `scripts/github/`
+
+CI-only scripts have grown enough to warrant their own folder, separate from the
+local-dev scripts wired into `package.json` (`sync-*`, `screenshot`).
+
+Move into `scripts/github/` (referenced only by workflows):
+
+- `scripts/preview-deployment-ids.ts` → `scripts/github/preview-deployment-ids.ts`
+- `scripts/wrangler-summary.ts` → `scripts/github/wrangler-summary.ts`
+- new `scripts/github/cleanup-deployments.ts` (+ test) lands here directly.
+
+Stay in `scripts/` (wired into `package.json`): `sync-ferries.ts`,
+`sync-ferries-osm.ts`, `sync-wp.ts`, `screenshot.ts`.
+
+Update the `node ... scripts/<x>.ts` paths in the three workflows that reference
+the moved files:
+
+- `cmd-delete-preview.yml` → `scripts/github/preview-deployment-ids.ts`
+- `cd-cloudflare.yml` → `scripts/github/wrangler-summary.ts`
+- `cmd-preview.yml` → `scripts/github/wrangler-summary.ts`
+
+The CLI self-detection (`process.argv[1]?.endsWith("<file>.ts")`) keys on the
+filename only, so it survives the move unchanged.
+
+### Shared helper — `scripts/github/cleanup-deployments.ts`
 
 Pure function plus a CLI, mirroring `wrangler-summary.ts`.
 
@@ -100,14 +124,14 @@ Behaviour of `planCleanup`:
 CLI mode (`process.argv[1]?.endsWith("cleanup-deployments.ts")`):
 
 ```
-node --experimental-strip-types scripts/cleanup-deployments.ts <json-file> <branch...>
+node --experimental-strip-types scripts/github/cleanup-deployments.ts <json-file> <branch...>
 ```
 
 - Reads the merged deployments JSON.
 - Writes `ids.txt` (one id per line) for the shell delete loop.
 - Writes `report.md` (the rendered report) for the comment/issue step.
 
-### Test — `scripts/cleanup-deployments.test.ts` (Vitest)
+### Test — `scripts/github/cleanup-deployments.test.ts` (Vitest)
 
 Cover with fixture deployment arrays:
 
@@ -130,7 +154,7 @@ Auto-delete a merged feature branch's preview deployments.
   - checkout → pnpm/action-setup → setup-node → `pnpm install --frozen-lockfile`.
   - `BRANCH` = `github.event.pull_request.head.ref`.
   - `wrangler pages deployment list --environment preview --json > deployments.json`.
-  - `scripts/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt`.
+  - `scripts/github/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt`.
   - delete loop (`wrangler pages deployment delete "$id" --force`), counting
     `deleted` / `failed`.
 - Upsert a comment on the merged PR (marker `<!-- cd-cloudflare-cleanup -->`):
@@ -151,7 +175,7 @@ Weekly global prune, keep latest `main` + latest `develop`.
   pnpm exec wrangler pages deployment list --environment preview --json > preview.json
   node -e 'const fs=require("fs");const a=JSON.parse(fs.readFileSync("prod.json","utf8"));const b=JSON.parse(fs.readFileSync("preview.json","utf8"));fs.writeFileSync("deployments.json",JSON.stringify([...a,...b]))'
   ```
-- `node --experimental-strip-types scripts/cleanup-deployments.ts deployments.json main develop`
+- `node --experimental-strip-types scripts/github/cleanup-deployments.ts deployments.json main develop`
   → produces `ids.txt` and `report.md`.
 - Delete loop over `ids.txt`.
 - **Upsert a GitHub issue** (marker `<!-- cloudflare-cleanup-report -->`, label
@@ -235,3 +259,5 @@ descending. If a protected branch has no deployments, its "Except" line reads
 - Cron report destination: GitHub issue, upserted weekly. (User choice.)
 - Command name: `/all-cleanup` (not `/cleanup`), owner-only, issues + PRs.
 - Approach A: shared pure script + thin workflows, over inline JS or bash+jq.
+- CI scripts move under `scripts/github/`; local-dev scripts stay in `scripts/`.
+  (User choice.)
