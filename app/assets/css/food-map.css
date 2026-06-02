@@ -390,11 +390,15 @@
   bottom: 0;
   width: 348px;
   z-index: 700;
+  /* The container spans the drawer's full width even when collapsed. Let clicks
+     fall through its empty area to the map; only the panel and handle catch them. */
+  pointer-events: none;
 }
 
 .list-drawer__panel {
   position: absolute;
   inset: 0;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   background: var(--background);
@@ -414,6 +418,7 @@
   top: 50%;
   left: 100%;
   transform: translateY(-50%);
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
