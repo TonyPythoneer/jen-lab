@@ -79,10 +79,13 @@ jobs:
               `${marker}\n${report || `Cleanup ran but produced no report. See the [workflow run](${runUrl}).`}` +
               failNote;
 
+            // Filter by our own label so the search stays small and never
+            // misses the tracking issue behind a page of unrelated issues.
             const { data: issues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: "open",
+              labels: "cloudflare-cleanup",
               per_page: 100,
             });
             const existing = issues.find((i) => i.body?.includes(marker));
