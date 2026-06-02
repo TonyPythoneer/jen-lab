@@ -23,7 +23,7 @@
         class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-rose-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow"
       >
         <UIcon name="i-lucide-sparkles" class="size-3" />
-        New!
+        {{ props.newBadgeText }}
       </span>
     </div>
     <div class="flex flex-col gap-2 flex-1 p-4">
@@ -54,16 +54,25 @@
 import { stripHtml, formatDate, type WpPost } from "~/utils/wpApi";
 import type { RouteLocationRaw } from "vue-router";
 
-const props = defineProps<{
-  post: WpPost;
-  to: RouteLocationRaw;
-  tagMap: Record<number, string>;
-}>();
+// Badge text + age cutoff come from content/site/blogs.yml via the page.
+// Defaults keep the card self-contained for Storybook and as a fallback.
+const props = withDefaults(
+  defineProps<{
+    post: WpPost;
+    to: RouteLocationRaw;
+    tagMap: Record<number, string>;
+    newBadgeText?: string;
+    newPostDaysThreshold?: number;
+  }>(),
+  {
+    newBadgeText: "New!",
+    newPostDaysThreshold: 7,
+  },
+);
 
-const NEW_POST_DAYS = 7;
 const isNew = computed(() => {
   const t = new Date(props.post.date).getTime();
   if (Number.isNaN(t)) return false;
-  return Date.now() - t <= NEW_POST_DAYS * 86400_000;
+  return Date.now() - t <= props.newPostDaysThreshold * 86400_000;
 });
 </script>

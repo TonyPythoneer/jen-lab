@@ -7,7 +7,9 @@ const COMPONENT_MAP: Record<string, ReturnType<typeof resolveComponent>> = {
   "section-support": resolveComponent("HomeSectionSupport"),
 };
 
-const { data: page } = useLazyAsyncData("pages-layout:home", () =>
+// Blocking (not lazy) so the homepage SEO from content is baked into the
+// prerendered HTML.
+const { data: page } = useAsyncData("pages-layout:home", () =>
   queryCollection("pagesLayout").path("/pages-layout/home").first(),
 );
 
@@ -17,10 +19,10 @@ function sectionProps(section: { component: string; [key: string]: unknown }) {
 }
 
 useSeoMeta({
-  title: "榛知 — 職涯 × 旅遊，從雪梨出發",
-  description: "榛知 Jen：澳洲職涯顧問 × 旅遊作家。兩個身份，一個在雪梨的真實故事。",
-  ogTitle: "榛知 — 職涯 × 旅遊，從雪梨出發",
-  ogDescription: "澳洲職涯顧問 × 旅遊作家。探索 Jen Knows 職場資源，或跟著 Jen Liu 走訪澳洲。",
+  title: () => page.value?.seo?.title,
+  description: () => page.value?.seo?.description,
+  ogTitle: () => page.value?.seo?.ogTitle,
+  ogDescription: () => page.value?.seo?.ogDescription,
   ogType: "website",
 });
 </script>

@@ -1,0 +1,39 @@
+# 部落格頁面文字 — 編輯說明
+
+這個資料夾裡的 `blogs.yml` 控制部落格頁面上的所有「外框文字」
+（標題、按鈕、提示）。文章本身在 WordPress，不在這裡。
+
+## 怎麼改
+- 只改冒號「:」右邊的文字。
+- 不要改冒號左邊的英文名字（例如 `title:`、`backLink:`），改了頁面會壞掉。
+- 改完存檔即可。
+
+## 每個欄位是什麼
+
+### listPage —— /blogs 列表頁
+- `title`：列表頁最上方的大標題。
+- `subtitle`：大標題下面那行小字。
+- `loadingErrorMessage`：文章載入失敗時顯示的訊息。
+- `loadingErrorRetryButton`：載入失敗時，那顆「再試一次」按鈕的字。
+- `noResultsMessage`：搜尋不到文章時顯示的字。
+- `seoTitle` / `seoDescription`：給 Google 和社群分享看的文字，
+  **讀者在頁面上看不到**。
+
+### detailPage —— 單篇文章頁
+- `backLink`：左上角「返回」連結的字。
+- `loadingMessage`：文章還在載入時顯示的字。
+- `notFoundMessage`：找不到這篇文章時顯示的字。
+- `seoTitleTemplate`：瀏覽器分頁標題的格式，給搜尋引擎看。
+  裡面的 `{{title}}` 會自動換成文章自己的標題。
+  例如填 `{{title}} | Jen Liu`，文章叫「雪梨遊記」時就會變成
+  「雪梨遊記 | Jen Liu」。`{{title}}` 一定要保留。
+
+### search —— 從頂端拉下來的搜尋框
+- `placeholder`：搜尋框裡的淡色提示字。
+- `categoryLabel`：「分類」篩選鈕上的字。
+- `tagLabel`：「標籤」篩選鈕上的字。
+
+### postCard —— 列表裡每篇文章的小卡片
+- `newBadgeText`：新文章右上角那顆小標籤的字（目前是 New!）。
+- `newPostDaysThreshold`：文章發布幾天內算「新」、會顯示上面那顆標籤。
+  填數字，例如 7 代表七天內的文章算新。

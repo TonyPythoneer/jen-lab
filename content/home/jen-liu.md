@@ -15,7 +15,6 @@ sections:
     products:
       - banner: /home/jen-liu/products/sydney.webp
         title: 雪梨 附：藍山．紐卡索．獵人谷．賈維斯灣
-        brief: 準備來雪梨旅遊，卻搜尋不到必吃美食嗎?
         description: |
           **榛知移居雪梨多年，帶你走進雪梨的多元面貌，**
           **一次盡覽城市與自然交織的壯闊風景！**
@@ -24,10 +23,8 @@ sections:
           從歷史街區、經典地標，到港灣海灘與海岸祕境；從藝術節慶、市集漫遊，到酒莊巡禮與小鎮探訪，給你最道地的體驗。
           不論是初訪雪梨，或想再一次發掘不同玩法，都能透過清晰分區與主題規畫，找到最適合自己的行程，開啟一趟屬於你的精彩旅程。
         purchaseUrl: https://www.books.com.tw/products/0011050556
-        purchaseLabel: 馬上購買
       - banner: /home/jen-liu/products/sydney-food-in-notion.webp
         title: 雪梨市區美食手冊
-        brief: 準備來雪梨旅遊，卻搜尋不到必吃美食嗎?
         description: |
           📘 這份Notion手冊包含：
 
@@ -37,10 +34,8 @@ sections:
 
           讓你的雪梨之旅的每一餐都不踩雷，吃到翻肚才回家！
         purchaseUrl: https://portaly.cc/jenliuau/product/EnDXJiD2Mu0PXf4Om2kY
-        purchaseLabel: 馬上領取
       - banner: /home/jen-liu/products/starting-your-solo-trip-in-australia.webp
         title: 開始在澳洲自助旅行
-        brief: 為你深入介紹澳洲旅遊完整情報！
         description: |
           * 涵蓋雪梨、新南威爾斯州、墨爾本、布里斯本、黃金海岸、伯斯與塔斯馬尼亞
           * 深度導覽市區必訪景點、熱門周邊近郊、高山健行與海灘漫遊等
@@ -48,7 +43,6 @@ sections:
 
           提供行程規畫、交通資訊詳解，行程串聯安排更聰明！
         purchaseUrl: https://www.books.com.tw/products/0011024538
-        purchaseLabel: 馬上購買
 
   - id: galleries
     label: Galleries

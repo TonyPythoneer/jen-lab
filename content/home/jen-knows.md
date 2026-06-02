@@ -66,7 +66,6 @@ sections:
     products:
       - banner: /home/jen-knows/products/aus-workplace-guide.webp
         title: 澳洲職場指南 2.0
-        brief: 從面試、入職到升職，系統性掌握澳洲職場文化
         description: |
           * **基礎知識篇** - 稅務、Super、勞工權益等基本制度
           * **求職篇** - 英文履歷、面試準備
@@ -82,10 +81,8 @@ sections:
 
           使用澳幣付款，請至以下連結 https://buy.stripe.com/4gM3cvbMO5Nx73026sbwk03
         purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
-        purchaseLabel: 真棒，我要這個！
       - banner: /home/jen-knows/products/taiwan-travel-guide.webp
         title: 海外遊子回台手冊
-        brief: 給「熟悉又陌生」的你，重新連上台灣的一份生活指南。
         description: |
           📘這本手冊包含：
           * 回台前需準備事項（恢復戶籍、申辦自然人憑證等）
@@ -105,5 +102,4 @@ sections:
           使用澳幣付款，請至以下連結
           https://buy.stripe.com/aFa5kD3gidfZ8743awbwk00
         purchaseUrl: https://portaly.cc/jenknowsau/product/MPD8CttocCqWRkBvNPp8
-        purchaseLabel: 立刻下單
 ---

@@ -14,12 +14,9 @@ export const Default: Story = {
   args: {
     banner: "https://images.unsplash.com/photo-150784272343-583f20270319?w=400&h=300&fit=crop",
     title: "雪梨 附：藍山．紐卡索．獵人谷．賈維斯灣",
-    brief:
-      "A comprehensive guide to Sydney and surroundings with detailed maps and recommendations.",
     descriptionHtml:
       "<p>Explore the beauty of Sydney and beyond with insider knowledge. Each chapter covers different regions with practical tips and stunning visuals.</p>",
     purchaseUrl: "https://books.com.tw",
-    purchaseLabel: "購買",
   },
   render: (args) => ({
     components: { Product },
@@ -36,10 +33,8 @@ export const WithoutBanner: Story = {
   args: {
     banner: undefined,
     title: "Digital Product",
-    brief: "A premium online course about web development.",
     descriptionHtml: "<p>Learn modern web development practices with hands-on projects.</p>",
     purchaseUrl: "https://example.com",
-    purchaseLabel: "Enroll",
   },
   render: (args) => ({
     components: { Product },
@@ -56,7 +51,6 @@ export const WithExtendedDescription: Story = {
   args: {
     banner: "https://images.unsplash.com/photo-1507842872885-ce7c1d7ff17f?w=400&h=300&fit=crop",
     title: "Complete Guide",
-    brief: "Everything you need to know.",
     descriptionHtml: `
       <p>This comprehensive guide covers:</p>
       <ul>
@@ -67,7 +61,6 @@ export const WithExtendedDescription: Story = {
       <p>Perfect for beginners and intermediate learners.</p>
     `,
     purchaseUrl: "https://example.com",
-    purchaseLabel: "Get Now",
   },
   render: (args) => ({
     components: { Product },

@@ -4,7 +4,7 @@
     <h2
       class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl shrink-0"
     >
-      My Stories
+      {{ heading }}
     </h2>
 
     <div class="blog3dv2-root" :style="`--n: ${n}; --dur: ${props.spinDuration}s`">
@@ -37,7 +37,7 @@
                   ×
                 </button>
                 <img :src="item.url" :alt="item.alt" loading="lazy" />
-                <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">閱讀全文</NuxtLink>
+                <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">{{ ctaLabel }}</NuxtLink>
               </figure>
             </article>
           </section>
@@ -56,10 +56,16 @@ const props = withDefaults(
     postCount?: number;
     /** Seconds for one full rotation */
     spinDuration?: number;
+    /** Section heading above the ring */
+    heading?: string;
+    /** "Read full post" link label on each card */
+    ctaLabel?: string;
   }>(),
   {
     postCount: 18,
     spinDuration: 30,
+    heading: "My Stories",
+    ctaLabel: "閱讀全文",
   },
 );
 

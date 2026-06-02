@@ -15,7 +15,7 @@
             <input
               ref="searchInput"
               v-model="q"
-              :placeholder="PLACEHOLDER"
+              :placeholder="props.placeholder"
               class="w-full border-0 bg-transparent py-2 pr-10 text-2xl font-medium text-abyssal-ink outline-none placeholder:text-abyssal-ink/40 md:text-3xl"
               @keyup.enter="submit"
             />
@@ -41,8 +41,12 @@
 
         <!-- Filters: 分類 + 標籤 side by side, below the input. Enter in the input submits. -->
         <div class="mt-4 flex flex-wrap gap-3">
-          <BlogFilterButton v-model="selectedCategoryIds" label="分類" :items="categoryTree" />
-          <BlogFilterButton v-model="selectedTagIds" label="標籤" :items="tagTree" />
+          <BlogFilterButton
+            v-model="selectedCategoryIds"
+            :label="props.categoryLabel"
+            :items="categoryTree"
+          />
+          <BlogFilterButton v-model="selectedTagIds" :label="props.tagLabel" :items="tagTree" />
         </div>
       </div>
     </template>
@@ -53,7 +57,21 @@
 import { buildBlogSearchRoute } from "~/utils/blogSearchQuery";
 import { csvToIds } from "~/utils/csvToIds";
 
-const PLACEHOLDER = "Type for blog search";
+// Search-box wording comes from content/site/blogs.yml via the layout.
+// Defaults keep the modal self-contained for Storybook and as a fallback.
+const props = withDefaults(
+  defineProps<{
+    placeholder?: string;
+    categoryLabel?: string;
+    tagLabel?: string;
+  }>(),
+  {
+    placeholder: "Type for blog search",
+    categoryLabel: "分類",
+    tagLabel: "標籤",
+  },
+);
+
 // The theme's default slideover overlay (bg-elevated) is transparent in this light-only
 // palette, so set an explicit gray veil over the page behind the modal.
 const OVERLAY_CLASS = "bg-abyssal-ink/40";
