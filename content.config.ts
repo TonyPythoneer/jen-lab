@@ -163,5 +163,12 @@ export default defineContentConfig({
       source: "wp/categories/*.yaml",
       schema: wpCategorySchema,
     }),
+    site: defineCollection({
+      type: "data",
+      source: "site/header.yml",
+      schema: z.object({
+        nav: z.array(z.object({ label: z.string(), to: z.string() })),
+      }),
+    }),
   },
 });

@@ -10,11 +10,9 @@ export type EnrichedRestaurant = Restaurant & {
   categoryName: string;
 };
 
-// `await import(...)` is intentional: Vite emits the restaurants dataset as
-// its own chunk, kept out of the route chunk. `useLazyAsyncData` then
-// non-blockingly fetches it on first composable use, so the page shell paints
-// before the dataset arrives. Do NOT replace with a static top-level import —
-// that would fold the dataset back into the route chunk.
+// `await import(...)` keeps the restaurants dataset (44KB) in a separate Vite
+// chunk rather than folding it into the route chunk. Do NOT replace with a
+// static top-level import.
 async function loadData() {
   const { categories, restaurants } = await import("~/assets/data/pages/restaurants");
 

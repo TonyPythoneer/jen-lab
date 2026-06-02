@@ -86,7 +86,7 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 ## AI Development
 
 - Nuxt
-  - Must use `useLazyAsyncData` instead of `useAsyncData` to avoid blocking UI rendering.
+  - Must use `useAsyncData` instead of `useLazyAsyncData`. All pages are prerendered — data is baked into the HTML payload at build time, so there is no runtime blocking concern. `useLazyAsyncData` only helps when a page is NOT prerendered and you want the shell to paint before data arrives; that case does not exist here.
   - Composables
     - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
     - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
