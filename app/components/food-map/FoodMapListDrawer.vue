@@ -19,6 +19,14 @@ function toggleSheet() {
   else store.openDrawer();
 }
 
+// The close (X) button dismisses everything back to the initial collapsed peek:
+// drop any picked place AND collapse the sheet. (Back, by contrast, only drops
+// the place and stays expanded on the list.)
+function closeToPeek() {
+  store.selectRestaurant(null);
+  store.closeDrawer();
+}
+
 // Districts share their labels with the top-bar chips.
 const AREA_NAME: Record<string, string> = { CBD: "市中心 · CBD", Suburbs: "城郊 · Suburbs" };
 
@@ -66,7 +74,7 @@ const heading = computed(() => {
             </svg>
             <span>返回清單 · Back</span>
           </button>
-          <button class="list-drawer__close" aria-label="Close" @click="store.closeDrawer()">
+          <button class="list-drawer__close" aria-label="Close" @click="closeToPeek">
             <svg
               width="14"
               height="14"
@@ -91,7 +99,7 @@ const heading = computed(() => {
             <span class="list-drawer__heading-name">{{ heading }}</span>
             <span class="list-drawer__heading-count">{{ restaurants.length }} 間</span>
           </div>
-          <button class="list-drawer__close" aria-label="Close" @click="store.closeDrawer()">
+          <button class="list-drawer__close" aria-label="Close" @click="closeToPeek">
             <svg
               width="14"
               height="14"
