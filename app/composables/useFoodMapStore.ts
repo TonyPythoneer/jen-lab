@@ -45,6 +45,9 @@ export function useFoodMapStore() {
   }
 
   function setHovered(id: string | null) {
+    // The group hover-highlight is a desktop affordance. On mobile a tap fires
+    // mouseover too, which would leave the group effect stuck, so skip it there.
+    if (typeof window !== "undefined" && window.innerWidth <= 640) return;
     state.hoveredCategoryId = id;
   }
 
