@@ -40,7 +40,11 @@ _你丟，我接。還沒分類的想法都先放這。_
 
 ## 🔨 進行中（Doing）
 
-_（目前沒有背景任務）_
+- 🧠 **規劃模式（你外出 3 小時）**：產出計畫 + 規格中。**此期間不做正式實作。**
+  - ✅ 盤點完成：非品牌色散在 13 檔（多為機械替換）、圓角 2 檔、dark 殘留 0
+  - ✅ 設計文件：`docs/superpowers/specs/2026-06-03-design-system-consistency-design.md`
+  - ✅ 實作計畫：`docs/superpowers/plans/2026-06-03-design-system-consistency.md`（逐檔改動 + 工人隊腳本）
+  - ✅ **規劃全部完成 — 等你回來拍 3 個小決定（見下方 Next）**
 
 ---
 
@@ -52,17 +56,27 @@ _（目前沒有背景任務）_
 - `nuxt.config.ts` 加入 `componentSettings`（保住元件名字，搬檔不破壞）
 - `gsd-cockpit` skill v1 草稿（`~/.claude/skills/gsd-cockpit/SKILL.md`）— 待你點頭
 - ✅ **整理 home/ 完成**：22 個檔歸位（sections/art/motion/parts/\_unused）+ `components:dirs` hook 保住扁平名字，驗證 0 phantom、template 零改動
+- ✅ 三個 commit 落地（樣式 / 重組 / 控制台）
+- ✅ **視覺驗證**：/blogs + 首頁瀏覽器確認沒壞（你親自看過）
+- ✅ 設計文件 + 實作計畫已寫好並 commit（規劃模式產出）
 
 ---
 
 ## 📋 接下來（Next）
 
-1. 🎯 設計 + 建「駕駛艙」skill（GSD 之上的工作模式驅動器）— v1 純 skill
-2. 用 skill 驅動：把 `home/` 檔案搬進 `sections/art/motion/parts/_unused`（含 stories）→ 背景
-3. 驗證 dev server 在新 config 下元件都解析得到
-4. CLAUDE.md 寫入 Design System Quick Reference
-5. webwright 視覺驗證所有樣式改動
-6. （v2）加 SessionStart hook 讓 skill always-on
+**▶ 你回來第一步：拍 3 個小決定（其餘全部備好了）**
+
+計畫：`docs/superpowers/plans/2026-06-03-design-system-consistency.md`
+規格：`docs/superpowers/specs/2026-06-03-design-system-consistency-design.md`
+
+1. **拍板 D1 / D2 / D3**（計畫開頭的 Decision gate，都有我的預設建議）
+   - D1：YouTube 播放鍵紅色 →（預設）改 `digital-orange`
+   - D2：篩選器「選中」的 teal →（預設）改 `digital-orange`
+   - D3：三個孤兒元件（ContentBody / SectionNewProduct / Toc）→（預設）刪除
+2. **CLAUDE.md 寫入設計速查**（計畫 Task 1，先做＝工人的合約）
+3. **品牌色掃除**：11–13 檔機械替換（計畫 Task 3；工人隊腳本在 Appendix A，一聲令下就放）
+4. **Storybook 標題對齊**新資料夾（計畫 Task 4）
+5. 全部完成 → 瀏覽器視覺驗證 + 逐塊 commit
 
 ---
 
@@ -70,3 +84,6 @@ _（目前沒有背景任務）_
 
 - 全站其他領域的結構模式（現在不需要）
 - Sydney food-map（這次明確不碰）
+- **駕駛艙 skill v2**：把工人隊模式寫進 skill + 加 SessionStart hook 變 always-on（meta 工具，不擋清理工作）
+- **Typography 語意 token**（D4 延後）：讓標題改用 theme.css 的 `--text-heading/display`，獨立一輪再做
+- `gsd-cockpit` skill v1 仍待你點頭定案
