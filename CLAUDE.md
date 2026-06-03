@@ -42,13 +42,13 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/my-best-restaurants-search-in-sydney` (Leaflet map).
+Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map).
 
 **Non-obvious constraints:**
 
 - `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
 - `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
-- `MapView.vue` — Leaflet must stay inside `<ClientOnly>` (SSR-unsafe).
+- Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapStage.vue`).
 - `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
 - Light mode only — dark mode disabled in `app.config.ts`.
 
@@ -69,15 +69,15 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 
 **Directory = route domain.** Each subdirectory maps to the route it serves. Nuxt auto-import uses the directory as the component prefix.
 
-| Directory      | Serves                                  |
-| -------------- | --------------------------------------- |
-| `site/`        | All pages (global layout)               |
-| `home/`        | `/`                                     |
-| `blog/`        | `/blogs`, `/blogs/[slug]`               |
-| `restaurants/` | `/my-best-restaurants-search-in-sydney` |
-| `profile/`     | `/about`                                |
-| `shared/`      | Cross-domain reusable primitives        |
-| `fx/`          | Visual effects consumed by components   |
+| Directory   | Serves                                |
+| ----------- | ------------------------------------- |
+| `site/`     | All pages (global layout)             |
+| `home/`     | `/`                                   |
+| `blog/`     | `/blogs`, `/blogs/[slug]`             |
+| `food-map/` | `/sydney-food-map`                    |
+| `profile/`  | `/about`                              |
+| `shared/`   | Cross-domain reusable primitives      |
+| `fx/`       | Visual effects consumed by components |
 
 **`Section` prefix = page consumes it directly.** A `Section*` component is a full-width block rendered inside `pages/`. No prefix = sub-component consumed by another component, not a page.
 
@@ -110,6 +110,43 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 - Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
 - Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Profile.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
+
+## Design System Quick Reference
+
+Token source of truth: `app/assets/css/theme.css` (raw) + `main.css` (semantic aliases).
+Never hardcode a hex/px a token already covers. Light-mode only — never write `dark:*`.
+
+**Colors** — brand tokens as `bg-*` / `text-*` / `border-*`, opacity via `/NN`:
+
+| Token            | Use                          |
+| ---------------- | ---------------------------- |
+| `basalt-canvas`  | page background              |
+| `ash-white`      | card / raised surface        |
+| `abyssal-ink`    | primary text + dark surfaces |
+| `pure-white`     | text on dark surfaces        |
+| `digital-orange` | primary accent, CTA, hover   |
+| `cyber-violet`   | secondary accent (Jen Knows) |
+| `pixel-glare`    | highlight dots               |
+| `sydney-sky`     | hero background              |
+
+**Raw → brand mapping** (use these, never the raw palette):
+
+| Raw                                                                 | Brand                             |
+| ------------------------------------------------------------------- | --------------------------------- |
+| `text-neutral-400` / `text-gray-400/500`                            | `text-abyssal-ink/50`             |
+| `text-gray-700`                                                     | `text-abyssal-ink/70`             |
+| `bg-gray-50/100`                                                    | `bg-ash-white`                    |
+| `bg-gray-200`                                                       | `bg-basalt-canvas`                |
+| `border-neutral/gray-200/300/400`                                   | `border-abyssal-ink/10`           |
+| `bg/border/text-gray-900`, `text-black`, `bg-white`, `border-black` | `…-abyssal-ink` / `bg-pure-white` |
+
+**Radius** — semantic aliases, never raw `rounded-xl/2xl` on cards/pills:
+`rounded-card` (40px, cards/panels) · `rounded-button` (800px pill, buttons+badges) · `rounded-input` (100px) · `rounded-full` (true circles only). Small radii on non-card/pill elements (e.g. inline images, list rows) may stay.
+
+**Typography:** `font-display` (Bebas Neue) for all h1/h2 — already heavy, never add `font-bold`. `font-sans` (DM Sans) for body. Section heading standard: `font-display tracking-[0.02em] leading-[0.94]`.
+
+**Never:** `dark:*`, raw `text-neutral-*` / `bg-rose-*` / `text-primary-500` utilities, `rounded-xl` on cards, `font-bold` on `font-display`.
+Note: Nuxt UI `color="neutral"` / `variant="outline"` props are component contract — keep them (they are not raw utilities).
 
 ## Working Preferences
 

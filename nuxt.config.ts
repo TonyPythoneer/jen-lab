@@ -157,6 +157,20 @@ const experimentalSettings: NuxtConfig = {
 
 const lifecycleHookstSettings: NuxtConfig = {
   hooks: {
+    // home/ is split into role sub-folders (sections, art, motion, parts,
+    // _unused) but every component keeps a FLAT name (<HomeSectionHero>, not
+    // <HomeSectionsSectionHero>) so the reorg never touches a template.
+    // Done via hook + unshift because module-injected ~/components scans
+    // otherwise win and fold the sub-folder back into the name. pathPrefix:false
+    // drops the sub-folder; the "Home" prefix restores the domain prefix.
+    "components:dirs"(dirs) {
+      dirs.unshift({
+        path: join(__dirname, "app/components/home"),
+        prefix: "Home",
+        pathPrefix: false,
+      });
+    },
+
     // Render markdown → HTML once at build, store on the content row as
     // `descriptionHtml`. Keeps `description` (source) intact and avoids
     // shipping markdown-it to the client. Scoped to the `home` collection;

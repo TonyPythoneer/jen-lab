@@ -15,7 +15,7 @@
       </div>
 
       <div v-else-if="error" class="text-center py-20">
-        <p class="text-neutral-400 mb-4">{{ chrome?.listPage.loadingErrorMessage }}</p>
+        <p class="text-abyssal-ink/50 mb-4">{{ chrome?.listPage.loadingErrorMessage }}</p>
         <UButton color="neutral" variant="outline" @click="refresh()">
           {{ chrome?.listPage.loadingErrorRetryButton }}
         </UButton>
@@ -37,13 +37,13 @@
         />
       </div>
 
-      <div v-else class="text-center py-20 text-neutral-400">
+      <div v-else class="text-center py-20 text-abyssal-ink/50">
         {{ chrome?.listPage.noResultsMessage }}
       </div>
     </div>
 
     <!-- Pagination -->
-    <div class="flex justify-center border-t border-neutral-200 pt-6">
+    <div class="flex justify-center border-t border-abyssal-ink/10 pt-6">
       <UPagination
         :page="currentPage"
         :total="totalPages * PER_PAGE"
@@ -66,7 +66,7 @@
                 : undefined
             "
           />
-          <span v-else class="px-1.5 text-sm text-neutral-400">…</span>
+          <span v-else class="px-1.5 text-sm text-abyssal-ink/50">…</span>
         </template>
       </UPagination>
     </div>
