@@ -2,7 +2,7 @@
   <Transition name="fade">
     <button
       v-if="show"
-      class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-pure-white text-abyssal-ink border-2 border-abyssal-ink shadow-lg flex items-center justify-center hover:bg-ash-white transition-colors"
+      class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-abyssal-ink text-pure-white shadow-md flex items-center justify-center hover:bg-abyssal-ink/90 transition-colors"
       @click="scrollToTop"
     >
       <UIcon name="i-lucide-chevron-up" class="w-7 h-7" />
