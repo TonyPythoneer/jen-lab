@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col"
-  >
+  <div class="rounded-card border border-abyssal-ink/10 overflow-hidden flex flex-col">
     <USkeleton class="h-48 w-full rounded-none" />
     <div class="flex flex-col gap-2 flex-1 p-4">
       <USkeleton class="h-3 w-20" />
