@@ -75,7 +75,7 @@ const { progress } = useScrollProgress(pinWrapper);
       class="sticky top-[var(--site-header-h)] h-[calc(100vh_-_var(--site-header-h))] overflow-hidden flex flex-col gap-6"
     >
       <h2
-        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-5xl sm:text-6xl shrink-0"
+        class="font-display tracking-[0.02em] leading-[0.94] text-abyssal-ink text-5xl sm:text-6xl shrink-0"
       >
         {{ heading }}
         <span class="block">{{ headingAccent }}</span>

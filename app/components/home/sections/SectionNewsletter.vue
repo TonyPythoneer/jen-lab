@@ -44,7 +44,7 @@ const newsletterDotField = {
 
     <div class="relative z-10 max-w-2xl mx-auto space-y-6">
       <h2
-        class="font-display font-bold tracking-[0.02em] leading-tight text-pure-white text-3xl md:text-5xl"
+        class="font-display tracking-[0.02em] leading-[0.94] text-pure-white text-3xl md:text-5xl"
       >
         {{ headline }}
         <span class="block text-digital-orange mt-2">

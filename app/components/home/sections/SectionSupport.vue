@@ -27,7 +27,7 @@ const visible = computed(() =>
       <HomeBubbleTeaCss />
 
       <h2
-        class="font-display tracking-[0.02em] leading-[0.9] text-abyssal-ink text-3xl md:text-4xl"
+        class="font-display tracking-[0.02em] leading-[0.94] text-abyssal-ink text-3xl md:text-4xl"
       >
         如果這些內容對你有幫助
       </h2>
