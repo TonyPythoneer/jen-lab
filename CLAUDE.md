@@ -111,6 +111,43 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 - Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Profile.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
 
+## Design System Quick Reference
+
+Token source of truth: `app/assets/css/theme.css` (raw) + `main.css` (semantic aliases).
+Never hardcode a hex/px a token already covers. Light-mode only — never write `dark:*`.
+
+**Colors** — brand tokens as `bg-*` / `text-*` / `border-*`, opacity via `/NN`:
+
+| Token            | Use                          |
+| ---------------- | ---------------------------- |
+| `basalt-canvas`  | page background              |
+| `ash-white`      | card / raised surface        |
+| `abyssal-ink`    | primary text + dark surfaces |
+| `pure-white`     | text on dark surfaces        |
+| `digital-orange` | primary accent, CTA, hover   |
+| `cyber-violet`   | secondary accent (Jen Knows) |
+| `pixel-glare`    | highlight dots               |
+| `sydney-sky`     | hero background              |
+
+**Raw → brand mapping** (use these, never the raw palette):
+
+| Raw                                                                 | Brand                             |
+| ------------------------------------------------------------------- | --------------------------------- |
+| `text-neutral-400` / `text-gray-400/500`                            | `text-abyssal-ink/50`             |
+| `text-gray-700`                                                     | `text-abyssal-ink/70`             |
+| `bg-gray-50/100`                                                    | `bg-ash-white`                    |
+| `bg-gray-200`                                                       | `bg-basalt-canvas`                |
+| `border-neutral/gray-200/300/400`                                   | `border-abyssal-ink/10`           |
+| `bg/border/text-gray-900`, `text-black`, `bg-white`, `border-black` | `…-abyssal-ink` / `bg-pure-white` |
+
+**Radius** — semantic aliases, never raw `rounded-xl/2xl` on cards/pills:
+`rounded-card` (40px, cards/panels) · `rounded-button` (800px pill, buttons+badges) · `rounded-input` (100px) · `rounded-full` (true circles only). Small radii on non-card/pill elements (e.g. inline images, list rows) may stay.
+
+**Typography:** `font-display` (Bebas Neue) for all h1/h2 — already heavy, never add `font-bold`. `font-sans` (DM Sans) for body. Section heading standard: `font-display tracking-[0.02em] leading-[0.94]`.
+
+**Never:** `dark:*`, raw `text-neutral-*` / `bg-rose-*` / `text-primary-500` utilities, `rounded-xl` on cards, `font-bold` on `font-display`.
+Note: Nuxt UI `color="neutral"` / `variant="outline"` props are component contract — keep them (they are not raw utilities).
+
 ## Working Preferences
 
 - **Parallel components** — when asked to create a NEW or parallel component, create it standalone. Do **not** Read, Grep, or open the original file — not even "for reference" — unless the user explicitly says so.
