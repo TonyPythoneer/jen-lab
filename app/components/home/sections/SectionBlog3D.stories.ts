@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import SectionBlog3D from "./SectionBlog3D.vue";
 
-const meta = { title: "home/SectionBlog3D", component: SectionBlog3D } satisfies Meta<
+const meta = { title: "home/sections/SectionBlog3D", component: SectionBlog3D } satisfies Meta<
   typeof SectionBlog3D
 >;
 export default meta;

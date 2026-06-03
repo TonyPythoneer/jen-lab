@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import GlyphSvg from "./GlyphSvg.vue";
 
 const meta = {
-  title: "home/GlyphSvg",
+  title: "home/art/GlyphSvg",
   component: GlyphSvg,
 } satisfies Meta<typeof GlyphSvg>;
 

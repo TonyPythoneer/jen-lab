@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import EnvelopeAnimation from "./EnvelopeAnimation.vue";
 
 const meta = {
-  title: "home/EnvelopeAnimation",
+  title: "home/motion/EnvelopeAnimation",
   component: EnvelopeAnimation,
 } satisfies Meta<typeof EnvelopeAnimation>;
 

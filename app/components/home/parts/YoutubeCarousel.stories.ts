@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import YoutubeCarousel from "./YoutubeCarousel.vue";
 
 const meta = {
-  title: "home/YoutubeCarousel",
+  title: "home/parts/YoutubeCarousel",
   component: YoutubeCarousel,
 } satisfies Meta<typeof YoutubeCarousel>;
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import WaveSvg from "./WaveSvg.vue";
 
 const meta = {
-  title: "home/WaveSvg",
+  title: "home/art/WaveSvg",
   component: WaveSvg,
 } satisfies Meta<typeof WaveSvg>;
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import HarbourBridgeSvg from "./HarbourBridgeSvg.vue";
 
 const meta = {
-  title: "home/HarbourBridgeSvg",
+  title: "home/art/HarbourBridgeSvg",
   component: HarbourBridgeSvg,
 } satisfies Meta<typeof HarbourBridgeSvg>;
 

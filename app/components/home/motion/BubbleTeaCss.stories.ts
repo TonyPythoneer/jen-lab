@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import BubbleTeaCss from "./BubbleTeaCss.vue";
 
 const meta = {
-  title: "home/BubbleTeaCss",
+  title: "home/motion/BubbleTeaCss",
   component: BubbleTeaCss,
 } satisfies Meta<typeof BubbleTeaCss>;
 
