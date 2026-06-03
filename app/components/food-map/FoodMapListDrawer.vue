@@ -13,6 +13,12 @@ const props = defineProps<{
 
 const store = useFoodMapStore();
 
+// Mobile bottom sheet: the grip toggles between peek (brand only) and expanded.
+function toggleSheet() {
+  if (store.state.drawerOpen) store.closeDrawer();
+  else store.openDrawer();
+}
+
 // Districts share their labels with the top-bar chips.
 const AREA_NAME: Record<string, string> = { CBD: "市中心 · CBD", Suburbs: "城郊 · Suburbs" };
 
@@ -31,6 +37,19 @@ const heading = computed(() => {
 <template>
   <div :class="['list-drawer', { 'is-open': store.state.drawerOpen }]">
     <div class="list-drawer__panel">
+      <!-- Mobile peek: drag handle + 雪梨食堂誌 brand (the "Local vibe" strip).
+           Tapping toggles peek ⇄ expanded. Hidden on desktop and in detail view. -->
+      <button
+        v-if="!selectedRestaurant"
+        class="list-drawer__grip"
+        :aria-expanded="store.state.drawerOpen"
+        aria-label="展開清單 · Toggle list"
+        @click="toggleSheet"
+      >
+        <span class="list-drawer__handle" aria-hidden="true" />
+        <FoodMapHeader />
+      </button>
+
       <!-- Detail view: a picked place replaces the list -->
       <template v-if="selectedRestaurant">
         <div class="list-drawer__bar">

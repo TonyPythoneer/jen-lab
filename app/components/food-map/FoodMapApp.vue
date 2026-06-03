@@ -33,7 +33,8 @@ function onStageReady(controls: typeof mapControls) {
 </script>
 
 <template>
-  <div class="food-map-app">
+  <!-- `--detail` (mobile only) hides chips/style/zoom/recenter once a place is picked. -->
+  <div :class="['food-map-app', { 'food-map-app--detail': selectedRestaurant }]">
     <ClientOnly>
       <FoodMapStage
         :restaurants="visibleRestaurants"
