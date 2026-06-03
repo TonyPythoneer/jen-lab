@@ -70,6 +70,7 @@ function onStageReady(controls: typeof mapControls) {
         :boats-enabled="boatsEnabled"
         @select="setTheme"
         @toggle-boats="toggleBoats"
+        @open="store.closeDrawer"
       />
     </div>
 

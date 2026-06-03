@@ -10,9 +10,16 @@ const props = defineProps<{
 const emit = defineEmits<{
   select: [id: string];
   "toggle-boats": [];
+  // Fires when the dropdown opens, so the parent can close the list drawer.
+  open: [];
 }>();
 
 const open = ref(false);
+
+function toggle() {
+  open.value = !open.value;
+  if (open.value) emit("open");
+}
 
 function pick(id: string) {
   emit("select", id);
@@ -34,7 +41,7 @@ function getSwatchGradient(themeId: string) {
 <template>
   <div class="theme-menu">
     <!-- Trigger -->
-    <button class="theme-menu__trigger" aria-label="Map theme" @click="open = !open">
+    <button class="theme-menu__trigger" aria-label="Map theme" @click="toggle">
       <svg
         width="15"
         height="15"
