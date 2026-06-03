@@ -166,11 +166,11 @@
   color: var(--accent) !important;
 }
 
-/* ===================== MAP CONTROLS (zoom + recenter only) ===================== */
+/* ===================== MAP CONTROLS (zoom + recenter, bottom-right) ===================== */
 
 .map-controls {
   position: absolute;
-  top: 18px;
+  bottom: 18px;
   right: 18px;
   display: flex;
   flex-direction: column;
@@ -225,38 +225,129 @@
     color 100ms;
 }
 
-/* ===================== THEME MENU ===================== */
+/* ===================== TOP BAR (search + chips + home) ===================== */
 
-/* Centred anchor: keeps the style menu dead-centre; Home floats to its left. */
-.map-topbar {
+.food-topbar {
   position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 650;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Gaps between the bar's pieces should not block the map underneath. */
+  pointer-events: none;
+}
+.food-topbar > * {
+  pointer-events: auto;
 }
 
-.map-home {
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
+.food-topbar__search {
+  flex: 0 0 320px;
+  max-width: 320px;
   background: var(--paper);
-  border: 1px solid var(--foreground);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  box-shadow: 0 2px 10px rgba(61, 40, 23, 0.16);
+  color: var(--foreground);
+}
+
+/* Chip row scrolls sideways once the cuisines overflow. */
+.food-topbar__chips {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px;
+  scrollbar-width: none;
+}
+.food-topbar__chips::-webkit-scrollbar {
+  display: none;
+}
+
+.food-topbar__divider {
+  flex: 0 0 auto;
+  width: 1px;
+  height: 22px;
+  background: var(--border-strong);
+  margin: 0 2px;
+}
+
+.food-chip {
+  --cat: var(--accent);
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: var(--paper);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--foreground);
+  white-space: nowrap;
+  box-shadow: 0 1px 5px rgba(61, 40, 23, 0.12);
+  transition:
+    background 120ms,
+    border-color 120ms,
+    color 120ms;
+}
+.food-chip:hover {
+  background: var(--muted);
+}
+.food-chip.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--primary);
+}
+.food-chip__glyph {
+  font-size: 14px;
+  line-height: 1;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.food-topbar__home {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  background: var(--paper);
+  border: 1px solid var(--border-strong);
   border-radius: 9999px;
   color: var(--foreground);
   box-shadow: 0 2px 10px rgba(61, 40, 23, 0.16);
-  transition:
-    background 120ms,
-    color 120ms;
+  transition: background 120ms;
 }
-.map-home:hover {
-  background: var(--accent);
-  color: var(--primary);
+.food-topbar__home:hover {
+  background: var(--muted);
+}
+.food-topbar__home-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.food-topbar__home-word {
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--foreground);
+}
+
+/* ===================== MAP STYLE CORNER (bottom-left, "Layers") ===================== */
+
+.map-style-corner {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  z-index: 650;
 }
 
 .theme-menu {
@@ -288,9 +379,8 @@
 
 .theme-menu__list {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: calc(100% + 8px);
+  left: 0;
   width: 300px;
   background: var(--paper);
   border: 1px solid var(--border-strong);
@@ -398,71 +488,106 @@
   transform: translateX(18px);
 }
 
-/* ===================== LIST DRAWER (left, collapsible) ===================== */
+/* ===================== LIST DRAWER (slides down from the top bar) ===================== */
 
 .list-drawer {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 348px;
+  top: 68px;
+  left: 14px;
+  width: 360px;
+  max-width: calc(100vw - 28px);
   z-index: 700;
-  /* The container spans the drawer's full width even when collapsed. Let clicks
-     fall through its empty area to the map; only the panel and handle catch them. */
+  /* Closed: tucked up behind the top bar, hidden, and click-through. */
+  opacity: 0;
+  transform: translateY(-12px);
   pointer-events: none;
+  transition:
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.list-drawer.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .list-drawer__panel {
-  position: absolute;
-  inset: 0;
-  pointer-events: auto;
   display: flex;
   flex-direction: column;
+  max-height: calc(100dvh - 68px - 18px);
   background: var(--background);
-  border-right: 1px solid var(--border-strong);
-  box-shadow: 6px 0 28px rgba(61, 40, 23, 0.16);
-  transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(61, 40, 23, 0.22);
+  overflow: hidden;
   min-height: 0;
 }
 
-.list-drawer.is-collapsed .list-drawer__panel {
-  transform: translateX(-100%);
+/* top bar of the panel: heading + close, or back + close in detail view */
+.list-drawer__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 12px 18px;
+  border-bottom: 1px solid var(--border-strong);
 }
-
-/* edge handle — the only thing visible when collapsed */
-.list-drawer__handle {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  transform: translateY(-50%);
-  pointer-events: auto;
+.list-drawer__heading {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 14px 8px;
-  background: var(--paper);
-  border: 1px solid var(--border-strong);
-  border-left: none;
-  border-radius: 0 8px 8px 0;
-  color: var(--foreground);
-  box-shadow: 4px 2px 12px rgba(61, 40, 23, 0.16);
-  transition:
-    background 120ms,
-    transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 2px;
 }
-.list-drawer__handle:hover {
+.list-drawer__heading-name {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list-drawer__heading-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.list-drawer__back {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: color 120ms;
+}
+.list-drawer__back:hover {
+  color: var(--foreground);
+}
+.list-drawer__close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--muted-foreground);
+  transition:
+    color 120ms,
+    background 120ms;
+}
+.list-drawer__close:hover {
+  color: var(--foreground);
   background: var(--muted);
 }
-.list-drawer.is-collapsed .list-drawer__handle {
-  left: 0;
-}
-
-.list-drawer__handle-count {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--accent);
-  letter-spacing: 0.04em;
+.list-drawer__scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 8px;
 }
 
 /* brand block at top of the drawer */
@@ -993,17 +1118,14 @@
 }
 
 /* scrollbars */
-.drawer-list::-webkit-scrollbar,
-.entry-panel__body::-webkit-scrollbar {
+.list-drawer__scroll::-webkit-scrollbar {
   width: 8px;
 }
-.drawer-list::-webkit-scrollbar-thumb,
-.entry-panel__body::-webkit-scrollbar-thumb {
+.list-drawer__scroll::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   border-radius: 4px;
 }
-.drawer-list::-webkit-scrollbar-track,
-.entry-panel__body::-webkit-scrollbar-track {
+.list-drawer__scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
@@ -1011,14 +1133,19 @@
 
 @media (max-width: 640px) {
   .list-drawer {
-    width: 86vw;
+    left: 14px;
+    right: 14px;
+    width: auto;
   }
-  .theme-menu {
-    left: 18px;
-    transform: none;
+  /* Stack the search above the chips so both fit a phone width. */
+  .food-topbar {
+    flex-wrap: wrap;
   }
-  .theme-menu__list {
-    left: 0;
-    transform: none;
+  .food-topbar__search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .food-topbar__home {
+    order: -1;
   }
 }
