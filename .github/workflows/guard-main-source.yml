@@ -1,0 +1,21 @@
+# Enforce the branch model: only `develop` may open a PR into `main`.
+# This fails any PR targeting main whose source branch is not develop.
+# To make it blocking, add this job as a required status check on main
+# (a main-only ruleset) — see the PR description.
+name: guard-main-source
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  source-must-be-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only develop may merge into main
+        run: |
+          if [ "${{ github.head_ref }}" != "develop" ]; then
+            echo "::error::PRs into main must come from 'develop' (got '${{ github.head_ref }}')."
+            exit 1
+          fi
+          echo "OK — PR into main is from develop."
