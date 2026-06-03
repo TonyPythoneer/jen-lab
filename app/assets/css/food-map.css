@@ -932,7 +932,21 @@
   flex-direction: column;
   gap: 16px;
 }
+/* Name + action buttons share a row; centre-aligned so the buttons stay middle
+   of a wrapped multi-line name rather than sticking to the top. */
+.detail__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.detail__actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+}
 .detail__title {
+  flex: 1;
+  min-width: 0;
   font-size: 27px;
   font-weight: 700;
   line-height: 1.08;
@@ -1227,6 +1241,9 @@
     top: 117px;
     left: 14px;
     bottom: auto;
+    /* Above the list sheet (700) and top bar (800): this element is the stacking
+       context for its fixed bottom-drawer, so it must outrank them as a whole. */
+    z-index: 950;
   }
 
   /* ============ BOTTOM SHEET: the drawer rises from the bottom, Google style ============

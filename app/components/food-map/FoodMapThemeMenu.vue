@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MapTheme } from "~/composables/useFoodMapTheme";
+import { useFoodMapStore } from "~/composables/useFoodMapStore";
 
 const props = defineProps<{
   themes: MapTheme[];
@@ -15,6 +16,15 @@ const emit = defineEmits<{
 }>();
 
 const open = ref(false);
+
+// Picking a place takes over the screen (detail), so close the style menu.
+const store = useFoodMapStore();
+watch(
+  () => store.state.selectedRestaurantId,
+  (id) => {
+    if (id) open.value = false;
+  },
+);
 
 function toggle() {
   open.value = !open.value;

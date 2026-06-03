@@ -62,65 +62,9 @@ const heading = computed(() => {
         <FoodMapHeader />
       </button>
 
-      <!-- Detail view: a picked place replaces the list. Floating bordered icon
-           buttons (Google-Maps style) instead of a full-width bar: back on the
-           left, then the external-map link and close grouped on the right. -->
+      <!-- Detail view: a picked place replaces the list. The link + close buttons
+           live in the detail's name row (see FoodMapDetail). -->
       <template v-if="selectedRestaurant">
-        <div class="detail-actions">
-          <button
-            class="map-iconbtn"
-            aria-label="返回清單 · Back"
-            @click="store.selectRestaurant(null)"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="m15 6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
-          <div class="detail-actions__right">
-            <a
-              v-if="selectedRestaurant.googleMapsLink"
-              class="map-iconbtn"
-              :href="selectedRestaurant.googleMapsLink"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="在 Google 地圖開啟 · Open in Google Maps"
-            >
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
-                />
-              </svg>
-            </a>
-            <button class="map-iconbtn" aria-label="關閉 · Close" @click="closeToPeek">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M6 6 18 18M18 6 6 18" stroke-linecap="round" />
-              </svg>
-            </button>
-          </div>
-        </div>
         <div class="list-drawer__scroll">
           <FoodMapDetail :restaurant="selectedRestaurant" />
         </div>
