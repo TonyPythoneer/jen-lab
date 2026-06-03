@@ -42,13 +42,13 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/my-best-restaurants-search-in-sydney` (Leaflet map).
+Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map).
 
 **Non-obvious constraints:**
 
 - `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
 - `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
-- `MapView.vue` — Leaflet must stay inside `<ClientOnly>` (SSR-unsafe).
+- Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapStage.vue`).
 - `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
 - Light mode only — dark mode disabled in `app.config.ts`.
 
@@ -69,15 +69,15 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 
 **Directory = route domain.** Each subdirectory maps to the route it serves. Nuxt auto-import uses the directory as the component prefix.
 
-| Directory      | Serves                                  |
-| -------------- | --------------------------------------- |
-| `site/`        | All pages (global layout)               |
-| `home/`        | `/`                                     |
-| `blog/`        | `/blogs`, `/blogs/[slug]`               |
-| `restaurants/` | `/my-best-restaurants-search-in-sydney` |
-| `profile/`     | `/about`                                |
-| `shared/`      | Cross-domain reusable primitives        |
-| `fx/`          | Visual effects consumed by components   |
+| Directory   | Serves                                |
+| ----------- | ------------------------------------- |
+| `site/`     | All pages (global layout)             |
+| `home/`     | `/`                                   |
+| `blog/`     | `/blogs`, `/blogs/[slug]`             |
+| `food-map/` | `/sydney-food-map`                    |
+| `profile/`  | `/about`                              |
+| `shared/`   | Cross-domain reusable primitives      |
+| `fx/`       | Visual effects consumed by components |
 
 **`Section` prefix = page consumes it directly.** A `Section*` component is a full-width block rendered inside `pages/`. No prefix = sub-component consumed by another component, not a page.
 

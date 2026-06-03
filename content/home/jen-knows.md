@@ -28,10 +28,6 @@ sections:
         icon: i-lucide-sparkles
         title: NextSteps 一站式職涯探索與管理工具
         brief: 解析職缺、找出技能缺口，獲得具體職涯建議
-      - to: /my-best-restaurants-search-in-sydney
-        icon: i-lucide-map-pin
-        title: 榛知雪梨美食地圖
-        brief: 精選私藏雪梨餐廳，找到你的下一頓好飯
       # - to: https://jenliu.com.au/
       #   icon: i-simple-icons-wordpress
       #   title: 榛知部落格
