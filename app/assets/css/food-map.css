@@ -1233,4 +1233,9 @@
   .food-map-app--detail .map-controls {
     display: none;
   }
+  /* Shorter than the list sheet, so the selected pin (panned up by the map) has
+     comfortable room to show above the detail. */
+  .food-map-app--detail .list-drawer__panel {
+    max-height: 68dvh;
+  }
 }

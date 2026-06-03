@@ -202,8 +202,17 @@ onMounted(async () => {
     () => props.selectedRestaurantId,
     (id) => {
       applySelection();
-      if (id && markers[id]) {
-        map?.flyTo(markers[id].getLatLng(), Math.max(map.getZoom(), 15), { duration: 0.6 });
+      if (!id || !markers[id] || !map || !L) return;
+      const latlng = markers[id].getLatLng();
+      const zoom = Math.max(map.getZoom(), 15);
+      // On mobile the detail sheet covers the lower part of the screen, so a
+      // plain centre would land the pin behind it. Shift the map centre down
+      // (~30% of the height) so the pin sits in the open band near the top.
+      if (window.innerWidth <= 640) {
+        const pt = map.project(latlng, zoom).add([0, map.getSize().y * 0.3]);
+        map.flyTo(map.unproject(pt, zoom), zoom, { duration: 0.6 });
+      } else {
+        map.flyTo(latlng, zoom, { duration: 0.6 });
       }
     },
   );
