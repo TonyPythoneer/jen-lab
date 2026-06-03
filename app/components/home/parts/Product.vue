@@ -44,9 +44,11 @@
       leave-from-class="translate-x-0"
       leave-to-class="-translate-x-full"
     >
+      <!-- pr-16 reserves the right column for the close + buy buttons so the
+           heading and text never run underneath them at any card width. -->
       <div
         v-if="open"
-        class="product-drawer absolute inset-0 z-10 overflow-y-auto overscroll-contain bg-ash-white px-5 pb-5 pt-14"
+        class="product-drawer absolute inset-0 z-10 overflow-y-auto overscroll-contain bg-ash-white p-5 pr-16"
       >
         <h3 class="mb-3 text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h3>
         <!-- descriptionHtml is pre-rendered at build by markdown-it (see nuxt.config.ts
