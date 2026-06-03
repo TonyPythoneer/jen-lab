@@ -205,11 +205,17 @@ onMounted(async () => {
       if (!id || !markers[id] || !map || !L) return;
       const latlng = markers[id].getLatLng();
       const zoom = Math.max(map.getZoom(), 15);
-      // On mobile the detail sheet covers the lower part of the screen, so a
-      // plain centre would land the pin behind it. Shift the map centre down
-      // (~30% of the height) so the pin sits in the open band near the top.
+      // On mobile the detail sheet covers the lower part of the screen. Centre the
+      // pin in the open band between the search bar and the sheet top, so it is
+      // neither hidden by the sheet nor tucked under the input bar.
       if (window.innerWidth <= 640) {
-        const pt = map.project(latlng, zoom).add([0, map.getSize().y * 0.3]);
+        const h = map.getSize().y;
+        const searchBarBottom = 64; // search row: 14 top + ~45 tall + margin
+        const sheetTop = h * 0.38; // detail sheet is 62dvh (see food-map.css)
+        const pinHalf = 23; // pin is ~46px tall, anchored at its base
+        const roomCentre = (searchBarBottom + sheetTop) / 2;
+        const offsetY = h / 2 - (roomCentre + pinHalf);
+        const pt = map.project(latlng, zoom).add([0, offsetY]);
         map.flyTo(map.unproject(pt, zoom), zoom, { duration: 0.6 });
       } else {
         map.flyTo(latlng, zoom, { duration: 0.6 });

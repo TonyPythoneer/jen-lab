@@ -30,12 +30,15 @@ function closeToPeek() {
 // Districts share their labels with the top-bar chips.
 const AREA_NAME: Record<string, string> = { CBD: "市中心 · CBD", Suburbs: "城郊 · Suburbs" };
 
-// Heading mirrors whichever chip is active; no chip means the full atlas.
+// Heading mirrors the active chips: one category shows its name, several show a
+// count, an area alone shows the district, nothing shows the full atlas.
 const heading = computed(() => {
-  if (store.state.selectedCategoryId) {
-    const c = props.categories.find((x) => x.id === store.state.selectedCategoryId);
+  const ids = store.state.selectedCategoryIds;
+  if (ids.length === 1) {
+    const c = props.categories.find((x) => x.id === ids[0]);
     if (c) return `${c.name} · ${CATEGORY_EN[c.id] ?? ""}`.trim();
   }
+  if (ids.length > 1) return `${ids.length} 類篩選 · ${ids.length} filters`;
   if (store.state.selectedArea)
     return AREA_NAME[store.state.selectedArea] ?? store.state.selectedArea;
   return "雪梨食堂誌 · The Atlas";

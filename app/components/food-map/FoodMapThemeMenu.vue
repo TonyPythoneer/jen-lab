@@ -57,10 +57,13 @@ function getSwatchGradient(themeId: string) {
           stroke-linejoin="round"
         />
       </svg>
-      <span>{{ activeTheme?.name }}</span>
+      <span class="theme-menu__trigger-label">{{ activeTheme?.name }}</span>
     </button>
 
-    <!-- Dropdown -->
+    <!-- Backdrop: only shown on mobile, where the list is a bottom drawer; tap to dismiss. -->
+    <div v-if="open" class="theme-menu__backdrop" @click="open = false" />
+
+    <!-- Dropdown (desktop) / bottom drawer (mobile) -->
     <div v-if="open" class="theme-menu__list">
       <!-- Heading -->
       <div class="theme-menu__heading">地圖樣式 · Map Style</div>

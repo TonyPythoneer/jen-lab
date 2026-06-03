@@ -6,7 +6,8 @@ import type { EnrichedRestaurant } from "~/composables/useRestaurants";
 // If this composable is ever called outside <ClientOnly> in a new route, revisit.
 const state = reactive({
   search: "",
-  selectedCategoryId: null as string | null,
+  // Categories stack: each chip toggles its id in/out; the list shows the union.
+  selectedCategoryIds: [] as string[],
   selectedArea: null as string | null,
   selectedRestaurantId: null as string | null,
   hoveredCategoryId: null as string | null,
@@ -23,9 +24,11 @@ export function useFoodMapStore() {
     state.drawerOpen = false;
   }
 
-  // Chips are single-select toggles: clicking the active one clears it.
-  function selectCategory(id: string | null) {
-    state.selectedCategoryId = state.selectedCategoryId === id ? null : id;
+  // Category chips stack: clicking toggles that id in or out of the set.
+  function selectCategory(id: string) {
+    const i = state.selectedCategoryIds.indexOf(id);
+    if (i === -1) state.selectedCategoryIds.push(id);
+    else state.selectedCategoryIds.splice(i, 1);
     state.drawerOpen = true;
   }
 
@@ -47,7 +50,7 @@ export function useFoodMapStore() {
 
   function reset() {
     state.search = "";
-    state.selectedCategoryId = null;
+    state.selectedCategoryIds = [];
     state.selectedArea = null;
     state.selectedRestaurantId = null;
     state.hoveredCategoryId = null;
@@ -56,8 +59,8 @@ export function useFoodMapStore() {
 
   function getVisibleList(all: EnrichedRestaurant[]) {
     let list = all;
-    if (state.selectedCategoryId)
-      list = list.filter((r) => r.categoryId === state.selectedCategoryId);
+    if (state.selectedCategoryIds.length)
+      list = list.filter((r) => state.selectedCategoryIds.includes(r.categoryId));
     if (state.selectedArea) list = list.filter((r) => r.area === state.selectedArea);
     const q = state.search.trim().toLowerCase();
     if (q)

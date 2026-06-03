@@ -61,7 +61,7 @@ const activeCategories = computed(() =>
       <button
         v-for="c in activeCategories"
         :key="c.id"
-        :class="['food-chip', { 'is-active': store.state.selectedCategoryId === c.id }]"
+        :class="['food-chip', { 'is-active': store.state.selectedCategoryIds.includes(c.id) }]"
         :style="{ '--cat': c.color }"
         @click="store.selectCategory(c.id)"
         @mouseenter="store.setHovered(c.id)"
