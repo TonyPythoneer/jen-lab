@@ -36,7 +36,7 @@
               :class="
                 selected || indeterminate
                   ? 'border-abyssal-ink bg-abyssal-ink'
-                  : 'border-neutral-300'
+                  : 'border-abyssal-ink/10'
               "
             >
               <UIcon v-if="selected" name="i-lucide-check" class="size-3 text-pure-white" />

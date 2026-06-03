@@ -4,13 +4,13 @@
     <div class="min-h-[var(--first-section-h)] flex flex-col justify-center gap-6">
       <NuxtLink
         :to="{ path: '/blogs', query: lastQuery }"
-        class="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-digital-orange transition-colors"
+        class="inline-flex items-center gap-1 text-sm text-abyssal-ink/50 hover:text-digital-orange transition-colors"
       >
         <UIcon name="i-lucide-arrow-left" class="size-4" />
         {{ chrome?.detailPage.backLink }}
       </NuxtLink>
 
-      <div v-if="pending || error || !post" class="text-center py-20 text-neutral-400">
+      <div v-if="pending || error || !post" class="text-center py-20 text-abyssal-ink/50">
         {{ pending ? chrome?.detailPage.loadingMessage : chrome?.detailPage.notFoundMessage }}
       </div>
 
@@ -21,7 +21,7 @@
       >
         <template #description>
           <span
-            class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-ash-white text-abyssal-ink border border-neutral-200"
+            class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-ash-white text-abyssal-ink border border-abyssal-ink/10"
           >
             {{ formatDate(post.date) }}
           </span>

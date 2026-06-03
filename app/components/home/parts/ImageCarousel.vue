@@ -8,7 +8,7 @@
       class="w-full mb-8"
     >
       <div
-        class="relative rounded-card overflow-hidden aspect-[2/1] bg-gray-100 group cursor-zoom-in"
+        class="relative rounded-card overflow-hidden aspect-[2/1] bg-ash-white group cursor-zoom-in"
         @click="openImage(item)"
       >
         <img

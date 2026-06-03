@@ -15,7 +15,7 @@
 // Single source for the social-contact row. `contacts` comes from app.config.ts;
 // callers supply only the size/tone classes that differ between placements.
 withDefaults(defineProps<{ linkClass?: string; iconClass?: string }>(), {
-  linkClass: "text-gray-500",
+  linkClass: "text-abyssal-ink/60",
   iconClass: "w-5 h-5",
 });
 

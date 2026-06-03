@@ -57,8 +57,8 @@
       class="absolute bottom-6 right-2.5 z-1000 w-9 h-9 rounded-full border text-[10px] font-bold tracking-wide cursor-pointer flex items-center justify-center transition-colors duration-150"
       :class="
         tileQuality === 'high'
-          ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
-          : 'bg-white border-gray-300 text-gray-400 shadow hover:border-gray-400 hover:text-gray-500'
+          ? 'bg-abyssal-ink border-abyssal-ink text-pure-white shadow-lg'
+          : 'bg-pure-white border-abyssal-ink/10 text-abyssal-ink/50 shadow hover:border-abyssal-ink/20 hover:text-abyssal-ink/70'
       "
       @click="toggleTileQuality"
     >

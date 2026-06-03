@@ -1,6 +1,8 @@
 <template>
   <div>
-    <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">{{ title }}</p>
+    <p class="text-xs font-semibold text-abyssal-ink/50 uppercase tracking-widest mb-2">
+      {{ title }}
+    </p>
     <!-- "全部" sits alone on row 1; spacer divs push the real items to row 2 of the 4-col grid. -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
       <BlogFilterItem

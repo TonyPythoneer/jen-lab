@@ -8,13 +8,13 @@
   <UCollapsible class="flex flex-col gap-5 [&>div]:overflow-visible" :default-open="defaultOpen">
     <template #default="{ open }">
       <button class="flex items-center justify-center gap-2 w-full">
-        <div class="flex-1 h-px bg-gray-200" />
-        <span class="text-sm text-gray-500 shrink-0">{{ label }}</span>
+        <div class="flex-1 h-px bg-abyssal-ink/10" />
+        <span class="text-sm text-abyssal-ink/60 shrink-0">{{ label }}</span>
         <UIcon
           :name="open ? 'i-lucide-chevron-down' : 'i-lucide-chevron-right'"
-          class="w-4 h-4 text-gray-400 shrink-0"
+          class="w-4 h-4 text-abyssal-ink/50 shrink-0"
         />
-        <div class="flex-1 h-px bg-gray-200" />
+        <div class="flex-1 h-px bg-abyssal-ink/10" />
       </button>
     </template>
     <template #content>

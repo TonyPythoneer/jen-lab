@@ -9,7 +9,7 @@
         class="w-full mb-8"
       >
         <button class="flex flex-col gap-1.5 group w-full text-left" @click="openVideo(item)">
-          <div class="relative rounded-card overflow-hidden aspect-[2/1] bg-gray-100">
+          <div class="relative rounded-card overflow-hidden aspect-[2/1] bg-ash-white">
             <img
               :src="`https://img.youtube.com/vi/${item.id}/mqdefault.jpg`"
               :alt="item.title"
@@ -18,7 +18,7 @@
             />
             <div class="absolute inset-0 flex items-center justify-center">
               <div
-                class="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center group-hover:bg-red-600 transition-colors"
+                class="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center group-hover:bg-digital-orange transition-colors"
               >
                 <UIcon name="i-lucide-play" class="w-5 h-5 text-white ml-0.5" />
               </div>
