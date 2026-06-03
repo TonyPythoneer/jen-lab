@@ -35,7 +35,7 @@ const activeCategories = computed(() =>
     <UInput
       v-model="store.state.search"
       icon="i-lucide-search"
-      placeholder="搜尋餐廳 — Search the atlas"
+      placeholder="雪梨食堂誌 — Search The Atlas"
       class="food-topbar__search"
       :ui="{
         root: 'w-full',

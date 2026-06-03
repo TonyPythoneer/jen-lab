@@ -252,6 +252,16 @@
   border-radius: 9999px;
   box-shadow: 0 2px 10px rgba(61, 40, 23, 0.16);
   color: var(--foreground);
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
+}
+/* Focus highlight mirrors the active filter chip: the accent colour. */
+.food-topbar__search:focus-within {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    0 2px 10px rgba(61, 40, 23, 0.16);
 }
 
 /* Chip row scrolls sideways once the cuisines overflow. */
@@ -595,6 +605,37 @@
   overflow-y: auto;
   min-height: 0;
   padding-bottom: 8px;
+}
+
+/* Detail header: floating bordered icon buttons (Google-Maps style) — back on
+   the left, external-map link + close grouped on the right. */
+.detail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 4px;
+}
+.detail-actions__right {
+  display: flex;
+  gap: 8px;
+}
+.map-iconbtn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  color: var(--foreground);
+  box-shadow: 0 1px 5px rgba(61, 40, 23, 0.12);
+  transition:
+    background 120ms,
+    color 120ms;
+}
+.map-iconbtn:hover {
+  background: var(--accent);
+  color: var(--primary);
 }
 
 /* Mobile sheet grip (handle + brand). Desktop never shows it; mobile turns it on. */

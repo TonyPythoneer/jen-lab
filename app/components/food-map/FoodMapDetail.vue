@@ -9,34 +9,8 @@ defineProps<{
 
 <template>
   <div class="detail">
-    <!-- Title doubles as the map link; paperclip hints it is clickable -->
-    <h2 class="detail__title">
-      <a
-        v-if="restaurant.googleMapsLink"
-        class="detail__title-link"
-        :href="restaurant.googleMapsLink"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <span class="detail__title-name">{{ restaurant.name }}</span>
-        <svg
-          class="detail__title-clip"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
-          />
-        </svg>
-      </a>
-      <template v-else>{{ restaurant.name }}</template>
-    </h2>
+    <!-- The external-map link now lives as a button in the detail header. -->
+    <h2 class="detail__title">{{ restaurant.name }}</h2>
 
     <!-- Chapter + price, merged into one line under the title -->
     <span class="detail__chapter">

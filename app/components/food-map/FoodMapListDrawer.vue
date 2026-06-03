@@ -41,7 +41,8 @@ const heading = computed(() => {
   if (ids.length > 1) return `${ids.length} 類篩選 · ${ids.length} filters`;
   if (store.state.selectedArea)
     return AREA_NAME[store.state.selectedArea] ?? store.state.selectedArea;
-  return "雪梨食堂誌 · The Atlas";
+  // No filter: the brand already sits in the peek above, so skip a redundant label.
+  return "";
 });
 </script>
 
@@ -61,13 +62,19 @@ const heading = computed(() => {
         <FoodMapHeader />
       </button>
 
-      <!-- Detail view: a picked place replaces the list -->
+      <!-- Detail view: a picked place replaces the list. Floating bordered icon
+           buttons (Google-Maps style) instead of a full-width bar: back on the
+           left, then the external-map link and close grouped on the right. -->
       <template v-if="selectedRestaurant">
-        <div class="list-drawer__bar">
-          <button class="list-drawer__back" @click="store.selectRestaurant(null)">
+        <div class="detail-actions">
+          <button
+            class="map-iconbtn"
+            aria-label="返回清單 · Back"
+            @click="store.selectRestaurant(null)"
+          >
             <svg
-              width="14"
-              height="14"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -75,20 +82,44 @@ const heading = computed(() => {
             >
               <path d="m15 6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <span>返回清單 · Back</span>
           </button>
-          <button class="list-drawer__close" aria-label="Close" @click="closeToPeek">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
+          <div class="detail-actions__right">
+            <a
+              v-if="selectedRestaurant.googleMapsLink"
+              class="map-iconbtn"
+              :href="selectedRestaurant.googleMapsLink"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="在 Google 地圖開啟 · Open in Google Maps"
             >
-              <path d="M6 6 18 18M18 6 6 18" stroke-linecap="round" />
-            </svg>
-          </button>
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                />
+              </svg>
+            </a>
+            <button class="map-iconbtn" aria-label="關閉 · Close" @click="closeToPeek">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M6 6 18 18M18 6 6 18" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="list-drawer__scroll">
           <FoodMapDetail :restaurant="selectedRestaurant" />
@@ -102,10 +133,10 @@ const heading = computed(() => {
             <span class="list-drawer__heading-name">{{ heading }}</span>
             <span class="list-drawer__heading-count">{{ restaurants.length }} 間</span>
           </div>
-          <button class="list-drawer__close" aria-label="Close" @click="closeToPeek">
+          <button class="map-iconbtn" aria-label="關閉 · Close" @click="closeToPeek">
             <svg
-              width="14"
-              height="14"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
