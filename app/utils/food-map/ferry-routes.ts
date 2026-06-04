@@ -5,9 +5,6 @@
 // baked into the tiles instead of drifting off them. Run `pnpm sync:ferries:osm`
 // (scripts/sync-ferries-osm.ts) to refresh it via the Overpass API. The data shape
 // never changes — map themes only repaint it, they never decide which routes exist.
-//
-// (scripts/sync-ferries.ts pulls channel-accurate TfNSW GTFS geometry instead; it
-// is kept for reference but drifts off the OSM-derived basemap, so it is not used.)
 
 import data from "../../assets/data/ferry-routes.json";
 
