@@ -39,6 +39,11 @@ export interface RiverBoatsController {
   // Show + animate the whole network, or hide it.
   setEnabled(on: boolean): void;
   isEnabled(): boolean;
+  // Freeze / unfreeze the animation WITHOUT hiding the fleet. Used while the map
+  // is panned or zoomed so the per-frame marker updates don't compete with the
+  // map's own interaction work; the boats ride along, frozen, then resume.
+  pause(): void;
+  resume(): void;
   // Stop rAF, remove the layer, drop listeners.
   destroy(): void;
 }
@@ -431,6 +436,10 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       enabled = !!val;
       applyEnabled();
     },
+    // Freeze (stop the rAF, keep the fleet on the map) and unfreeze (start() is a
+    // no-op if disabled or reduced-motion, so resume is always safe to call).
+    pause: stop,
+    resume: start,
     refreshTheme,
     destroy() {
       stop();
