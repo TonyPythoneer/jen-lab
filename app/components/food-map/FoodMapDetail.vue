@@ -1,42 +1,69 @@
 <script setup lang="ts">
 import type { EnrichedRestaurant } from "~/composables/useRestaurants";
 import { CATEGORY_EN, CATEGORY_ICON } from "~/utils/food-map-categories";
+import { useFoodMapStore } from "~/composables/useFoodMapStore";
 
 defineProps<{
   restaurant: EnrichedRestaurant;
 }>();
+
+const store = useFoodMapStore();
+
+// Close dismisses the detail back to the initial collapsed peek (drop the place
+// and close the sheet). There is no separate back button — close covers it.
+// Close the panel first, then drop the place only after the close transition
+// (opacity 220ms / transform 320ms) finishes — otherwise the list view swaps in
+// while the panel is still fading and flashes on screen.
+function close() {
+  store.closeDrawer();
+  setTimeout(() => store.selectRestaurant(null), 340);
+}
 </script>
 
 <template>
   <div class="detail">
-    <!-- Title doubles as the map link; paperclip hints it is clickable -->
-    <h2 class="detail__title">
-      <a
-        v-if="restaurant.googleMapsLink"
-        class="detail__title-link"
-        :href="restaurant.googleMapsLink"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <span class="detail__title-name">{{ restaurant.name }}</span>
-        <svg
-          class="detail__title-clip"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+    <!-- Name shares a row with the link + close buttons; centred so the buttons
+         stay middle-aligned even when the name wraps to several lines. -->
+    <div class="detail__head">
+      <h2 class="detail__title">{{ restaurant.name }}</h2>
+      <div class="detail__actions">
+        <a
+          v-if="restaurant.googleMapsLink"
+          class="map-iconbtn"
+          :href="restaurant.googleMapsLink"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="在 Google 地圖開啟 · Open in Google Maps"
         >
-          <path
-            d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
-          />
-        </svg>
-      </a>
-      <template v-else>{{ restaurant.name }}</template>
-    </h2>
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
+            />
+          </svg>
+        </a>
+        <button class="map-iconbtn" aria-label="關閉 · Close" @click="close">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M6 6 18 18M18 6 6 18" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <!-- Chapter + price, merged into one line under the title -->
     <span class="detail__chapter">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MapTheme } from "~/composables/useFoodMapTheme";
+import { useFoodMapStore } from "~/composables/useFoodMapStore";
 
 const props = defineProps<{
   themes: MapTheme[];
@@ -10,9 +11,25 @@ const props = defineProps<{
 const emit = defineEmits<{
   select: [id: string];
   "toggle-boats": [];
+  // Fires when the dropdown opens, so the parent can close the list drawer.
+  open: [];
 }>();
 
 const open = ref(false);
+
+// Picking a place takes over the screen (detail), so close the style menu.
+const store = useFoodMapStore();
+watch(
+  () => store.state.selectedRestaurantId,
+  (id) => {
+    if (id) open.value = false;
+  },
+);
+
+function toggle() {
+  open.value = !open.value;
+  if (open.value) emit("open");
+}
 
 function pick(id: string) {
   emit("select", id);
@@ -23,10 +40,9 @@ const activeTheme = computed(() => props.themes.find((t) => t.id === props.activ
 
 function getSwatchGradient(themeId: string) {
   const gradients: Record<string, string> = {
-    engraving: "linear-gradient(135deg, #f3eede 0 52%, #2c241a 52% 100%)",
-    handtint: "linear-gradient(125deg, #ead9bb 0 42%, #c08a72 42% 70%, #9fb6c0 70% 100%)",
     voyager: "linear-gradient(135deg, #e7dcc0 0 58%, #8fb6d4 58% 100%)",
-    topographic: "linear-gradient(135deg, #ddca9c 0 55%, #b7a06f 55% 78%, #9bb1bf 78% 100%)",
+    handtint: "linear-gradient(125deg, #ead9bb 0 42%, #c08a72 42% 70%, #9fb6c0 70% 100%)",
+    engraving: "linear-gradient(135deg, #f3eede 0 52%, #2c241a 52% 100%)",
   };
   return { backgroundImage: gradients[themeId] || "none" };
 }
@@ -35,7 +51,7 @@ function getSwatchGradient(themeId: string) {
 <template>
   <div class="theme-menu">
     <!-- Trigger -->
-    <button class="theme-menu__trigger" aria-label="Map theme" @click="open = !open">
+    <button class="theme-menu__trigger" aria-label="Map theme" @click="toggle">
       <svg
         width="15"
         height="15"
@@ -51,10 +67,13 @@ function getSwatchGradient(themeId: string) {
           stroke-linejoin="round"
         />
       </svg>
-      <span>{{ activeTheme?.name }}</span>
+      <span class="theme-menu__trigger-label">{{ activeTheme?.name }}</span>
     </button>
 
-    <!-- Dropdown -->
+    <!-- Backdrop: only shown on mobile, where the list is a bottom drawer; tap to dismiss. -->
+    <div v-if="open" class="theme-menu__backdrop" @click="open = false" />
+
+    <!-- Dropdown (desktop) / bottom drawer (mobile) -->
     <div v-if="open" class="theme-menu__list">
       <!-- Heading -->
       <div class="theme-menu__heading">地圖樣式 · Map Style</div>

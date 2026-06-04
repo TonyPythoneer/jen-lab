@@ -1,0 +1,97 @@
+<script setup lang="ts">
+import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+import type { Category } from "~/assets/data/pages/restaurants";
+import { CATEGORY_EN, categoryGlyph } from "~/utils/food-map-categories";
+import { countByRegion, countByCuisine } from "~/utils/foodMapFilters";
+import { useFoodMapStore } from "~/composables/useFoodMapStore";
+
+const props = defineProps<{
+  categories: readonly Category[];
+  allRestaurants: EnrichedRestaurant[];
+}>();
+
+const store = useFoodMapStore();
+
+// Area chips lead the row, mirroring the two map districts.
+const AREAS = [
+  { id: "CBD", name: "市中心", sub: "CBD" },
+  { id: "Suburbs", name: "城郊", sub: "Suburbs" },
+] as const;
+
+// Dependent filter maths — each facet's counts come from the dataset under the
+// OTHER facet's current selection, so Region and Cuisine constrain each other.
+const selection = computed(() => ({
+  region: store.state.selectedArea,
+  cuisine: store.state.selectedCategoryId,
+}));
+const regionCounts = computed(() => countByRegion(props.allRestaurants, selection.value));
+const cuisineCounts = computed(() => countByCuisine(props.allRestaurants, selection.value));
+
+// Cuisines with no match under the selected region drop out entirely, so an
+// impossible region+cuisine pair can never be picked.
+const activeCategories = computed(() =>
+  props.categories.filter((c) => (cuisineCounts.value[c.id] ?? 0) > 0),
+);
+
+// Once a cuisine is picked, collapse the row to just that chip — the other
+// styles hide until it is deselected (click the active chip again).
+const visibleCategories = computed(() => {
+  const sel = store.state.selectedCategoryId;
+  return sel ? activeCategories.value.filter((c) => c.id === sel) : activeCategories.value;
+});
+</script>
+
+<template>
+  <div class="food-topbar">
+    <!-- Search: focusing it summons the list drawer -->
+    <UInput
+      v-model="store.state.search"
+      icon="i-lucide-search"
+      placeholder="雪梨食堂誌 — Search The Atlas"
+      class="food-topbar__search"
+      :ui="{
+        root: 'w-full',
+        base: 'rounded-full ring-0 px-[14px] py-[11px] text-[14px] bg-transparent',
+        leadingIcon: 'size-[16px]',
+      }"
+      @focus="store.openDrawer()"
+    />
+
+    <!-- Filter chips: Area toggles first, then one chip per cuisine. Both are
+         single-select and depend on each other — a district with no match under
+         the active cuisine is disabled; counts update live. Scrolls sideways. -->
+    <div class="food-topbar__chips">
+      <button
+        v-for="a in AREAS"
+        :key="a.id"
+        :class="['food-chip', { 'is-active': store.state.selectedArea === a.id }]"
+        :disabled="(regionCounts[a.id] ?? 0) === 0"
+        @click="store.selectArea(a.id)"
+      >
+        <span class="food-chip__label">{{ a.name }}</span>
+        <span class="food-chip__count">{{ regionCounts[a.id] ?? 0 }}</span>
+      </button>
+
+      <span class="food-topbar__divider" aria-hidden="true" />
+
+      <button
+        v-for="c in visibleCategories"
+        :key="c.id"
+        :class="['food-chip', { 'is-active': store.state.selectedCategoryId === c.id }]"
+        :style="{ '--cat': c.color }"
+        @click="store.selectCategory(c.id)"
+        @mouseenter="store.setHovered(c.id)"
+        @mouseleave="store.setHovered(null)"
+      >
+        <span class="food-chip__glyph">{{ categoryGlyph(c) }}</span>
+        <span class="food-chip__label">{{ CATEGORY_EN[c.id] ?? c.name }}</span>
+        <span class="food-chip__count">{{ cuisineCounts[c.id] ?? 0 }}</span>
+      </button>
+    </div>
+
+    <!-- Home: the avatar picture itself is the link back to the site. -->
+    <NuxtLink to="/" class="food-topbar__home" aria-label="Back to home">
+      <img src="/favicon.128x128.webp" alt="Back to home" class="food-topbar__home-avatar" />
+    </NuxtLink>
+  </div>
+</template>

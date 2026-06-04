@@ -189,12 +189,24 @@ onMounted(async () => {
     () => props.restaurants,
     (list) => {
       buildMarkers(list);
-      if (list.length > 0 && list.length < 100) {
-        const grp = L!.featureGroup(Object.values(markers));
-        try {
-          map?.fitBounds(grp.getBounds().pad(0.25), { animate: true, maxZoom: 16 });
-        } catch {}
-      }
+      if (list.length === 0 || list.length >= 100 || !map || !L) return;
+      const bounds = L.featureGroup(Object.values(markers)).getBounds();
+      try {
+        if (window.innerWidth <= 640) {
+          // The list sheet covers the lower 62dvh on mobile, and the search +
+          // filter chips float over the top. Reserve both so the whole group is
+          // framed in the open band, not crammed under the sheet.
+          const h = map.getSize().y;
+          map.fitBounds(bounds, {
+            animate: true,
+            maxZoom: 16,
+            paddingTopLeft: [24, 125],
+            paddingBottomRight: [24, Math.round(h * 0.62)],
+          });
+        } else {
+          map.fitBounds(bounds.pad(0.25), { animate: true, maxZoom: 16 });
+        }
+      } catch {}
     },
   );
 
@@ -202,8 +214,23 @@ onMounted(async () => {
     () => props.selectedRestaurantId,
     (id) => {
       applySelection();
-      if (id && markers[id]) {
-        map?.flyTo(markers[id].getLatLng(), Math.max(map.getZoom(), 15), { duration: 0.6 });
+      if (!id || !markers[id] || !map || !L) return;
+      const latlng = markers[id].getLatLng();
+      const zoom = Math.max(map.getZoom(), 15);
+      // On mobile the detail sheet covers the lower part of the screen. Centre the
+      // pin in the open band between the search bar and the sheet top, so it is
+      // neither hidden by the sheet nor tucked under the input bar.
+      if (window.innerWidth <= 640) {
+        const h = map.getSize().y;
+        const searchBarBottom = 64; // search row: 14 top + ~45 tall + margin
+        const sheetTop = h * 0.38; // detail sheet is 62dvh (see food-map.css)
+        const pinHalf = 23; // pin is ~46px tall, anchored at its base
+        const roomCentre = (searchBarBottom + sheetTop) / 2;
+        const offsetY = h / 2 - (roomCentre + pinHalf);
+        const pt = map.project(latlng, zoom).add([0, offsetY]);
+        map.flyTo(map.unproject(pt, zoom), zoom, { duration: 0.6 });
+      } else {
+        map.flyTo(latlng, zoom, { duration: 0.6 });
       }
     },
   );
