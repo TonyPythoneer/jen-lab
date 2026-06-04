@@ -6,12 +6,35 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: CD Cloudflare
+name: 🚀 Deploy · Cloudflare
 
 on:
   pull_request:
     types: [closed]
     branches: [main, develop]
+    # Skip the deploy when a merged PR touches ONLY files that cannot change the
+    # built site (CI, docs, editor config, tests, helper scripts). If any file
+    # outside this list changed, the deploy still runs. Note: `*.md` matches only
+    # root-level docs (README, CLAUDE, ...); blog posts live in content/*.md and
+    # are intentionally NOT ignored, so editing a post still deploys.
+    paths-ignore:
+      - ".github/**"
+      - ".claude/**"
+      - ".agents/**"
+      - ".zed/**"
+      - ".storybook/**"
+      - "docs/**"
+      - "tasks/**"
+      - "tests/**"
+      - "scripts/**"
+      - "*.md"
+      - ".gitignore"
+      - ".prettierignore"
+      - "renovate.json"
+      - "skills-lock.json"
+      - "tsconfig.scripts.json"
+      - "tsconfig.stories.json"
+      - "tsconfig.test.json"
 
 permissions:
   contents: read
