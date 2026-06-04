@@ -3,6 +3,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 export type Deployment = {
   id?: string;
   created_on?: string;
+  // "production" | "preview" — set by Cloudflare on every deployment.
+  environment?: string;
   deployment_trigger?: { metadata?: { branch?: string } };
 };
 
@@ -22,7 +24,8 @@ export type CleanupReport = {
   protectedBranches: string[];
 };
 
-// Deployments with no branch metadata land here; never protected.
+// Deployments with no branch metadata are grouped here for the report. They are
+// still eligible for the production-environment keep below.
 const UNKNOWN_BRANCH = "(unknown)";
 
 // Turn an ISO date into a sortable number. Missing/bad dates sort oldest.
@@ -30,6 +33,8 @@ function toTime(createdOn?: string): number {
   const t = createdOn ? Date.parse(createdOn) : Number.NaN;
   return Number.isNaN(t) ? 0 : t;
 }
+
+const byNewest = (a: Deployment, b: Deployment) => toTime(b.created_on) - toTime(a.created_on);
 
 // Protected branches first (in the order given), then the rest by most deleted.
 function sortRows(rows: BranchRow[], protectedBranches: string[]): void {
@@ -46,7 +51,30 @@ export function planCleanup(
   deployments: Deployment[],
   protectedBranches: string[],
 ): { toDelete: string[]; report: CleanupReport } {
-  // Group every deployment under its branch name.
+  // Decide which deployment ids to KEEP. Everything else is deleted.
+  const keepIds = new Set<string>();
+
+  // 1. The newest production deployment is the live `main` build. Protect it by
+  //    environment, not branch name, so it survives even when a deployment is
+  //    missing branch metadata (e.g. a CI deploy made in detached HEAD).
+  const newestProd = deployments
+    .filter((d) => d.environment === "production" && typeof d.id === "string")
+    .sort(byNewest)[0];
+  if (newestProd?.id) keepIds.add(newestProd.id);
+
+  // 2. The newest deployment of each protected branch (e.g. develop's preview).
+  for (const branch of protectedBranches) {
+    const newestOfBranch = deployments
+      .filter((d) => d.deployment_trigger?.metadata?.branch === branch && typeof d.id === "string")
+      .sort(byNewest)[0];
+    if (newestOfBranch?.id) keepIds.add(newestOfBranch.id);
+  }
+
+  const toDelete = deployments
+    .map((d) => d.id)
+    .filter((id): id is string => typeof id === "string" && !keepIds.has(id));
+
+  // Group by branch for the human-readable report.
   const groups = new Map<string, Deployment[]>();
   for (const d of deployments) {
     const branch = d.deployment_trigger?.metadata?.branch ?? UNKNOWN_BRANCH;
@@ -55,30 +83,18 @@ export function planCleanup(
     groups.set(branch, list);
   }
 
-  const protectedSet = new Set(protectedBranches);
-  const toDelete: string[] = [];
   const rows: BranchRow[] = [];
-
   for (const [branch, list] of groups) {
-    // Newest first so the protected branch keeps its latest build.
-    const sorted = [...list].sort((a, b) => toTime(b.created_on) - toTime(a.created_on));
-    const isProtected = protectedSet.has(branch);
-    const keep = isProtected ? sorted.slice(0, 1) : [];
-    const drop = isProtected ? sorted.slice(1) : sorted;
-
-    const dropIds = drop.map((d) => d.id).filter((id): id is string => typeof id === "string");
-    toDelete.push(...dropIds);
-
-    const kept = keep[0];
+    const kept = list.filter((d) => typeof d.id === "string" && keepIds.has(d.id));
+    const keptNewest = [...kept].sort(byNewest)[0];
     rows.push({
       branch,
       total: list.length,
-      kept: keep.length,
-      // Count every dropped deployment so total always equals kept + deleted,
-      // even if a malformed entry has no id to add to toDelete.
-      deleted: drop.length,
-      keptId: kept?.id,
-      keptDate: kept?.created_on,
+      kept: kept.length,
+      // total always equals kept + deleted, even for malformed entries with no id.
+      deleted: list.length - kept.length,
+      keptId: keptNewest?.id,
+      keptDate: keptNewest?.created_on,
     });
   }
 
