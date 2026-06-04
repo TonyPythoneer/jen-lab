@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { stripHtml, formatDate } from "~/utils/wpApi";
+import { stripHtml, formatDate } from "~/utils/blog/wpApi";
 
 describe("stripHtml", () => {
   it("removes tags and trims", () => {

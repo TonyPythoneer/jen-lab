@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import type { Category } from "~/assets/data/pages/restaurants";
-import { CATEGORY_EN, categoryGlyph } from "~/utils/food-map-categories";
-import { countByRegion, countByCuisine } from "~/utils/foodMapFilters";
-import { useFoodMapStore } from "~/composables/useFoodMapStore";
+import { CATEGORY_EN, categoryGlyph } from "~/utils/food-map/food-map-categories";
+import { countByRegion, countByCuisine } from "~/utils/food-map/foodMapFilters";
+import { useFoodMapStore } from "~/composables/food-map/useFoodMapStore";
 
 const props = defineProps<{
   categories: readonly Category[];

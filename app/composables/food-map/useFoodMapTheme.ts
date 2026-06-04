@@ -26,23 +26,19 @@ export interface MapTheme {
   en: string;
   note: string;
   tiles: TileSource;
-  filter: string;
-  wash: string;
-  grain: number;
   vars: MapThemeVars;
 }
 
-// Menu order = array order. Default = first entry: Harbour Blue, then Hand-tint, then Copper.
+// Parchment FX removed, so the two old OSM themes (hand-tint / engraving) became
+// identical — only the basemap source now distinguishes a theme. Kept the two
+// genuinely-different basemaps: CARTO Voyager (colour) and plain OSM (ink).
 export const MAP_THEMES: MapTheme[] = [
   {
     id: "voyager",
     name: "晴港藍",
     en: "Harbour Blue",
-    note: "Keeps real blue water — most legible",
+    note: "CARTO Voyager — keeps real blue water, most legible",
     tiles: TILE_SOURCES.voyagerLabels,
-    filter: "saturate(1.22) brightness(1.0) contrast(1.12) sepia(0.10)",
-    wash: "rgba(242, 232, 206, 0.07)",
-    grain: 0.4,
     vars: {
       "--map-boundary": "#8a6d44",
       "--map-water-accent": "#7fa8c9",
@@ -52,31 +48,11 @@ export const MAP_THEMES: MapTheme[] = [
     },
   },
   {
-    id: "handtint",
-    name: "手繪測量圖",
-    en: "Hand-tinted Survey",
-    note: "Faded survey linework with hand-applied colour washes",
-    tiles: TILE_SOURCES.osm,
-    filter: "saturate(0.9) sepia(0.22) hue-rotate(-5deg) brightness(0.85) contrast(1.55)",
-    wash: "rgba(224, 206, 170, 0.14)",
-    grain: 0.5,
-    vars: {
-      "--map-boundary": "#8a5a3c",
-      "--map-water-accent": "#9fb6c0",
-      "--map-label": "#5e4026",
-      "--boat-ink": "#5e4026",
-      "--boat-route": "rgba(120, 84, 52, 0.4)",
-    },
-  },
-  {
     id: "engraving",
-    name: "銅版雕刻",
-    en: "Copperplate Engraving",
-    note: "Black engraved linework on warm engraver's paper",
+    name: "墨線圖",
+    en: "Ink Lines",
+    note: "Plain OpenStreetMap with dark ink boundaries",
     tiles: TILE_SOURCES.osm,
-    filter: "grayscale(1) brightness(0.84) contrast(1.7) sepia(0.5) brightness(1.06)",
-    wash: "rgba(226, 214, 184, 0.2)",
-    grain: 0.5,
     vars: {
       "--map-boundary": "#2c241a",
       "--map-water-accent": "#7b736040",
