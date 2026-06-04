@@ -6,12 +6,35 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: CD Cloudflare
+name: 🚀 Deploy · Cloudflare
 
 on:
   pull_request:
     types: [closed]
     branches: [main, develop]
+    # Skip the deploy when a merged PR touches ONLY files that cannot change the
+    # built site (CI, docs, editor config, tests, helper scripts). If any file
+    # outside this list changed, the deploy still runs. Note: `*.md` matches only
+    # root-level docs (README, CLAUDE, ...); blog posts live in content/*.md and
+    # are intentionally NOT ignored, so editing a post still deploys.
+    paths-ignore:
+      - ".github/**"
+      - ".claude/**"
+      - ".agents/**"
+      - ".zed/**"
+      - ".storybook/**"
+      - "docs/**"
+      - "tasks/**"
+      - "tests/**"
+      - "scripts/**"
+      - "*.md"
+      - ".gitignore"
+      - ".prettierignore"
+      - "renovate.json"
+      - "skills-lock.json"
+      - "tsconfig.scripts.json"
+      - "tsconfig.stories.json"
+      - "tsconfig.test.json"
 
 permissions:
   contents: read
@@ -36,12 +59,20 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - id: deploy
-        run: |
-          set -o pipefail
-          pnpm deploy 2>&1 | tee deploy.log
         env:
+          # The branch the PR merged into (main or develop). Passing --branch
+          # makes Cloudflare route the deploy deterministically — main to the
+          # production environment, develop to a named preview — and tags the
+          # deployment with correct branch metadata. Without it wrangler guesses
+          # from git, which is unreliable in the detached HEAD of a PR checkout
+          # and leaves the cleanup workflows unable to identify the branch.
+          BRANCH: ${{ github.event.pull_request.base.ref }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -o pipefail
+          pnpm build
+          pnpm exec wrangler pages deploy --branch "$BRANCH" 2>&1 | tee deploy.log
 
       - name: Extract wrangler summary
         if: always()
