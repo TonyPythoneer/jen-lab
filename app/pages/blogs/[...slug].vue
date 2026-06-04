@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { fetchPost, stripHtml, formatDate } from "~/utils/wpApi";
+import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
 
 const route = useRoute();
 const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));

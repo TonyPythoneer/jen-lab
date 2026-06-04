@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { stripHtml, formatDate, type WpPost } from "~/utils/wpApi";
+import { stripHtml, formatDate, type WpPost } from "~/utils/blog/wpApi";
 import type { RouteLocationRaw } from "vue-router";
 
 // Badge text + age cutoff come from content/site/blogs.yml via the page.

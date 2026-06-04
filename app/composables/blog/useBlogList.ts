@@ -1,5 +1,5 @@
-import { csvToIds } from "~/utils/csvToIds";
-import type { WpPostsPage } from "~/utils/wpApi";
+import { csvToIds } from "~/utils/shared/csvToIds";
+import type { WpPostsPage } from "~/utils/blog/wpApi";
 
 export interface BlogListInit {
   q?: unknown;

@@ -6,8 +6,9 @@
 // passed in) + FERRY_ROUTES. It knows nothing about Vue, the store, or drawers.
 //
 // ── ONE NETWORK, EVERY MAP STYLE ─────────────────────────────────────────────
-// The route network is DATA, not decoration. The fleet + course lines + wharves
-// are built ONCE and live in one Leaflet layer group, present on every theme.
+// The route network is DATA, not decoration. Course lines + wharves are built ONCE
+// into one Leaflet layer group; the moving fleet is drawn on a dedicated canvas
+// (see useCanvasLayer — one layer for the whole fleet, not one DOM marker each).
 // Switching the cartographic style never rebuilds or hides the network. The route
 // styling is DECOUPLED from the theme: colours are fixed in networkColors() so the
 // network reads identically on every basemap. (Per-theme tinting was the old bug —
@@ -30,8 +31,9 @@
 // motion places vessels statically. Enabled-state is owned by the caller.
 // =============================================================================
 
-import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker, Marker } from "leaflet";
-import { FERRY_ROUTES } from "~/utils/ferry-routes";
+import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
+import { FERRY_ROUTES } from "~/utils/food-map/ferry-routes";
+import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 export interface RiverBoatsController {
   // Re-read --boat-route/--boat-ink and recolour lines, wharf dots, and boats.
@@ -39,6 +41,16 @@ export interface RiverBoatsController {
   // Show + animate the whole network, or hide it.
   setEnabled(on: boolean): void;
   isEnabled(): boolean;
+  // Freeze / unfreeze the animation WITHOUT hiding the fleet. Used while the map
+  // is panned or zoomed so the per-frame marker updates don't compete with the
+  // map's own interaction work; the boats ride along, frozen, then resume.
+  pause(): void;
+  resume(): void;
+  // Show / hide the static SVG layers on their own. These exist so a dev tool can
+  // isolate how much each vector layer costs while dragging the map. They do NOT
+  // touch the boats or the enabled-state — they only add/remove the sub-group.
+  setCourseLinesVisible(on: boolean): void;
+  setWharfDotsVisible(on: boolean): void;
   // Stop rAF, remove the layer, drop listeners.
   destroy(): void;
 }
@@ -69,8 +81,8 @@ interface Vessel {
   dir: 1 | -1; // travel direction along the path
   speed: number; // effective metres per second
   dwellUntil: number; // ms timestamp; >now ⇒ paused at a wharf
-  marker: Marker;
-  el: HTMLElement | null; // the inner .river-boat element (for flip/fade)
+  lat: number; // current position, updated each frame; the boat canvas draws here
+  lng: number;
   facingRight: boolean;
 }
 
@@ -95,9 +107,6 @@ const CONFIG = {
   // ~1 vessel per this many metres of route (then clamped by the caps above).
   metresPerVessel: 2600,
 
-  // 0 (snappy) … 1 (very smooth) — eases the facing flip + spawn fade.
-  animationSmoothness: 0.7,
-
   // Dash must read as a continuous line on ANY basemap. A very sparse dash (the
   // old "1 6") only joins up over textured terrain; on the blue style's blank
   // water the dots got lost, so routes looked like they vanished. Denser dash +
@@ -113,19 +122,6 @@ const prefersReducedMotion = () =>
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
 
-// Solid sail-ship silhouette: hull + billowing mainsail and jib on a mast,
-// topped with a pennant. fill=currentColor so the theme tints it. Art faces
-// RIGHT; the engine mirrors it for left-bound travel.
-const BOAT_SVG =
-  '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">' +
-  '<g fill="currentColor">' +
-  '<path d="M11.45 3.2h1.1v12.6h-1.1z"/>' +
-  '<path d="M12.55 2.7l3.7 0.85-3.7 1.05z"/>' +
-  '<path d="M13 3.9c4.7 2 6.7 6.8 6 11.2H13z"/>' +
-  '<path d="M11 5.4C7.9 7.8 6.5 11.5 6.6 15.1H11z"/>' +
-  '<path d="M2.6 15.7h18.8c-0.9 3.3-3.7 5.1-9.4 5.1S3.5 19 2.6 15.7z"/>' +
-  "</g></svg>";
-
 export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsController {
   // Source from FERRY_ROUTES, keeping only routes with usable geometry.
   const routes = FERRY_ROUTES.filter(
@@ -133,6 +129,11 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   );
 
   const layer: LayerGroup = L.layerGroup();
+  // Course lines and wharf dots live in their own sub-groups so a dev tool can
+  // toggle each layer independently and measure how much each one costs while
+  // the map is dragged. Boats are added straight to `layer`.
+  const courseGroup: LayerGroup = L.layerGroup();
+  const wharfGroup: LayerGroup = L.layerGroup();
   const reduced = prefersReducedMotion();
 
   let vessels: Vessel[] = [];
@@ -141,8 +142,43 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   let rafId: number | null = null;
   let lastTs = 0;
   let running = false;
-  // The caller owns this; default off until setEnabled is called.
+
+  // The caller owns this; default off until setEnabled is called. Declared before
+  // the boat canvas because its onDraw (run once at creation) reads it.
   let enabled = false;
+
+  // The boats render on their own canvas (one layer for the whole fleet) instead
+  // of one DOM marker each — see useCanvasLayer for why. Solid sail-ship silhouette
+  // as a single Path2D, faces RIGHT; the draw mirrors it for left-bound travel.
+  let boatInk = "#2c2418";
+  const boatPath = new Path2D(
+    "M11.45 3.2h1.1v12.6h-1.1z" +
+      "M12.55 2.7l3.7 0.85-3.7 1.05z" +
+      "M13 3.9c4.7 2 6.7 6.8 6 11.2H13z" +
+      "M11 5.4C7.9 7.8 6.5 11.5 6.6 15.1H11z" +
+      "M2.6 15.7h18.8c-0.9 3.3-3.7 5.1-9.4 5.1S3.5 19 2.6 15.7z",
+  );
+  const boatCanvas: CanvasLayerController = createCanvasLayer(map, L, {
+    paneName: "food-boats",
+    paneZIndex: 580, // below the pins pane (600)
+    onDraw: (ctx, { project, zoomScale }) => {
+      if (!enabled) return;
+      // Divide by the live zoom scale so boats hold a constant screen size on zoom.
+      const s = ((window.innerWidth <= 640 ? 0.85 : 1) * (26 / 24)) / (zoomScale || 1);
+      ctx.fillStyle = boatInk;
+      ctx.globalAlpha = 0.94;
+      for (const v of vessels) {
+        const p = project(v.lat, v.lng);
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.scale(v.facingRight ? s : -s, s);
+        ctx.translate(-12, -15.7); // anchor (13,17) of the 26px icon → viewBox units
+        ctx.fill(boatPath);
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+    },
+  });
 
   // Pre-measure a path → cumulative metres + total length.
   function measure(points: PathPoint[]): { cum: number[]; total: number } {
@@ -188,6 +224,10 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   // ── BUILD the whole network from CONFIG (runs once) ──────────────────────────
   function build() {
     layer.clearLayers();
+    courseGroup.clearLayers();
+    wharfGroup.clearLayers();
+    courseGroup.addTo(layer);
+    wharfGroup.addTo(layer);
     vessels = [];
     courseLines = [];
     wharfDots = [];
@@ -216,7 +256,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
         lineCap: "round",
         ...CONFIG.routeLine,
       };
-      courseLines.push(L.polyline(m.path, lineOptions).addTo(layer));
+      courseLines.push(L.polyline(m.path, lineOptions).addTo(courseGroup));
       m.stopIndex.forEach((vertexIndex) => {
         wharfDots.push(
           L.circleMarker(m.path[vertexIndex]!, {
@@ -228,7 +268,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
             fillOpacity: 0.45,
             interactive: false,
             pane: "overlayPane",
-          }).addTo(layer),
+          }).addTo(wharfGroup),
         );
       });
     });
@@ -253,9 +293,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       if (budget <= 0) break;
     }
 
-    const flip = CONFIG.animationSmoothness;
-    const flipMs = Math.round(140 + flip * 360);
-    const fadeMs = Math.round(500 + flip * 1400);
+    boatInk = colors.ink;
     const baseSpeed = CONFIG.baseSpeedMetresPerSec * CONFIG.shipSpeedMultiplier;
 
     measured.forEach((m, ri) => {
@@ -267,38 +305,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
         const pos = dir > 0 ? phase * m.total : (1 - phase) * m.total;
         const speed = baseSpeed * rand(CONFIG.speedVarianceMin, CONFIG.speedVarianceMax);
         const start = sampleAtDist(m.path, m.cum, m.total, pos);
-
-        const marker = L.marker([start.lat, start.lng], {
-          icon: L.divIcon({
-            className: "river-boat-wrap",
-            html:
-              '<div class="river-boat" style="--boat-ink:' +
-              colors.ink +
-              ";transition:transform " +
-              flipMs +
-              "ms ease, opacity " +
-              fadeMs +
-              'ms ease">' +
-              BOAT_SVG +
-              "</div>",
-            iconSize: [26, 26],
-            iconAnchor: [13, 17],
-          }),
-          interactive: false,
-          keyboard: false,
-          zIndexOffset: -200,
-        }).addTo(layer);
-
-        const el = marker.getElement()
-          ? (marker.getElement()!.querySelector(".river-boat") as HTMLElement | null)
-          : null;
         const facingRight = (dir > 0 ? start.dx : -start.dx) >= 0;
-        if (el) {
-          el.style.transform = facingRight ? "scaleX(1)" : "scaleX(-1)";
-          el.style.opacity = "0";
-        }
-        const delay = reduced ? 0 : (k / Math.max(1, n)) * 1400 + ri * 220 + Math.random() * 500;
-        if (el) setTimeout(() => (el.style.opacity = "0.94"), delay);
 
         vessels.push({
           path: m.path,
@@ -309,8 +316,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
           dir,
           speed,
           dwellUntil: 0,
-          marker,
-          el,
+          lat: start.lat,
+          lng: start.lng,
           facingRight,
         });
       }
@@ -355,24 +362,12 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       }
 
       const p = sampleAtDist(v.path, v.cum, v.total, v.pos);
-      v.marker.setLatLng([p.lat, p.lng]);
-
-      // Resolve the boat element lazily. At build() the boats layer isn't on the
-      // map yet, so marker.getElement() returns null and v.el stays null — which
-      // silently disabled the left/right flip (the guard below skipped it). Grab
-      // the element on the first frame it exists and sync it to the current
-      // facing so subsequent direction changes animate the scaleX flip.
-      if (!v.el) {
-        v.el = (v.marker.getElement()?.querySelector(".river-boat") as HTMLElement) ?? null;
-        if (v.el) v.el.style.transform = v.facingRight ? "scaleX(1)" : "scaleX(-1)";
-      }
-
-      const wantRight = (v.dir > 0 ? p.dx : -p.dx) >= 0;
-      if (wantRight !== v.facingRight && v.el) {
-        v.facingRight = wantRight;
-        v.el.style.transform = wantRight ? "scaleX(1)" : "scaleX(-1)";
-      }
+      v.lat = p.lat;
+      v.lng = p.lng;
+      v.facingRight = (v.dir > 0 ? p.dx : -p.dx) >= 0;
     }
+    // One canvas redraw for the whole fleet this frame.
+    boatCanvas.redraw();
     rafId = window.requestAnimationFrame(frame);
   }
 
@@ -395,6 +390,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   document.addEventListener("visibilitychange", onVisibility);
 
   // Apply the current enabled-state: show + animate, or hide the whole network.
+  // The boatCanvas.redraw() also covers reduced-motion (start() is a no-op there,
+  // so this single draw places the static fleet) and clears it when disabled.
   function applyEnabled() {
     if (enabled) {
       if (!map.hasLayer(layer)) layer.addTo(map);
@@ -403,6 +400,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       stop();
       if (map.hasLayer(layer)) map.removeLayer(layer);
     }
+    boatCanvas.redraw();
   }
 
   // Called after every map-style swap. Colours are fixed (see networkColors), so
@@ -412,13 +410,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     const colors = networkColors();
     courseLines.forEach((pl) => pl.setStyle({ color: colors.route }));
     wharfDots.forEach((d) => d.setStyle({ color: colors.ink, fillColor: colors.ink }));
-    vessels.forEach((v) => {
-      if (v.el) v.el.style.setProperty("--boat-ink", colors.ink);
-    });
-    // LayerGroup has no bringToFront in Leaflet's types (or at runtime); call it
-    // defensively so z-ordering still works if a future Leaflet adds it.
-    const group = layer as unknown as { bringToFront?: () => void };
-    if (map.hasLayer(layer) && group.bringToFront) group.bringToFront();
+    boatInk = colors.ink;
+    boatCanvas.redraw();
   }
 
   // Build the network once; the caller decides enabled via setEnabled.
@@ -431,10 +424,23 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       enabled = !!val;
       applyEnabled();
     },
+    // Freeze (stop the rAF, keep the fleet on the map) and unfreeze (start() is a
+    // no-op if disabled or reduced-motion, so resume is always safe to call).
+    pause: stop,
+    resume: start,
+    setCourseLinesVisible(on: boolean) {
+      if (on) courseGroup.addTo(layer);
+      else layer.removeLayer(courseGroup);
+    },
+    setWharfDotsVisible(on: boolean) {
+      if (on) wharfGroup.addTo(layer);
+      else layer.removeLayer(wharfGroup);
+    },
     refreshTheme,
     destroy() {
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
+      boatCanvas.destroy();
       if (map.hasLayer(layer)) map.removeLayer(layer);
       layer.clearLayers();
       vessels = [];

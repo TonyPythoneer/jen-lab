@@ -22,7 +22,7 @@
 
 ```bash
 # Vue/Nuxt development
-pnpm dev          # Dev server at :3500 — user runs it; NEVER start/kill, assume it's already running
+pnpm dev          # :3500. Port via DEV_PORT env (DEV_PORT=3600 pnpm dev for a 2nd worktree). --host 0.0.0.0 = LAN/phone reachable. Check lsof / Nuxt dev-lock before starting a duplicate.
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally with wrangler
 pnpm deploy       # Build + deploy to Cloudflare Pages

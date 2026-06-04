@@ -76,8 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { fetchPosts } from "~/utils/wpApi";
-import { csvToIds } from "~/utils/csvToIds";
+import { useBlogList } from "~/composables/blog/useBlogList";
+import { useBlogTaxonomies } from "~/composables/blog/useBlogTaxonomies";
+import { fetchPosts } from "~/utils/blog/wpApi";
+import { csvToIds } from "~/utils/shared/csvToIds";
 
 const PER_PAGE = 20;
 const SKELETON_COUNT = 4;

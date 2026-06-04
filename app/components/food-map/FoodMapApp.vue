@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import type { Category } from "~/assets/data/pages/restaurants";
-import { useFoodMapStore } from "~/composables/useFoodMapStore";
-import { useFoodMapTheme } from "~/composables/useFoodMapTheme";
+import { useFoodMapStore } from "~/composables/food-map/useFoodMapStore";
+import { useFoodMapTheme } from "~/composables/food-map/useFoodMapTheme";
 
 const props = defineProps<{
   restaurants: EnrichedRestaurant[];
@@ -17,6 +17,34 @@ const boatsEnabled = ref(true);
 function toggleBoats() {
   boatsEnabled.value = !boatsEnabled.value;
 }
+
+// Dev-only switches to turn each static vector layer off and feel its drag cost
+// on a real phone. Only rendered in the theme menu when `import.meta.dev`.
+const devLayers = reactive({
+  courseLines: true,
+  wharfDots: true,
+  boundary: true,
+  boundarySimplified: false, // default to the original full-resolution jsdelivr geometry
+  // Off by default: the maxBounds wall + viscosity tug the centre during a touch
+  // pinch, which shifted the canvas markers toward the focal point. Toggle on (dev)
+  // only to compare. The dev panel still exposes it.
+  maxBounds: false,
+  idleTiles: true, // only fetch tiles when the drag stops
+});
+function toggleLayer(key: keyof typeof devLayers) {
+  devLayers[key] = !devLayers[key];
+}
+
+// Dev basemap renderer comparison, switched from the style menu dropdown.
+const tileMode = ref<"raster2x" | "raster1x">("raster2x");
+function selectTileMode(mode: typeof tileMode.value) {
+  tileMode.value = mode;
+}
+
+// The profiler panel shows in dev, or in any build via `?debug` — so the levers
+// can be felt on the real prod build (where the jank actually reproduces).
+const route = useRoute();
+const debug = computed(() => import.meta.dev || route.query.debug !== undefined);
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
 const selectedRestaurant = computed(() => store.getSelectedRestaurant(props.restaurants));
@@ -33,14 +61,22 @@ function onStageReady(controls: typeof mapControls) {
 </script>
 
 <template>
-  <div class="food-map-app">
+  <!-- `--detail` (mobile only) hides chips/style/zoom/recenter once a place is picked. -->
+  <div :class="['food-map-app', { 'food-map-app--detail': selectedRestaurant }]">
     <ClientOnly>
-      <FoodMapStage
+      <FoodMapCanvas
         :restaurants="visibleRestaurants"
         :selected-restaurant-id="store.state.selectedRestaurantId"
         :hovered-category-id="store.state.hoveredCategoryId"
         :theme="theme"
         :boats-enabled="boatsEnabled"
+        :course-lines-visible="devLayers.courseLines"
+        :wharf-dots-visible="devLayers.wharfDots"
+        :boundary-visible="devLayers.boundary"
+        :boundary-simplified="devLayers.boundarySimplified"
+        :max-bounds-enabled="devLayers.maxBounds"
+        :idle-tiles="devLayers.idleTiles"
+        :tile-mode="tileMode"
         @select="store.selectRestaurant"
         @hover="store.setHovered"
         @ready="onStageReady"
@@ -50,40 +86,34 @@ function onStageReady(controls: typeof mapControls) {
       </template>
     </ClientOnly>
 
-    <div class="map-vignette" aria-hidden="true" />
+    <!-- Top bar: search + filter chips + home, Google-Maps style -->
+    <FoodMapTopBar :categories="categories" :all-restaurants="props.restaurants" />
 
-    <div class="map-topbar">
-      <!-- Home: sits to the left of the centred style menu, back to the site -->
-      <NuxtLink to="/" class="map-home" aria-label="Back to home">
-        <svg
-          width="17"
-          height="17"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <path d="M9 22V12h6v10" />
-        </svg>
-      </NuxtLink>
+    <!-- List drawer: slides down from the top bar; list ⇄ detail -->
+    <FoodMapListDrawer
+      :restaurants="visibleRestaurants"
+      :selected-restaurant="selectedRestaurant"
+    />
 
+    <!-- Bottom-left: map style picker -->
+    <div class="map-style-corner">
       <FoodMapThemeMenu
         :themes="themes"
         :active-theme-id="themeId"
         :boats-enabled="boatsEnabled"
+        :dev-layers="devLayers"
+        :tile-mode="tileMode"
+        :debug="debug"
         @select="setTheme"
         @toggle-boats="toggleBoats"
+        @toggle-layer="toggleLayer"
+        @select-tile-mode="selectTileMode"
+        @open="store.closeDrawer"
       />
     </div>
 
+    <!-- Bottom-right: recenter on top, zoom below -->
     <div class="map-controls">
-      <div class="map-controls__group">
-        <button aria-label="Zoom in" @click="mapControls.zoomBy?.(1)">+</button>
-        <button aria-label="Zoom out" @click="mapControls.zoomBy?.(-1)">−</button>
-      </div>
       <button
         class="map-controls__solo"
         aria-label="Recenter on Sydney"
@@ -101,15 +131,10 @@ function onStageReady(controls: typeof mapControls) {
           <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" stroke-linecap="round" />
         </svg>
       </button>
+      <div class="map-controls__group">
+        <button aria-label="Zoom in" @click="mapControls.zoomBy?.(1)">+</button>
+        <button aria-label="Zoom out" @click="mapControls.zoomBy?.(-1)">−</button>
+      </div>
     </div>
-
-    <FoodMapListDrawer
-      :categories="categories"
-      :restaurants="visibleRestaurants"
-      :all-restaurants="props.restaurants"
-      :selected-restaurant="selectedRestaurant"
-      @invalidate-map="mapControls.invalidate?.()"
-      @clear-selection="store.selectRestaurant(null)"
-    />
   </div>
 </template>

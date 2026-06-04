@@ -54,8 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { buildBlogSearchRoute } from "~/utils/blogSearchQuery";
-import { csvToIds } from "~/utils/csvToIds";
+import { useBlogSearch } from "~/composables/blog/useBlogSearch";
+import { useBlogTaxonomies } from "~/composables/blog/useBlogTaxonomies";
+import { buildBlogSearchRoute } from "~/utils/blog/blogSearchQuery";
+import { csvToIds } from "~/utils/shared/csvToIds";
 
 // Search-box wording comes from content/site/blogs.yml via the layout.
 // Defaults keep the modal self-contained for Storybook and as a fallback.

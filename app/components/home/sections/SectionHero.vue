@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useScrollProgress } from "~/composables/shared/useScrollProgress";
 // Copy comes from content/pages-layout/home.md (section-hero block). Defaults
 // keep the component self-contained for Storybook and as a safe fallback.
 withDefaults(

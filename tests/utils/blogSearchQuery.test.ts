@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { buildBlogSearchRoute } from "~/utils/blogSearchQuery";
+import { buildBlogSearchRoute } from "~/utils/blog/blogSearchQuery";
 
 describe("buildBlogSearchRoute", () => {
   it("builds a bare /blogs route when empty", () => {

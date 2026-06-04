@@ -9,7 +9,7 @@
 // (scripts/sync-ferries.ts pulls channel-accurate TfNSW GTFS geometry instead; it
 // is kept for reference but drifts off the OSM-derived basemap, so it is not used.)
 
-import data from "../assets/data/ferry-routes.json";
+import data from "../../assets/data/ferry-routes.json";
 
 // A wharf along a route. `i` indexes into the route's `path`.
 export interface FerryStop {

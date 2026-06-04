@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host",
-    "storybook": "storybook dev -p 6006",
+    "dev": "nuxt dev --host 0.0.0.0 -p ${DEV_PORT:-3500}",
+    "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
     "typecheck": "nuxt typecheck",
     "check": "vp check",
