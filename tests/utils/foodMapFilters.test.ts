@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { filterRestaurants, countByRegion, countByCuisine } from "~/utils/foodMapFilters";
+import { filterRestaurants, countByRegion, countByCuisine } from "~/utils/food-map/foodMapFilters";
 
 // Mirrors the spec's worked example: two regions, three cuisines.
 type R = { id: string; area: string; categoryId: string };

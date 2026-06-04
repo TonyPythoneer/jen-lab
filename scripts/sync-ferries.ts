@@ -22,7 +22,7 @@
 
 import { writeFile } from "node:fs/promises";
 import { unzipSync, strFromU8 } from "fflate";
-import type { FerryRoute, FerryStop } from "../app/utils/ferry-routes.ts";
+import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferry-routes.ts";
 
 // Sydney Ferries operator feed. The path is mode/operator: ferries/sydneyferries.
 const GTFS_URL = "https://api.transport.nsw.gov.au/v1/gtfs/schedule/ferries/sydneyferries";

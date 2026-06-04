@@ -119,9 +119,6 @@
   inset: 0;
   isolation: isolate; /* contain Leaflet's pane z-indexes below the drawers */
   background: var(--map-bg);
-  --tile-filter: none;
-  --tile-wash: transparent;
-  --paper-grain-opacity: 0.5;
 }
 
 .leaflet-container {
@@ -129,57 +126,21 @@
   font-family: var(--font-serif);
 }
 
-/* Re-grade the basemap into the chosen cartographic look. The filter string is
-   set per-theme by JS (see MAP_THEMES in vue-composables.js). */
-.map-surface .leaflet-tile-pane {
-  filter: var(--tile-filter);
-}
-
-/* Parchment wash — sits above tiles, below boundary lines + markers, so it
-   warms the map without muddying the linework. (Leaflet panes: tiles 200,
-   overlay 400, markers 600 — we slot in at 250/260.) */
-.map-surface::before {
-  content: "";
+/* Desktop hover tooltip for canvas pins (positioned in container px by JS). */
+.food-tip {
   position: absolute;
-  inset: 0;
-  z-index: 250;
+  z-index: 700;
+  transform: translate(-50%, calc(-100% - 16px));
+  background: var(--paper, #fff);
+  border: 1px solid var(--foreground, #2c241a);
+  border-radius: 4px;
+  color: var(--foreground, #2c241a);
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 3px 8px;
+  white-space: nowrap;
   pointer-events: none;
-  background: var(--tile-wash);
-  mix-blend-mode: multiply;
-}
-
-/* Procedural paper grain for the "old explorer's map" feel. */
-.map-surface::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 260;
-  pointer-events: none;
-  opacity: var(--paper-grain-opacity);
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-/* While the map is panned/zoomed (.is-interacting toggled in FoodMapStage), drop
-   the per-frame GPU work: the tile filter and the two multiply blend overlays
-   force a full-viewport recomposite every frame, which weak mobile GPUs can't
-   sustain at 60fps. The atlas look snaps back the instant the gesture ends. */
-.map-surface.is-interacting .leaflet-tile-pane {
-  filter: none;
-}
-.map-surface.is-interacting::before,
-.map-surface.is-interacting::after {
-  display: none;
-}
-
-/* Soft vignette to focus the centre — purely atmospheric, never blocks input. */
-.map-vignette {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 450;
-  box-shadow: inset 0 0 160px 40px rgba(61, 40, 23, 0.16);
 }
 
 .leaflet-control-attribution {
@@ -512,6 +473,19 @@
   flex: 1;
 }
 
+/* Dev basemap-renderer picker — native select so the phone gets its own picker. */
+.theme-menu__select {
+  flex: 1;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
 /* pill track + sliding knob; ON state tinted with --accent */
 .theme-menu__switch {
   flex-shrink: 0;
@@ -815,103 +789,6 @@
   flex-wrap: wrap;
   gap: 6px;
 }
-/* ===================== MAP MARKERS ===================== */
-
-.r-pin-wrap {
-  width: 38px;
-  height: 46px;
-}
-.r-pin {
-  --cat: var(--accent);
-  position: absolute;
-  top: 2px;
-  left: 5px;
-  width: 28px;
-  height: 28px;
-  background: var(--paper);
-  border: 1.25px solid var(--foreground); /* thin default so hover thickening reads */
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  transform-origin: center;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(61, 40, 23, 0.18);
-  transition:
-    border-width 130ms ease,
-    border-color 130ms ease,
-    opacity 160ms ease,
-    transform 150ms ease,
-    box-shadow 150ms ease;
-}
-.r-pin__glyph {
-  transform: rotate(45deg);
-  font-size: 15px;
-  line-height: 1;
-  font-family: var(--emoji-stack);
-  user-select: none;
-  /* render the flag/food emoji as monochrome parchment ink */
-  filter: var(--ink-filter);
-}
-.r-pin.is-group {
-  border-width: 3px;
-  border-color: var(--cat);
-  transform: rotate(-45deg) scale(1.14);
-  box-shadow: 0 3px 7px rgba(61, 40, 23, 0.28);
-  z-index: 600;
-}
-.r-pin.is-faded {
-  opacity: 0.22;
-  box-shadow: none;
-}
-.r-pin.is-active {
-  border-width: 3px;
-  border-color: var(--cat);
-  transform: rotate(-45deg) scale(2);
-  box-shadow:
-    0 0 0 4px rgba(153, 60, 29, 0.16),
-    0 4px 9px rgba(61, 40, 23, 0.3);
-  z-index: 1000;
-  /* Pop-in when a pin becomes selected — echoes the restaurant map's pin-hop.
-     The class is re-added on each new selection, so the animation replays. */
-  animation: r-pin-pop 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-
-/* Scale bounce ending at the active scale(2). The pin stays rotated -45deg,
-   so every frame keeps that rotation and only the scale changes. */
-@keyframes r-pin-pop {
-  0% {
-    transform: rotate(-45deg) scale(0.7);
-  }
-  40% {
-    transform: rotate(-45deg) scale(2.26);
-  }
-  60% {
-    transform: rotate(-45deg) scale(1.8);
-  }
-  80% {
-    transform: rotate(-45deg) scale(2.12);
-  }
-  100% {
-    transform: rotate(-45deg) scale(2);
-  }
-}
-
-.leaflet-tooltip.r-tip {
-  background: var(--paper);
-  border: 1px solid var(--foreground);
-  border-radius: 2px;
-  color: var(--foreground);
-  font-family: var(--font-serif);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 8px;
-  box-shadow: none;
-  white-space: nowrap;
-}
-.leaflet-tooltip.r-tip::before {
-  display: none;
-}
 
 /* suburb labels */
 .suburb-label-wrap {
@@ -937,31 +814,6 @@
   white-space: nowrap;
   pointer-events: none;
   opacity: 0.9;
-}
-
-/* ---- river boats (ferry simulation markers) ---- */
-.river-boat-wrap {
-  /* Leaflet divIcon wrapper — strip default marker chrome. */
-  background: none;
-  border: none;
-  pointer-events: none;
-  width: 26px;
-  height: 26px;
-}
-.river-boat {
-  /* The engine sets an inline --boat-ink per theme; SVG fills currentColor. */
-  color: var(--boat-ink);
-  width: 26px;
-  height: 26px;
-  /* Flip about the centre so the scaleX(1)↔scaleX(-1) left/right turn pivots in
-     place. The engine sets an inline `transition: transform` so the turn eases. */
-  transform-origin: center;
-  will-change: transform, opacity;
-  pointer-events: none;
-}
-.river-boat svg {
-  display: block;
-  fill: currentColor;
 }
 
 /* scrollbars */
@@ -1073,7 +925,7 @@
   }
   /* Fixed height (not content-driven) so the open band above is predictable and
      the map can centre the selected pin in it. Detail scrolls inside. The map
-     pan in FoodMapStage assumes this 62dvh -> sheet top at 38dvh. */
+     pan in FoodMapCanvas assumes this 62dvh -> sheet top at 38dvh. */
   .food-map-app--detail .list-drawer__panel {
     height: 62dvh;
     max-height: 62dvh;

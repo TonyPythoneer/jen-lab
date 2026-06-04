@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import type { Category } from "~/assets/data/pages/restaurants";
-import { useFoodMapStore } from "~/composables/useFoodMapStore";
-import { useFoodMapTheme } from "~/composables/useFoodMapTheme";
+import { useFoodMapStore } from "~/composables/food-map/useFoodMapStore";
+import { useFoodMapTheme } from "~/composables/food-map/useFoodMapTheme";
 
 const props = defineProps<{
   restaurants: EnrichedRestaurant[];
@@ -17,6 +17,34 @@ const boatsEnabled = ref(true);
 function toggleBoats() {
   boatsEnabled.value = !boatsEnabled.value;
 }
+
+// Dev-only switches to turn each static vector layer off and feel its drag cost
+// on a real phone. Only rendered in the theme menu when `import.meta.dev`.
+const devLayers = reactive({
+  courseLines: true,
+  wharfDots: true,
+  boundary: true,
+  boundarySimplified: false, // default to the original full-resolution jsdelivr geometry
+  // Off by default: the maxBounds wall + viscosity tug the centre during a touch
+  // pinch, which shifted the canvas markers toward the focal point. Toggle on (dev)
+  // only to compare. The dev panel still exposes it.
+  maxBounds: false,
+  idleTiles: true, // only fetch tiles when the drag stops
+});
+function toggleLayer(key: keyof typeof devLayers) {
+  devLayers[key] = !devLayers[key];
+}
+
+// Dev basemap renderer comparison, switched from the style menu dropdown.
+const tileMode = ref<"raster2x" | "raster1x">("raster2x");
+function selectTileMode(mode: typeof tileMode.value) {
+  tileMode.value = mode;
+}
+
+// The profiler panel shows in dev, or in any build via `?debug` — so the levers
+// can be felt on the real prod build (where the jank actually reproduces).
+const route = useRoute();
+const debug = computed(() => import.meta.dev || route.query.debug !== undefined);
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
 const selectedRestaurant = computed(() => store.getSelectedRestaurant(props.restaurants));
@@ -36,12 +64,19 @@ function onStageReady(controls: typeof mapControls) {
   <!-- `--detail` (mobile only) hides chips/style/zoom/recenter once a place is picked. -->
   <div :class="['food-map-app', { 'food-map-app--detail': selectedRestaurant }]">
     <ClientOnly>
-      <FoodMapStage
+      <FoodMapCanvas
         :restaurants="visibleRestaurants"
         :selected-restaurant-id="store.state.selectedRestaurantId"
         :hovered-category-id="store.state.hoveredCategoryId"
         :theme="theme"
         :boats-enabled="boatsEnabled"
+        :course-lines-visible="devLayers.courseLines"
+        :wharf-dots-visible="devLayers.wharfDots"
+        :boundary-visible="devLayers.boundary"
+        :boundary-simplified="devLayers.boundarySimplified"
+        :max-bounds-enabled="devLayers.maxBounds"
+        :idle-tiles="devLayers.idleTiles"
+        :tile-mode="tileMode"
         @select="store.selectRestaurant"
         @hover="store.setHovered"
         @ready="onStageReady"
@@ -50,8 +85,6 @@ function onStageReady(controls: typeof mapControls) {
         <div class="map-surface" />
       </template>
     </ClientOnly>
-
-    <div class="map-vignette" aria-hidden="true" />
 
     <!-- Top bar: search + filter chips + home, Google-Maps style -->
     <FoodMapTopBar :categories="categories" :all-restaurants="props.restaurants" />
@@ -68,8 +101,13 @@ function onStageReady(controls: typeof mapControls) {
         :themes="themes"
         :active-theme-id="themeId"
         :boats-enabled="boatsEnabled"
+        :dev-layers="devLayers"
+        :tile-mode="tileMode"
+        :debug="debug"
         @select="setTheme"
         @toggle-boats="toggleBoats"
+        @toggle-layer="toggleLayer"
+        @select-tile-mode="selectTileMode"
         @open="store.closeDrawer"
       />
     </div>

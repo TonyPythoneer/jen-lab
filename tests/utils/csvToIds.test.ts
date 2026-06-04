@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { csvToIds } from "~/utils/csvToIds";
+import { csvToIds } from "~/utils/shared/csvToIds";
 
 describe("csvToIds", () => {
   it("parses a comma-separated id list", () => {

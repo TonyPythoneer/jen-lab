@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { fetchPosts, stripHtml } from "~/utils/wpApi";
+import { fetchPosts, stripHtml } from "~/utils/blog/wpApi";
 
 const props = withDefaults(
   defineProps<{

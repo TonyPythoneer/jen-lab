@@ -1,5 +1,5 @@
-import type { EnrichedRestaurant } from "~/composables/useRestaurants";
-import { filterRestaurants } from "~/utils/foodMapFilters";
+import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
+import { filterRestaurants } from "~/utils/food-map/foodMapFilters";
 
 // Module-level state — all food-map components share the same reactive object.
 // Safe during SSR/prerender because: (1) all values are immutable defaults, and

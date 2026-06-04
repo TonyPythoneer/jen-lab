@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRestaurants } from "~/composables/useRestaurants";
+import { useRestaurants } from "~/composables/food-map/useRestaurants";
 
 definePageMeta({ layout: false });
 
