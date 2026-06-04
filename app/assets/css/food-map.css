@@ -161,6 +161,18 @@
   background-size: 180px 180px;
 }
 
+/* While the map is panned/zoomed (.is-interacting toggled in FoodMapStage), drop
+   the per-frame GPU work: the tile filter and the two multiply blend overlays
+   force a full-viewport recomposite every frame, which weak mobile GPUs can't
+   sustain at 60fps. The atlas look snaps back the instant the gesture ends. */
+.map-surface.is-interacting .leaflet-tile-pane {
+  filter: none;
+}
+.map-surface.is-interacting::before,
+.map-surface.is-interacting::after {
+  display: none;
+}
+
 /* Soft vignette to focus the centre — purely atmospheric, never blocks input. */
 .map-vignette {
   position: absolute;

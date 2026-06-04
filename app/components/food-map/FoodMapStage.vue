@@ -187,10 +187,17 @@ onMounted(async () => {
   boats = createRiverBoats(map, L);
   boats.setEnabled(props.boatsEnabled);
 
-  // Freeze the ferry animation while the map is panned/zoomed so its per-frame
-  // marker writes don't compete with the map's own interaction; resume when idle.
-  map.on("movestart zoomstart", () => boats?.pause());
-  map.on("moveend zoomend", () => boats?.resume());
+  // While the map is panned/zoomed: freeze the ferries AND drop the GPU-expensive
+  // tints (tile filter + grain/wash blend — see `.is-interacting` in food-map.css)
+  // so weak mobile GPUs stay smooth. Everything restores the moment the map settles.
+  map.on("movestart zoomstart", () => {
+    boats?.pause();
+    mapEl.value?.classList.add("is-interacting");
+  });
+  map.on("moveend zoomend", () => {
+    boats?.resume();
+    mapEl.value?.classList.remove("is-interacting");
+  });
 
   invalidate = () => map?.invalidateSize({ animate: false });
   window.addEventListener("resize", invalidate);
