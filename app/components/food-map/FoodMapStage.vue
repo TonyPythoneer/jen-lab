@@ -31,6 +31,7 @@ let tileLayer: TileLayer | null = null;
 let boundaryLayer: GeoJSON | null = null;
 let labelLayer: LayerGroup | null = null;
 let boats: RiverBoatsController | null = null;
+let invalidate: (() => void) | null = null;
 const markers: Record<string, Marker> = {};
 
 function applyTheme(theme: MapTheme) {
@@ -154,6 +155,16 @@ function applyHover() {
   }
 }
 
+// Registered synchronously: inside the async onMounted it would run after the
+// first `await` with no active instance and silently never fire, leaking the
+// boats rAF + resize listener. The refs it touches are module-level lets above.
+onUnmounted(() => {
+  if (invalidate) window.removeEventListener("resize", invalidate);
+  boats?.destroy();
+  map?.remove();
+  map = null;
+});
+
 onMounted(async () => {
   if (!mapEl.value) return;
   L = (await import("leaflet")).default;
@@ -176,7 +187,19 @@ onMounted(async () => {
   boats = createRiverBoats(map, L);
   boats.setEnabled(props.boatsEnabled);
 
-  const invalidate = () => map?.invalidateSize({ animate: false });
+  // While the map is panned/zoomed: freeze the ferries AND drop the GPU-expensive
+  // tints (tile filter + grain/wash blend — see `.is-interacting` in food-map.css)
+  // so weak mobile GPUs stay smooth. Everything restores the moment the map settles.
+  map.on("movestart zoomstart", () => {
+    boats?.pause();
+    mapEl.value?.classList.add("is-interacting");
+  });
+  map.on("moveend zoomend", () => {
+    boats?.resume();
+    mapEl.value?.classList.remove("is-interacting");
+  });
+
+  invalidate = () => map?.invalidateSize({ animate: false });
   window.addEventListener("resize", invalidate);
 
   emit("ready", {
@@ -248,13 +271,6 @@ onMounted(async () => {
     () => props.boatsEnabled,
     (on) => boats?.setEnabled(on),
   );
-
-  onUnmounted(() => {
-    window.removeEventListener("resize", invalidate);
-    boats?.destroy();
-    map?.remove();
-    map = null;
-  });
 });
 </script>
 
