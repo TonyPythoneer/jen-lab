@@ -1,11 +1,12 @@
-name: CI
+name: 🧪 App Tests
 
 on:
   pull_request:
     paths:
       - "app/**"
       - "server/**"
-      - "shared/**"
+      - "_cloudflare/**"
+      - "schemas/**"
       - "content/**"
       - "public/**"
       - "scripts/**"
@@ -17,13 +18,15 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "tsconfig*.json"
+      - "*.d.ts"
       - ".github/workflows/**"
   push:
     branches: [main]
     paths:
       - "app/**"
       - "server/**"
-      - "shared/**"
+      - "_cloudflare/**"
+      - "schemas/**"
       - "content/**"
       - "public/**"
       - "scripts/**"
@@ -35,6 +38,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "tsconfig*.json"
+      - "*.d.ts"
       - ".github/workflows/**"
 
 jobs:
