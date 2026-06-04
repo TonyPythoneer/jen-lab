@@ -4,7 +4,6 @@ import MarkdownIt from "markdown-it";
 import linkAttrs from "markdown-it-link-attributes";
 import { readdirSync, statSync } from "node:fs";
 import { join, relative, extname } from "node:path";
-import { DEV_PORT } from "./app/config/app";
 
 // Derive the set of valid static routes from app/pages/ at config-load time.
 // Used by the content:file:afterParse hook to validate nav URLs in header.yml.
@@ -136,9 +135,6 @@ const devSettings: NuxtConfig = {
     timeline: {
       enabled: true,
     },
-  },
-  devServer: {
-    port: DEV_PORT,
   },
   vite: {
     optimizeDeps: {
