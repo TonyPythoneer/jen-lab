@@ -90,3 +90,42 @@ describe("renderReport", () => {
     expect(md).toContain("- `develop` → no deployments found");
   });
 });
+
+describe("planCleanup — production environment protection", () => {
+  function prodDep(id: string, createdOn: string, branch?: string) {
+    return {
+      id,
+      created_on: createdOn,
+      environment: "production",
+      ...(branch ? { deployment_trigger: { metadata: { branch } } } : {}),
+    };
+  }
+
+  it("keeps the newest production deployment even with no branch metadata", () => {
+    const deployments = [
+      prodDep("p1", "2026-01-01T00:00:00Z"),
+      prodDep("p2", "2026-03-01T00:00:00Z"),
+      prodDep("p3", "2026-02-01T00:00:00Z"),
+    ];
+    const { toDelete } = planCleanup(deployments, ["main", "develop"]);
+    expect([...toDelete].sort()).toEqual(["p1", "p3"]);
+  });
+
+  it("protects production by environment and develop by branch together", () => {
+    const deployments = [
+      prodDep("p1", "2026-01-01T00:00:00Z"), // old production
+      prodDep("p2", "2026-03-01T00:00:00Z"), // newest production (live main)
+      dep("d1", "develop", "2026-01-01T00:00:00Z"),
+      dep("d2", "develop", "2026-02-01T00:00:00Z"), // newest develop preview
+      dep("f1", "feat/x", "2026-02-01T00:00:00Z"), // feature preview
+    ];
+    const { toDelete } = planCleanup(deployments, ["main", "develop"]);
+    expect([...toDelete].sort()).toEqual(["d1", "f1", "p1"]);
+  });
+
+  it("does not delete a lone production deployment", () => {
+    const deployments = [prodDep("only", "2026-01-01T00:00:00Z")];
+    const { toDelete } = planCleanup(deployments, ["main", "develop"]);
+    expect(toDelete).toEqual([]);
+  });
+});
