@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import type { EnrichedRestaurant } from "~/composables/useRestaurants";
-import type { Category } from "~/assets/data/pages/restaurants";
-import { CATEGORY_EN, CATEGORY_ICON } from "~/utils/food-map-categories";
+import { CATEGORY_ICON } from "~/utils/food-map-categories";
 import { useFoodMapStore } from "~/composables/useFoodMapStore";
 
-const props = defineProps<{
-  categories: readonly Category[];
+defineProps<{
   restaurants: EnrichedRestaurant[];
   selectedRestaurant: EnrichedRestaurant | null;
 }>();
@@ -26,24 +23,6 @@ function closeToPeek() {
   store.selectRestaurant(null);
   store.closeDrawer();
 }
-
-// Districts share their labels with the top-bar chips.
-const AREA_NAME: Record<string, string> = { CBD: "市中心 · CBD", Suburbs: "城郊 · Suburbs" };
-
-// Heading mirrors the active chips: one category shows its name, several show a
-// count, an area alone shows the district, nothing shows the full atlas.
-const heading = computed(() => {
-  const ids = store.state.selectedCategoryIds;
-  if (ids.length === 1) {
-    const c = props.categories.find((x) => x.id === ids[0]);
-    if (c) return `${c.name} · ${CATEGORY_EN[c.id] ?? ""}`.trim();
-  }
-  if (ids.length > 1) return `${ids.length} 類篩選 · ${ids.length} filters`;
-  if (store.state.selectedArea)
-    return AREA_NAME[store.state.selectedArea] ?? store.state.selectedArea;
-  // No filter: the brand already sits in the peek above, so skip a redundant label.
-  return "";
-});
 </script>
 
 <template>
@@ -74,7 +53,6 @@ const heading = computed(() => {
       <template v-else>
         <div class="list-drawer__bar">
           <div class="list-drawer__heading">
-            <span class="list-drawer__heading-name">{{ heading }}</span>
             <span class="list-drawer__heading-count">{{ restaurants.length }} 間</span>
           </div>
           <button class="map-iconbtn" aria-label="關閉 · Close" @click="closeToPeek">

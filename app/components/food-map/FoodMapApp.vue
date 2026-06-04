@@ -58,7 +58,6 @@ function onStageReady(controls: typeof mapControls) {
 
     <!-- List drawer: slides down from the top bar; list ⇄ detail -->
     <FoodMapListDrawer
-      :categories="categories"
       :restaurants="visibleRestaurants"
       :selected-restaurant="selectedRestaurant"
     />

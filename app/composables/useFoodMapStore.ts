@@ -1,13 +1,16 @@
 import type { EnrichedRestaurant } from "~/composables/useRestaurants";
+import { filterRestaurants } from "~/utils/foodMapFilters";
 
 // Module-level state — all food-map components share the same reactive object.
 // Safe during SSR/prerender because: (1) all values are immutable defaults, and
 // (2) mutations only happen via user interaction, which never fires server-side.
 // If this composable is ever called outside <ClientOnly> in a new route, revisit.
+//
+// Region (`selectedArea`) and Cuisine (`selectedCategoryId`) are two single-select
+// facets that AND-combine and depend on each other (see foodMapFilters).
 const state = reactive({
   search: "",
-  // Categories stack: each chip toggles its id in/out; the list shows the union.
-  selectedCategoryIds: [] as string[],
+  selectedCategoryId: null as string | null,
   selectedArea: null as string | null,
   selectedRestaurantId: null as string | null,
   hoveredCategoryId: null as string | null,
@@ -24,16 +27,14 @@ export function useFoodMapStore() {
     state.drawerOpen = false;
   }
 
-  // Category chips stack: clicking toggles that id in or out of the set.
-  function selectCategory(id: string) {
-    const i = state.selectedCategoryIds.indexOf(id);
-    if (i === -1) state.selectedCategoryIds.push(id);
-    else state.selectedCategoryIds.splice(i, 1);
+  // Single-select: re-clicking the active cuisine clears it.
+  function selectCategory(id: string | null) {
+    state.selectedCategoryId = id === null || state.selectedCategoryId === id ? null : id;
     state.drawerOpen = true;
   }
 
   function selectArea(area: string | null) {
-    state.selectedArea = state.selectedArea === area ? null : area;
+    state.selectedArea = area === null || state.selectedArea === area ? null : area;
     state.drawerOpen = true;
   }
 
@@ -53,7 +54,7 @@ export function useFoodMapStore() {
 
   function reset() {
     state.search = "";
-    state.selectedCategoryIds = [];
+    state.selectedCategoryId = null;
     state.selectedArea = null;
     state.selectedRestaurantId = null;
     state.hoveredCategoryId = null;
@@ -61,10 +62,10 @@ export function useFoodMapStore() {
   }
 
   function getVisibleList(all: EnrichedRestaurant[]) {
-    let list = all;
-    if (state.selectedCategoryIds.length)
-      list = list.filter((r) => state.selectedCategoryIds.includes(r.categoryId));
-    if (state.selectedArea) list = list.filter((r) => r.area === state.selectedArea);
+    let list = filterRestaurants(all, {
+      region: state.selectedArea,
+      cuisine: state.selectedCategoryId,
+    });
     const q = state.search.trim().toLowerCase();
     if (q)
       list = list.filter(

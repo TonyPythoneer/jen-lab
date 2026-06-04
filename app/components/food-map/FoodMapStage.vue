@@ -189,12 +189,24 @@ onMounted(async () => {
     () => props.restaurants,
     (list) => {
       buildMarkers(list);
-      if (list.length > 0 && list.length < 100) {
-        const grp = L!.featureGroup(Object.values(markers));
-        try {
-          map?.fitBounds(grp.getBounds().pad(0.25), { animate: true, maxZoom: 16 });
-        } catch {}
-      }
+      if (list.length === 0 || list.length >= 100 || !map || !L) return;
+      const bounds = L.featureGroup(Object.values(markers)).getBounds();
+      try {
+        if (window.innerWidth <= 640) {
+          // The list sheet covers the lower 62dvh on mobile, and the search +
+          // filter chips float over the top. Reserve both so the whole group is
+          // framed in the open band, not crammed under the sheet.
+          const h = map.getSize().y;
+          map.fitBounds(bounds, {
+            animate: true,
+            maxZoom: 16,
+            paddingTopLeft: [24, 125],
+            paddingBottomRight: [24, Math.round(h * 0.62)],
+          });
+        } else {
+          map.fitBounds(bounds.pad(0.25), { animate: true, maxZoom: 16 });
+        }
+      } catch {}
     },
   );
 
