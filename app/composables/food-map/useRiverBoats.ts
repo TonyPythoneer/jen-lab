@@ -32,7 +32,7 @@
 // =============================================================================
 
 import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
-import { FERRY_ROUTES } from "~/utils/food-map/ferry-routes";
+import { FERRY_ROUTES } from "~/utils/food-map/ferryRoutes";
 import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 export interface RiverBoatsController {

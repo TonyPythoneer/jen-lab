@@ -42,13 +42,13 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Four routes: `/` (landing), `/about`, `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map).
+Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes: `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in the `routeRules` prerender list.
 
 **Non-obvious constraints:**
 
 - `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
 - `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
-- Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapStage.vue`).
+- Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapApp.vue`, which wraps the `FoodMapCanvas` map stage).
 - `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
 - Light mode only — dark mode disabled in `app.config.ts`.
 
@@ -69,15 +69,14 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 
 **Directory = route domain.** Each subdirectory maps to the route it serves. Nuxt auto-import uses the directory as the component prefix.
 
-| Directory   | Serves                                |
-| ----------- | ------------------------------------- |
-| `site/`     | All pages (global layout)             |
-| `home/`     | `/`                                   |
-| `blog/`     | `/blogs`, `/blogs/[slug]`             |
-| `food-map/` | `/sydney-food-map`                    |
-| `profile/`  | `/about`                              |
-| `shared/`   | Cross-domain reusable primitives      |
-| `fx/`       | Visual effects consumed by components |
+| Directory   | Serves                           |
+| ----------- | -------------------------------- |
+| `site/`     | All pages (global layout)        |
+| `home/`     | `/`                              |
+| `blog/`     | `/blogs`, `/blogs/[slug]`        |
+| `food-map/` | `/sydney-food-map`               |
+| `profile/`  | `/jen-knows`, `/jen-liu`         |
+| `shared/`   | Cross-domain reusable primitives |
 
 **`Section` prefix = page consumes it directly.** A `Section*` component is a full-width block rendered inside `pages/`. No prefix = sub-component consumed by another component, not a page.
 
@@ -105,10 +104,11 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 ## Code Style
 
 - 2-space indent for Vue and TypeScript. Configured in `.zed/settings.json` for the Zed IDE.
+- File naming under `app/`: TS modules are **camelCase** — composables (`useRiverBoats.ts`) and plain utils (`geoSimplify.ts`, `foodMapFilters.ts`) alike. Vue components stay PascalCase (`FoodMapCanvas.vue`). A test mirrors its source name (`geoSimplify.ts` → `geoSimplify.test.ts`). No kebab-case for `.ts` modules.
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
 - No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<UButton color="neutral">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
 - Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
-- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Profile.vue`.
+- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Page.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
 
 ## Design System Quick Reference

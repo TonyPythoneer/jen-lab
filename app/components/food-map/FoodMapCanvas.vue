@@ -4,7 +4,7 @@ import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import type { MapTheme } from "~/composables/food-map/useFoodMapTheme";
 import { createRiverBoats, type RiverBoatsController } from "~/composables/food-map/useRiverBoats";
 import { createPinCanvas, type PinCanvasController } from "~/composables/food-map/usePinCanvas";
-import { simplifyFeatureCollection } from "~/utils/food-map/geo-simplify";
+import { simplifyFeatureCollection } from "~/utils/food-map/geoSimplify";
 
 // Dev tile-resolution toggle: @2x retina vs @1x. (Phones force @1x regardless.)
 export type TileMode = "raster2x" | "raster1x";

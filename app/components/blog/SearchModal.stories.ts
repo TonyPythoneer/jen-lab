@@ -38,7 +38,7 @@ export const Default: Story = {
       return { args, useBlogSearch, useBlogTaxonomies };
     },
     template: `
-      <div class="min-h-screen bg-gray-50">
+      <div class="min-h-screen bg-ash-white">
         <SearchModal v-bind="args" />
       </div>
     `,

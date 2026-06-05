@@ -1,6 +1,14 @@
 <script setup lang="ts">
 definePageMeta({ layout: false });
 
+// Internal styleguide — dev only, never shipped. It is deliberately left out of
+// the routeRules prerender list, so a static production build never emits it. The
+// guard makes that intent explicit: if the route is somehow reached in prod
+// (client-side nav), treat it as not found.
+if (!import.meta.dev) {
+  throw createError({ statusCode: 404, statusMessage: "Not Found" });
+}
+
 useSeoMeta({
   title: "Styleguide — Jen Lab",
   description:
