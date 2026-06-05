@@ -8,7 +8,7 @@
 
 import type { Map as LeafletMap } from "leaflet";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
-import { CATEGORY_ICON } from "~/utils/food-map/food-map-categories";
+import { CATEGORY_ICON } from "~/utils/food-map/foodMapCategories";
 import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 type LeafletNS = typeof import("leaflet");

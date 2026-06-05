@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
-import { CATEGORY_ICON } from "~/utils/food-map/food-map-categories";
+import { CATEGORY_ICON } from "~/utils/food-map/foodMapCategories";
 import { useFoodMapStore } from "~/composables/food-map/useFoodMapStore";
 
 defineProps<{

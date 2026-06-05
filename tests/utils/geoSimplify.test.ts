@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { simplifyRing, simplifyFeatureCollection } from "~/utils/food-map/geo-simplify";
+import { simplifyRing, simplifyFeatureCollection } from "~/utils/food-map/geoSimplify";
 
 type Position = [number, number];
 
