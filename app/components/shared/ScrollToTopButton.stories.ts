@@ -21,7 +21,7 @@ export const Default: Story = {
       return { args, isScrolled };
     },
     template: `
-      <div class="min-h-[200vh] bg-gray-50 p-8">
+      <div class="min-h-[200vh] bg-ash-white p-8">
         <div class="max-w-2xl mx-auto space-y-4">
           <h1 class="text-3xl font-bold">Scroll down to see the button</h1>
           <p class="text-gray-600">The button appears after scrolling {{ args.threshold }}px down the page.</p>
@@ -43,7 +43,7 @@ export const CustomThreshold: Story = {
     components: { ScrollToTopButton },
     setup: () => ({ args }),
     template: `
-      <div class="min-h-[200vh] bg-gray-50 p-8">
+      <div class="min-h-[200vh] bg-ash-white p-8">
         <div class="max-w-2xl mx-auto space-y-4">
           <h1 class="text-3xl font-bold">Custom Threshold (500px)</h1>
           <div v-for="i in 30" :key="i" class="p-4 bg-white rounded border">
