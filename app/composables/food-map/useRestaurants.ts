@@ -1,4 +1,4 @@
-import type { categories, restaurants } from "~/assets/data/pages/restaurants";
+import type { categories, restaurants } from "~/assets/data/restaurants";
 
 type Category = (typeof categories)[number];
 type Restaurant = (typeof restaurants)[number];
@@ -14,7 +14,7 @@ export type EnrichedRestaurant = Restaurant & {
 // chunk rather than folding it into the route chunk. Do NOT replace with a
 // static top-level import.
 async function loadData() {
-  const { categories, restaurants } = await import("~/assets/data/pages/restaurants");
+  const { categories, restaurants } = await import("~/assets/data/restaurants");
 
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const enrichedRestaurants: EnrichedRestaurant[] = restaurants.map((r) => {
@@ -27,7 +27,7 @@ async function loadData() {
 }
 
 export function useRestaurants() {
-  const { status, data } = useLazyAsyncData("~/assets/data/pages/restaurants", loadData);
+  const { status, data } = useLazyAsyncData("~/assets/data/restaurants", loadData);
 
   // Filters — each independently nullable, all AND-combined.
   const selectedArea = ref<RestaurantArea | null>(null);
