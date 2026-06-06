@@ -9,6 +9,8 @@ interface AsyncDataOptions<T> {
   default?: () => T;
   transform?: (input: unknown) => T;
   server?: boolean;
+  getCachedData?: () => T | null | undefined;
+  watch?: unknown[];
 }
 
 export interface AsyncData<T> {
@@ -53,6 +55,14 @@ function create<T>(
 
   // Skip on server when caller opted out of SSR execution.
   if (import.meta.env.SSR && options.server === false) {
+    return { data, pending, error, status, refresh: execute, execute };
+  }
+
+  // Custom cache lookup (e.g. per-page result cache in blog list).
+  const customCached = options.getCachedData?.();
+  if (customCached !== null && customCached !== undefined) {
+    data.value = customCached;
+    status.value = "success";
     return { data, pending, error, status, refresh: execute, execute };
   }
 
