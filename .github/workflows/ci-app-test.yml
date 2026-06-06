@@ -1,9 +1,6 @@
 name: 🧪 App Tests
 
-# Migration status (2026-06): this pipeline targets the current Nuxt 4 stack.
-# When the Nuxt 4 → Vue 3 + Vite migration lands (tracking: issue #57), the path
-# filters (e.g. nuxt.config.ts → vite.config.ts + velite.config.ts) and the
-# build/check commands here must be updated to the Vite+ toolchain.
+# Stack (2026-06): Vue 3 + Vite (vite-plus, vite-ssg, Velite). Nuxt removed.
 
 on:
   pull_request:
@@ -16,9 +13,8 @@ on:
       - "public/**"
       - "scripts/**"
       - "tests/**"
-      - "nuxt.config.ts"
-      - "content.config.ts"
       - "vite.config.ts"
+      - "velite.config.ts"
       - "wrangler.jsonc"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -36,9 +32,8 @@ on:
       - "public/**"
       - "scripts/**"
       - "tests/**"
-      - "nuxt.config.ts"
-      - "content.config.ts"
       - "vite.config.ts"
+      - "velite.config.ts"
       - "wrangler.jsonc"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -63,6 +58,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm typecheck
+      - run: pnpm check
 
       - run: pnpm test

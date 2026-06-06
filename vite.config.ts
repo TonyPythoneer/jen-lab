@@ -1,10 +1,11 @@
-import { defineConfig } from "vite-plus";
+import { defineConfig, type PluginOption } from "vite-plus";
 import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
-import VueRouter from "unplugin-vue-router/vite";
+import VueRouter from "vue-router/vite";
 import Layouts from "vite-plugin-vue-layouts-next";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
+import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -37,38 +38,41 @@ const homeComponents: Record<string, string> = {
   HomeSectionSupport: "sections/SectionSupport",
 };
 
+const plugins: PluginOption[] = [
+  tailwindcss(),
+  VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
+  vue(),
+  Layouts({ layoutsDirs: "app/layouts", defaultLayout: "default" }),
+  AutoImport({
+    imports: [
+      "vue",
+      "vue-router",
+      "@vueuse/core",
+      { "@unhead/vue": ["useHead", "useSeoMeta", "useHeadSafe"] },
+    ],
+    dirs: ["app/composables/**"],
+    dts: "auto-imports.d.ts",
+  }),
+  Components({
+    dirs: ["app/components"],
+    directoryAsNamespace: true,
+    collapseSamePrefixes: true,
+    dts: "components.d.ts",
+    resolvers: [
+      {
+        type: "component",
+        resolve: (name: string) =>
+          name in homeComponents
+            ? { from: path.resolve(ROOT, `app/components/home/${homeComponents[name]}.vue`) }
+            : undefined,
+      },
+    ],
+  }),
+  Inspect(),
+];
+
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
-    vue(),
-    Layouts({ layoutsDirs: "app/layouts", defaultLayout: "default" }),
-    AutoImport({
-      imports: [
-        "vue",
-        "vue-router",
-        "@vueuse/core",
-        { "@unhead/vue": ["useHead", "useSeoMeta", "useHeadSafe"] },
-      ],
-      dirs: ["app/composables/**"],
-      dts: "auto-imports.d.ts",
-    }),
-    Components({
-      dirs: ["app/components"],
-      directoryAsNamespace: true,
-      collapseSamePrefixes: true,
-      dts: "components.d.ts",
-      resolvers: [
-        {
-          type: "component",
-          resolve: (name: string) =>
-            name in homeComponents
-              ? { from: path.resolve(ROOT, `app/components/home/${homeComponents[name]}.vue`) }
-              : undefined,
-        },
-      ],
-    }),
-  ],
+  plugins,
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./app", import.meta.url)),
