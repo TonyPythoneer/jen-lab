@@ -1,0 +1,45 @@
+name: 📦 Bundle Size
+
+# Builds the site and posts each page's initial download weight to the run
+# summary, so a reviewer sees the per-page cost of a change on the PR.
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - "content/**"
+      - "scripts/build-icon-subset.ts"
+      - "scripts/bundle-report.ts"
+      - "vite.config.ts"
+      - "velite.config.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/ci-bundle-size.yml"
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.0.3
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - name: Per-page bundle report
+        run: |
+          {
+            echo '## 📦 Per-page initial load (gzipped)'
+            echo '```'
+            pnpm exec jiti scripts/bundle-report.ts
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

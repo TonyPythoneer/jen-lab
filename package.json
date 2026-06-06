@@ -3,8 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "velite build && vite-ssg build",
-    "dev:watch": "velite --watch & vp dev --host 0.0.0.0 --port ${DEV_PORT:-3500}",
+    "build": "pnpm gen:icons && velite build && vite-ssg build",
+    "dev:watch": "pnpm gen:icons && (velite --watch & vp dev --host 0.0.0.0 --port ${DEV_PORT:-3500})",
+    "gen:icons": "jiti scripts/build-icon-subset.ts",
+    "bundle:report": "jiti scripts/bundle-report.ts",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
     "check": "vp check",
