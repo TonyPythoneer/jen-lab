@@ -108,7 +108,7 @@ const MAX_JOIN_GAP_M = 300;
 // gap. Returns one polyline per connected component.
 function stitchComponents(segsIn: LatLng[][]): LatLng[][] {
   const segs = segsIn.filter((s) => s.length >= 2);
-  const used = Array.from({ length: segs.length }, () => false);
+  const used = new Array<boolean>(segs.length).fill(false);
   const components: LatLng[][] = [];
 
   for (let seed = 0; seed < segs.length; seed++) {
