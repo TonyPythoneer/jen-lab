@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
-const b = await chromium.launch({ args: ["--use-gl=angle", "--use-angle=swiftshader", "--ignore-gpu-blocklist"] });
+const b = await chromium.launch({
+  args: ["--use-gl=angle", "--use-angle=swiftshader", "--ignore-gpu-blocklist"],
+});
 const p = await b.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 });
 await p.goto("http://localhost:3500/sydney-food-map", { waitUntil: "networkidle", timeout: 60000 });
 await p.waitForFunction(() => !!window.__foodMapDebug, null, { timeout: 30000 });

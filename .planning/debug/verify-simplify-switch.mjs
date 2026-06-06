@@ -5,12 +5,22 @@ await p.goto("http://localhost:3500/sydney-food-map", { waitUntil: "networkidle"
 await p.waitForFunction(() => !!window.__foodMapDebug, null, { timeout: 30000 });
 await p.waitForTimeout(2500);
 // Count total boundary vertices currently on the map.
-const countPts = () => p.evaluate(() => {
-  const m = window.__foodMapDebug.map; let pts = 0;
-  const walk = (a) => { if (Array.isArray(a)) { if (a.length && a[0] && a[0].lat != null) {} a.forEach(walk); } else if (a && a.lat != null) pts++; };
-  m.eachLayer((l) => { if (l.feature && l.getLatLngs) walk(l.getLatLngs()); });
-  return pts;
-});
+const countPts = () =>
+  p.evaluate(() => {
+    const m = window.__foodMapDebug.map;
+    let pts = 0;
+    const walk = (a) => {
+      if (Array.isArray(a)) {
+        if (a.length && a[0] && a[0].lat != null) {
+        }
+        a.forEach(walk);
+      } else if (a && a.lat != null) pts++;
+    };
+    m.eachLayer((l) => {
+      if (l.feature && l.getLatLngs) walk(l.getLatLngs());
+    });
+    return pts;
+  });
 const simplified = await countPts();
 await p.click(".theme-menu__trigger");
 await p.waitForTimeout(400);

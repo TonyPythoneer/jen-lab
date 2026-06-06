@@ -13,6 +13,7 @@
 ### Task 1: Fix `app/layouts/default.vue`
 
 **Files:**
+
 - Modify: `app/layouts/default.vue`
 
 - [ ] **Step 1: Replace `<slot />` with `<RouterView />`**
@@ -20,13 +21,13 @@
 Open `app/layouts/default.vue`. Change line 6 from:
 
 ```html
-      <slot />
+<slot />
 ```
 
 to:
 
 ```html
-      <RouterView />
+<RouterView />
 ```
 
 `RouterView` is globally registered by `app.use(router)` — no import needed.
@@ -44,9 +45,7 @@ const { data: chrome } = await useAsyncData("site:blogs", () =>
 to:
 
 ```typescript
-const { data: chrome } = useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 ```
 
 The `useAsyncData` shim returns a plain object (not a Promise). Removing `await` prevents the component from being unnecessarily treated as an async component.

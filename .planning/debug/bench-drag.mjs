@@ -112,9 +112,10 @@ async function dragStats(page) {
 
 // NOGPU=1 forces software compositing so pan/raster cost lands on the throttled
 // CPU — this is what lets a desktop reproduce a weak phone's pan-compositor jank.
-const launchArgs = process.env.NOGPU === "1"
-  ? ["--disable-gpu", "--disable-gpu-compositing", "--disable-software-rasterizer"]
-  : [];
+const launchArgs =
+  process.env.NOGPU === "1"
+    ? ["--disable-gpu", "--disable-gpu-compositing", "--disable-software-rasterizer"]
+    : [];
 const browser = await chromium.launch({ headless: !HEADED, args: launchArgs });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 const client = await page.context().newCDPSession(page);

@@ -100,10 +100,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Collections } from "@nuxt/content";
+import type { home } from "../../generated/velite/index.js";
 
 const props = defineProps<{
-  page: Collections["home"];
+  page: home;
   displayName: string;
   brand: "jen-liu" | "jen-knows";
 }>();

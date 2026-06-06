@@ -8,11 +8,15 @@ await p.waitForFunction(() => !!window.__foodMapDebug, null, { timeout: 30000 })
 await p.waitForTimeout(2500);
 
 // Zoom out a touch so many suburb outlines are in frame.
-await p.evaluate(() => { window.__foodMapDebug.map.setZoom(13, { animate: false }); });
+await p.evaluate(() => {
+  window.__foodMapDebug.map.setZoom(13, { animate: false });
+});
 await p.waitForTimeout(1200);
 await p.screenshot({ path: ".planning/debug/boundary-z13.png" });
 
-await p.evaluate(() => { window.__foodMapDebug.map.setZoom(15, { animate: false }); });
+await p.evaluate(() => {
+  window.__foodMapDebug.map.setZoom(15, { animate: false });
+});
 await p.waitForTimeout(1200);
 await p.screenshot({ path: ".planning/debug/boundary-z15.png" });
 

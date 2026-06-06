@@ -41,7 +41,7 @@ updated: 2026-06-04
   exact moment the main thread is busiest (touchmove → move the map pane), the
   boats are doing their most expensive work.
 - timestamp: 2026-06-04 — Boats default ON: `FoodMapApp.vue` `boatsEnabled =
-  ref(true)`. So the user hits this without toggling anything.
+ref(true)`. So the user hits this without toggling anything.
 - timestamp: 2026-06-04 — Aggravators in `food-map.css`:
   - `.river-boat` has `will-change: transform, opacity` (line 947) → up to 32
     permanent GPU layers; a layer-count footgun on a weak GPU.

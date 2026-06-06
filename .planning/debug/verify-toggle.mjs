@@ -4,11 +4,15 @@ const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
 await p.goto("http://localhost:3500/sydney-food-map", { waitUntil: "networkidle", timeout: 60000 });
 await p.waitForFunction(() => !!window.__foodMapDebug, null, { timeout: 30000 });
 await p.waitForTimeout(2500);
-const countBoundary = () => p.evaluate(() => {
-  const m = window.__foodMapDebug.map; let n = 0;
-  m.eachLayer((l) => { if (l.feature && l.getLatLngs) n++; });
-  return n;
-});
+const countBoundary = () =>
+  p.evaluate(() => {
+    const m = window.__foodMapDebug.map;
+    let n = 0;
+    m.eachLayer((l) => {
+      if (l.feature && l.getLatLngs) n++;
+    });
+    return n;
+  });
 const before = await countBoundary();
 await p.click(".theme-menu__trigger");
 await p.waitForTimeout(400);

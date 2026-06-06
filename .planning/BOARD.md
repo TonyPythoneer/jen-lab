@@ -18,6 +18,7 @@
 **已鎖 12 個決定:** emoji 彩色 / 無陰影無動畫無過渡 / 羊皮紙全砍(主題塌成 voyager+osm) / 船搬 canvas / 手機@1x桌機@2x / 標籤依視窗過濾 / maxBounds 動態算到手機 room 置中 / 桌機留 hover+tooltip / DPR 上限 1.5 / 點擊選最近+選中畫最上不做 cluster / 邊界用原始 jsdelivr / 清掉 maplibre+GL。
 
 **進度(GSD 自主):**
+
 - [x] P0 清理:maplibre/GL 移除、羊皮紙移除、主題縮減、手機 @1x
 - [x] P1 canvas 圖層基礎
 - [x] P2 pin 上 canvas + emoji bitmap 快取
@@ -31,6 +32,7 @@
 **核心成果:餐廳 pin(77)+ 船(32)+ suburb 標籤 從「每個一個 DOM 合成層」→ 全部畫到 2 張 canvas。** 弱機 GPU 平移要合成的層從 ~109 變 2 —— 直接打中你實測的根因(fancy pin 太多層)。
 
 **做了什麼(12 個決定全到位):**
+
 - 新檔 `useCanvasLayer.ts`(通用 canvas 圖層,DPR≤1.5、平移免重畫、zoom 動畫跟著縮放)+ `usePinCanvas.ts`(白圓+彩色 emoji bitmap 快取、選中/群組/淡化、命中測試)。
 - `useRiverBoats.ts`:船 DOM→canvas Path2D(模擬邏輯不動,只換畫法)。
 - pin 互動:點擊選最近、桌機 hover 高亮+店名 tooltip、選中畫最上;無陰影/過渡/跳動。
@@ -44,6 +46,7 @@
 **視覺取捨:** pin 形狀 水滴→圓形(canvas 最乾淨/命中最準),emoji 彩色(墨色濾鏡沒了)。不喜歡可改。
 
 ### 📱 實機測 **http://10.220.2.178:3700/sydney-food-map/**(prod,已重建)
+
 _改 6 檔 + 新增 2 檔。計畫 `.planning/plans/food-map-canvas-markers.md`。_
 
 ---
@@ -61,6 +64,7 @@ _改 6 檔 + 新增 2 檔。計畫 `.planning/plans/food-map-canvas-markers.md`�
 **為什麼 drag 桌機測不出差異:** Leaflet 拖曳只對 pane 下 transform、不重投影向量,所以向量數量不影響每幀主執行緒;重投影只在 zoom 發生。弱機拖曳卡是 GPU 合成那塊巨大 SVG,桌機 GPU 太強重現不了——但 zoom 指標精準隔離出「最重的那層」。
 
 **修法(3 招,全部驗過):**
+
 1. `preferCanvas: true`(FoodMapStage)— 所有向量層改用單一 canvas bitmap 而非龐大 SVG DOM,pan 只合成一張貼圖(真正解拖曳的招,桌機量不到)。船/餐廳 pin 是 divIcon(DOM)不受影響;虛線航線、circleMarker 在 canvas 正常。
 2. 邊界下載後即時 Douglas-Peucker 簡化(`app/utils/geo-simplify.ts`,ε=0.0005≈45m)→ **174k 降到 10.3k 點(17x)**,一次性成本只 9.4ms。
 3. 拖曳時關掉餐廳 pin 的 5-stage glyph filter(food-map.css)— 免費省 paint。
@@ -68,6 +72,7 @@ _改 6 檔 + 新增 2 檔。計畫 `.planning/plans/food-map-canvas-markers.md`�
 **驗證:** zoomMs **352 → 74(4.8x,逼近 52ms 地板)**;視覺截圖 z13/z15 邊界外框+標籤仍貼合海岸線、無鋸齒(17x 簡化對 0.5 透明細線無損);dev toggle UI 端到端驗過(471→關→0→開→471);`pnpm check` 0 errors;`pnpm test` 52/52(geo-simplify 新增 8 個)。**Motorola G05 實機手感要你親自確認**(桌機重現不了弱機 GPU 合成成本)。
 
 **順手交付你要的東西:** 地圖樣式選單 dev-only 多了「Dev · Layer profiler」開關 + 船隻開關,`import.meta.dev` gate,prod 不出現 → **你可以在手機上自己逐層開關感受成本**:
+
 - 行政區邊界(顯示/隱藏)
 - **邊界簡化(開=簡化 10k 點;關=原始 jsdelivr CDN 174k 點)← 你要的比較開關**,切換會用快取的原始資料即時重建圖層,可反覆切。端到端驗過:10,321 ⇄ 173,858 ⇄ 10,321(無洩漏)
 - 航線 / 碼頭點(顯示/隱藏)
@@ -78,6 +83,7 @@ _改 6 檔 + 新增 2 檔。計畫 `.planning/plans/food-map-canvas-markers.md`�
 ### ⚠️ 需要你拍板的一個決定
 
 **要不要升級成「本地預簡化邊界檔 + 移除 jsdelivr CDN fetch」?**
+
 - 現況(已修):保留 CDN fetch,前端即時簡化。即時簡化成本只 9.4ms,可忽略。
 - 升級的好處:省掉手機上**下載完整 174k 點檔案 + JSON.parse** 的載入成本、移除第三方 CDN 執行期依賴(可靠性)。
 - 代價:要 commit 一個簡化後的資產檔、保留 CC-BY 來源標註——較大改動,涉及授權,所以留給你決定。
@@ -122,6 +128,24 @@ _你丟，我接。還沒分類的想法都先放這。_
 ---
 
 ## 🔨 進行中（Doing）
+
+### Nuxt 遺留清理 + 套件更新（branch: refactor/migrate）
+
+**目標:** 移除所有 Nuxt runtime 遺留，讓 package.json 只剩真正需要的套件。
+
+**Opus 顧問建議:** 保留 vite-ssg（替換風險高、收益低）。`unplugin-vue-router` 仍必要（Vue Router 5.1 沒有內建 file routing）。
+
+**執行清單:**
+
+- [ ] 替換 tsconfig.json（移除 .nuxt/ 參照，改成 Vite/Vue standalone tsconfig）
+- [ ] 更新 tsconfig.test.json / tsconfig.scripts.json（不再 extends .nuxt/）
+- [ ] 修正 profile/Page.vue 的 @nuxt/content 型別 import → Velite 型別
+- [ ] 刪除 nuxt.config.ts, content.config.ts（Nuxt 遺留設定檔）
+- [ ] 更新 package.json scripts（移除 nuxt dev/build/prepare）
+- [ ] 移除套件: nuxt, @nuxt/content, @nuxtjs/color-mode, @nuxtjs/mdc, @vueuse/nuxt, @nuxt/fonts, nitro-cloudflare-dev
+- [ ] 移 @nuxt/ui 到 devDependencies（Storybook 用）
+- [ ] 升級 vue-router 5.0.4 → 5.1.0
+- [ ] pnpm check + pnpm test + pnpm ssg:build 全綠 → commit
 
 _（worktree branch 已 rebase 到最新 develop + 把我這回合的 17 個 commit squash 成 2 個。等 Tony review / 開 PR。）_
 
