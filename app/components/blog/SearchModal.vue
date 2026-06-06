@@ -1,5 +1,5 @@
 <template>
-  <USlideover
+  <AppSlideover
     v-model:open="open"
     side="top"
     :overlay="true"
@@ -25,11 +25,11 @@
               aria-label="搜尋"
               @click="submit"
             >
-              <UIcon name="i-lucide-search" class="size-6" />
+              <AppIcon name="i-lucide-search" class="size-6" />
             </button>
             <div class="absolute inset-x-0 bottom-0 h-px bg-abyssal-ink" />
           </div>
-          <UButton
+          <AppButton
             color="neutral"
             variant="ghost"
             icon="i-lucide-x"
@@ -50,7 +50,7 @@
         </div>
       </div>
     </template>
-  </USlideover>
+  </AppSlideover>
 </template>
 
 <script setup lang="ts">
@@ -97,8 +97,10 @@ watch(open, async (isOpen) => {
   searchInput.value?.focus();
 });
 
+const router = useRouter();
+
 async function submit() {
-  await navigateTo(
+  await router.push(
     buildBlogSearchRoute({
       q: q.value,
       categoryIds: selectedCategoryIds.value,

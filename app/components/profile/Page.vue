@@ -34,7 +34,7 @@
         </p>
         <!-- Multiple tabs: UTabs navigation + reactive bio below -->
         <template v-else>
-          <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
+          <AppTabs v-model="activeTab" :items="tabItems" class="w-full" />
           <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
             {{ activeBio }}
           </p>

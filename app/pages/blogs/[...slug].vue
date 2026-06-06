@@ -2,19 +2,19 @@
   <SitePageContainer>
     <!-- First section: back-nav + post header together fill the viewport -->
     <div class="min-h-[var(--first-section-h)] flex flex-col justify-center gap-6">
-      <NuxtLink
+      <RouterLink
         :to="{ path: '/blogs', query: lastQuery }"
         class="inline-flex items-center gap-1 text-sm text-abyssal-ink/50 hover:text-digital-orange transition-colors"
       >
-        <UIcon name="i-lucide-arrow-left" class="size-4" />
+        <AppIcon name="i-lucide-arrow-left" class="size-4" />
         {{ chrome?.detailPage.backLink }}
-      </NuxtLink>
+      </RouterLink>
 
       <div v-if="pending || error || !post" class="text-center py-20 text-abyssal-ink/50">
         {{ pending ? chrome?.detailPage.loadingMessage : chrome?.detailPage.notFoundMessage }}
       </div>
 
-      <UPageHeader
+      <AppPageHeader
         v-else
         :title="meta.title"
         :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
@@ -26,7 +26,7 @@
             {{ formatDate(post.date) }}
           </span>
         </template>
-      </UPageHeader>
+      </AppPageHeader>
     </div>
 
     <!-- Featured image + post content (below the fold) -->

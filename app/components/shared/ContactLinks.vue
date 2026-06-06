@@ -7,7 +7,7 @@
     v-bind="contact.url.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener' }"
     :class="[linkClass, contact.hoverClass, 'transition-colors']"
   >
-    <UIcon :name="contact.icon" :class="iconClass" />
+    <AppIcon :name="contact.icon" :class="iconClass" />
   </a>
 </template>
 

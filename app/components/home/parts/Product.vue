@@ -22,7 +22,7 @@
       class="absolute right-3 top-3 z-20 grid size-9 place-items-center rounded-full bg-pure-white/80 text-abyssal-ink shadow-sm backdrop-blur-sm transition-colors hover:bg-pure-white"
       @click="open = !open"
     >
-      <UIcon :name="open ? 'i-lucide-x' : 'i-lucide-info'" class="size-5" />
+      <AppIcon :name="open ? 'i-lucide-x' : 'i-lucide-info'" class="size-5" />
     </button>
 
     <!-- Buy: sits directly below the info button; opens the buy interstitial. -->
@@ -32,7 +32,7 @@
       class="absolute right-3 top-14 z-20 grid size-9 place-items-center rounded-full bg-digital-orange text-pure-white shadow-sm transition-colors hover:bg-[#e34800]"
       @click="buyOpen = true"
     >
-      <UIcon name="i-streamline-freehand:e-commerce-click-buy" class="size-5" />
+      <AppIcon name="i-streamline-freehand:e-commerce-click-buy" class="size-5" />
     </button>
 
     <!-- Info drawer: slides in left-to-right over the whole card; scrolls to read. -->

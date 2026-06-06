@@ -5,7 +5,7 @@
       class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-abyssal-ink text-pure-white shadow-md flex items-center justify-center hover:bg-abyssal-ink/90 transition-colors"
       @click="scrollToTop"
     >
-      <UIcon name="i-lucide-chevron-up" class="w-7 h-7" />
+      <AppIcon name="i-lucide-chevron-up" class="w-7 h-7" />
     </button>
   </Transition>
 </template>

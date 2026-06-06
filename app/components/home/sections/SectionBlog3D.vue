@@ -37,7 +37,7 @@
                   ×
                 </button>
                 <img :src="item.url" :alt="item.alt" loading="lazy" />
-                <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">{{ ctaLabel }}</NuxtLink>
+                <RouterLink class="card-cta" :to="`/blogs/${item.id}`">{{ ctaLabel }}</RouterLink>
               </figure>
             </article>
           </section>
