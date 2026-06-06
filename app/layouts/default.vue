@@ -3,7 +3,7 @@
     <SiteHeader />
 
     <div class="flex-1 pt-[var(--site-header-h)] pb-[var(--section-gap)]">
-      <slot />
+      <RouterView />
     </div>
 
     <SiteFooter />
@@ -20,7 +20,5 @@
 // The search modal lives in the global layout, so its wording is fetched here
 // from content/site/blogs.yml. Shares the "site:blogs" fetch with the blog
 // pages (same key, so Nuxt runs it once).
-const { data: chrome } = await useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 </script>
