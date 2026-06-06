@@ -13,6 +13,8 @@
     "test:watch": "vp test",
     "generate": "nuxt generate",
     "preview": "npm run build && wrangler pages dev",
+    "ssg:build": "velite build && vite-ssg build",
+    "ssg:preview": "npm run ssg:build && npx serve dist",
     "postinstall": "nuxt prepare",
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types",

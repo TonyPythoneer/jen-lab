@@ -69,7 +69,7 @@ const props = withDefaults(
   },
 );
 
-const { data: postsPage } = await useLazyAsyncData("blog3dv2-posts", () =>
+const { data: postsPage } = useLazyAsyncData("blog3dv2-posts", () =>
   fetchPosts({ perPage: props.postCount }),
 );
 

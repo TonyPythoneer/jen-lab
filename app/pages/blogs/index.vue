@@ -27,8 +27,7 @@
           :key="post.id"
           :post="post"
           :to="{
-            name: 'blogs-slug',
-            params: { slug: [String(post.id)] },
+            path: `/blogs/${post.id}`,
             query: { title: post.slug },
           }"
           :tag-map="tagMap"
@@ -85,9 +84,7 @@ const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = await useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 useSeoMeta({
   title: () => chrome.value?.listPage.seoTitle,
   description: () => chrome.value?.listPage.seoDescription,

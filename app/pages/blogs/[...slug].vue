@@ -52,12 +52,12 @@ const route = useRoute();
 const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = await useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
-const postId = Number(route.params.slug?.[0]);
+// slug is a string in unplugin-vue-router (Nuxt returned an array; plain Vue Router does not)
+const rawSlug = route.params.slug;
+const postId = Number(Array.isArray(rawSlug) ? rawSlug[0] : rawSlug);
 const validId = Number.isInteger(postId) && postId > 0;
 
 // Lazy (not useAsyncData): non-blocking, paints the shell + loading state first.

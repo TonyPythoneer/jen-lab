@@ -72,7 +72,23 @@ function create<T>(
   } else if (options.immediate !== false) {
     const raw = handler();
     if (raw instanceof Promise) {
-      execute(); // async (WordPress) — resolves on the client
+      // Async handler (e.g. WordPress fetch): drive through execute so status
+      // transitions to pending → success/error and data.value is updated.
+      pending.value = true;
+      status.value = "pending";
+      raw
+        .then((v) => {
+          data.value = apply(v);
+          cache.set(key, data.value);
+          status.value = "success";
+        })
+        .catch((e) => {
+          error.value = e instanceof Error ? e : new Error(String(e));
+          status.value = "error";
+        })
+        .finally(() => {
+          pending.value = false;
+        });
     } else {
       const result = apply(raw); // sync (Velite) — set now so it prerenders
       data.value = result;
