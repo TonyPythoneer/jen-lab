@@ -52,9 +52,6 @@ analyze.client.*.json
 .superpowers
 entities.json
 
-# planning / cockpit board (local scratch, not shipped)
-.planning/
-
 # MemPalace per-project files (issue #185)
 mempalace.yaml
 .playwright-mcp

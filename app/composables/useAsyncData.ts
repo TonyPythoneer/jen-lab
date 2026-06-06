@@ -2,7 +2,7 @@
 // the same key (e.g. "site:blogs" used in the layout AND pages) runs once.
 // Sync handlers (Velite content) resolve immediately so they prerender; async
 // handlers (WordPress fetch) resolve on the client.
-import { ref, type Ref } from "vue";
+import { ref, watch, type Ref } from "vue";
 
 interface AsyncDataOptions<T> {
   immediate?: boolean;
@@ -95,6 +95,19 @@ function create<T>(
       cache.set(key, result);
       status.value = "success";
     }
+  }
+
+  // Re-fetch when any watched source changes (mirrors Nuxt's watch option).
+  if (!import.meta.env.SSR && options.watch?.length) {
+    watch(options.watch as Parameters<typeof watch>[0], () => {
+      const cached = options.getCachedData?.();
+      if (cached !== null && cached !== undefined) {
+        data.value = cached;
+        status.value = "success";
+        return;
+      }
+      execute();
+    });
   }
 
   return { data, pending, error, status, refresh: execute, execute };

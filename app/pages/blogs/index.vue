@@ -64,6 +64,7 @@
                 ? 'bg-digital-orange text-pure-white shadow-none hover:bg-digital-orange hover:text-pure-white disabled:bg-digital-orange aria-disabled:bg-digital-orange'
                 : undefined
             "
+            @click="currentPage = item.value as number"
           />
           <span v-else class="px-1.5 text-sm text-abyssal-ink/50">…</span>
         </template>
