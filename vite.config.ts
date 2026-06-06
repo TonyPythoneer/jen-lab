@@ -78,4 +78,5 @@ export default defineConfig({
   ssgOptions: {
     includedRoutes: () => ["/", "/jen-knows", "/jen-liu", "/blogs", "/sydney-food-map"],
   },
+  staged: { "*.{ts,vue}": "vp check --fix" },
 });
