@@ -72,6 +72,10 @@ const plugins: PluginOption[] = [
 ];
 
 export default defineConfig({
+  fmt: {
+    // Only format app source — skip committed-but-not-ours directories.
+    ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**"],
+  },
   plugins,
   resolve: {
     alias: {
