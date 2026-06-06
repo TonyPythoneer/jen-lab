@@ -79,3 +79,4 @@ components.d.ts
 typed-router.d.ts
 public/static/
 .eslintrc-auto-import.json
+.codegraph/

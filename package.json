@@ -18,9 +18,9 @@
     "ssg:preview": "npm run ssg:build && npx serve dist",
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types",
-    "sync:wp": "node --experimental-strip-types scripts/sync-wp.ts",
-    "sync:ferries:osm": "node --experimental-strip-types scripts/sync-ferries-osm.ts",
-    "ai:screenshot": "node --experimental-strip-types scripts/screenshot.ts",
+    "sync:wp": "jiti scripts/sync-wp.ts",
+    "sync:ferries:osm": "jiti scripts/sync-ferries-osm.ts",
+    "ai:screenshot": "jiti scripts/screenshot.ts",
     "prepare": "vp config"
   },
   "dependencies": {

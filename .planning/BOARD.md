@@ -137,15 +137,17 @@ _你丟，我接。還沒分類的想法都先放這。_
 
 **執行清單:**
 
-- [ ] 替換 tsconfig.json（移除 .nuxt/ 參照，改成 Vite/Vue standalone tsconfig）
-- [ ] 更新 tsconfig.test.json / tsconfig.scripts.json（不再 extends .nuxt/）
-- [ ] 修正 profile/Page.vue 的 @nuxt/content 型別 import → Velite 型別
-- [ ] 刪除 nuxt.config.ts, content.config.ts（Nuxt 遺留設定檔）
-- [ ] 更新 package.json scripts（移除 nuxt dev/build/prepare）
-- [ ] 移除套件: nuxt, @nuxt/content, @nuxtjs/color-mode, @nuxtjs/mdc, @vueuse/nuxt, @nuxt/fonts, nitro-cloudflare-dev
-- [ ] 移 @nuxt/ui 到 devDependencies（Storybook 用）
-- [ ] 升級 vue-router 5.0.4 → 5.1.0
-- [ ] pnpm check + pnpm test + pnpm ssg:build 全綠 → commit
+- [x] 替換 tsconfig.json（移除 .nuxt/ 參照，改成 Vite/Vue standalone tsconfig）
+- [x] 更新 tsconfig.test.json / tsconfig.scripts.json（不再 extends .nuxt/）
+- [x] 修正 profile/Page.vue 的 @nuxt/content 型別 import → Velite 型別
+- [x] 刪除 nuxt.config.ts, content.config.ts（Nuxt 遺留設定檔）
+- [x] 更新 package.json scripts（移除 nuxt dev/build/prepare）
+- [x] 移除套件: nuxt, @nuxt/content, @nuxtjs/color-mode, @nuxtjs/mdc, @vueuse/nuxt, @nuxt/fonts, nitro-cloudflare-dev
+- [x] 移 @nuxt/ui 到 devDependencies（Storybook 用）
+- [x] 升級 vue-router 5.0.4 → 5.1.0
+- [x] pnpm check (0 errors) + pnpm test (52/52) + pnpm ssg:build 全綠 → committed + pushed
+
+✅ **全部完成**（commit `931c203`）
 
 _（worktree branch 已 rebase 到最新 develop + 把我這回合的 17 個 commit squash 成 2 個。等 Tony review / 開 PR。）_
 
