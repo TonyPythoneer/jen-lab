@@ -1,7 +1,9 @@
+<route lang="json">
+{ "meta": { "layout": false } }
+</route>
+
 <script setup lang="ts">
 import { useRestaurants } from "~/composables/food-map/useRestaurants";
-
-definePageMeta({ layout: false });
 
 useSeoMeta({
   title: "Sydney Food Map — Jen Lab",
