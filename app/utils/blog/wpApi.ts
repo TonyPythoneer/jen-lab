@@ -1,4 +1,5 @@
 import { WP_BASE } from "~/config/site";
+import { $fetch } from "ofetch";
 export { WP_BASE };
 
 // Field whitelists keep payloads lean (WP defaults include many unused properties)

@@ -51,6 +51,11 @@ function create<T>(
     }
   }
 
+  // Skip on server when caller opted out of SSR execution.
+  if (import.meta.env.SSR && options.server === false) {
+    return { data, pending, error, status, refresh: execute, execute };
+  }
+
   if (cache.has(key)) {
     data.value = cache.get(key) as T;
     status.value = "success";
