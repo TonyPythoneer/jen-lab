@@ -1,0 +1,10 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 900, height: 700 } });
+const errs = [];
+p.on("pageerror", e => errs.push(e.message.slice(0,120)));
+await p.goto("http://localhost:3500/sydney-food-map", { waitUntil: "networkidle", timeout: 60000 });
+await p.waitForTimeout(3000);
+await p.screenshot({ path: ".planning/debug/p0.png" });
+console.log("errors:", errs.length ? JSON.stringify(errs.slice(0,4)) : "none");
+await b.close();
