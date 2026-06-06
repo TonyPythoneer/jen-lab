@@ -1,8 +1,4 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
+# Dev/build outputs
 .cache
 dist
 
@@ -71,7 +67,7 @@ outputs/
 /*.tif
 /*.tiff
 
-# Vue 3 + Vite migration (WIP) build artifacts
+# Generated build artifacts
 generated/
 dist/
 auto-imports.d.ts
@@ -80,3 +76,8 @@ typed-router.d.ts
 public/static/
 .eslintrc-auto-import.json
 .codegraph/
+
+# Planning scaffolding — GSD board + superpowers specs/plans are working files,
+# never committed. The guard-project-done CI fails the build if they reappear.
+.planning/
+docs/superpowers/
