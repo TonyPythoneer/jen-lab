@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **Migration status (2026-06):** This repo currently runs on **Nuxt 4**. A migration to **pure Vue 3 + Vite** (Vite+, shadcn-vue, Velite) is the active direction; an autonomous attempt was made and **reverted** (it removed Nuxt before the Vue toolchain was complete). The validated plan, the war-room defect analysis, and the hardened-retry guidance live in [issue #57](https://github.com/TonyPythoneer/jen-lab/issues/57). Until that migration lands, all the Nuxt-specific guidance below remains in force.
+
 ## Constitution
 
 - Professionalism

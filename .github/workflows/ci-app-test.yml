@@ -1,5 +1,10 @@
 name: 🧪 App Tests
 
+# Migration status (2026-06): this pipeline targets the current Nuxt 4 stack.
+# When the Nuxt 4 → Vue 3 + Vite migration lands (tracking: issue #57), the path
+# filters (e.g. nuxt.config.ts → vite.config.ts + velite.config.ts) and the
+# build/check commands here must be updated to the Vite+ toolchain.
+
 on:
   pull_request:
     paths:
