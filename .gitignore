@@ -73,3 +73,11 @@ outputs/
 /*.ico
 /*.tif
 /*.tiff
+
+# Vue 3 + Vite migration (WIP) build artifacts
+generated/
+dist/
+auto-imports.d.ts
+components.d.ts
+typed-router.d.ts
+public/static/
