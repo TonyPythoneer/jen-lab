@@ -50,7 +50,7 @@
         :disabled="loading || totalPages <= 1"
         @update:page="currentPage = $event"
       >
-        <!-- Active page: orange fill via raw token (Nuxt UI `primary` semantic is not wired to digital-orange). -->
+        <!-- Active page: orange fill via raw token (no `primary` alias is wired to digital-orange). -->
         <template #item="{ item, page: activePage }">
           <AppButton
             v-if="item.type === 'page'"
@@ -120,7 +120,7 @@ const {
   status,
   error,
   refresh,
-} = useLazyAsyncData(
+} = useAsyncData(
   fullKey.value,
   () =>
     fetchPosts({
@@ -151,7 +151,7 @@ const loading = computed(() => status.value === "pending");
 // #endregion
 
 // #region URL sync
-const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const lastQuery = useBlogLastQuery();
 
 // State → URL (one-way). Skip when leaving /blogs to avoid clobbering during navigation.
 watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {

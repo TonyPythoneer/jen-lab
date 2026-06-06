@@ -19,7 +19,7 @@ function toggleBoats() {
 }
 
 // Dev-only switches to turn each static vector layer off and feel its drag cost
-// on a real phone. Only rendered in the theme menu when `import.meta.dev`.
+// on a real phone. Only rendered in the theme menu when `import.meta.env.DEV`.
 const devLayers = reactive({
   courseLines: true,
   wharfDots: true,
@@ -44,7 +44,7 @@ function selectTileMode(mode: typeof tileMode.value) {
 // The profiler panel shows in dev, or in any build via `?debug` — so the levers
 // can be felt on the real prod build (where the jank actually reproduces).
 const route = useRoute();
-const debug = computed(() => import.meta.dev || route.query.debug !== undefined);
+const debug = computed(() => import.meta.env.DEV || route.query.debug !== undefined);
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
 const selectedRestaurant = computed(() => store.getSelectedRestaurant(props.restaurants));

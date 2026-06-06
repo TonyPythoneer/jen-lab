@@ -14,8 +14,8 @@ const props = withDefaults(
   defineProps<{
     variant?: "outline" | "default" | "soft";
     size?: "xs" | "sm" | "md";
-    color?: string; // NuxtUI compat, ignored
-    ui?: Record<string, unknown>; // NuxtUI compat, ignored
+    color?: string; // accepted for API compatibility, ignored
+    ui?: Record<string, unknown>; // accepted for API compatibility, ignored
   }>(),
   { variant: "default", size: "sm" },
 );

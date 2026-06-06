@@ -1,9 +1,9 @@
-// Replacement for @nuxt/content's queryCollection, backed by Velite's
-// build-time output (.velite). Reproduces only the chained API the app uses:
+// Velite-backed content query. Reads the build-time collections in
+// generated/velite and exposes only the chained API the app uses:
 //   queryCollection("home").path("/home/jen-knows").first()
 //   queryCollection("wpTags").order("count","DESC").order("wpId","DESC").all()
 //   queryCollection("site").first()
-// Auto-imported (app/composables) so call sites stay byte-identical.
+// Auto-imported from app/composables so pages call it without an import.
 import {
   home,
   pagesLayout,
@@ -24,7 +24,7 @@ class QueryBuilder<T> {
     this.rows = rows;
   }
 
-  // matches @nuxt/content "page" path queries
+  // filter rows by their `path` field
   path(p: string): this {
     this.rows = this.rows.filter((r) => (r as { path?: string }).path === p);
     return this;

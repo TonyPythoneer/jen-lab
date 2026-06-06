@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const appConfig = useAppConfig();
-const socials = appConfig.contacts ?? [];
+import { contacts } from "~/config/site";
+
+const socials = contacts;
 
 const footerDotField = {
   color: "var(--color-pixel-glare)",

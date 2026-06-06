@@ -1,12 +1,12 @@
 // Categories + tags from content collections (synced via `pnpm sync:wp`).
 // Client-only to keep them off the SSR/hydration critical path.
 export function useBlogTaxonomies() {
-  const { data: categories } = useLazyAsyncData(
+  const { data: categories } = useAsyncData(
     "wp-categories",
     () => queryCollection("wpCategories").order("wpId", "DESC").all(),
     { server: false },
   );
-  const { data: tags } = useLazyAsyncData(
+  const { data: tags } = useAsyncData(
     "wp-tags",
     () => queryCollection("wpTags").order("count", "DESC").order("wpId", "DESC").all(),
     { server: false },

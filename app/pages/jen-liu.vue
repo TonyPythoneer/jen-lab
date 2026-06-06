@@ -8,7 +8,7 @@
 const DISPLAY_NAME = "Jen Liu";
 const HEAD_TITLE = "榛知 | 澳洲旅遊作家";
 
-const { data: page } = useLazyAsyncData("profile:jen-liu", () =>
+const { data: page } = useAsyncData("profile:jen-liu", () =>
   queryCollection("home").path("/home/jen-liu").first(),
 );
 

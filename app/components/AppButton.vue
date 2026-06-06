@@ -28,7 +28,7 @@ const props = withDefaults(
     as?: string;
     href?: string;
     to?: RouteLocationRaw;
-    ui?: Record<string, string>; // NuxtUI compat — only ui.base applied
+    ui?: Record<string, string>; // API-compat passthrough — only ui.base applied
   }>(),
   { color: "neutral", variant: "solid", size: "sm" },
 );
@@ -55,7 +55,7 @@ const elementAttrs = computed(() => {
 });
 // #endregion
 
-// #region CVA — maps NuxtUI color×variant to design tokens
+// #region CVA — maps color×variant props to design tokens
 const button = cva(
   "inline-flex items-center justify-center gap-1.5 rounded-button font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-digital-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {

@@ -49,13 +49,13 @@
 import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
 
 const route = useRoute();
-const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const lastQuery = useBlogLastQuery();
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
 const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
-// slug is a string in unplugin-vue-router (Nuxt returned an array; plain Vue Router does not)
+// route.params.slug is a string with vue-router file routing; the Array.isArray guard is a defensive fallback
 const rawSlug = route.params.slug;
 const postId = Number(Array.isArray(rawSlug) ? rawSlug[0] : rawSlug);
 const validId = Number.isInteger(postId) && postId > 0;
@@ -65,7 +65,7 @@ const {
   data: post,
   status,
   error,
-} = useLazyAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
+} = useAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
 const pending = computed(() => validId && status.value === "pending");
 
 const meta = computed(() => {

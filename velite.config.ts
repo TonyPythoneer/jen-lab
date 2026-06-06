@@ -3,8 +3,9 @@ import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
 import linkAttrs from "markdown-it-link-attributes";
 
-// EXACT replica of the markdown-it instance in the old nuxt.config.ts
-// (content:file:afterParse hook). Keeps descriptionHtml byte-identical.
+// markdown-it instance for product descriptions. Renders descriptionHtml at
+// build time so the client ships no markdown parser. Keep settings stable to
+// keep descriptionHtml byte-identical across rebuilds.
 const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(linkAttrs, {
   matcher: (href: string) => /^https?:/.test(href),
   attrs: { target: "_blank", rel: "noopener" },
@@ -79,7 +80,7 @@ const home = defineCollection({
         ]),
       ),
     })
-    // @nuxt/content "page" path: content/home/jen-knows.md -> /home/jen-knows
+    // page path: content/home/jen-knows.md -> /home/jen-knows
     .transform((data) => ({ ...data, path: "/" + data.path })),
 });
 

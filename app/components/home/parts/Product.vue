@@ -51,8 +51,8 @@
         class="product-drawer absolute inset-0 z-10 overflow-y-auto overscroll-contain bg-ash-white p-5 pr-16"
       >
         <h3 class="mb-3 text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h3>
-        <!-- descriptionHtml is pre-rendered at build by markdown-it (see nuxt.config.ts
-             content:file:afterParse). v-html ships no parser to the client; source is trusted local content. -->
+        <!-- descriptionHtml is pre-rendered at build by markdown-it (see velite.config.ts
+             productListSection transform). v-html ships no parser to the client; source is trusted local content. -->
         <div
           v-if="descriptionHtml"
           class="product-description text-sm leading-relaxed text-abyssal-ink/70"
@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-// `descriptionHtml` is pre-rendered at build (see nuxt.config.ts hook).
+// `descriptionHtml` is pre-rendered at build (see velite.config.ts).
 // `description` is the markdown source — declared only to absorb the
 // spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
 defineProps<{

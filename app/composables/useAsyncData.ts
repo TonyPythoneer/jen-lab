@@ -1,7 +1,7 @@
-// Replacements for Nuxt's useAsyncData / useLazyAsyncData. Keyed dedup cache so
-// the same key (e.g. "site:blogs" used in the layout AND pages) runs once.
-// Sync handlers (Velite content) resolve immediately so they prerender; async
-// handlers (WordPress fetch) resolve on the client.
+// App data layer: keyed async data with a dedup cache, so the same key (e.g.
+// "site:blogs", used in the layout AND the blog pages) runs once. Sync handlers
+// (Velite content) resolve immediately so they prerender into the SSG HTML;
+// async handlers (WordPress fetch) resolve on the client.
 import { ref, watch, type Ref } from "vue";
 
 interface AsyncDataOptions<T> {
@@ -97,7 +97,7 @@ function create<T>(
     }
   }
 
-  // Re-fetch when any watched source changes (mirrors Nuxt's watch option).
+  // Re-fetch when any watched source changes.
   if (!import.meta.env.SSR && options.watch?.length) {
     watch(options.watch as Parameters<typeof watch>[0], () => {
       const cached = options.getCachedData?.();
@@ -114,14 +114,6 @@ function create<T>(
 }
 
 export function useAsyncData<T>(
-  key: string,
-  handler: () => T | Promise<T>,
-  options?: AsyncDataOptions<T>,
-) {
-  return create(key, handler, options);
-}
-
-export function useLazyAsyncData<T>(
   key: string,
   handler: () => T | Promise<T>,
   options?: AsyncDataOptions<T>,

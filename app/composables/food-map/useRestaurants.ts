@@ -27,7 +27,7 @@ async function loadData() {
 }
 
 export function useRestaurants() {
-  const { status, data } = useLazyAsyncData("~/assets/data/restaurants", loadData);
+  const { status, data } = useAsyncData("~/assets/data/restaurants", loadData);
 
   // Filters — each independently nullable, all AND-combined.
   const selectedArea = ref<RestaurantArea | null>(null);
