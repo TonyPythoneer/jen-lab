@@ -1,0 +1,1275 @@
+{
+  "home": [
+    {
+      "_path": "/home/jen-knows",
+      "_file": "jen-knows.md",
+      "_raw": "---\nprofile:\n  avatar: /home/jen-knows/avatar.webp\n  name: 榛知\n  tabs:\n    - label: NextSteps Academy\n      bio: |\n        陪你找到職涯的下一步\n        🇦🇺 澳洲求職培訓 | 資源 | 職場人脈\n        ✍️ 澳洲企業商模分析系列，每週四於 FB, IG, "
+    },
+    {
+      "_path": "/home/jen-liu",
+      "_file": "jen-liu.md",
+      "_raw": "---\nprofile:\n  avatar: /home/jen-liu/avatar.webp\n  name: 榛知\n  tabs:\n    - label: 澳洲旅遊作家\n      bio: |\n        《開始在澳洲自助旅行》編修作者\n        分享澳洲知識、雪梨美食及旅遊資訊\n\nsections:\n  - id: products\n    label: Products\n  "
+    }
+  ],
+  "pagesLayout": [
+    {
+      "_path": "/pages-layout/home",
+      "_file": "home.md",
+      "_raw": "---\n# ===== Homepage Layout Manager =====\n# How to use:\n#   - Remove a section block -> that section will not appear on the homepage\n#   - Reorder the blocks -> homepage order follows\n#   - Edit the t"
+    }
+  ],
+  "wpTags": [
+    {
+      "_file": "10040534-東京奧運.yaml",
+      "wpId": 10040534,
+      "slug": "%e6%9d%b1%e4%ba%ac%e5%a5%a7%e9%81%8b",
+      "name": "東京奧運",
+      "count": 1
+    },
+    {
+      "_file": "101892504-澳洲最低工資.yaml",
+      "wpId": 101892504,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%9c%80%e4%bd%8e%e5%b7%a5%e8%b3%87",
+      "name": "澳洲最低工資",
+      "count": 1
+    },
+    {
+      "_file": "10482-足球.yaml",
+      "wpId": 10482,
+      "slug": "%e8%b6%b3%e7%90%83",
+      "name": "足球",
+      "count": 1
+    },
+    {
+      "_file": "106473757-人才荒.yaml",
+      "wpId": 106473757,
+      "slug": "%e4%ba%ba%e6%89%8d%e8%8d%92",
+      "name": "人才荒",
+      "count": 1
+    },
+    {
+      "_file": "112803835-澳洲公民.yaml",
+      "wpId": 112803835,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%85%ac%e6%b0%91",
+      "name": "澳洲公民",
+      "count": 2
+    },
+    {
+      "_file": "114500193-澳洲職場.yaml",
+      "wpId": 114500193,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%81%b7%e5%a0%b4",
+      "name": "澳洲職場",
+      "count": 19
+    },
+    {
+      "_file": "11863451-產品經理.yaml",
+      "wpId": 11863451,
+      "slug": "%e7%94%a2%e5%93%81%e7%b6%93%e7%90%86",
+      "name": "產品經理",
+      "count": 1
+    },
+    {
+      "_file": "1203152-grad program.yaml",
+      "wpId": 1203152,
+      "slug": "grad-program",
+      "name": "grad program",
+      "count": 3
+    },
+    {
+      "_file": "12167879-公益活動.yaml",
+      "wpId": 12167879,
+      "slug": "%e5%85%ac%e7%9b%8a%e6%b4%bb%e5%8b%95",
+      "name": "公益活動",
+      "count": 1
+    },
+    {
+      "_file": "1256367-Easter Show.yaml",
+      "wpId": 1256367,
+      "slug": "easter-show",
+      "name": "Easter Show",
+      "count": 1
+    },
+    {
+      "_file": "12687826-auspost.yaml",
+      "wpId": 12687826,
+      "slug": "auspost",
+      "name": "auspost",
+      "count": 1
+    },
+    {
+      "_file": "127413579-封城.yaml",
+      "wpId": 127413579,
+      "slug": "%e5%b0%81%e5%9f%8e",
+      "name": "封城",
+      "count": 1
+    },
+    {
+      "_file": "13257-體育.yaml",
+      "wpId": 13257,
+      "slug": "%e9%ab%94%e8%82%b2",
+      "name": "體育",
+      "count": 2
+    },
+    {
+      "_file": "135933418-雪梨跨年.yaml",
+      "wpId": 135933418,
+      "slug": "%e9%9b%aa%e6%a2%a8%e8%b7%a8%e5%b9%b4",
+      "name": "雪梨跨年",
+      "count": 4
+    },
+    {
+      "_file": "13728248-海膽.yaml",
+      "wpId": 13728248,
+      "slug": "%e6%b5%b7%e8%86%bd",
+      "name": "海膽",
+      "count": 1
+    },
+    {
+      "_file": "137691-Gap Year.yaml",
+      "wpId": 137691,
+      "slug": "gap-year",
+      "name": "Gap Year",
+      "count": 1
+    },
+    {
+      "_file": "14067-AI.yaml",
+      "wpId": 14067,
+      "slug": "ai",
+      "name": "AI",
+      "count": 1
+    },
+    {
+      "_file": "144834-ANZAC Day.yaml",
+      "wpId": 144834,
+      "slug": "anzac-day",
+      "name": "ANZAC Day",
+      "count": 1
+    },
+    {
+      "_file": "1463296-面試.yaml",
+      "wpId": 1463296,
+      "slug": "%e9%9d%a2%e8%a9%a6",
+      "name": "面試",
+      "count": 1
+    },
+    {
+      "_file": "158392909-國際會議.yaml",
+      "wpId": 158392909,
+      "slug": "%e5%9c%8b%e9%9a%9b%e6%9c%83%e8%ad%b0",
+      "name": "國際會議",
+      "count": 2
+    },
+    {
+      "_file": "1617953-獎學金.yaml",
+      "wpId": 1617953,
+      "slug": "%e7%8d%8e%e5%ad%b8%e9%87%91",
+      "name": "獎學金",
+      "count": 2
+    },
+    {
+      "_file": "18737793-心理健康.yaml",
+      "wpId": 18737793,
+      "slug": "%e5%bf%83%e7%90%86%e5%81%a5%e5%ba%b7",
+      "name": "心理健康",
+      "count": 1
+    },
+    {
+      "_file": "187923654-雪梨大學.yaml",
+      "wpId": 187923654,
+      "slug": "%e9%9b%aa%e6%a2%a8%e5%a4%a7%e5%ad%b8",
+      "name": "雪梨大學",
+      "count": 2
+    },
+    {
+      "_file": "1974072-Parking Sign.yaml",
+      "wpId": 1974072,
+      "slug": "parking-sign",
+      "name": "Parking Sign",
+      "count": 1
+    },
+    {
+      "_file": "200472715-澳洲簽證.yaml",
+      "wpId": 200472715,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%b0%bd%e8%ad%89",
+      "name": "澳洲簽證",
+      "count": 1
+    },
+    {
+      "_file": "221778592-鐘乳石洞.yaml",
+      "wpId": 221778592,
+      "slug": "%e9%90%98%e4%b9%b3%e7%9f%b3%e6%b4%9e",
+      "name": "鐘乳石洞",
+      "count": 1
+    },
+    {
+      "_file": "224961245-Harberfield.yaml",
+      "wpId": 224961245,
+      "slug": "harberfield",
+      "name": "Harberfield",
+      "count": 1
+    },
+    {
+      "_file": "22798211-新航.yaml",
+      "wpId": 22798211,
+      "slug": "%e6%96%b0%e8%88%aa",
+      "name": "新航",
+      "count": 1
+    },
+    {
+      "_file": "241895393-澳洲購物.yaml",
+      "wpId": 241895393,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%b3%bc%e7%89%a9",
+      "name": "澳洲購物",
+      "count": 1
+    },
+    {
+      "_file": "242107624-雪梨煙火.yaml",
+      "wpId": 242107624,
+      "slug": "%e9%9b%aa%e6%a2%a8%e7%85%99%e7%81%ab",
+      "name": "雪梨煙火",
+      "count": 1
+    },
+    {
+      "_file": "246417459-澳洲保健品.yaml",
+      "wpId": 246417459,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bf%9d%e5%81%a5%e5%93%81",
+      "name": "澳洲保健品",
+      "count": 1
+    },
+    {
+      "_file": "2503095-beyondblue.yaml",
+      "wpId": 2503095,
+      "slug": "beyondblue",
+      "name": "beyondblue",
+      "count": 1
+    },
+    {
+      "_file": "25135660-海螺.yaml",
+      "wpId": 25135660,
+      "slug": "%e6%b5%b7%e8%9e%ba",
+      "name": "海螺",
+      "count": 1
+    },
+    {
+      "_file": "263303819-雪梨一日遊.yaml",
+      "wpId": 263303819,
+      "slug": "%e9%9b%aa%e6%a2%a8%e4%b8%80%e6%97%a5%e9%81%8a",
+      "name": "雪梨一日遊",
+      "count": 1
+    },
+    {
+      "_file": "269339031-雪梨美食.yaml",
+      "wpId": 269339031,
+      "slug": "%e9%9b%aa%e6%a2%a8%e7%be%8e%e9%a3%9f",
+      "name": "雪梨美食",
+      "count": 2
+    },
+    {
+      "_file": "27231339-跨國企業.yaml",
+      "wpId": 27231339,
+      "slug": "%e8%b7%a8%e5%9c%8b%e4%bc%81%e6%a5%ad",
+      "name": "跨國企業",
+      "count": 1
+    },
+    {
+      "_file": "27559490-藍山.yaml",
+      "wpId": 27559490,
+      "slug": "%e8%97%8d%e5%b1%b1",
+      "name": "藍山",
+      "count": 1
+    },
+    {
+      "_file": "280910-headspace.yaml",
+      "wpId": 280910,
+      "slug": "headspace",
+      "name": "headspace",
+      "count": 1
+    },
+    {
+      "_file": "28204919-藍花楹.yaml",
+      "wpId": 28204919,
+      "slug": "%e8%97%8d%e8%8a%b1%e6%a5%b9",
+      "name": "藍花楹",
+      "count": 1
+    },
+    {
+      "_file": "295453838-澳洲PR.yaml",
+      "wpId": 295453838,
+      "slug": "%e6%be%b3%e6%b4%b2pr",
+      "name": "澳洲PR",
+      "count": 1
+    },
+    {
+      "_file": "299961993-應屆畢業生.yaml",
+      "wpId": 299961993,
+      "slug": "%e6%87%89%e5%b1%86%e7%95%a2%e6%a5%ad%e7%94%9f",
+      "name": "應屆畢業生",
+      "count": 1
+    },
+    {
+      "_file": "30074342-雪梨歌劇院.yaml",
+      "wpId": 30074342,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%ad%8c%e5%8a%87%e9%99%a2",
+      "name": "雪梨歌劇院",
+      "count": 1
+    },
+    {
+      "_file": "30931703-mygov.yaml",
+      "wpId": 30931703,
+      "slug": "mygov",
+      "name": "mygov",
+      "count": 1
+    },
+    {
+      "_file": "312868-lifeline.yaml",
+      "wpId": 312868,
+      "slug": "lifeline",
+      "name": "lifeline",
+      "count": 1
+    },
+    {
+      "_file": "35715-census.yaml",
+      "wpId": 35715,
+      "slug": "census",
+      "name": "census",
+      "count": 1
+    },
+    {
+      "_file": "368375137-公民考試.yaml",
+      "wpId": 368375137,
+      "slug": "%e5%85%ac%e6%b0%91%e8%80%83%e8%a9%a6",
+      "name": "公民考試",
+      "count": 1
+    },
+    {
+      "_file": "383371-Black Friday.yaml",
+      "wpId": 383371,
+      "slug": "black-friday",
+      "name": "Black Friday",
+      "count": 1
+    },
+    {
+      "_file": "390368850-澳洲教育.yaml",
+      "wpId": 390368850,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%95%99%e8%82%b2",
+      "name": "澳洲教育",
+      "count": 2
+    },
+    {
+      "_file": "392240562-澳洲保險.yaml",
+      "wpId": 392240562,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bf%9d%e9%9a%aa",
+      "name": "澳洲保險",
+      "count": 3
+    },
+    {
+      "_file": "39428760-澳洲郵政.yaml",
+      "wpId": 39428760,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%83%b5%e6%94%bf",
+      "name": "澳洲郵政",
+      "count": 1
+    },
+    {
+      "_file": "39428761-新南威爾士州.yaml",
+      "wpId": 39428761,
+      "slug": "%e6%96%b0%e5%8d%97%e5%a8%81%e7%88%be%e5%a3%ab%e5%b7%9e",
+      "name": "新南威爾士州",
+      "count": 1
+    },
+    {
+      "_file": "41425343-澳洲高中.yaml",
+      "wpId": 41425343,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%ab%98%e4%b8%ad",
+      "name": "澳洲高中",
+      "count": 2
+    },
+    {
+      "_file": "41436734-橄欖球.yaml",
+      "wpId": 41436734,
+      "slug": "%e6%a9%84%e6%ac%96%e7%90%83",
+      "name": "橄欖球",
+      "count": 1
+    },
+    {
+      "_file": "43393422-澳洲知識.yaml",
+      "wpId": 43393422,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%9f%a5%e8%ad%98",
+      "name": "澳洲知識",
+      "count": 26
+    },
+    {
+      "_file": "43753773-澳洲美食.yaml",
+      "wpId": 43753773,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%be%8e%e9%a3%9f",
+      "name": "澳洲美食",
+      "count": 1
+    },
+    {
+      "_file": "454714754-澳洲買房.yaml",
+      "wpId": 454714754,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%b2%b7%e6%88%bf",
+      "name": "澳洲買房",
+      "count": 1
+    },
+    {
+      "_file": "4574381-rode microphone.yaml",
+      "wpId": 4574381,
+      "slug": "rode-microphone",
+      "name": "rode microphone",
+      "count": 1
+    },
+    {
+      "_file": "5004-mental health.yaml",
+      "wpId": 5004,
+      "slug": "mental-health",
+      "name": "mental health",
+      "count": 1
+    },
+    {
+      "_file": "5238643-canva.yaml",
+      "wpId": 5238643,
+      "slug": "canva",
+      "name": "canva",
+      "count": 1
+    },
+    {
+      "_file": "527350405-奧運項目.yaml",
+      "wpId": 527350405,
+      "slug": "%e5%a5%a7%e9%81%8b%e9%a0%85%e7%9b%ae",
+      "name": "奧運項目",
+      "count": 1
+    },
+    {
+      "_file": "528625726-煙火攝影.yaml",
+      "wpId": 528625726,
+      "slug": "%e7%85%99%e7%81%ab%e6%94%9d%e5%bd%b1",
+      "name": "煙火攝影",
+      "count": 1
+    },
+    {
+      "_file": "535264967-澳洲買車.yaml",
+      "wpId": 535264967,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%b2%b7%e8%bb%8a",
+      "name": "澳洲買車",
+      "count": 1
+    },
+    {
+      "_file": "539559031-澳洲伴手禮.yaml",
+      "wpId": 539559031,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bc%b4%e6%89%8b%e7%a6%ae",
+      "name": "澳洲伴手禮",
+      "count": 1
+    },
+    {
+      "_file": "555594162-大學研究.yaml",
+      "wpId": 555594162,
+      "slug": "%e5%a4%a7%e5%ad%b8%e7%a0%94%e7%a9%b6",
+      "name": "大學研究",
+      "count": 2
+    },
+    {
+      "_file": "564966966-澳洲信用卡.yaml",
+      "wpId": 564966966,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bf%a1%e7%94%a8%e5%8d%a1",
+      "name": "澳洲信用卡",
+      "count": 2
+    },
+    {
+      "_file": "600991109-黑色購物節.yaml",
+      "wpId": 600991109,
+      "slug": "%e9%bb%91%e8%89%b2%e8%b3%bc%e7%89%a9%e7%af%80",
+      "name": "黑色購物節",
+      "count": 1
+    },
+    {
+      "_file": "620919748-鸚鵡島.yaml",
+      "wpId": 620919748,
+      "slug": "%e9%b8%9a%e9%b5%a1%e5%b3%b6",
+      "name": "鸚鵡島",
+      "count": 1
+    },
+    {
+      "_file": "649936903-沃克魯斯宅邸.yaml",
+      "wpId": 649936903,
+      "slug": "%e6%b2%83%e5%85%8b%e9%ad%af%e6%96%af%e5%ae%85%e9%82%b8",
+      "name": "沃克魯斯宅邸",
+      "count": 1
+    },
+    {
+      "_file": "664114-博物館.yaml",
+      "wpId": 664114,
+      "slug": "%e5%8d%9a%e7%89%a9%e9%a4%a8",
+      "name": "博物館",
+      "count": 1
+    },
+    {
+      "_file": "66574-澳洲.yaml",
+      "wpId": 66574,
+      "slug": "%e6%be%b3%e6%b4%b2",
+      "name": "澳洲",
+      "count": 1
+    },
+    {
+      "_file": "690548315-黑五折扣.yaml",
+      "wpId": 690548315,
+      "slug": "%e9%bb%91%e4%ba%94%e6%8a%98%e6%89%a3",
+      "name": "黑五折扣",
+      "count": 1
+    },
+    {
+      "_file": "692910727-疫苗證明.yaml",
+      "wpId": 692910727,
+      "slug": "%e7%96%ab%e8%8b%97%e8%ad%89%e6%98%8e",
+      "name": "疫苗證明",
+      "count": 1
+    },
+    {
+      "_file": "694479852-COVID-19.yaml",
+      "wpId": 694479852,
+      "slug": "covid-19",
+      "name": "COVID-19",
+      "count": 3
+    },
+    {
+      "_file": "695218880-新冠疫情.yaml",
+      "wpId": 695218880,
+      "slug": "%e6%96%b0%e5%86%a0%e7%96%ab%e6%83%85",
+      "name": "新冠疫情",
+      "count": 1
+    },
+    {
+      "_file": "696752371-澳洲疫情.yaml",
+      "wpId": 696752371,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%96%ab%e6%83%85",
+      "name": "澳洲疫情",
+      "count": 1
+    },
+    {
+      "_file": "69737-Medicare.yaml",
+      "wpId": 69737,
+      "slug": "medicare",
+      "name": "Medicare",
+      "count": 2
+    },
+    {
+      "_file": "699404815-澳洲求職.yaml",
+      "wpId": 699404815,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%b1%82%e8%81%b7",
+      "name": "澳洲求職",
+      "count": 2
+    },
+    {
+      "_file": "700140240-雪梨旅遊.yaml",
+      "wpId": 700140240,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%97%85%e9%81%8a",
+      "name": "雪梨旅遊",
+      "count": 12
+    },
+    {
+      "_file": "715313053-澳洲休假.yaml",
+      "wpId": 715313053,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bc%91%e5%81%87",
+      "name": "澳洲休假",
+      "count": 1
+    },
+    {
+      "_file": "717617281-澳洲公路旅行.yaml",
+      "wpId": 717617281,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%85%ac%e8%b7%af%e6%97%85%e8%a1%8c",
+      "name": "澳洲公路旅行",
+      "count": 10
+    },
+    {
+      "_file": "717693741-澳洲民宿.yaml",
+      "wpId": 717693741,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%b0%91%e5%ae%bf",
+      "name": "澳洲民宿",
+      "count": 1
+    },
+    {
+      "_file": "719044253-雪梨海港大橋.yaml",
+      "wpId": 719044253,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%b5%b7%e6%b8%af%e5%a4%a7%e6%a9%8b",
+      "name": "雪梨海港大橋",
+      "count": 2
+    },
+    {
+      "_file": "719964719-澳洲普查.yaml",
+      "wpId": 719964719,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%99%ae%e6%9f%a5",
+      "name": "澳洲普查",
+      "count": 1
+    },
+    {
+      "_file": "720066964-獨立技術移民.yaml",
+      "wpId": 720066964,
+      "slug": "%e7%8d%a8%e7%ab%8b%e6%8a%80%e8%a1%93%e7%a7%bb%e6%b0%91",
+      "name": "獨立技術移民",
+      "count": 1
+    },
+    {
+      "_file": "720066967-州擔保移民.yaml",
+      "wpId": 720066967,
+      "slug": "%e5%b7%9e%e6%93%94%e4%bf%9d%e7%a7%bb%e6%b0%91",
+      "name": "州擔保移民",
+      "count": 1
+    },
+    {
+      "_file": "720282328-澳洲品牌故事.yaml",
+      "wpId": 720282328,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%93%81%e7%89%8c%e6%95%85%e4%ba%8b",
+      "name": "澳洲品牌故事",
+      "count": 1
+    },
+    {
+      "_file": "720909825-澳洲汽車保險.yaml",
+      "wpId": 720909825,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%b1%bd%e8%bb%8a%e4%bf%9d%e9%9a%aa",
+      "name": "澳洲汽車保險",
+      "count": 2
+    },
+    {
+      "_file": "721465722-雪梨封城.yaml",
+      "wpId": 721465722,
+      "slug": "%e9%9b%aa%e6%a2%a8%e5%b0%81%e5%9f%8e",
+      "name": "雪梨封城",
+      "count": 1
+    },
+    {
+      "_file": "721554818-澳洲醫療.yaml",
+      "wpId": 721554818,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%86%ab%e7%99%82",
+      "name": "澳洲醫療",
+      "count": 2
+    },
+    {
+      "_file": "721637632-澳洲改名.yaml",
+      "wpId": 721637632,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%94%b9%e5%90%8d",
+      "name": "澳洲改名",
+      "count": 1
+    },
+    {
+      "_file": "721639934-澳洲運動.yaml",
+      "wpId": 721639934,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%81%8b%e5%8b%95",
+      "name": "澳洲運動",
+      "count": 2
+    },
+    {
+      "_file": "721639936-澳洲奧運.yaml",
+      "wpId": 721639936,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%a5%a7%e9%81%8b",
+      "name": "澳洲奧運",
+      "count": 2
+    },
+    {
+      "_file": "721639939-澳洲橄欖球.yaml",
+      "wpId": 721639939,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%a9%84%e6%ac%96%e7%90%83",
+      "name": "澳洲橄欖球",
+      "count": 1
+    },
+    {
+      "_file": "721915724-奧運英文.yaml",
+      "wpId": 721915724,
+      "slug": "%e5%a5%a7%e9%81%8b%e8%8b%b1%e6%96%87",
+      "name": "奧運英文",
+      "count": 1
+    },
+    {
+      "_file": "722642541-巴黎奧運.yaml",
+      "wpId": 722642541,
+      "slug": "%e5%b7%b4%e9%bb%8e%e5%a5%a7%e9%81%8b",
+      "name": "巴黎奧運",
+      "count": 1
+    },
+    {
+      "_file": "723129314-澳洲健保.yaml",
+      "wpId": 723129314,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%81%a5%e4%bf%9d",
+      "name": "澳洲健保",
+      "count": 1
+    },
+    {
+      "_file": "723129316-澳洲醫療保險.yaml",
+      "wpId": 723129316,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%86%ab%e7%99%82%e4%bf%9d%e9%9a%aa",
+      "name": "澳洲醫療保險",
+      "count": 3
+    },
+    {
+      "_file": "72336383-澳洲退休金.yaml",
+      "wpId": 72336383,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%80%80%e4%bc%91%e9%87%91",
+      "name": "澳洲退休金",
+      "count": 4
+    },
+    {
+      "_file": "723621697-澳洲學測.yaml",
+      "wpId": 723621697,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%ad%b8%e6%b8%ac",
+      "name": "澳洲學測",
+      "count": 1
+    },
+    {
+      "_file": "723736372-澳洲健康保險.yaml",
+      "wpId": 723736372,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%81%a5%e5%ba%b7%e4%bf%9d%e9%9a%aa",
+      "name": "澳洲健康保險",
+      "count": 1
+    },
+    {
+      "_file": "724065213-澳洲置產.yaml",
+      "wpId": 724065213,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%bd%ae%e7%94%a2",
+      "name": "澳洲置產",
+      "count": 1
+    },
+    {
+      "_file": "725176937-澳洲好用網站.yaml",
+      "wpId": 725176937,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%a5%bd%e7%94%a8%e7%b6%b2%e7%ab%99",
+      "name": "澳洲好用網站",
+      "count": 1
+    },
+    {
+      "_file": "725427506-疫苗證書.yaml",
+      "wpId": 725427506,
+      "slug": "%e7%96%ab%e8%8b%97%e8%ad%89%e6%9b%b8",
+      "name": "疫苗證書",
+      "count": 1
+    },
+    {
+      "_file": "726085-Little Bay.yaml",
+      "wpId": 726085,
+      "slug": "little-bay",
+      "name": "Little Bay",
+      "count": 1
+    },
+    {
+      "_file": "726821509-澳洲實用網站.yaml",
+      "wpId": 726821509,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%af%a6%e7%94%a8%e7%b6%b2%e7%ab%99",
+      "name": "澳洲實用網站",
+      "count": 1
+    },
+    {
+      "_file": "727093155-大離職潮.yaml",
+      "wpId": 727093155,
+      "slug": "%e5%a4%a7%e9%9b%a2%e8%81%b7%e6%bd%ae",
+      "name": "大離職潮",
+      "count": 1
+    },
+    {
+      "_file": "727093159-大辭職潮.yaml",
+      "wpId": 727093159,
+      "slug": "%e5%a4%a7%e8%be%ad%e8%81%b7%e6%bd%ae",
+      "name": "大辭職潮",
+      "count": 1
+    },
+    {
+      "_file": "727151854-英文郵件.yaml",
+      "wpId": 727151854,
+      "slug": "%e8%8b%b1%e6%96%87%e9%83%b5%e4%bb%b6",
+      "name": "英文郵件",
+      "count": 1
+    },
+    {
+      "_file": "727889393-澳洲社工.yaml",
+      "wpId": 727889393,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%a4%be%e5%b7%a5",
+      "name": "澳洲社工",
+      "count": 2
+    },
+    {
+      "_file": "727889396-澳洲職人訪談.yaml",
+      "wpId": 727889396,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%81%b7%e4%ba%ba%e8%a8%aa%e8%ab%87",
+      "name": "澳洲職人訪談",
+      "count": 1
+    },
+    {
+      "_file": "728232822-雪梨海膽.yaml",
+      "wpId": 728232822,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%b5%b7%e8%86%bd",
+      "name": "雪梨海膽",
+      "count": 1
+    },
+    {
+      "_file": "728289603-澳洲跨年.yaml",
+      "wpId": 728289603,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%b7%a8%e5%b9%b4",
+      "name": "澳洲跨年",
+      "count": 1
+    },
+    {
+      "_file": "728289605-攝影攻略.yaml",
+      "wpId": 728289605,
+      "slug": "%e6%94%9d%e5%bd%b1%e6%94%bb%e7%95%a5",
+      "name": "攝影攻略",
+      "count": 1
+    },
+    {
+      "_file": "728902218-澳洲遊民.yaml",
+      "wpId": 728902218,
+      "slug": "%e6%be%b3%e6%b4%b2%e9%81%8a%e6%b0%91",
+      "name": "澳洲遊民",
+      "count": 1
+    },
+    {
+      "_file": "728902232-澳洲社會住宅.yaml",
+      "wpId": 728902232,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%a4%be%e6%9c%83%e4%bd%8f%e5%ae%85",
+      "name": "澳洲社會住宅",
+      "count": 1
+    },
+    {
+      "_file": "750355-奧運.yaml",
+      "wpId": 750355,
+      "slug": "%e5%a5%a7%e9%81%8b",
+      "name": "奧運",
+      "count": 1
+    },
+    {
+      "_file": "754632338-遠端上班.yaml",
+      "wpId": 754632338,
+      "slug": "%e9%81%a0%e7%ab%af%e4%b8%8a%e7%8f%ad",
+      "name": "遠端上班",
+      "count": 1
+    },
+    {
+      "_file": "754632341-外商職場.yaml",
+      "wpId": 754632341,
+      "slug": "%e5%a4%96%e5%95%86%e8%81%b7%e5%a0%b4",
+      "name": "外商職場",
+      "count": 1
+    },
+    {
+      "_file": "756465568-485簽證.yaml",
+      "wpId": 756465568,
+      "slug": "485%e7%b0%bd%e8%ad%89",
+      "name": "485簽證",
+      "count": 1
+    },
+    {
+      "_file": "757687150-chatGPT.yaml",
+      "wpId": 757687150,
+      "slug": "chatgpt",
+      "name": "chatGPT",
+      "count": 1
+    },
+    {
+      "_file": "765824035-新州旅遊地圖.yaml",
+      "wpId": 765824035,
+      "slug": "%e6%96%b0%e5%b7%9e%e6%97%85%e9%81%8a%e5%9c%b0%e5%9c%96",
+      "name": "新州旅遊地圖",
+      "count": 2
+    },
+    {
+      "_file": "770482337-漢密爾頓島.yaml",
+      "wpId": 770482337,
+      "slug": "%e6%bc%a2%e5%af%86%e7%88%be%e9%a0%93%e5%b3%b6",
+      "name": "漢密爾頓島",
+      "count": 2
+    },
+    {
+      "_file": "772591740-澳洲住房危機.yaml",
+      "wpId": 772591740,
+      "slug": "%e6%be%b3%e6%b4%b2%e4%bd%8f%e6%88%bf%e5%8d%b1%e6%a9%9f",
+      "name": "澳洲住房危機",
+      "count": 1
+    },
+    {
+      "_file": "77534378-澳洲新聞.yaml",
+      "wpId": 77534378,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%96%b0%e8%81%9e",
+      "name": "澳洲新聞",
+      "count": 1
+    },
+    {
+      "_file": "776153793-澳洲禮物卡.yaml",
+      "wpId": 776153793,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%a6%ae%e7%89%a9%e5%8d%a1",
+      "name": "澳洲禮物卡",
+      "count": 1
+    },
+    {
+      "_file": "776919144-點數票.yaml",
+      "wpId": 776919144,
+      "slug": "%e9%bb%9e%e6%95%b8%e7%a5%a8",
+      "name": "點數票",
+      "count": 1
+    },
+    {
+      "_file": "776919349-澳航哩程票.yaml",
+      "wpId": 776919349,
+      "slug": "%e6%be%b3%e8%88%aa%e5%93%a9%e7%a8%8b%e7%a5%a8",
+      "name": "澳航哩程票",
+      "count": 1
+    },
+    {
+      "_file": "777029484-雪梨小義大利.yaml",
+      "wpId": 777029484,
+      "slug": "%e9%9b%aa%e6%a2%a8%e5%b0%8f%e7%be%a9%e5%a4%a7%e5%88%a9",
+      "name": "雪梨小義大利",
+      "count": 1
+    },
+    {
+      "_file": "777216397-新州火車博物館.yaml",
+      "wpId": 777216397,
+      "slug": "%e6%96%b0%e5%b7%9e%e7%81%ab%e8%bb%8a%e5%8d%9a%e7%89%a9%e9%a4%a8",
+      "name": "新州火車博物館",
+      "count": 1
+    },
+    {
+      "_file": "7780461-黑色星期五.yaml",
+      "wpId": 7780461,
+      "slug": "%e9%bb%91%e8%89%b2%e6%98%9f%e6%9c%9f%e4%ba%94",
+      "name": "黑色星期五",
+      "count": 1
+    },
+    {
+      "_file": "780320896-雪梨皇家復活節嘉年華.yaml",
+      "wpId": 780320896,
+      "slug": "%e9%9b%aa%e6%a2%a8%e7%9a%87%e5%ae%b6%e5%be%a9%e6%b4%bb%e7%af%80%e5%98%89%e5%b9%b4%e8%8f%af",
+      "name": "雪梨皇家復活節嘉年華",
+      "count": 1
+    },
+    {
+      "_file": "780320899-Easter Show攻略.yaml",
+      "wpId": 780320899,
+      "slug": "easter-show%e6%94%bb%e7%95%a5",
+      "name": "Easter Show攻略",
+      "count": 1
+    },
+    {
+      "_file": "780514753-澳紐聯軍紀念日.yaml",
+      "wpId": 780514753,
+      "slug": "%e6%be%b3%e7%b4%90%e8%81%af%e8%bb%8d%e7%b4%80%e5%bf%b5%e6%97%a5",
+      "name": "澳紐聯軍紀念日",
+      "count": 1
+    },
+    {
+      "_file": "780514755-澳新軍團日.yaml",
+      "wpId": 780514755,
+      "slug": "%e6%be%b3%e6%96%b0%e8%bb%8d%e5%9c%98%e6%97%a5",
+      "name": "澳新軍團日",
+      "count": 1
+    },
+    {
+      "_file": "780523870-澳洲停車告示牌.yaml",
+      "wpId": 780523870,
+      "slug": "%e6%be%b3%e6%b4%b2%e5%81%9c%e8%bb%8a%e5%91%8a%e7%a4%ba%e7%89%8c",
+      "name": "澳洲停車告示牌",
+      "count": 1
+    },
+    {
+      "_file": "782083507-採松露.yaml",
+      "wpId": 782083507,
+      "slug": "%e6%8e%a1%e6%9d%be%e9%9c%b2",
+      "name": "採松露",
+      "count": 1
+    },
+    {
+      "_file": "784441898-澳洲海事博物館.yaml",
+      "wpId": 784441898,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%b5%b7%e4%ba%8b%e5%8d%9a%e7%89%a9%e9%a4%a8",
+      "name": "澳洲海事博物館",
+      "count": 1
+    },
+    {
+      "_file": "786085825-雪梨歷史.yaml",
+      "wpId": 786085825,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%ad%b7%e5%8f%b2",
+      "name": "雪梨歷史",
+      "count": 1
+    },
+    {
+      "_file": "786103231-雪梨槍擊.yaml",
+      "wpId": 786103231,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%a7%8d%e6%93%8a",
+      "name": "雪梨槍擊",
+      "count": 1
+    },
+    {
+      "_file": "786103232-邦代槍擊.yaml",
+      "wpId": 786103232,
+      "slug": "%e9%82%a6%e4%bb%a3%e6%a7%8d%e6%93%8a",
+      "name": "邦代槍擊",
+      "count": 1
+    },
+    {
+      "_file": "786240141-煙火拍攝.yaml",
+      "wpId": 786240141,
+      "slug": "%e7%85%99%e7%81%ab%e6%8b%8d%e6%94%9d",
+      "name": "煙火拍攝",
+      "count": 1
+    },
+    {
+      "_file": "786320946-澳洲捐血.yaml",
+      "wpId": 786320946,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%8d%90%e8%a1%80",
+      "name": "澳洲捐血",
+      "count": 1
+    },
+    {
+      "_file": "786858035-雪梨極光.yaml",
+      "wpId": 786858035,
+      "slug": "%e9%9b%aa%e6%a2%a8%e6%a5%b5%e5%85%89",
+      "name": "雪梨極光",
+      "count": 1
+    },
+    {
+      "_file": "787226636-英文.yaml",
+      "wpId": 787226636,
+      "slug": "%e8%8b%b1%e6%96%87",
+      "name": "英文",
+      "count": 1
+    },
+    {
+      "_file": "787226637-澳洲生活.yaml",
+      "wpId": 787226637,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%94%9f%e6%b4%bb",
+      "name": "澳洲生活",
+      "count": 29
+    },
+    {
+      "_file": "787226638-澳洲移民.yaml",
+      "wpId": 787226638,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%a7%bb%e6%b0%91",
+      "name": "澳洲移民",
+      "count": 6
+    },
+    {
+      "_file": "787226639-澳洲留學.yaml",
+      "wpId": 787226639,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%95%99%e5%ad%b8",
+      "name": "澳洲留學",
+      "count": 6
+    },
+    {
+      "_file": "787226640-澳洲旅遊.yaml",
+      "wpId": 787226640,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%97%85%e9%81%8a",
+      "name": "澳洲旅遊",
+      "count": 38
+    },
+    {
+      "_file": "787226641-澳洲政府網站.yaml",
+      "wpId": 787226641,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%94%bf%e5%ba%9c%e7%b6%b2%e7%ab%99",
+      "name": "澳洲政府網站",
+      "count": 6
+    },
+    {
+      "_file": "787226642-澳洲時事.yaml",
+      "wpId": 787226642,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%99%82%e4%ba%8b",
+      "name": "澳洲時事",
+      "count": 8
+    },
+    {
+      "_file": "787226643-澳洲職場.yaml",
+      "wpId": 787226643,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%81%b7%e5%a0%b4",
+      "name": "澳洲職場",
+      "count": 2
+    },
+    {
+      "_file": "787226644-澳洲歷史.yaml",
+      "wpId": 787226644,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%ad%b7%e5%8f%b2",
+      "name": "澳洲歷史",
+      "count": 2
+    },
+    {
+      "_file": "787226645-澳洲理財.yaml",
+      "wpId": 787226645,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%90%86%e8%b2%a1",
+      "name": "澳洲理財",
+      "count": 6
+    },
+    {
+      "_file": "7938-lenovo.yaml",
+      "wpId": 7938,
+      "slug": "lenovo",
+      "name": "lenovo",
+      "count": 1
+    },
+    {
+      "_file": "80242-運動.yaml",
+      "wpId": 80242,
+      "slug": "%e9%81%8b%e5%8b%95",
+      "name": "運動",
+      "count": 1
+    },
+    {
+      "_file": "94193532-澳洲政府.yaml",
+      "wpId": 94193532,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%94%bf%e5%ba%9c",
+      "name": "澳洲政府",
+      "count": 1
+    },
+    {
+      "_file": "991087-雪梨.yaml",
+      "wpId": 991087,
+      "slug": "%e9%9b%aa%e6%a2%a8",
+      "name": "雪梨",
+      "count": 4
+    },
+    {
+      "_file": "998196-Penrith.yaml",
+      "wpId": 998196,
+      "slug": "penrith",
+      "name": "Penrith",
+      "count": 1
+    }
+  ],
+  "wpCategories": [
+    {
+      "_file": "1-Uncategorized.yaml",
+      "wpId": 1,
+      "slug": "uncategorized",
+      "name": "Uncategorized"
+    },
+    {
+      "_file": "180805-英文.yaml",
+      "wpId": 180805,
+      "slug": "%e8%8b%b1%e6%96%87",
+      "name": "英文"
+    },
+    {
+      "_file": "45737584-澳洲移民.yaml",
+      "wpId": 45737584,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%a7%bb%e6%b0%91",
+      "name": "澳洲移民"
+    },
+    {
+      "_file": "49027543-澳洲留學.yaml",
+      "wpId": 49027543,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%95%99%e5%ad%b8",
+      "name": "澳洲留學"
+    },
+    {
+      "_file": "54049154-澳洲旅遊.yaml",
+      "wpId": 54049154,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%97%85%e9%81%8a",
+      "name": "澳洲旅遊",
+      "children": [
+        {
+          "wpId": 786764321,
+          "slug": "metro%e9%80%9b%e9%9b%aa%e6%a2%a8",
+          "name": "Metro逛雪梨"
+        },
+        {
+          "wpId": 777512921,
+          "slug": "%e6%96%b0%e5%b7%9e%e5%8d%97%e9%83%a8%e9%ab%98%e5%9c%b0",
+          "name": "新州南部高地"
+        }
+      ]
+    },
+    {
+      "_file": "713157869-澳洲時事.yaml",
+      "wpId": 713157869,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%99%82%e4%ba%8b",
+      "name": "澳洲時事"
+    },
+    {
+      "_file": "718061597-澳洲職場.yaml",
+      "wpId": 718061597,
+      "slug": "%e6%be%b3%e6%b4%b2%e8%81%b7%e5%a0%b4",
+      "name": "澳洲職場",
+      "children": [
+        {
+          "wpId": 787226635,
+          "slug": "%e4%b8%80%e9%80%b1%e4%b8%80%e5%ae%b6%e6%be%b3%e6%b4%b2%e4%bc%81%e6%a5%ad",
+          "name": "一週一家澳洲企業"
+        }
+      ]
+    },
+    {
+      "_file": "718619301-澳洲歷史.yaml",
+      "wpId": 718619301,
+      "slug": "%e6%be%b3%e6%b4%b2%e6%ad%b7%e5%8f%b2",
+      "name": "澳洲歷史",
+      "children": [
+        {
+          "wpId": 786955331,
+          "slug": "%e9%ba%a5%e8%80%83%e7%91%9e%e8%a1%97%e6%aa%94%e6%a1%88",
+          "name": "麥考瑞街檔案"
+        }
+      ]
+    },
+    {
+      "_file": "7297459-澳洲生活.yaml",
+      "wpId": 7297459,
+      "slug": "%e6%be%b3%e6%b4%b2%e7%94%9f%e6%b4%bb",
+      "name": "澳洲生活",
+      "children": [
+        {
+          "wpId": 720909828,
+          "slug": "%e6%be%b3%e6%b4%b2%e7%90%86%e8%b2%a1",
+          "name": "澳洲理財"
+        },
+        {
+          "wpId": 87042402,
+          "slug": "%e6%be%b3%e6%b4%b2%e6%94%bf%e5%ba%9c%e7%b6%b2%e7%ab%99",
+          "name": "澳洲政府網站"
+        }
+      ]
+    }
+  ],
+  "site": {
+    "_file": "header.yml",
+    "nav": [
+      {
+        "label": "Home",
+        "to": "/"
+      },
+      {
+        "label": "Jen Knows",
+        "to": "/jen-knows"
+      },
+      {
+        "label": "Jen Liu",
+        "to": "/jen-liu"
+      },
+      {
+        "label": "Blogs",
+        "to": "/blogs"
+      },
+      {
+        "label": "Sydney Food Map",
+        "to": "/sydney-food-map"
+      }
+    ]
+  },
+  "siteBlogs": {
+    "_file": "blogs.yml",
+    "listPage": {
+      "title": "Notes From The Notebook.",
+      "subtitle": "Collected one day, one thought, one note at a time.",
+      "loadingErrorMessage": "載入失敗，請稍後再試",
+      "loadingErrorRetryButton": "重新載入",
+      "noResultsMessage": "沒有找到相關文章",
+      "seoTitle": "Blog — Jen Lab",
+      "seoDescription": "Long-form posts about what I learned the hard way."
+    },
+    "detailPage": {
+      "backLink": "返回部落格",
+      "loadingMessage": "載入中...",
+      "notFoundMessage": "找不到文章",
+      "seoTitleTemplate": "{{title}} | Jen Liu"
+    },
+    "search": {
+      "placeholder": "Type for blog search",
+      "categoryLabel": "分類",
+      "tagLabel": "標籤"
+    },
+    "postCard": {
+      "newBadgeText": "New!",
+      "newPostDaysThreshold": 7
+    }
+  }
+}

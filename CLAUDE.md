@@ -42,15 +42,14 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes: `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in the `routeRules` prerender list.
+Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Static routes prerendered via `vite-ssg` `ssgOptions` in `vite.config.ts`: `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in the prerender list.
 
 **Non-obvious constraints:**
 
 - `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
-- `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
+- `useRestaurants.ts` — intentional dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
 - Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapApp.vue`, which wraps the `FoodMapCanvas` map stage).
-- `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
-- Light mode only — dark mode disabled in `app.config.ts`.
+- Light mode only.
 
 ## Storybook
 
@@ -84,11 +83,9 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 
 ## AI Development
 
-- Nuxt
-  - Must use `useAsyncData` instead of `useLazyAsyncData`. All pages are prerendered — data is baked into the HTML payload at build time, so there is no runtime blocking concern. `useLazyAsyncData` only helps when a page is NOT prerendered and you want the shell to paint before data arrives; that case does not exist here.
-  - Composables
-    - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
-    - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
+- Composables
+  - Prefer pure composables (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) — standard Vue 3 Composition API. Keep page-level state (route state, page queries) in the page; feed refs into pure composables.
+  - Extract composables when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
 
 - RWD: desktop and mobile only — no tablet breakpoints. On elements visible only on mobile (e.g. `md:hidden`), add `<!-- Mobile -->`; no comment means it serves all breakpoints.
 

@@ -1,10 +1,8 @@
 import type { Preview } from "@storybook/vue3-vite";
 import { setup } from "@storybook/vue3-vite";
 import { h, type App } from "vue";
-import ui from "@nuxt/ui/vue-plugin";
 // @ts-expect-error — tsconfig doesn't cover .storybook/ context, but runtime works fine
 import StoryWrapper from "../app/storybook/StoryWrapper.vue";
-// @ts-expect-error - CSS import resolution in Storybook context
 import "../app/assets/css/main.css";
 
 // Minimal stand-ins for Nuxt's built-in components.
@@ -29,7 +27,6 @@ const ClientOnly = {
 };
 
 setup((app: App) => {
-  app.use(ui);
   app.component("NuxtLink", NuxtLink);
   app.component("NuxtImg", NuxtImg);
   app.component("NuxtPicture", NuxtImg);

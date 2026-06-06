@@ -32,7 +32,7 @@
 // =============================================================================
 
 import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
-import { FERRY_ROUTES } from "~/utils/food-map/ferryRoutes";
+import { FERRY_ROUTES, type FerryRoute, type FerryStop } from "../../utils/food-map/ferryRoutes";
 import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 export interface RiverBoatsController {
@@ -125,7 +125,7 @@ const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
 export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsController {
   // Source from FERRY_ROUTES, keeping only routes with usable geometry.
   const routes = FERRY_ROUTES.filter(
-    (r) => r.path && r.path.length > 1 && r.stops && r.stops.length >= 2,
+    (r: FerryRoute) => r.path && r.path.length > 1 && r.stops && r.stops.length >= 2,
   );
 
   const layer: LayerGroup = L.layerGroup();
@@ -235,17 +235,17 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     const colors = networkColors();
 
     const measured: Measured[] = routes
-      .map((r) => {
+      .map((r: FerryRoute) => {
         const m = measure(r.path);
         return {
           path: r.path,
           cum: m.cum,
           total: m.total,
-          stopDist: r.stops.map((s) => m.cum[s.i]!),
-          stopIndex: r.stops.map((s) => s.i),
+          stopDist: r.stops.map((s: FerryStop) => m.cum[s.i]!),
+          stopIndex: r.stops.map((s: FerryStop) => s.i),
         };
       })
-      .filter((m) => m.total > 0);
+      .filter((m: Measured) => m.total > 0);
     if (!measured.length) return;
 
     // Course line + wharf dots per route.
@@ -281,7 +281,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     const desired = measured.map((m) =>
       clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );
-    const alloc = new Array<number>(measured.length).fill(0);
+    const alloc = Array.from({ length: measured.length }, () => 0);
     const longestFirst = measured
       .map((_, i) => i)
       .sort((a, b) => measured[b]!.total - measured[a]!.total);
