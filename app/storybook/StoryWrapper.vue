@@ -1,8 +1,7 @@
-<!-- Wraps every story in UApp (overlay/toast/tooltip context). An SFC so the
-     vue plugin compiles it and @nuxt/ui's resolver auto-imports UApp — a runtime
-     template string in preview.ts could not be scanned for that. -->
+<!-- Wraps every story in an isolation context. Plain SFC — @nuxt/ui was
+     removed, so no UApp; stories don't use overlay/toast/tooltip. -->
 <template>
-  <UApp class="isolate">
+  <div class="isolate">
     <slot />
-  </UApp>
+  </div>
 </template>
