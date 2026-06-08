@@ -19,6 +19,11 @@
     - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without verifying the route in webwright.
     - **Violation**: building a click-to-flip card and stopping at "the code compiles" without ever rendering it.
   - If the change has no visible route, say so explicitly and ask which route to verify — do not skip verification silently.
+- Git flow
+  - Every development branch opens its PR against **`develop`**, never `main`. `main` only receives merges from `develop`.
+  - `develop` and `main` are PR-protected — never direct-push to either; always branch + PR.
+- Accessibility
+  - This is a personal site. **Never build for accessibility** — no focus traps, keyboard navigation, ARIA roles, or screen-reader support. Design and verify for **mouse + touch tap only**.
 - Else
   - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
