@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "@nuxt/ui";
 @import "./theme.css";
 
 @theme {
@@ -55,11 +54,8 @@
 }
 
 /*
- * Nuxt UI utility overrides (non-layered → beats all @layer utilities)
- * This project uses a near-full-circle pill shape (800px) for all buttons,
- * so rounded-button must always win. Nuxt UI injects rounded-md into UButton's
- * base class list; when both appear, layer source order lets rounded-md win.
- * Declaring these rules outside any @layer overrides that without !important.
+ * Radius overrides (non-layered → beats all @layer utilities).
+ * AppButton sets rounded-button; declare outside @layer so it always wins.
  */
 .rounded-button {
   border-radius: var(--radius-button);
@@ -81,9 +77,8 @@
  * 1000 : overlays anchored INSIDE the Leaflet map container (must beat
  *        Leaflet's internal panes — controls top out around z 800).
  * 1100 : floating UI on the Leaflet page that must sit above 1000-layer
- *        in-map overlays (e.g. UColorModeButton).
- *
- *  Modal/popover layers come from @nuxt/ui — do not redeclare here.
+ *        in-map overlays.
+ *  z-40/z-50 : AppModal / AppSlideover overlays (set directly in those components).
  */
 
 .fade-enter-active,

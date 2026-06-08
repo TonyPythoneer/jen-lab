@@ -22,7 +22,7 @@
       class="absolute right-3 top-3 z-20 grid size-9 place-items-center rounded-full bg-pure-white/80 text-abyssal-ink shadow-sm backdrop-blur-sm transition-colors hover:bg-pure-white"
       @click="open = !open"
     >
-      <UIcon :name="open ? 'i-lucide-x' : 'i-lucide-info'" class="size-5" />
+      <AppIcon :name="open ? 'i-lucide-x' : 'i-lucide-info'" class="size-5" />
     </button>
 
     <!-- Buy: sits directly below the info button; opens the buy interstitial. -->
@@ -32,7 +32,7 @@
       class="absolute right-3 top-14 z-20 grid size-9 place-items-center rounded-full bg-digital-orange text-pure-white shadow-sm transition-colors hover:bg-[#e34800]"
       @click="buyOpen = true"
     >
-      <UIcon name="i-streamline-freehand:e-commerce-click-buy" class="size-5" />
+      <AppIcon name="i-streamline-freehand:e-commerce-click-buy" class="size-5" />
     </button>
 
     <!-- Info drawer: slides in left-to-right over the whole card; scrolls to read. -->
@@ -51,8 +51,8 @@
         class="product-drawer absolute inset-0 z-10 overflow-y-auto overscroll-contain bg-ash-white p-5 pr-16"
       >
         <h3 class="mb-3 text-lg font-display tracking-[0.02em] text-abyssal-ink">{{ title }}</h3>
-        <!-- descriptionHtml is pre-rendered at build by markdown-it (see nuxt.config.ts
-             content:file:afterParse). v-html ships no parser to the client; source is trusted local content. -->
+        <!-- descriptionHtml is pre-rendered at build by markdown-it (see velite.config.ts
+             productListSection transform). v-html ships no parser to the client; source is trusted local content. -->
         <div
           v-if="descriptionHtml"
           class="product-description text-sm leading-relaxed text-abyssal-ink/70"
@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-// `descriptionHtml` is pre-rendered at build (see nuxt.config.ts hook).
+// `descriptionHtml` is pre-rendered at build (see velite.config.ts).
 // `description` is the markdown source — declared only to absorb the
 // spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
 defineProps<{

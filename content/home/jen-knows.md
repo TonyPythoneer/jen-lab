@@ -34,8 +34,8 @@ sections:
         brief: 澳洲觀點專欄，刊載於《Crossing》
   - id: videos
     label: Videos
-    component: youtube-carousel
-    carousels:
+    component: youtube-gallery
+    galleries:
       - id: career-videos
         videos:
           - id: J7AWXUoq9ck

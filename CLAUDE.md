@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt has been removed. All guidance below reflects the current Vite stack.
+
 ## Constitution
 
 - Professionalism
@@ -21,13 +23,13 @@
 ## Commands
 
 ```bash
-# Vue/Nuxt development
-pnpm dev          # :3500. Port via DEV_PORT env (DEV_PORT=3600 pnpm dev for a 2nd worktree). --host 0.0.0.0 = LAN/phone reachable. Check lsof / Nuxt dev-lock before starting a duplicate.
+# Vue 3 + Vite development
+pnpm dev          # :3500. Port via DEV_PORT env (DEV_PORT=3600 pnpm dev for a 2nd worktree). Runs velite --watch & vp dev in parallel. Also exposes /__inspect/ (vite-plugin-inspect). Check lsof before starting a duplicate.
 pnpm build        # Build for production (Cloudflare Pages)
-pnpm preview      # Build + preview locally with wrangler
+pnpm preview      # Build + preview locally
 pnpm deploy       # Build + deploy to Cloudflare Pages
 
-# Storybook — component preview (standalone, not connected to Nuxt)
+# Storybook — component preview (standalone)
 pnpm storybook        # Component preview at :6006
 pnpm build-storybook  # Build static Storybook to storybook-static/
 
@@ -42,19 +44,18 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Nuxt 4 personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes: `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (WordPress REST API), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in the `routeRules` prerender list.
+Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes (via `vite-ssg`): `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (Velite content), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in `ssgOptions.includedRoutes`.
 
 **Non-obvious constraints:**
 
 - `SitePageContainer` — do **not** use on `/` (homepage manages its own container for full-bleed sections). Use on all other pages.
-- `useRestaurants.ts` — intentional `useLazyAsyncData` + dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
+- `useRestaurants.ts` — intentional dynamic `import()`: keeps the dataset out of the route chunk. Do NOT replace with a static top-level import.
 - Leaflet is SSR-unsafe — any Leaflet-rendering component must stay inside `<ClientOnly>` (see `FoodMapApp.vue`, which wraps the `FoodMapCanvas` map stage).
-- `mdc.highlight: false` in `nuxt.config.ts` — disables Shiki WASM (~1.5 MB). Re-enable only if fenced code blocks are added to content.
-- Light mode only — dark mode disabled in `app.config.ts`.
+- Light mode only (enforced in component themes).
 
 ## Storybook
 
-Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the project's vite-plus/rolldown toolchain. `.storybook/main.ts` folds auto-import and component config into `@nuxt/ui/vite`'s own options (it bundles both plugins; a second instance throws). `@vitejs/plugin-vue` is explicitly registered because vite-plus doesn't add it automatically.
+Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import and component resolution plugins explicitly. `@vitejs/plugin-vue` is registered because vite-plus doesn't add it automatically.
 
 - **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"`.
 - **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus/Nuxt's TS setup; stories are dev-only.
@@ -84,11 +85,9 @@ Standalone `@storybook/vue3-vite` (NOT `@nuxtjs/storybook`) — avoids the proje
 
 ## AI Development
 
-- Nuxt
-  - Must use `useAsyncData` instead of `useLazyAsyncData`. All pages are prerendered — data is baked into the HTML payload at build time, so there is no runtime blocking concern. `useLazyAsyncData` only helps when a page is NOT prerendered and you want the shell to paint before data arrives; that case does not exist here.
-  - Composables
-    - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
-    - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **Nuxt-bound** one. Keep Nuxt-bound calls (`useRoute`, `useState`) in the page; feed their refs into the pure composable.
+- Composables
+  - Extract when logic is **shared across components**, needs **independent unit tests**, or needs clear **ownership boundaries** between team members. Otherwise inline it.
+  - Prefer a **pure** composable (`ref`/`computed`/`watch`/plain JS, accepts `MaybeRefOrGetter`) over a **router-bound** one. Keep router calls (`useRoute`, `useRouter`) in the page; feed their refs into the pure composable.
 
 - RWD: desktop and mobile only — no tablet breakpoints. On elements visible only on mobile (e.g. `md:hidden`), add `<!-- Mobile -->`; no comment means it serves all breakpoints.
 

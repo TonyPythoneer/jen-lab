@@ -60,7 +60,7 @@ const panelHiddenClass = computed(() =>
         aria-label="查看詳情"
         @click="isOpen = true"
       >
-        <UIcon name="i-lucide-info" class="size-5" />
+        <AppIcon name="i-lucide-info" class="size-5" />
       </button>
 
       <!-- Mobile: white card panel slides over the colored card -->
@@ -74,7 +74,7 @@ const panelHiddenClass = computed(() =>
           aria-label="關閉"
           @click="isOpen = false"
         >
-          <UIcon name="i-lucide-x" class="size-5 text-abyssal-ink" />
+          <AppIcon name="i-lucide-x" class="size-5 text-abyssal-ink" />
         </button>
 
         <div class="space-y-3">
@@ -87,7 +87,7 @@ const panelHiddenClass = computed(() =>
           </p>
         </div>
 
-        <UButton
+        <AppButton
           color="neutral"
           size="md"
           :class="['text-white text-base font-medium transition-colors', ctaClass]"
@@ -96,7 +96,7 @@ const panelHiddenClass = computed(() =>
           trailing-icon="i-lucide-arrow-right"
         >
           {{ ctaLabel }}
-        </UButton>
+        </AppButton>
       </div>
     </article>
 
@@ -119,7 +119,7 @@ const panelHiddenClass = computed(() =>
         </p>
       </div>
 
-      <UButton
+      <AppButton
         color="neutral"
         size="md"
         :class="['text-white text-base font-medium transition-colors', ctaClass]"
@@ -128,7 +128,7 @@ const panelHiddenClass = computed(() =>
         trailing-icon="i-lucide-arrow-right"
       >
         {{ ctaLabel }}
-      </UButton>
+      </AppButton>
     </article>
   </div>
 </template>

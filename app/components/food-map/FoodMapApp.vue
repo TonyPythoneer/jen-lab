@@ -19,7 +19,7 @@ function toggleBoats() {
 }
 
 // Dev-only switches to turn each static vector layer off and feel its drag cost
-// on a real phone. Only rendered in the theme menu when `import.meta.dev`.
+// on a real phone. Only rendered in the theme menu when `import.meta.env.DEV`.
 const devLayers = reactive({
   courseLines: true,
   wharfDots: true,
@@ -44,7 +44,7 @@ function selectTileMode(mode: typeof tileMode.value) {
 // The profiler panel shows in dev, or in any build via `?debug` — so the levers
 // can be felt on the real prod build (where the jank actually reproduces).
 const route = useRoute();
-const debug = computed(() => import.meta.dev || route.query.debug !== undefined);
+const debug = computed(() => import.meta.env.DEV || route.query.debug !== undefined);
 
 const visibleRestaurants = computed(() => store.getVisibleList(props.restaurants));
 const selectedRestaurant = computed(() => store.getSelectedRestaurant(props.restaurants));
@@ -63,7 +63,7 @@ function onStageReady(controls: typeof mapControls) {
 <template>
   <!-- `--detail` (mobile only) hides chips/style/zoom/recenter once a place is picked. -->
   <div :class="['food-map-app', { 'food-map-app--detail': selectedRestaurant }]">
-    <ClientOnly>
+    <AppClientOnly>
       <FoodMapCanvas
         :restaurants="visibleRestaurants"
         :selected-restaurant-id="store.state.selectedRestaurantId"
@@ -84,7 +84,7 @@ function onStageReady(controls: typeof mapControls) {
       <template #fallback>
         <div class="map-surface" />
       </template>
-    </ClientOnly>
+    </AppClientOnly>
 
     <!-- Top bar: search + filter chips + home, Google-Maps style -->
     <FoodMapTopBar :categories="categories" :all-restaurants="props.restaurants" />

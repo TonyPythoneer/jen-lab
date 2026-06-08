@@ -1,24 +1,35 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "files": [],
-  "references": [
-    {
-      "path": "./.nuxt/tsconfig.app.json"
-    },
-    {
-      "path": "./.nuxt/tsconfig.server.json"
-    },
-    {
-      "path": "./.nuxt/tsconfig.shared.json"
-    },
-    {
-      "path": "./.nuxt/tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.test.json" // tests/ — see file header
-    },
-    {
-      "path": "./tsconfig.scripts.json" // scripts/ + shared/ — see file header
+  // Standalone Vite/Vue tsconfig — no .nuxt/ dependency.
+  // tsconfig.test.json and tsconfig.scripts.json extend this.
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "preserve",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowArbitraryExtensions": true,
+    "moduleDetection": "force",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "useDefineForClassFields": true,
+    "baseUrl": ".",
+    "paths": {
+      "~": ["./app"],
+      "~/*": ["./app/*"],
+      "@": ["./app"],
+      "@/*": ["./app/*"]
     }
-  ]
+  },
+  "include": ["*.d.ts", "vite.config.ts", "app/**/*.ts", "app/**/*.tsx", "app/**/*.vue"]
 }

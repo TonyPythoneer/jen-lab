@@ -21,7 +21,7 @@ content/home/<分頁名字>.md
 ```
 public/home/<分頁名字>/
 ├── avatar.webp                          ← 頭像
-├── galleries/<相簿名字>/xxx.webp        ← 圖片輪播用
+├── galleries/<相簿名字>/xxx.webp        ← 圖片圖庫用
 └── products/xxx.webp                    ← 商品圖
 ```
 
@@ -83,13 +83,13 @@ profile:
 
 `icon` 是圖示名稱,最簡單的方式是從現有檔案複製貼上,或請工程師幫你找。
 
-### ② youtube-carousel — 影片輪播
+### ② youtube-gallery — 影片圖庫
 
 ```yaml
 - id: videos
   label: Videos
-  component: youtube-carousel
-  carousels:
+  component: youtube-gallery
+  galleries:
     - id: career-talks
       label: 職涯分享          # 可選,加了會顯示子標題
       videos:
@@ -97,23 +97,23 @@ profile:
           title: 影片標題
         - id: b2k3oprSEOI
           title: 第二支影片
-    - id: vlog                  # 同一抽屜內第 2 組影片輪播
+    - id: vlog                  # 同一抽屜內第 2 組影片圖庫
       label: Vlog
       videos:
         - id: xxxxxxxx
           title: ...
 ```
 
-**同抽屜放多組** → 一個 section 內塞多個 `carousels` 項。
+**同抽屜放多組** → 一個 section 內塞多個 `galleries` 項。
 **各自獨立抽屜** → 寫多個 section。
 
-### ③ image-carousel — 圖片輪播
+### ③ image-gallery — 圖片圖庫
 
 ```yaml
 - id: galleries
   label: Galleries
-  component: image-carousel
-  carousels:
+  component: image-gallery
+  galleries:
     - id: trip-photos
       label: 旅遊紀錄          # 可選
       images:
@@ -124,7 +124,7 @@ profile:
         - /home/jen-liu/galleries/food-photos/x.webp
 ```
 
-規則跟 youtube-carousel 一樣 — 一個 section 多 `carousels` = 同抽屜多組。
+規則跟 youtube-gallery 一樣 — 一個 section 多 `galleries` = 同抽屜多組。
 
 ### ④ product-list — 商品卡片
 
@@ -170,8 +170,8 @@ sections:                          # ← 順序決定顯示順序
 
   - id: galleries                  # ← 第 2 個出現
     label: 相簿
-    component: image-carousel
-    carousels:
+    component: image-gallery
+    galleries:
       - id: photos
         images:
           - /home/my-tab/galleries/photos/a.webp

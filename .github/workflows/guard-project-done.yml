@@ -1,0 +1,40 @@
+name: 🚫 Project-Done Guard
+
+# Enforces the "migration is finished" end state:
+#   1. No GSD board or superpowers specs/plans committed (working scaffolding only).
+#   2. No Nuxt references left in app/ runtime code.
+# Both are gitignored, so this is a backstop against an accidental force-add.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: No planning scaffolding committed
+        run: |
+          found=$(git ls-files .planning docs/superpowers)
+          if [ -n "$found" ]; then
+            echo "::error::Planning scaffolding must be deleted — these files are committed:"
+            echo "$found"
+            exit 1
+          fi
+          echo "✓ no .planning / docs/superpowers committed"
+
+      - name: No Nuxt remnants in app/ runtime
+        run: |
+          # Stories and the Storybook folder are dev-only and still use @nuxt/ui,
+          # so they are excluded from this check.
+          found=$(grep -rin nuxt app/ --include='*.vue' --include='*.ts' \
+            | grep -v '\.stories\.ts:' | grep -v 'app/storybook/' || true)
+          if [ -n "$found" ]; then
+            echo "::error::Nuxt references found in app/ runtime code:"
+            echo "$found"
+            exit 1
+          fi
+          echo "✓ no Nuxt references in app/ runtime"

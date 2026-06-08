@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const appConfig = useAppConfig();
-const socials = appConfig.contacts ?? [];
+import { contacts } from "~/config/site";
+
+const socials = contacts;
 
 const footerDotField = {
   color: "var(--color-pixel-glare)",
@@ -31,10 +32,10 @@ const currentYear = new Date().getFullYear();
       <!-- Dark-radial dotfield: pixel-glare dots fading from top-right corner -->
       <HomeBackgroundDots v-bind="footerDotField" />
       <!-- Brand mark + wordmark -->
-      <NuxtLink to="/" class="flex items-center gap-2.5 w-fit">
+      <RouterLink to="/" class="flex items-center gap-2.5 w-fit">
         <img src="/favicon.128x128.webp" alt="" class="size-7 rounded-full shrink-0" />
         <span class="font-display tracking-[0.02em] text-xl">JEN</span>
-      </NuxtLink>
+      </RouterLink>
 
       <!-- Tagline: tighter font size on mobile, larger on desktop -->
       <h2 class="font-display tracking-[0.02em] leading-[1.3] text-4xl md:text-5xl">
@@ -55,7 +56,7 @@ const currentYear = new Date().getFullYear();
           rel="noopener"
           class="flex-1 aspect-square rounded-full bg-digital-orange text-pure-white inline-flex items-center justify-center transition-colors duration-[180ms] hover:bg-[#e34800]"
         >
-          <UIcon :name="c.icon" class="size-6" />
+          <AppIcon :name="c.icon" class="size-6" />
         </a>
       </div>
 

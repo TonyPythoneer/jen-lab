@@ -34,7 +34,7 @@
         </p>
         <!-- Multiple tabs: UTabs navigation + reactive bio below -->
         <template v-else>
-          <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm" class="w-full" />
+          <AppTabs v-model="activeTab" :items="tabItems" class="w-full" />
           <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
             {{ activeBio }}
           </p>
@@ -73,23 +73,23 @@
         </div>
       </template>
 
-      <!-- youtube-carousel: full width -->
-      <template v-else-if="section.component === 'youtube-carousel'">
-        <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
-          <h3 v-if="carousel.label" class="text-sm font-semibold text-abyssal-ink/60">
-            {{ carousel.label }}
+      <!-- youtube-gallery: 2-col grid -->
+      <template v-else-if="section.component === 'youtube-gallery'">
+        <div v-for="gallery in section.galleries" :key="gallery.id" class="flex flex-col gap-2">
+          <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
+            {{ gallery.label }}
           </h3>
-          <HomeYoutubeCarousel :videos="carousel.videos" />
+          <HomeYoutubeGallery :videos="gallery.videos" />
         </div>
       </template>
 
-      <!-- image-carousel: full width -->
-      <template v-else-if="section.component === 'image-carousel'">
-        <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
-          <h3 v-if="carousel.label" class="text-sm font-semibold text-abyssal-ink/60">
-            {{ carousel.label }}
+      <!-- image-gallery: 2-col grid -->
+      <template v-else-if="section.component === 'image-gallery'">
+        <div v-for="gallery in section.galleries" :key="gallery.id" class="flex flex-col gap-2">
+          <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
+            {{ gallery.label }}
           </h3>
-          <HomeImageCarousel :images="carousel.images" />
+          <HomeImageGallery :images="gallery.images" />
         </div>
       </template>
     </section>
@@ -100,10 +100,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Collections } from "@nuxt/content";
+import type { home } from "../../generated/velite/index.js";
 
 const props = defineProps<{
-  page: Collections["home"];
+  page: home;
   displayName: string;
   brand: "jen-liu" | "jen-knows";
 }>();

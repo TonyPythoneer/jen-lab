@@ -4,6 +4,8 @@ A modern Nuxt/Vue web application deployed on Cloudflare Pages.
 
 "Jen Lab" is a personal content platform built as a frontend engineering practice project focused on AI-assisted development workflows, frontend performance optimization, and headless CMS integration.
 
+> **Migration status (2026-06):** Migrating from **Nuxt 4 → pure Vue 3 + Vite** (Vite+, shadcn-vue, Velite) is the active direction. An autonomous attempt was made and **reverted** — it removed Nuxt before the Vue toolchain was complete — so the repo currently runs on **Nuxt 4**. Design, plan, and retry tracking: [issue #57](https://github.com/TonyPythoneer/jen-lab/issues/57).
+
 ## Features
 
 - CMS-driven homepage content
@@ -84,7 +86,7 @@ pnpm dev
 Local server:
 
 ```txt
-http://localhost:3000
+http://localhost:3500
 ```
 
 ## Production Build

@@ -1,6 +1,6 @@
 // Plain, framework-free site config.
-// Imported by app.config.ts (Nuxt runtime) AND by Storybook (no app.config there).
-// Single source of truth so the @nuxt/ui theme never drifts between the two.
+// Imported directly by the app's components (Footer, ContactLinks) AND by
+// Storybook's theme config — single source of truth so the two never drift.
 
 // Canonical site identity — single source for the domain so it never drifts
 // across the WP API base (utils/wpApi.ts) and the contact link + email below.

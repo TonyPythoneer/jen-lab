@@ -1,5 +1,7 @@
 name: 🧪 App Tests
 
+# Stack (2026-06): Vue 3 + Vite (vite-plus, vite-ssg, Velite). Nuxt removed.
+
 on:
   pull_request:
     paths:
@@ -11,9 +13,8 @@ on:
       - "public/**"
       - "scripts/**"
       - "tests/**"
-      - "nuxt.config.ts"
-      - "content.config.ts"
       - "vite.config.ts"
+      - "velite.config.ts"
       - "wrangler.jsonc"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -31,9 +32,8 @@ on:
       - "public/**"
       - "scripts/**"
       - "tests/**"
-      - "nuxt.config.ts"
-      - "content.config.ts"
       - "vite.config.ts"
+      - "velite.config.ts"
       - "wrangler.jsonc"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -58,6 +58,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm typecheck
+      - run: pnpm check
 
       - run: pnpm test

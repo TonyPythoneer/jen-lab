@@ -37,7 +37,7 @@
                   ×
                 </button>
                 <img :src="item.url" :alt="item.alt" loading="lazy" />
-                <NuxtLink class="card-cta" :to="`/blogs/${item.id}`">{{ ctaLabel }}</NuxtLink>
+                <RouterLink class="card-cta" :to="`/blogs/${item.id}`">{{ ctaLabel }}</RouterLink>
               </figure>
             </article>
           </section>
@@ -69,7 +69,7 @@ const props = withDefaults(
   },
 );
 
-const { data: postsPage } = await useLazyAsyncData("blog3dv2-posts", () =>
+const { data: postsPage } = useAsyncData("blog3dv2-posts", () =>
   fetchPosts({ perPage: props.postCount }),
 );
 
