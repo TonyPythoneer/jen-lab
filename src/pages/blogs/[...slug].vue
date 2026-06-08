@@ -61,13 +61,22 @@ const rawSlug = route.params.slug;
 const postId = Number(Array.isArray(rawSlug) ? rawSlug[0] : rawSlug);
 const validId = Number.isInteger(postId) && postId > 0;
 
-// Lazy (not useAsyncData): non-blocking, paints the shell + loading state first.
-const {
-  data: post,
-  status,
-  error,
-} = useAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
-const pending = computed(() => validId && status.value === "pending");
+// Non-blocking: paint the shell + loading state first, fetch the post client-side.
+const post = ref<Awaited<ReturnType<typeof fetchPost>> | null>(null);
+const pending = ref(false);
+const error = ref<Error | null>(null);
+
+onMounted(async () => {
+  if (!validId) return;
+  pending.value = true;
+  try {
+    post.value = await fetchPost(postId);
+  } catch (e) {
+    error.value = e instanceof Error ? e : new Error(String(e));
+  } finally {
+    pending.value = false;
+  }
+});
 
 const meta = computed(() => {
   const p = post.value;

@@ -69,9 +69,11 @@ const props = withDefaults(
   },
 );
 
-const { data: postsPage } = useAsyncData("blog3dv2-posts", () =>
-  fetchPosts({ perPage: props.postCount }),
-);
+// WP posts fill in client-side after mount (live, not baked at build).
+const postsPage = ref<Awaited<ReturnType<typeof fetchPosts>> | null>(null);
+onMounted(async () => {
+  postsPage.value = await fetchPosts({ perPage: props.postCount });
+});
 
 // Image sizing knob — tune PHOTON_FIT below.
 // Cards are 2/3 portrait, locked to desktop max 432x648 (--w: 18em + 1.5em font),
