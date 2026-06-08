@@ -12,7 +12,6 @@
     "check": "vp check && pnpm typecheck",
     "typecheck": "vue-tsc --noEmit",
     "test": "vp test run",
-    "test:watch": "vp test",
     "preview": "pnpm build && pnpm dlx serve dist",
     "deploy": "pnpm build && wrangler pages deploy",
     "cf-typegen": "wrangler types",
