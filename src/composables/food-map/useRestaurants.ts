@@ -27,7 +27,8 @@ async function loadData() {
 }
 
 export function useRestaurants() {
-  const { status, data } = useAsyncData("~/assets/data/restaurants", loadData);
+  const data = ref<Awaited<ReturnType<typeof loadData>> | null>(null);
+  void loadData().then((d) => (data.value = d));
 
   // Filters — each independently nullable, all AND-combined.
   const selectedArea = ref<RestaurantArea | null>(null);
@@ -35,7 +36,7 @@ export function useRestaurants() {
   const searchedName = ref("");
   const selectedRestaurantId = ref<string | null>(null);
 
-  const isReady = computed(() => status.value === "success");
+  const isReady = computed(() => data.value !== null);
   const categories = computed(() => data.value?.categories ?? []);
   const restaurantAreaSet = computed(
     () => data.value?.restaurantAreaSet ?? new Set<RestaurantArea>(),
