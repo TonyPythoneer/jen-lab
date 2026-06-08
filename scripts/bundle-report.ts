@@ -50,8 +50,7 @@ const rows: Row[] = readdirSync(DIST)
 if (process.argv.includes("--json")) {
   console.log(JSON.stringify(rows));
 } else {
-  const header =
-    "Page".padEnd(26) + "JS".padStart(11) + "CSS".padStart(11) + "Total".padStart(11);
+  const header = "Page".padEnd(26) + "JS".padStart(11) + "CSS".padStart(11) + "Total".padStart(11);
   console.log("\nPer-page initial load (gzipped):\n");
   console.log(header);
   console.log("-".repeat(header.length));
