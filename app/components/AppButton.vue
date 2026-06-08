@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import { RouterLink, type RouteLocationRaw } from "vue-router";
-import { cva } from "class-variance-authority";
 import { cn } from "~/lib/utils";
 
 defineOptions({ inheritAttrs: false });
@@ -55,72 +54,37 @@ const elementAttrs = computed(() => {
 });
 // #endregion
 
-// #region CVA — maps color×variant props to design tokens
-const button = cva(
-  "inline-flex items-center justify-center gap-1.5 rounded-button font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-digital-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      color: { primary: "", neutral: "", secondary: "" },
-      variant: { solid: "", outline: "", ghost: "", soft: "" },
-      size: {
-        xs: "h-6 px-1.5 text-xs",
-        sm: "h-8 px-2 text-sm",
-        md: "h-9 px-3 text-sm",
-        lg: "h-10 px-3.5 text-base",
-        xl: "h-11 px-4 text-base",
-      },
-      square: { true: "px-0 aspect-square" },
-    },
-    compoundVariants: [
-      // Primary solid (orange CTA)
-      {
-        color: "primary",
-        variant: "solid",
-        class: "bg-digital-orange text-pure-white hover:bg-[#e34800]",
-      },
-      // Neutral solid
-      {
-        color: "neutral",
-        variant: "solid",
-        class: "bg-abyssal-ink text-pure-white hover:bg-abyssal-ink/90",
-      },
-      // Neutral outline — 1.5 px inset shadow (matches uiConfig in site.ts)
-      {
-        color: "neutral",
-        variant: "outline",
-        class:
-          "shadow-[inset_0_0_0_1.5px_var(--color-abyssal-ink)] text-abyssal-ink hover:bg-abyssal-ink hover:text-pure-white hover:shadow-none",
-      },
-      // Neutral ghost
-      {
-        color: "neutral",
-        variant: "ghost",
-        class: "text-abyssal-ink hover:bg-abyssal-ink/8",
-      },
-      // Primary soft
-      {
-        color: "primary",
-        variant: "soft",
-        class: "bg-digital-orange/10 text-digital-orange hover:bg-digital-orange/20",
-      },
-      // Neutral soft
-      {
-        color: "neutral",
-        variant: "soft",
-        class: "bg-abyssal-ink/10 text-abyssal-ink hover:bg-abyssal-ink/20",
-      },
-      // Secondary soft
-      {
-        color: "secondary",
-        variant: "soft",
-        class: "bg-cyber-violet/10 text-cyber-violet hover:bg-cyber-violet/20",
-      },
-    ],
-  },
-);
+// #region Variant classes — maps color×variant props to design tokens
+const BASE =
+  "inline-flex items-center justify-center gap-1.5 rounded-button font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-digital-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+
+const SIZE = {
+  xs: "h-6 px-1.5 text-xs",
+  sm: "h-8 px-2 text-sm",
+  md: "h-9 px-3 text-sm",
+  lg: "h-10 px-3.5 text-base",
+  xl: "h-11 px-4 text-base",
+} as const;
+
+// Only the defined color×variant pairs carry classes; the rest fall back to "".
+const COMBO: Record<string, string> = {
+  "primary-solid": "bg-digital-orange text-pure-white hover:bg-[#e34800]",
+  "neutral-solid": "bg-abyssal-ink text-pure-white hover:bg-abyssal-ink/90",
+  "neutral-outline":
+    "shadow-[inset_0_0_0_1.5px_var(--color-abyssal-ink)] text-abyssal-ink hover:bg-abyssal-ink hover:text-pure-white hover:shadow-none",
+  "neutral-ghost": "text-abyssal-ink hover:bg-abyssal-ink/8",
+  "primary-soft": "bg-digital-orange/10 text-digital-orange hover:bg-digital-orange/20",
+  "neutral-soft": "bg-abyssal-ink/10 text-abyssal-ink hover:bg-abyssal-ink/20",
+  "secondary-soft": "bg-cyber-violet/10 text-cyber-violet hover:bg-cyber-violet/20",
+};
 
 const cvaClass = computed(() =>
-  button({ color: props.color, variant: props.variant, size: props.size, square: props.square }),
+  cn(
+    BASE,
+    SIZE[props.size ?? "sm"],
+    COMBO[`${props.color}-${props.variant}`] ?? "",
+    props.square && "px-0 aspect-square",
+  ),
 );
 
 // ui.base adds extra classes to the root — used by callers to tweak padding/radius.
