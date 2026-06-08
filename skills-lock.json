@@ -19,22 +19,6 @@
       "skillPath": "skills/productivity/handoff/SKILL.md",
       "computedHash": "1a78d774f8a59db5daa6e65e20a6596872fa8cde769f9a6e3a09b678dd5ae8cc"
     },
-    "nuxt": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "computedHash": "571d9ea31a6f18b94168894814f20df361773e16de4a6dc675b526aaf6d55a45"
-    },
-    "nuxt-content": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "skillPath": "skills/nuxt-content/SKILL.md",
-      "computedHash": "2e6bbe566a1d907db8ff1d8a69637319a272cf7bebcdd51dd8c94a55cf70014f"
-    },
-    "nuxt-ui": {
-      "source": "nuxt/ui",
-      "sourceType": "github",
-      "computedHash": "73c6af534e1efcdfac6f3ac009ad5afe5aa67e12d90c60ee80f686573967ffe6"
-    },
     "pnpm": {
       "source": "onmax/nuxt-skills",
       "sourceType": "github",
