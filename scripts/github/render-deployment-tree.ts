@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import type { RawDeployment } from "./fetch-deployments";
+import type { RawDeployment } from "./fetch-deployments.js";
 
 // main is the live production domain; develop is the long-lived staging preview.
 const DEFAULT_PROTECTED = ["main", "develop"];
