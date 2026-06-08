@@ -1,5 +1,4 @@
 import { csvToIds } from "~/utils/shared/csvToIds";
-import type { WpPostsPage } from "~/utils/blog/wpApi";
 
 export interface BlogListInit {
   q?: unknown;
@@ -9,10 +8,8 @@ export interface BlogListInit {
 }
 
 /**
- * Pure blog-list state: filters, pagination, and the per-scope page cache.
- * No framework-bound APIs — the consuming page owns `useAsyncData` / URL sync
- * and feeds results back via `recordResult`. Keeps this unit-testable with
- * plain Vitest (see CLAUDE.md "When to extract a composable").
+ * Pure blog-list state: filters and pagination.
+ * No framework-bound APIs — the consuming page owns fetch and URL sync.
  */
 export function useBlogList(init: BlogListInit) {
   // Filter state
@@ -44,7 +41,7 @@ export function useBlogList(init: BlogListInit) {
     selectedTagIds.value = [];
   }
 
-  // Pagination + per-scope cache. scopeKey = filter set; a new scope wipes the cache.
+  // Pagination. scopeKey = filter set; a new scope resets to page 1.
   const currentPage = ref(Math.max(1, Number(init.page) || 1));
   const scopeKey = computed(
     () =>
@@ -52,19 +49,9 @@ export function useBlogList(init: BlogListInit) {
   );
   const fullKey = computed(() => `wp-posts:${scopeKey.value}:${currentPage.value}`);
 
-  const pageCache = ref(new Map<number, WpPostsPage>());
-  const totalPages = ref(1);
-
   watch(scopeKey, () => {
-    pageCache.value.clear();
     currentPage.value = 1;
-    totalPages.value = 1;
   });
-
-  function recordResult(result: WpPostsPage) {
-    pageCache.value.set(currentPage.value, result);
-    if (totalPages.value === 1) totalPages.value = result.totalPages;
-  }
 
   return {
     search,
@@ -78,8 +65,5 @@ export function useBlogList(init: BlogListInit) {
     currentPage,
     scopeKey,
     fullKey,
-    pageCache,
-    totalPages,
-    recordResult,
   };
 }

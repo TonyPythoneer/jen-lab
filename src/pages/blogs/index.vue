@@ -16,7 +16,7 @@
 
       <div v-else-if="error" class="text-center py-20">
         <p class="text-abyssal-ink/50 mb-4">{{ chrome?.listPage.loadingErrorMessage }}</p>
-        <Button color="neutral" variant="outline" @click="refresh()">
+        <Button color="neutral" variant="outline" @click="load()">
           {{ chrome?.listPage.loadingErrorRetryButton }}
         </Button>
       </div>
@@ -97,16 +97,8 @@ const router = useRouter();
 const initialQuery = route.query;
 
 // Filters, pagination + per-scope page cache (pure, see useBlogList).
-const {
-  search,
-  selectedCategoryIds,
-  selectedTagIds,
-  currentPage,
-  fullKey,
-  pageCache,
-  totalPages,
-  recordResult,
-} = useBlogList(initialQuery);
+const { search, selectedCategoryIds, selectedTagIds, currentPage, scopeKey, fullKey } =
+  useBlogList(initialQuery);
 
 // Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`).
 // Client-only: defers taxonomy fetch off SSR/hydration critical path.
@@ -116,31 +108,37 @@ const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [
 // #region Posts
 const scrollEl = ref<HTMLDivElement | null>(null);
 
-const {
-  data: result,
-  status,
-  error,
-  refresh,
-} = useAsyncData(
-  fullKey.value,
-  () =>
-    fetchPosts({
-      page: currentPage.value,
-      perPage: PER_PAGE,
-      search: search.value || undefined,
-      categories: selectedCategoryIds.value,
-      tags: selectedTagIds.value,
-    }),
-  {
-    server: false,
-    watch: [fullKey],
-    getCachedData: () => pageCache.value.get(currentPage.value),
-  },
+// Memoized by fullKey (page + all filters): a revisited page hits cache, no refetch.
+const loadPosts = useMemoize((_key: string) =>
+  fetchPosts({
+    page: currentPage.value,
+    perPage: PER_PAGE,
+    search: search.value || undefined,
+    categories: selectedCategoryIds.value,
+    tags: selectedTagIds.value,
+  }),
 );
 
-watch(result, (v) => {
-  if (v) recordResult(v);
-});
+const result = ref<Awaited<ReturnType<typeof fetchPosts>> | null>(null);
+const status = ref<"idle" | "pending" | "success" | "error">("idle");
+const error = ref<Error | null>(null);
+
+async function load() {
+  status.value = "pending";
+  error.value = null;
+  try {
+    result.value = await loadPosts(fullKey.value);
+    status.value = "success";
+  } catch (e) {
+    error.value = e instanceof Error ? e : new Error(String(e));
+    status.value = "error";
+  }
+}
+
+// Client-only (was server:false): fetch on the client, refetch when the key changes.
+watch(fullKey, load, { immediate: true });
+// New filter scope wipes the cache so it cannot grow unbounded across sessions.
+watch(scopeKey, () => loadPosts.clear());
 
 watch(currentPage, async () => {
   await nextTick();
@@ -148,6 +146,7 @@ watch(currentPage, async () => {
 });
 
 const posts = computed(() => result.value?.data ?? []);
+const totalPages = computed(() => result.value?.totalPages ?? 1);
 const loading = computed(() => status.value === "pending");
 // #endregion
 
