@@ -7,11 +7,9 @@ const COMPONENT_MAP: Record<string, ReturnType<typeof resolveComponent>> = {
   "section-support": resolveComponent("HomeSectionSupport"),
 };
 
-// Blocking (not lazy) so the homepage SEO from content is baked into the
+// Synchronous Velite read, so the homepage SEO from content is baked into the
 // prerendered HTML.
-const { data: page } = useAsyncData("pages-layout:home", () =>
-  queryCollection("pagesLayout").path("/pages-layout/home").first(),
-);
+const page = computed(() => queryCollection("pagesLayout").path("/pages-layout/home").first());
 
 function sectionProps(section: { component: string; [key: string]: unknown }) {
   const { component, ...props } = section;

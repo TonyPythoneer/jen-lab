@@ -2,7 +2,7 @@
 import { useBlogSearch } from "~/composables/blog/useBlogSearch";
 // `site` is a `type: "data"` collection — data items have no `path` column
 // (that only exists for `type: "page"`), so query the single file directly.
-const { data: siteHeader } = useAsyncData("site-header", () => queryCollection("site").first());
+const siteHeader = computed(() => queryCollection("site").first());
 const navItems = computed(() => siteHeader.value?.nav ?? []);
 
 const route = useRoute();
