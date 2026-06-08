@@ -79,7 +79,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeYoutubeGallery :videos="gallery.videos" />
+          <HomePartsYoutubeGallery :videos="gallery.videos" />
         </div>
       </template>
 
@@ -89,7 +89,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeImageGallery :images="gallery.images" />
+          <HomePartsImageGallery :images="gallery.images" />
         </div>
       </template>
     </section>
