@@ -20,9 +20,9 @@ const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const homeComponents: Record<string, string> = {
   HomeBuyButton: "parts/BuyButton",
   HomeDirectionPair: "parts/DirectionPair",
-  HomeImageCarousel: "parts/ImageCarousel",
+  HomeImageGallery: "parts/ImageGallery",
   HomeProduct: "parts/Product",
-  HomeYoutubeCarousel: "parts/YoutubeCarousel",
+  HomeYoutubeGallery: "parts/YoutubeGallery",
   HomeGlyphSvg: "art/GlyphSvg",
   HomeHarbourBridgeSvg: "art/HarbourBridgeSvg",
   HomeOperaHouseSvg: "art/OperaHouseSvg",
