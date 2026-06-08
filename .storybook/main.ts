@@ -64,6 +64,7 @@ const config: StorybookConfig = {
             "utility",
             "button",
             "badge",
+            "skeleton",
           ],
           collapseSamePrefixes: true,
         }),

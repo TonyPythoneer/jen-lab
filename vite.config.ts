@@ -84,6 +84,7 @@ const plugins = [
       "utility",
       "button",
       "badge",
+      "skeleton",
     ],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
