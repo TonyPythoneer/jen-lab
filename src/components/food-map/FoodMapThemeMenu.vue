@@ -43,11 +43,6 @@ const DEV_LAYERS: { key: DevLayerKey; label: string; note: string }[] = [
   { key: "maxBounds", label: "範圍牆 · Max bounds", note: "pen the map into the data box" },
   { key: "idleTiles", label: "滑動不抓圖磚 · Idle tiles", note: "only load tiles when drag stops" },
   { key: "boundary", label: "行政區邊界 · Suburb boundary", note: "~10k pts" },
-  {
-    key: "boundarySimplified",
-    label: "邊界簡化 · Simplify boundary",
-    note: "off = raw jsdelivr CDN, ~174k pts",
-  },
   { key: "courseLines", label: "航線 · Ferry routes", note: "~2k pts — cheap" },
   { key: "wharfDots", label: "碼頭點 · Wharf dots", note: "148 dots — cheap" },
 ];
@@ -146,6 +141,31 @@ function getSwatchGradient(themeId: string) {
           :aria-checked="props.boatsEnabled"
           aria-label="River boats"
           @click="emit('toggle-boats')"
+        >
+          <span class="theme-menu__switch-knob" />
+        </button>
+      </div>
+
+      <!-- Boundary resolution section -->
+      <div class="theme-menu__divider" />
+      <div class="theme-menu__heading">邊界 · Boundary</div>
+
+      <div class="theme-menu__toggle-row">
+        <div class="theme-menu__meta">
+          <div class="theme-menu__name">高解析度邊界 · High-res boundary</div>
+          <div class="theme-menu__note">
+            預設低解析度，較省效能 · off = lighter, simplified outline
+          </div>
+        </div>
+        <!-- ON = high-res (raw geometry). Stored inverted as `boundarySimplified`, so the
+             switch reflects !simplified and a click flips the same flag. -->
+        <button
+          class="theme-menu__switch"
+          :class="{ 'is-on': !props.devLayers.boundarySimplified }"
+          role="switch"
+          :aria-checked="!props.devLayers.boundarySimplified"
+          aria-label="High-res boundary"
+          @click="emit('toggle-layer', 'boundarySimplified')"
         >
           <span class="theme-menu__switch-knob" />
         </button>

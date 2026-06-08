@@ -24,7 +24,10 @@ const devLayers = reactive({
   courseLines: true,
   wharfDots: true,
   boundary: true,
-  boundarySimplified: false, // default to the original full-resolution jsdelivr geometry
+  // Default to the low-res (Douglas-Peucker simplified) boundary — far lighter to
+  // render/pan since the raw jsdelivr geometry is ~174k points. Users opt into the
+  // full high-res boundary from the style menu.
+  boundarySimplified: true,
   // Off by default: the maxBounds wall + viscosity tug the centre during a touch
   // pinch, which shifted the canvas markers toward the focal point. Toggle on (dev)
   // only to compare. The dev panel still exposes it.
