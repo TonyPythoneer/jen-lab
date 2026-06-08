@@ -1,28 +1,24 @@
 <template>
-  <div :class="$attrs.class">
-    <div class="flex justify-center border-b border-abyssal-ink/10">
-      <button
+  <TabsRoot
+    :model-value="modelValue"
+    :class="$attrs.class"
+    @update:model-value="$emit('update:modelValue', $event as string)"
+  >
+    <TabsList class="flex justify-center border-b border-abyssal-ink/10">
+      <TabsTrigger
         v-for="item in items"
         :key="item.value"
-        type="button"
-        :class="
-          cn(
-            'px-3 py-1.5 text-sm font-medium transition-colors border-b-2 -mb-px',
-            item.value === modelValue
-              ? 'border-digital-orange text-abyssal-ink'
-              : 'border-transparent text-abyssal-ink/50 hover:text-abyssal-ink',
-          )
-        "
-        @click="$emit('update:modelValue', item.value)"
+        :value="item.value"
+        class="px-3 py-1.5 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-abyssal-ink/50 hover:text-abyssal-ink data-[state=active]:border-digital-orange data-[state=active]:text-abyssal-ink"
       >
         {{ item.label }}
-      </button>
-    </div>
-  </div>
+      </TabsTrigger>
+    </TabsList>
+  </TabsRoot>
 </template>
 
 <script setup lang="ts">
-import { cn } from "~/lib/utils";
+import { TabsRoot, TabsList, TabsTrigger } from "reka-ui";
 
 defineOptions({ inheritAttrs: false });
 
