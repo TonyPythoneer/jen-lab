@@ -48,7 +48,7 @@ const visibleCategories = computed(() => {
       <span
         class="absolute left-[14px] top-1/2 -translate-y-1/2 pointer-events-none flex items-center"
       >
-        <AppIcon name="i-lucide-search" class="size-[16px] text-current opacity-60" />
+        <Icon name="i-lucide-search" class="size-[16px] text-current opacity-60" />
       </span>
       <input
         v-model="store.state.search"

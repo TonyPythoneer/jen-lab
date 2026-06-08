@@ -1,5 +1,5 @@
 <template>
-  <AppPopover>
+  <Popover>
     <button
       type="button"
       class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition-colors"
@@ -10,7 +10,7 @@
       "
       :aria-label="label"
     >
-      <AppIcon v-if="icon" :name="icon" class="size-4" />
+      <Icon v-if="icon" :name="icon" class="size-4" />
       <span v-else>{{ label }}</span>
       <span
         v-if="modelValue.length"
@@ -18,7 +18,7 @@
       >
         {{ modelValue.length }}
       </span>
-      <AppIcon v-else name="i-lucide-chevron-down" class="size-3 opacity-50" />
+      <Icon v-else name="i-lucide-chevron-down" class="size-3 opacity-50" />
     </button>
 
     <template #content>
@@ -38,12 +38,12 @@
                   : 'border-abyssal-ink/10'
               "
             >
-              <AppIcon
+              <Icon
                 v-if="modelValue.includes(item.value)"
                 name="i-lucide-check"
                 class="size-3 text-pure-white"
               />
-              <AppIcon
+              <Icon
                 v-else-if="isIndeterminate(item)"
                 name="i-lucide-minus"
                 class="size-3 text-pure-white"
@@ -66,7 +66,7 @@
                     : 'border-abyssal-ink/10'
                 "
               >
-                <AppIcon
+                <Icon
                   v-if="modelValue.includes(child.value)"
                   name="i-lucide-check"
                   class="size-3 text-pure-white"
@@ -78,7 +78,7 @@
         </template>
       </div>
     </template>
-  </AppPopover>
+  </Popover>
 </template>
 
 <script setup lang="ts">

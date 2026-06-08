@@ -53,6 +53,9 @@ const config: StorybookConfig = {
           dirs: [`${appDir}/components`],
           // Replicate Nuxt's component naming: home/Sprite.vue -> <HomeSprite>.
           directoryAsNamespace: true,
+          // Match vite.config: ui/<category>/<Name>.vue → bare <Name> so stories
+          // that render Modal/Button/Icon/… resolve them.
+          globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility"],
           collapseSamePrefixes: true,
         }),
       ],

@@ -13,13 +13,13 @@
         loading="lazy"
       />
       <div v-else class="w-full h-full flex items-center justify-center bg-basalt-canvas">
-        <AppIcon name="i-lucide-newspaper" class="size-12 text-abyssal-ink/30" />
+        <Icon name="i-lucide-newspaper" class="size-12 text-abyssal-ink/30" />
       </div>
       <span
         v-if="isNew"
         class="absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-digital-orange text-pure-white text-xs font-semibold px-2 py-0.5 rounded-button shadow"
       >
-        <AppIcon name="i-lucide-sparkles" class="size-3" />
+        <Icon name="i-lucide-sparkles" class="size-3" />
         {{ props.newBadgeText }}
       </span>
     </div>
@@ -33,7 +33,7 @@
         {{ stripHtml(post.excerpt.rendered) }}
       </p>
       <div class="flex flex-wrap gap-1 mt-auto pt-2">
-        <AppBadge
+        <Badge
           v-for="tagId in post.tags.slice(0, 3)"
           :key="tagId"
           color="neutral"
@@ -41,7 +41,7 @@
           size="xs"
         >
           {{ tagMap[tagId] ?? tagId }}
-        </AppBadge>
+        </Badge>
       </div>
     </div>
   </RouterLink>

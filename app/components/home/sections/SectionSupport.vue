@@ -37,7 +37,7 @@ const visible = computed(() =>
       </p>
 
       <div class="flex flex-wrap justify-center gap-3 pt-2">
-        <AppButton
+        <Button
           v-for="s in visible"
           :key="s.brand"
           as="a"
@@ -51,7 +51,7 @@ const visible = computed(() =>
           icon="fluent-emoji-high-contrast:bubble-tea"
         >
           {{ s.label }}
-        </AppButton>
+        </Button>
       </div>
     </div>
   </section>

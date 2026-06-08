@@ -18,14 +18,14 @@
             <div
               class="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center group-hover:bg-digital-orange transition-colors"
             >
-              <AppIcon name="i-lucide-play" class="w-5 h-5 text-white ml-0.5" />
+              <Icon name="i-lucide-play" class="w-5 h-5 text-white ml-0.5" />
             </div>
           </div>
         </div>
       </button>
     </div>
 
-    <AppModal v-model:open="isOpen" :ui="{ content: 'p-0 overflow-hidden' }" fullscreen>
+    <Modal v-model:open="isOpen" :ui="{ content: 'p-0 overflow-hidden' }" fullscreen>
       <template #content>
         <div class="relative w-full h-full bg-black flex items-center justify-center">
           <!-- Close button comes after the iframe in DOM, so paint order keeps it on top — no z-index needed. -->
@@ -33,7 +33,7 @@
             class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors"
             @click="closeVideo"
           >
-            <AppIcon name="i-lucide-x" class="w-5 h-5 text-white" />
+            <Icon name="i-lucide-x" class="w-5 h-5 text-white" />
           </button>
           <iframe
             v-if="activeVideoId"
@@ -51,7 +51,7 @@
           />
         </div>
       </template>
-    </AppModal>
+    </Modal>
   </div>
 </template>
 

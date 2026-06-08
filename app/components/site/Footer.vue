@@ -56,7 +56,7 @@ const currentYear = new Date().getFullYear();
           rel="noopener"
           class="flex-1 aspect-square rounded-full bg-digital-orange text-pure-white inline-flex items-center justify-center transition-colors duration-[180ms] hover:bg-[#e34800]"
         >
-          <AppIcon :name="c.icon" class="size-6" />
+          <Icon :name="c.icon" class="size-6" />
         </a>
       </div>
 

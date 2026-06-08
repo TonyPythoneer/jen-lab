@@ -3,8 +3,8 @@
 // WHY: main.ts bundles the lucide collection so icons render in the prerendered
 // SSG HTML. The full pack is ~543 KB / 1774 icons, but the site uses ~23. This
 // scans the source for `i-lucide-*` names and writes a subset, cutting the main
-// bundle by roughly half. Any icon the scan misses still renders — AppIcon's
-// @iconify/vue <Icon> falls back to the Iconify CDN at runtime.
+// bundle by roughly half. Any icon the scan misses still renders — the Icon
+// component's @iconify/vue render falls back to the Iconify CDN at runtime.
 //
 // Runs before `velite build` / `vp dev` (see package.json). Output is generated,
 // so it lives under generated/ (gitignored).

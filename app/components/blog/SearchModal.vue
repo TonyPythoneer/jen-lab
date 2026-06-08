@@ -1,5 +1,5 @@
 <template>
-  <AppSlideover
+  <Slideover
     v-model:open="open"
     side="top"
     :overlay="true"
@@ -25,11 +25,11 @@
               aria-label="搜尋"
               @click="submit"
             >
-              <AppIcon name="i-lucide-search" class="size-6" />
+              <Icon name="i-lucide-search" class="size-6" />
             </button>
             <div class="absolute inset-x-0 bottom-0 h-px bg-abyssal-ink" />
           </div>
-          <AppButton
+          <Button
             color="neutral"
             variant="ghost"
             icon="i-lucide-x"
@@ -50,7 +50,7 @@
         </div>
       </div>
     </template>
-  </AppSlideover>
+  </Slideover>
 </template>
 
 <script setup lang="ts">

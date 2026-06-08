@@ -14,16 +14,16 @@
       <div
         class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/20"
       >
-        <AppIcon name="i-lucide-zoom-in" class="size-10 text-white drop-shadow-lg" />
+        <Icon name="i-lucide-zoom-in" class="size-10 text-white drop-shadow-lg" />
       </div>
     </div>
   </div>
 
-  <AppModal v-model:open="isOpen" :ui="{ content: 'max-w-4xl p-0 overflow-hidden' }">
+  <Modal v-model:open="isOpen" :ui="{ content: 'max-w-4xl p-0 overflow-hidden' }">
     <template #content>
       <img :src="selectedImage" class="w-full h-auto max-h-[85vh] object-contain" />
     </template>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup lang="ts">

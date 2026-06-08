@@ -31,9 +31,9 @@
         >
           {{ page.profile.tabs[0]!.bio }}
         </p>
-        <!-- Multiple tabs: AppTabs navigation + reactive bio below -->
+        <!-- Multiple tabs: Tabs navigation + reactive bio below -->
         <template v-else>
-          <AppTabs v-model="activeTab" :items="tabItems" class="w-full" />
+          <Tabs v-model="activeTab" :items="tabItems" class="w-full" />
           <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">
             {{ activeBio }}
           </p>

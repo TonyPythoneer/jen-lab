@@ -82,7 +82,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       <!-- Socials + CTA + burger -->
       <div class="flex items-center gap-2 shrink-0">
         <!-- Search icon button -->
-        <AppButton
+        <Button
           color="neutral"
           variant="ghost"
           icon="i-lucide-search"
@@ -107,7 +107,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
           aria-label="Toggle menu"
           @click="mobileOpen = !mobileOpen"
         >
-          <AppIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-5" />
+          <Icon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-5" />
         </button>
       </div>
     </div>

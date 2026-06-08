@@ -82,14 +82,14 @@ function close() {
     <div v-if="restaurant.recommendations?.length" class="detail__block">
       <div class="detail__section-label">推薦 · Recommended</div>
       <div class="detail__recs">
-        <AppBadge
+        <Badge
           v-for="(rec, i) in restaurant.recommendations"
           :key="i"
           variant="outline"
           class="rounded-full px-[10px] py-[6px] text-[12px] bg-[var(--paper)] font-normal ring-[var(--foreground)]"
         >
           <span class="me-[6px] text-[10px] text-[var(--accent)]">✦</span>{{ rec }}
-        </AppBadge>
+        </Badge>
       </div>
     </div>
   </div>

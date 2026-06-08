@@ -6,7 +6,7 @@
         :to="{ path: '/blogs', query: lastQuery }"
         class="inline-flex items-center gap-1 text-sm text-abyssal-ink/50 hover:text-digital-orange transition-colors"
       >
-        <AppIcon name="i-lucide-arrow-left" class="size-4" />
+        <Icon name="i-lucide-arrow-left" class="size-4" />
         {{ chrome?.detailPage.backLink }}
       </RouterLink>
 
@@ -14,7 +14,7 @@
         {{ pending ? chrome?.detailPage.loadingMessage : chrome?.detailPage.notFoundMessage }}
       </div>
 
-      <AppPageHeader
+      <PageHeader
         v-else
         :title="meta.title"
         :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
@@ -26,7 +26,7 @@
             {{ formatDate(post.date) }}
           </span>
         </template>
-      </AppPageHeader>
+      </PageHeader>
     </div>
 
     <!-- Featured image + post content (below the fold) -->

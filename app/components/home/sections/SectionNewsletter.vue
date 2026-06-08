@@ -63,7 +63,7 @@ const newsletterDotField = {
       <!-- Animated envelope -->
       <HomeEnvelopeAnimation />
 
-      <AppButton
+      <Button
         as="a"
         class="mt-8 ring-2 ring-white ring-offset-2 ring-offset-slate-900"
         :href="subscriptionUrl"
@@ -75,7 +75,7 @@ const newsletterDotField = {
         trailing-icon="i-lucide-arrow-right"
       >
         {{ buttonLabel }}
-      </AppButton>
+      </Button>
     </div>
   </section>
 </template>

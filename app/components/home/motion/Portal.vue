@@ -6,7 +6,7 @@
     <div
       class="w-10 h-10 rounded-full bg-digital-orange/10 flex items-center justify-center shrink-0"
     >
-      <AppIcon :name="icon" class="w-5 h-5 text-digital-orange" />
+      <Icon :name="icon" class="w-5 h-5 text-digital-orange" />
     </div>
     <div class="flex-1">
       <p class="font-semibold text-abyssal-ink text-sm">{{ title }}</p>

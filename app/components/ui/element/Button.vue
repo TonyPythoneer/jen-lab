@@ -1,9 +1,9 @@
 <template>
   <component :is="tag" v-bind="elementAttrs" :class="cn(variantClass, uiBase, parentClass)">
-    <AppIcon v-if="icon" :name="icon" :class="iconSizeClass" class="shrink-0" />
+    <Icon v-if="icon" :name="icon" :class="iconSizeClass" class="shrink-0" />
     <span v-if="label !== undefined">{{ label }}</span>
     <slot v-else />
-    <AppIcon v-if="trailingIcon" :name="trailingIcon" :class="iconSizeClass" class="shrink-0" />
+    <Icon v-if="trailingIcon" :name="trailingIcon" :class="iconSizeClass" class="shrink-0" />
   </component>
 </template>
 

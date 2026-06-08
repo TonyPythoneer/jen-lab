@@ -7,7 +7,7 @@
       class="inline-flex size-8 items-center justify-center rounded-button text-sm text-abyssal-ink/50 transition-colors hover:text-abyssal-ink disabled:pointer-events-none disabled:opacity-30"
       @click="$emit('update:page', page - 1)"
     >
-      <AppIcon name="i-lucide-chevron-left" class="size-4" />
+      <Icon name="i-lucide-chevron-left" class="size-4" />
     </button>
 
     <!-- Page items via slot. No default body: the sole caller always supplies #item. -->
@@ -22,7 +22,7 @@
       class="inline-flex size-8 items-center justify-center rounded-button text-sm text-abyssal-ink/50 transition-colors hover:text-abyssal-ink disabled:pointer-events-none disabled:opacity-30"
       @click="$emit('update:page', page + 1)"
     >
-      <AppIcon name="i-lucide-chevron-right" class="size-4" />
+      <Icon name="i-lucide-chevron-right" class="size-4" />
     </button>
   </nav>
 </template>

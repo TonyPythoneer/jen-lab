@@ -1,9 +1,11 @@
 <template>
-  <Icon :icon="iconifyId" />
+  <IconifyIcon :icon="iconifyId" />
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
+// Aliased so the SFC's own global name <Icon> (this component) never collides
+// with the iconify primitive it renders.
+import { Icon as IconifyIcon } from "@iconify/vue";
 
 const props = defineProps<{ name: string }>();
 
