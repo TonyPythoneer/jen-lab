@@ -1,0 +1,114 @@
+# Owner-only command: comment "/list-deployments" on any issue or PR to print a
+# branch-grouped tree of every Cloudflare Pages deployment. Read-only — it never
+# deletes anything. Posts the tree back as a comment and uploads the full
+# (untruncated) tree as a build artifact.
+#
+# REQUIRED REPO SECRETS (Settings -> Secrets and variables -> Actions):
+#   CLOUDFLARE_API_TOKEN   token with the "Cloudflare Pages: Read" permission
+#   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
+
+name: 💬 PR Command · List Deployments
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  list-deployments:
+    # No pull_request check on purpose: the listing is project-wide, so it is
+    # allowed from any issue or PR comment (same as /all-cleanup).
+    if: >
+      github.event.comment.user.login == github.repository_owner &&
+      startsWith(github.event.comment.body, '/list-deployments')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acknowledge with reaction
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: "eyes",
+            });
+
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.0.3
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - id: render
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJECT_NAME: jen-lab
+        run: |
+          node --experimental-strip-types scripts/github/fetch-deployments.ts "$CLOUDFLARE_PROJECT_NAME" > deployments.json
+          node --experimental-strip-types scripts/github/render-deployment-tree.ts deployments.json > report.md
+
+      - name: Upload full tree artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployments-tree
+          path: deployments-tree.md
+          if-no-files-found: ignore
+
+      - name: Upsert command comment
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require("node:fs");
+            const marker = "<!-- cmd-list-deployments -->";
+            const success = "${{ steps.render.outcome }}" === "success";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+
+            let report = "";
+            try {
+              report = fs.readFileSync("report.md", "utf8").trim();
+            } catch {}
+
+            const body = success
+              ? `${marker}\n${report || "Ran but produced no report."}`
+              : `${marker}\n❌ List deployments failed. ` +
+                `See the [workflow run](${runUrl}).`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
