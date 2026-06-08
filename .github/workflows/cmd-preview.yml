@@ -73,6 +73,34 @@ jobs:
         if: always()
         run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
+      - name: Bundle report (current)
+        if: always()
+        run: pnpm exec jiti scripts/bundle-report.ts --json > /tmp/current.json || true
+
+      - name: Bundle report (baseline)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE_SHA="$(gh pr view ${{ github.event.issue.number }} --json baseRefOid -q .baseRefOid)"
+          git fetch --depth=1 origin "$BASE_SHA" || true
+          git worktree add /tmp/base "$BASE_SHA" || true
+          if [ -d /tmp/base ]; then
+            ( cd /tmp/base && pnpm install --frozen-lockfile && pnpm build \
+              && pnpm exec jiti "$GITHUB_WORKSPACE/scripts/bundle-report.ts" --json ) > /tmp/base.json || true
+          fi
+
+      - name: Bundle diff
+        if: always()
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE_REF="$(gh pr view ${{ github.event.issue.number }} --json baseRefName -q .baseRefName)" \
+          DEPLOY_SHA="$(git rev-parse HEAD)" \
+          DEPLOY_MSG="$(git log -1 --format=%s)" \
+            pnpm exec jiti scripts/bundle-diff.ts /tmp/base.json /tmp/current.json > /tmp/diff.md || true
+
       - name: Upsert PR comment
         if: always()
         uses: actions/github-script@v8
@@ -89,9 +117,14 @@ jobs:
             try {
               summary = fs.readFileSync("wrangler-summary.txt", "utf8").trim();
             } catch {}
+            let diff = "";
+            try {
+              diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
+            } catch {}
 
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\``
+              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+                (diff ? `\n\n${diff}` : "")
               : `${marker}\n❌ Preview deploy failed. ` +
                 `See the [workflow run](${runUrl}).`;
 
