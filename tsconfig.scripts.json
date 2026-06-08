@@ -1,11 +1,10 @@
 {
-  // scripts/ — extends root tsconfig; switches to NodeNext resolution for node: imports.
+  // scripts/ — extends root tsconfig and keeps its Bundler resolution so imports
+  // stay extension-less, matching the app. Scripts run via jiti (and the github/
+  // ones via node --experimental-strip-types), both of which resolve extension-less.
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "types": ["node"]
   },
   "include": ["scripts/**/*.ts", "shared/**/*.ts"]

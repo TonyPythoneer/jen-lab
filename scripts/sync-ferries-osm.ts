@@ -20,7 +20,7 @@
 // previous file is left untouched.
 
 import { writeFile } from "node:fs/promises";
-import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferryRoutes.ts";
+import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferryRoutes";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 const OUTPUT = new URL("../app/assets/data/ferry-routes.json", import.meta.url);
