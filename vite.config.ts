@@ -97,8 +97,8 @@ const plugins = [
 // every other key is still structurally checked.
 export default defineConfig({
   fmt: {
-    // Only format app source — skip committed-but-not-ours directories.
-    ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**"],
+    // Only format the web app source — skip planning docs and committed-but-not-ours dirs.
+    ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**", "docs/**"],
   },
   plugins,
   resolve: {
