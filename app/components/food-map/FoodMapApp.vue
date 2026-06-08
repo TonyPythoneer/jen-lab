@@ -63,7 +63,7 @@ function onStageReady(controls: typeof mapControls) {
 <template>
   <!-- `--detail` (mobile only) hides chips/style/zoom/recenter once a place is picked. -->
   <div :class="['food-map-app', { 'food-map-app--detail': selectedRestaurant }]">
-    <AppClientOnly>
+    <ClientOnly>
       <FoodMapCanvas
         :restaurants="visibleRestaurants"
         :selected-restaurant-id="store.state.selectedRestaurantId"
@@ -84,7 +84,7 @@ function onStageReady(controls: typeof mapControls) {
       <template #fallback>
         <div class="map-surface" />
       </template>
-    </AppClientOnly>
+    </ClientOnly>
 
     <!-- Top bar: search + filter chips + home, Google-Maps style -->
     <FoodMapTopBar :categories="categories" :all-restaurants="props.restaurants" />

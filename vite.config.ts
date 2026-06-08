@@ -60,6 +60,7 @@ const plugins = [
   Components({
     dirs: ["app/components"],
     directoryAsNamespace: true,
+    globalNamespaces: ["common"],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
     resolvers: [
