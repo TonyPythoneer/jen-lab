@@ -52,22 +52,41 @@ const rows: Row[] = readdirSync(DIST)
 if (process.argv.includes("--json")) {
   console.log(JSON.stringify(rows));
 } else {
-  const header =
-    "Page".padEnd(26) +
-    "HTML".padStart(11) +
-    "JS".padStart(11) +
-    "CSS".padStart(11) +
-    "Total".padStart(11);
-  console.log("\nPer-page initial load (gzipped). Total = JS+CSS; HTML is the prerendered doc.\n");
-  console.log(header);
-  console.log("-".repeat(header.length));
+  const name = (p: string) => p.replace(/\.html$/, "");
+  // Proportional bar: total relative to the heaviest page, eighth-block precision.
+  const eighths = ["", "▏", "▎", "▍", "▌", "▋", "▊", "▉"];
+  const max = Math.max(...rows.map((r) => r.totalGz), 1);
+  const bar = (v: number, width = 16) => {
+    const units = Math.round((v / max) * width * 8);
+    return "█".repeat(Math.floor(units / 8)) + eighths[units % 8]!;
+  };
+  const sum = (k: "htmlGz" | "jsGz" | "cssGz" | "totalGz") => rows.reduce((a, r) => a + r[k], 0);
+
+  const NAME = 18;
+  const col = (s: string) => s.padStart(11);
+  const head = "Page".padEnd(NAME) + col("HTML") + col("JS") + col("CSS") + col("Total");
+  const rule = "─".repeat(head.length);
+
+  console.log("\nPer-page initial load, gzipped  ·  Total = JS+CSS  ·  HTML = prerendered doc\n");
+  console.log(head);
+  console.log(rule);
   for (const row of rows) {
     console.log(
-      row.page.padEnd(26) +
-        kb(row.htmlGz).padStart(11) +
-        kb(row.jsGz).padStart(11) +
-        kb(row.cssGz).padStart(11) +
-        kb(row.totalGz).padStart(11),
+      name(row.page).padEnd(NAME) +
+        col(kb(row.htmlGz)) +
+        col(kb(row.jsGz)) +
+        col(kb(row.cssGz)) +
+        col(kb(row.totalGz)) +
+        "  " +
+        bar(row.totalGz),
     );
   }
+  console.log(rule);
+  console.log(
+    "Total".padEnd(NAME) +
+      col(kb(sum("htmlGz"))) +
+      col(kb(sum("jsGz"))) +
+      col(kb(sum("cssGz"))) +
+      col(kb(sum("totalGz"))),
+  );
 }
