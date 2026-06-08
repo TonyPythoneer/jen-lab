@@ -24,8 +24,8 @@ withDefaults(
       "中英雙語創作",
       "Open for reading",
     ],
-    portraitKnowsSrc: "/home/jen-knows.png",
-    portraitLiuSrc: "/home/jen-liu.png",
+    portraitKnowsSrc: "/home/jen-knows.webp",
+    portraitLiuSrc: "/home/jen-liu.webp",
   },
 );
 

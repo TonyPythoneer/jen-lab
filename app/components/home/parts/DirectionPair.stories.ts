@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     colorBg: "bg-sydney-sky",
-    imageSrc: "/home/jen-knows.png",
+    imageSrc: "/home/jen-knows.webp",
     imageAlt: "Jen profile",
     title: "Career",
     subtitle: "and Beyond",
@@ -42,7 +42,7 @@ export const Default: Story = {
 export const RightAligned: Story = {
   args: {
     colorBg: "bg-rose-100",
-    imageSrc: "/home/jen-liu.png",
+    imageSrc: "/home/jen-liu.webp",
     imageAlt: "Jen profile",
     title: "Travel",
     subtitle: "Stories",
@@ -70,7 +70,7 @@ export const RightAligned: Story = {
 export const WithScrollProgress: Story = {
   args: {
     colorBg: "bg-blue-100",
-    imageSrc: "/home/jen-knows.png",
+    imageSrc: "/home/jen-knows.webp",
     imageAlt: "Jen profile",
     title: "Development",
     subtitle: "Journey",
