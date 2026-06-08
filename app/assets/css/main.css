@@ -10,6 +10,66 @@
   --font-sans: "DM Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* shadcn-vue ⇄ 榛知 token bridge.
+   Maps shadcn's semantic tokens onto the brand tokens so every shadcn/cva
+   component renders the Caldera look. Light-mode only: no .dark block; the
+   @custom-variant + any baked `dark:*` utilities stay inert (no .dark on <html>).
+   `/NN` tints use color-mix so they stay derived from the source token (no hex). */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* shadcn radius scale — for any future shadcn part; brand card/pill radii are per-component. */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  --radius: 0.625rem; /* shadcn default; only governs rounded-sm/md/lg/xl */
+
+  --background: var(--color-basalt-canvas);
+  --foreground: var(--color-abyssal-ink);
+  --card: var(--color-ash-white);
+  --card-foreground: var(--color-abyssal-ink);
+  --popover: var(--color-pure-white);
+  --popover-foreground: var(--color-abyssal-ink);
+
+  --primary: var(--color-digital-orange);
+  --primary-foreground: var(--color-pure-white);
+  --secondary: var(--color-cyber-violet);
+  --secondary-foreground: var(--color-pure-white);
+
+  --muted: var(--color-ash-white);
+  --muted-foreground: color-mix(in oklab, var(--color-abyssal-ink) 50%, transparent);
+  --accent: color-mix(in oklab, var(--color-abyssal-ink) 8%, transparent);
+  --accent-foreground: var(--color-abyssal-ink);
+
+  --destructive: oklch(0.577 0.245 27.325); /* brand has no error token; keep shadcn red */
+
+  --border: color-mix(in oklab, var(--color-abyssal-ink) 10%, transparent);
+  --input: color-mix(in oklab, var(--color-abyssal-ink) 10%, transparent);
+  --ring: var(--color-digital-orange);
+}
+
 @layer base {
   :root {
     --site-header-h: 4.75rem;
