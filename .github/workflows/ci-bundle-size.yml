@@ -6,7 +6,7 @@ name: 📦 Bundle Size
 on:
   pull_request:
     paths:
-      - "app/**"
+      - "src/**"
       - "content/**"
       - "scripts/build-icon-subset.ts"
       - "scripts/bundle-report.ts"

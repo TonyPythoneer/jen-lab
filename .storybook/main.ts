@@ -4,12 +4,12 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import vue from "@vitejs/plugin-vue";
 
-const appDir = fileURLToPath(new URL("../app", import.meta.url));
+const appDir = fileURLToPath(new URL("../src", import.meta.url));
 const mocksDir = fileURLToPath(new URL("./mocks", import.meta.url));
 
 const config: StorybookConfig = {
   framework: "@storybook/vue3-vite",
-  stories: ["../app/components/**/*.stories.@(ts|js)", "../.storybook/**/*.stories.@(ts|js)"],
+  stories: ["../src/components/**/*.stories.@(ts|js)", "../.storybook/**/*.stories.@(ts|js)"],
   addons: [],
   async viteFinal(viteConfig) {
     const { mergeConfig } = await import("vite" as string);

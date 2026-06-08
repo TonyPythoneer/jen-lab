@@ -8,7 +8,7 @@ import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { googleFontsHref } from "./app/config/site";
+import { googleFontsHref } from "./src/config/site";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 
@@ -40,7 +40,7 @@ const homeComponents: Record<string, string> = {
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
 // distinct, so a direct annotation makes tsc recurse the PluginOption union too
 // deep (TS2321). One assertion on the whole array bridges them.
-// Build the Google Fonts <link> from app/config/site.ts and inject it at the
+// Build the Google Fonts <link> from src/config/site.ts and inject it at the
 // <!--google-fonts--> marker in index.html. Keeps the font list in one config.
 function injectFonts(): PluginOption {
   return {
@@ -57,9 +57,9 @@ function injectFonts(): PluginOption {
 const plugins = [
   injectFonts(),
   tailwindcss(),
-  VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
+  VueRouter({ routesFolder: "src/pages", dts: "typed-router.d.ts" }),
   vue(),
-  Layouts({ layoutsDirs: "app/layouts", defaultLayout: "default" }),
+  Layouts({ layoutsDirs: "src/layouts", defaultLayout: "default" }),
   AutoImport({
     imports: [
       "vue",
@@ -67,11 +67,11 @@ const plugins = [
       "@vueuse/core",
       { "@unhead/vue": ["useHead", "useSeoMeta", "useHeadSafe"] },
     ],
-    dirs: ["app/composables/**"],
+    dirs: ["src/composables/**"],
     dts: "auto-imports.d.ts",
   }),
   Components({
-    dirs: ["app/components"],
+    dirs: ["src/components"],
     directoryAsNamespace: true,
     // ui/<category>/<Name>.vue → bare <Name>. unplugin-vue-components strips EVERY
     // folder segment listed here, so ui/overlay/Modal.vue resolves to <Modal>.
@@ -93,7 +93,7 @@ const plugins = [
         type: "component",
         resolve: (name: string) =>
           name in homeComponents
-            ? { from: path.resolve(ROOT, `app/components/home/${homeComponents[name]}.vue`) }
+            ? { from: path.resolve(ROOT, `src/components/home/${homeComponents[name]}.vue`) }
             : undefined,
       },
     ],
@@ -127,7 +127,7 @@ export default defineConfig({
   plugins,
   resolve: {
     alias: {
-      "~": fileURLToPath(new URL("./app", import.meta.url)),
+      "~": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   server: {

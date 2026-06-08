@@ -27,16 +27,16 @@
     "noImplicitThis": true,
     "useDefineForClassFields": true,
     "paths": {
-      "~": ["./app"],
-      "~/*": ["./app/*"]
+      "~": ["./src"],
+      "~/*": ["./src/*"]
     }
   },
   "include": [
     "*.d.ts",
     "vite.config.ts",
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "app/**/*.vue",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
     "tests/**/*.ts",
     "scripts/**/*.ts",
     "shared/**/*.ts"

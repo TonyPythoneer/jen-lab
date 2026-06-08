@@ -14,7 +14,7 @@ import { join } from "node:path";
 const LUCIDE_PACK = "node_modules/@iconify-json/lucide/icons.json";
 const OUT_DIR = "generated/icons";
 const OUT_FILE = join(OUT_DIR, "lucide.json");
-const SCAN_DIRS = ["app", "content"];
+const SCAN_DIRS = ["src", "content"];
 const SCAN_EXT = /\.(vue|ts|md|ya?ml|json)$/;
 const ICON_RE = /i-lucide-([a-z0-9-]+)/g;
 

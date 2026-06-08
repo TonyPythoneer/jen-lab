@@ -20,10 +20,10 @@
 // previous file is left untouched.
 
 import { writeFile } from "node:fs/promises";
-import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferryRoutes";
+import type { FerryRoute, FerryStop } from "../src/utils/food-map/ferryRoutes";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
-const OUTPUT = new URL("../app/assets/data/ferry-routes.json", import.meta.url);
+const OUTPUT = new URL("../src/assets/data/ferry-routes.json", import.meta.url);
 const ATTRIBUTION = "© OpenStreetMap contributors (ODbL)";
 
 // Sydney Ferries network bbox: Parramatta River (west) to Manly / Watsons Bay.
