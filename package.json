@@ -50,6 +50,7 @@
     "@vitejs/plugin-vue": "^6.0.7",
     "@vueuse/core": "^14.3.0",
     "fflate": "^0.8.2",
+    "jiti": "2.7.0",
     "markdown-it": "^14.1.1",
     "markdown-it-link-attributes": "^4.0.1",
     "playwright": "^1.60.0",

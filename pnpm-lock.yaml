@@ -103,6 +103,9 @@ importers:
       fflate:
         specifier: ^0.8.2
         version: 0.8.3
+      jiti:
+        specifier: 2.7.0
+        version: 2.7.0
       markdown-it:
         specifier: ^14.1.1
         version: 14.1.1
