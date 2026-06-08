@@ -101,7 +101,7 @@ function create<T>(
         status.value = "success";
         return;
       }
-      execute();
+      void execute();
     });
   }
 

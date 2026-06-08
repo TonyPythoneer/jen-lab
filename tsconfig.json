@@ -26,7 +26,6 @@
     "noImplicitOverride": true,
     "noImplicitThis": true,
     "useDefineForClassFields": true,
-    "baseUrl": ".",
     "paths": {
       "~": ["./app"],
       "~/*": ["./app/*"]
