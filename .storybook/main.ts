@@ -62,7 +62,6 @@ const config: StorybookConfig = {
         // not from `#imports`, so no `#imports` alias is needed.
         alias: [
           { find: /^~\//, replacement: `${appDir}/` },
-          { find: /^@\//, replacement: `${appDir}/` },
           { find: /^@nuxt\/content$/, replacement: `${mocksDir}/content` },
         ],
       },

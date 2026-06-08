@@ -1,6 +1,7 @@
 {
-  // Standalone Vite/Vue tsconfig — no .nuxt/ dependency.
-  // tsconfig.test.json and tsconfig.scripts.json extend this.
+  // Single Vite/Vue tsconfig for the whole repo — app, tests, scripts, shared.
+  // No .nuxt/ dependency. node + DOM types are auto-included (no `types` field),
+  // so browser app code and node scripts both type-check from here.
   "compilerOptions": {
     "target": "ESNext",
     "module": "preserve",
@@ -26,10 +27,17 @@
     "baseUrl": ".",
     "paths": {
       "~": ["./app"],
-      "~/*": ["./app/*"],
-      "@": ["./app"],
-      "@/*": ["./app/*"]
+      "~/*": ["./app/*"]
     }
   },
-  "include": ["*.d.ts", "vite.config.ts", "app/**/*.ts", "app/**/*.tsx", "app/**/*.vue"]
+  "include": [
+    "*.d.ts",
+    "vite.config.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "app/**/*.vue",
+    "tests/**/*.ts",
+    "scripts/**/*.ts",
+    "shared/**/*.ts"
+  ]
 }

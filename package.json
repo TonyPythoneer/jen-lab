@@ -9,7 +9,8 @@
     "bundle:report": "pnpm build && jiti scripts/bundle-report.ts",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
-    "check": "vp check",
+    "check": "vp check && pnpm typecheck",
+    "typecheck": "vue-tsc --noEmit",
     "test": "vp test run",
     "test:watch": "vp test",
     "preview": "pnpm build && pnpm dlx serve dist",
@@ -64,6 +65,7 @@
     "vite-plus": "catalog:",
     "vite-ssg": "^28.3.0",
     "vitest": "catalog:",
+    "vue-tsc": "^3.3.3",
     "wrangler": "^4.86.0",
     "yaml": "^2.8.4"
   },

@@ -58,6 +58,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Build first so generated type stubs exist (generated/velite, auto-imports.d.ts,
+      # components.d.ts, typed-router.d.ts are gitignored). vue-tsc in `pnpm check`
+      # needs them.
+      - run: pnpm build
+
       - run: pnpm check
 
       - run: pnpm test

@@ -1,9 +1,0 @@
-{
-  // Tests — extends root tsconfig; disables noUncheckedIndexedAccess for test ergonomics.
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "skipLibCheck": true,
-    "noUncheckedIndexedAccess": false
-  },
-  "include": ["*.d.ts", "tests/**/*.ts"]
-}

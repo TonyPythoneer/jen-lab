@@ -38,7 +38,11 @@ const homeComponents: Record<string, string> = {
   HomeSectionSupport: "sections/SectionSupport",
 };
 
-const plugins: PluginOption[] = [
+// Plugins are typed against the `vite` package; defineConfig/PluginOption come
+// from `vite-plus`. The two Plugin types are structurally the same but nominally
+// distinct, so a direct annotation makes tsc recurse the PluginOption union too
+// deep (TS2321). One assertion on the whole array bridges them.
+const plugins = [
   tailwindcss(),
   VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
   vue(),
@@ -69,8 +73,12 @@ const plugins: PluginOption[] = [
     ],
   }),
   Inspect(),
-];
+] as PluginOption[];
 
+// `ssgOptions` is read by vite-ssg at build time, but vite-plus's defineConfig
+// type doesn't model it (it lives on @voidzero-dev/vite-plus-core's UserConfig,
+// which can't be augmented from here). Assert the arg type to allow the field;
+// every other key is still structurally checked.
 export default defineConfig({
   fmt: {
     // Only format app source — skip committed-but-not-ours directories.
@@ -80,7 +88,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./app", import.meta.url)),
-      "@": fileURLToPath(new URL("./app", import.meta.url)),
     },
   },
   server: {
@@ -91,4 +98,4 @@ export default defineConfig({
     includedRoutes: () => ["/", "/jen-knows", "/jen-liu", "/blogs", "/sydney-food-map"],
   },
   staged: { "*.{ts,vue}": "vp check --fix" },
-});
+} as Parameters<typeof defineConfig>[0]);

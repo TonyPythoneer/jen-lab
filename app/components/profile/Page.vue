@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import type { home } from "../../generated/velite/index.js";
+import type { home } from "../../../generated/velite/index.js";
 
 const props = defineProps<{
   page: home;
