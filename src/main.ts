@@ -14,4 +14,14 @@ import lucideData from "../generated/icons/lucide.json";
 addCollection(lucideData);
 
 // vite-ssg wires @unhead/vue internally; pages just call useHead/useSeoMeta.
-export const createApp = ViteSSG(App, { routes: setupLayouts(routes) });
+export const createApp = ViteSSG(App, {
+  routes: setupLayouts(routes),
+  // SPA nav keeps the old scroll position by default. Reset to top on a fresh
+  // navigation, jump to a #hash target when present, and restore the saved
+  // position on back/forward.
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) return savedPosition;
+    if (to.hash) return { el: to.hash };
+    return { top: 0 };
+  },
+});
