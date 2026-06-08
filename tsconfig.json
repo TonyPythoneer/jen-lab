@@ -28,7 +28,8 @@
     "useDefineForClassFields": true,
     "paths": {
       "~": ["./src"],
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "#velite": ["./generated/velite"]
     }
   },
   "include": [

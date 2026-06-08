@@ -123,6 +123,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./src", import.meta.url)),
+      // Velite's prebuilt content collections (generated/velite). Aliased so the
+      // content shim and type imports skip the ../../ climb out of src/.
+      "#velite": fileURLToPath(new URL("./generated/velite/index.js", import.meta.url)),
     },
   },
   server: {
