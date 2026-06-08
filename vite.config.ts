@@ -110,6 +110,14 @@ export default defineConfig({
     // Only format the web app source — skip planning docs and committed-but-not-ours dirs.
     ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**", "docs/**"],
   },
+  // Vue build-time feature flags. The app is 100% Composition API (<script setup>),
+  // so drop Options API support; also strip prod devtools + hydration-mismatch
+  // helpers. Tree-shakes a few KB out of the Vue runtime on every page.
+  define: {
+    __VUE_OPTIONS_API__: "false",
+    __VUE_PROD_DEVTOOLS__: "false",
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
+  },
   plugins,
   resolve: {
     alias: {
