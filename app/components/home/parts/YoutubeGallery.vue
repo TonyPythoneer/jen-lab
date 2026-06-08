@@ -1,13 +1,12 @@
 <template>
   <div class="flex flex-col gap-3">
-    <AppCarousel
-      v-slot="{ item }"
-      :items="videos"
-      dots
-      :ui="{ item: 'sm:basis-1/2' }"
-      class="w-full mb-8"
-    >
-      <button class="flex flex-col gap-1.5 group w-full text-left" @click="openVideo(item)">
+    <div class="grid sm:grid-cols-2 gap-3 mb-8">
+      <button
+        v-for="item in videos"
+        :key="item.id"
+        class="flex flex-col gap-1.5 group w-full text-left"
+        @click="openVideo(item)"
+      >
         <div class="relative rounded-card overflow-hidden aspect-[2/1] bg-ash-white">
           <img
             :src="`https://img.youtube.com/vi/${item.id}/mqdefault.jpg`"
@@ -24,7 +23,7 @@
           </div>
         </div>
       </button>
-    </AppCarousel>
+    </div>
 
     <AppModal v-model:open="isOpen" :ui="{ content: 'p-0 overflow-hidden' }" fullscreen>
       <template #content>

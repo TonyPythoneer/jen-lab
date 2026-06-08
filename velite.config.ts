@@ -20,11 +20,11 @@ const portalListSection = s.object({
   ),
 });
 
-const youtubeCarouselSection = s.object({
+const youtubeGallerySection = s.object({
   id: s.string(),
   label: s.string(),
-  component: s.literal("youtube-carousel"),
-  carousels: s.array(
+  component: s.literal("youtube-gallery"),
+  galleries: s.array(
     s.object({
       id: s.string(),
       label: s.string().optional(),
@@ -33,11 +33,11 @@ const youtubeCarouselSection = s.object({
   ),
 });
 
-const imageCarouselSection = s.object({
+const imageGallerySection = s.object({
   id: s.string(),
   label: s.string(),
-  component: s.literal("image-carousel"),
-  carousels: s.array(
+  component: s.literal("image-gallery"),
+  galleries: s.array(
     s.object({ id: s.string(), label: s.string().optional(), images: s.array(s.string()) }),
   ),
 });
@@ -74,8 +74,8 @@ const home = defineCollection({
       sections: s.array(
         s.union([
           portalListSection,
-          youtubeCarouselSection,
-          imageCarouselSection,
+          youtubeGallerySection,
+          imageGallerySection,
           productListSection,
         ]),
       ),

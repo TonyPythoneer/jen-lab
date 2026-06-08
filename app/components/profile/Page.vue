@@ -73,23 +73,23 @@
         </div>
       </template>
 
-      <!-- youtube-carousel: full width -->
-      <template v-else-if="section.component === 'youtube-carousel'">
-        <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
-          <h3 v-if="carousel.label" class="text-sm font-semibold text-abyssal-ink/60">
-            {{ carousel.label }}
+      <!-- youtube-gallery: 2-col grid -->
+      <template v-else-if="section.component === 'youtube-gallery'">
+        <div v-for="gallery in section.galleries" :key="gallery.id" class="flex flex-col gap-2">
+          <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
+            {{ gallery.label }}
           </h3>
-          <HomeYoutubeCarousel :videos="carousel.videos" />
+          <HomeYoutubeGallery :videos="gallery.videos" />
         </div>
       </template>
 
-      <!-- image-carousel: full width -->
-      <template v-else-if="section.component === 'image-carousel'">
-        <div v-for="carousel in section.carousels" :key="carousel.id" class="flex flex-col gap-2">
-          <h3 v-if="carousel.label" class="text-sm font-semibold text-abyssal-ink/60">
-            {{ carousel.label }}
+      <!-- image-gallery: 2-col grid -->
+      <template v-else-if="section.component === 'image-gallery'">
+        <div v-for="gallery in section.galleries" :key="gallery.id" class="flex flex-col gap-2">
+          <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
+            {{ gallery.label }}
           </h3>
-          <HomeImageCarousel :images="carousel.images" />
+          <HomeImageGallery :images="gallery.images" />
         </div>
       </template>
     </section>

@@ -1,11 +1,11 @@
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import YoutubeCarousel from "./YoutubeCarousel.vue";
+import YoutubeGallery from "./YoutubeGallery.vue";
 
 const meta = {
-  title: "home/parts/YoutubeCarousel",
-  component: YoutubeCarousel,
-} satisfies Meta<typeof YoutubeCarousel>;
+  title: "home/parts/YoutubeGallery",
+  component: YoutubeGallery,
+} satisfies Meta<typeof YoutubeGallery>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -21,11 +21,11 @@ export const Default: Story = {
     videos: mockVideos,
   },
   render: (args) => ({
-    components: { YoutubeCarousel },
+    components: { YoutubeGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <YoutubeCarousel v-bind="args" />
+        <YoutubeGallery v-bind="args" />
       </div>
     `,
   }),
@@ -36,11 +36,11 @@ export const SingleVideo: Story = {
     videos: [mockVideos[0]],
   },
   render: (args) => ({
-    components: { YoutubeCarousel },
+    components: { YoutubeGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <YoutubeCarousel v-bind="args" />
+        <YoutubeGallery v-bind="args" />
       </div>
     `,
   }),
@@ -51,11 +51,11 @@ export const ManyVideos: Story = {
     videos: [...mockVideos, ...mockVideos, mockVideos[0]],
   },
   render: (args) => ({
-    components: { YoutubeCarousel },
+    components: { YoutubeGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <YoutubeCarousel v-bind="args" />
+        <YoutubeGallery v-bind="args" />
       </div>
     `,
   }),

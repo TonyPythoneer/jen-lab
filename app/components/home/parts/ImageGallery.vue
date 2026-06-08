@@ -1,12 +1,8 @@
 <template>
-  <AppCarousel
-    v-slot="{ item }"
-    :items="images"
-    dots
-    :ui="{ item: 'sm:basis-1/2' }"
-    class="w-full mb-8"
-  >
+  <div class="grid sm:grid-cols-2 gap-3 mb-8">
     <div
+      v-for="(item, i) in images"
+      :key="i"
       class="relative rounded-card overflow-hidden aspect-[2/1] bg-ash-white group cursor-zoom-in"
       @click="openImage(item)"
     >
@@ -21,7 +17,7 @@
         <AppIcon name="i-lucide-zoom-in" class="size-10 text-white drop-shadow-lg" />
       </div>
     </div>
-  </AppCarousel>
+  </div>
 
   <AppModal v-model:open="isOpen" :ui="{ content: 'max-w-4xl p-0 overflow-hidden' }">
     <template #content>

@@ -1,11 +1,11 @@
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import ImageCarousel from "./ImageCarousel.vue";
+import ImageGallery from "./ImageGallery.vue";
 
 const meta = {
-  title: "home/parts/ImageCarousel",
-  component: ImageCarousel,
-} satisfies Meta<typeof ImageCarousel>;
+  title: "home/parts/ImageGallery",
+  component: ImageGallery,
+} satisfies Meta<typeof ImageGallery>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -21,11 +21,11 @@ export const Default: Story = {
     images: mockImages,
   },
   render: (args) => ({
-    components: { ImageCarousel },
+    components: { ImageGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <ImageCarousel v-bind="args" />
+        <ImageGallery v-bind="args" />
       </div>
     `,
   }),
@@ -36,11 +36,11 @@ export const SingleImage: Story = {
     images: [mockImages[0]],
   },
   render: (args) => ({
-    components: { ImageCarousel },
+    components: { ImageGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <ImageCarousel v-bind="args" />
+        <ImageGallery v-bind="args" />
       </div>
     `,
   }),
@@ -51,11 +51,11 @@ export const ManyImages: Story = {
     images: [...mockImages, mockImages[0], mockImages[1], mockImages[2], mockImages[0]],
   },
   render: (args) => ({
-    components: { ImageCarousel },
+    components: { ImageGallery },
     setup: () => ({ args }),
     template: `
       <div class="p-6 max-w-4xl">
-        <ImageCarousel v-bind="args" />
+        <ImageGallery v-bind="args" />
       </div>
     `,
   }),

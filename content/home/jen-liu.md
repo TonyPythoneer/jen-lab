@@ -46,8 +46,8 @@ sections:
 
   - id: galleries
     label: Galleries
-    component: image-carousel
-    carousels:
+    component: image-gallery
+    galleries:
       - id: traveling-in-nsw-towns
         images:
           - /home/jen-liu/galleries/traveling-in-nsw-towns/nsw-travel-map.webp
