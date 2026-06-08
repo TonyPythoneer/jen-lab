@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import { cn } from "~/lib/utils";
+import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
 
 defineOptions({ inheritAttrs: false });
 
@@ -32,13 +33,7 @@ const props = withDefaults(
   { color: "neutral", variant: "solid", size: "sm" },
 );
 
-const attrs = useAttrs();
-const parentClass = computed(() => (attrs.class as string) ?? "");
-
-// Non-class passthrough attrs (class is merged via cn, not forwarded twice).
-const restAttrs = computed(() =>
-  Object.fromEntries(Object.entries(attrs).filter(([k]) => k !== "class")),
-);
+const { parentClass, restAttrs } = useSplitClassAttrs();
 
 // #region Element type + element-specific attrs
 const tag = computed(() => {

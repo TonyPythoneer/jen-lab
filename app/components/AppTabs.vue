@@ -29,8 +29,6 @@ defineOptions({ inheritAttrs: false });
 defineProps<{
   modelValue: string;
   items: { label: string; value: string }[];
-  variant?: string; // accepted but unused — only "link" used in app
-  size?: string; // accepted but unused
 }>();
 
 defineEmits<{ "update:modelValue": [value: string] }>();

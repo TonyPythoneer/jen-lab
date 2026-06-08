@@ -10,26 +10,9 @@
       <AppIcon name="i-lucide-chevron-left" class="size-4" />
     </button>
 
-    <!-- Page items via slot -->
+    <!-- Page items via slot. No default body: the sole caller always supplies #item. -->
     <template v-for="item in pageItems" :key="item.key">
-      <slot name="item" :item="item" :page="page">
-        <!-- Default: plain page button -->
-        <button
-          v-if="item.type === 'page'"
-          type="button"
-          :disabled="disabled"
-          :class="[
-            'inline-flex size-8 items-center justify-center rounded-button text-sm transition-colors',
-            item.value === page
-              ? 'bg-digital-orange text-pure-white'
-              : 'text-abyssal-ink hover:bg-abyssal-ink/8',
-          ]"
-          @click="$emit('update:page', item.value as number)"
-        >
-          {{ item.value }}
-        </button>
-        <span v-else class="px-1.5 text-sm text-abyssal-ink/50">…</span>
-      </slot>
+      <slot name="item" :item="item" :page="page" />
     </template>
 
     <!-- Next -->

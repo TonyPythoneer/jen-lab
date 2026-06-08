@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
+import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
 
 defineOptions({ inheritAttrs: false });
 
@@ -13,17 +14,12 @@ const props = withDefaults(
   defineProps<{
     variant?: "outline" | "default" | "soft";
     size?: "xs" | "sm" | "md";
-    color?: string; // accepted for API compatibility, ignored
-    ui?: Record<string, unknown>; // accepted for API compatibility, ignored
+    color?: string; // ignored internally, but PostCard passes it — keep the swallow
   }>(),
   { variant: "default", size: "sm" },
 );
 
-const attrs = useAttrs();
-const restAttrs = computed(() =>
-  Object.fromEntries(Object.entries(attrs).filter(([k]) => k !== "class")),
-);
-const parentClass = computed(() => (attrs.class as string) ?? "");
+const { parentClass, restAttrs } = useSplitClassAttrs();
 
 const BADGE_BASE = "inline-flex items-center font-medium rounded-button";
 
