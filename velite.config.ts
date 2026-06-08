@@ -11,6 +11,10 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(link
   attrs: { target: "_blank", rel: "noopener" },
 });
 
+// velite's s.path() yields a slash-less path (e.g. "home/jen-knows"); prefix "/"
+// so it matches the app's absolute routes (content/home/jen-knows.md -> /home/jen-knows).
+const prefixPath = <T extends { path: string }>(data: T): T => ({ ...data, path: "/" + data.path });
+
 const portalListSection = s.object({
   id: s.string(),
   label: s.string(),
@@ -80,8 +84,7 @@ const home = defineCollection({
         ]),
       ),
     })
-    // page path: content/home/jen-knows.md -> /home/jen-knows
-    .transform((data) => ({ ...data, path: "/" + data.path })),
+    .transform(prefixPath),
 });
 
 const pagesLayout = defineCollection({
@@ -147,7 +150,7 @@ const pagesLayout = defineCollection({
         ]),
       ),
     })
-    .transform((data) => ({ ...data, path: "/" + data.path })),
+    .transform(prefixPath),
 });
 
 const site = defineCollection({

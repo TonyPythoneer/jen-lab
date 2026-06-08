@@ -77,6 +77,7 @@
 
 <script setup lang="ts">
 import { useBlogList } from "~/composables/blog/useBlogList";
+import { useSiteBlogsChrome } from "~/composables/blog/useSiteBlogsChrome";
 import { useBlogTaxonomies } from "~/composables/blog/useBlogTaxonomies";
 import { fetchPosts } from "~/utils/blog/wpApi";
 import { csvToIds } from "~/utils/shared/csvToIds";
@@ -85,7 +86,7 @@ const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
+const { data: chrome } = useSiteBlogsChrome();
 useSeoMeta({
   title: () => chrome.value?.listPage.seoTitle,
   description: () => chrome.value?.listPage.seoDescription,

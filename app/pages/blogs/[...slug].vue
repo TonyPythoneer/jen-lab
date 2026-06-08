@@ -47,12 +47,13 @@
 
 <script setup lang="ts">
 import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
+import { useSiteBlogsChrome } from "~/composables/blog/useSiteBlogsChrome";
 
 const route = useRoute("/blogs/[...slug]");
 const lastQuery = useBlogLastQuery();
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
+const { data: chrome } = useSiteBlogsChrome();
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
 // route.params.slug is a string with vue-router file routing; the Array.isArray guard is a defensive fallback

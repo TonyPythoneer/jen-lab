@@ -5,21 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { useProfileRoute } from "~/composables/useProfileRoute";
+
 const DISPLAY_NAME = "Jen Liu";
-const HEAD_TITLE = "榛知 | 澳洲旅遊作家";
-
-const { data: page } = useAsyncData("profile:jen-liu", () =>
-  queryCollection("home").path("/home/jen-liu").first(),
-);
-
-useHead({ title: HEAD_TITLE });
-
-const seoDescription = computed(() => page.value?.profile.tabs[0]?.bio ?? "");
-useSeoMeta({
-  description: seoDescription,
-  ogTitle: HEAD_TITLE,
-  ogDescription: seoDescription,
-  ogImage: "/home/jen-liu/avatar.webp",
-  twitterCard: "summary",
-});
+const { page } = useProfileRoute({ slug: "jen-liu", headTitle: "榛知 | 澳洲旅遊作家" });
 </script>
