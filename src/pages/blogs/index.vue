@@ -108,7 +108,7 @@ const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [
 // #region Posts
 const scrollEl = ref<HTMLDivElement | null>(null);
 
-// Memoized by fullKey (page + all filters): a revisited page hits cache, no refetch.
+// _key drives useMemoize's cache lookup; the closure refs carry the actual values.
 const loadPosts = useMemoize((_key: string) =>
   fetchPosts({
     page: currentPage.value,
@@ -130,15 +130,17 @@ async function load() {
     result.value = await loadPosts(fullKey.value);
     status.value = "success";
   } catch (e) {
+    // A rejected Promise stays cached under this key; evict it so a retry re-fetches.
+    loadPosts.delete(fullKey.value);
     error.value = e instanceof Error ? e : new Error(String(e));
     status.value = "error";
   }
 }
 
+// New filter scope wipes the cache first so it cannot grow unbounded across sessions.
+watch(scopeKey, () => loadPosts.clear());
 // Client-only (was server:false): fetch on the client, refetch when the key changes.
 watch(fullKey, load, { immediate: true });
-// New filter scope wipes the cache so it cannot grow unbounded across sessions.
-watch(scopeKey, () => loadPosts.clear());
 
 watch(currentPage, async () => {
   await nextTick();
