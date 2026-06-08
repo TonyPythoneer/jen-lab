@@ -167,3 +167,18 @@ Note: UI component variant props (`color="neutral"` / `variant="outline"`, defin
   - If you are about to write a literal value that papers over a real bug, stop and surface the root cause to the user.
 - **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
 - **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
+
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project uses Vite+ (`vp` CLI) — Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, Vite Task in one toolchain. Run `vp help`. Docs at `node_modules/vite-plus/docs`.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes.
+- [ ] Run `vp check` and `vp test` to format, lint, type check and test.
+- [ ] Check `vite.config.ts` tasks / `package.json` scripts; run via `vp run <script>`.
+- [ ] If setup/runtime/package-manager looks wrong, run `vp env doctor` and include its output.
+
+<!--VITE PLUS END-->
