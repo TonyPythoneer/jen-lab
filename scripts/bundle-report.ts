@@ -45,15 +45,22 @@ const rows: Row[] = readdirSync(DIST)
   })
   .sort((a, b) => b.totalGz - a.totalGz);
 
-const header = "Page".padEnd(26) + "JS".padStart(11) + "CSS".padStart(11) + "Total".padStart(11);
-console.log("\nPer-page initial load (gzipped):\n");
-console.log(header);
-console.log("-".repeat(header.length));
-for (const row of rows) {
-  console.log(
-    row.page.padEnd(26) +
-      kb(row.jsGz).padStart(11) +
-      kb(row.cssGz).padStart(11) +
-      kb(row.totalGz).padStart(11),
-  );
+// `--json` emits the raw rows so a second build can be diffed against this one
+// (see scripts/bundle-diff.ts). Default stays the human-readable table.
+if (process.argv.includes("--json")) {
+  console.log(JSON.stringify(rows));
+} else {
+  const header =
+    "Page".padEnd(26) + "JS".padStart(11) + "CSS".padStart(11) + "Total".padStart(11);
+  console.log("\nPer-page initial load (gzipped):\n");
+  console.log(header);
+  console.log("-".repeat(header.length));
+  for (const row of rows) {
+    console.log(
+      row.page.padEnd(26) +
+        kb(row.jsGz).padStart(11) +
+        kb(row.cssGz).padStart(11) +
+        kb(row.totalGz).padStart(11),
+    );
+  }
 }
