@@ -1,30 +1,56 @@
 <template>
-  <Teleport to="body">
-    <!-- Overlay -->
-    <Transition name="app-overlay">
-      <div
-        v-if="open"
-        class="fixed inset-0 z-40"
-        :class="ui?.overlay ?? 'bg-black/50'"
-        @click="dismissible !== false && close()"
-      />
-    </Transition>
+  <DialogRoot :open="open" @update:open="emit('update:open', $event)">
+    <DialogPortal>
+      <!-- Overlay -->
+      <Transition name="app-overlay">
+        <DialogOverlay
+          v-if="open"
+          force-mount
+          class="fixed inset-0 z-40"
+          :class="ui?.overlay ?? 'bg-black/50'"
+        />
+      </Transition>
 
-    <!-- Panel -->
-    <Transition :name="`app-slide-${side ?? 'right'}`">
-      <div v-if="open" class="fixed z-50" :class="panelClass">
-        <slot name="content" :close="close" />
-      </div>
-    </Transition>
-  </Teleport>
+      <!-- Panel -->
+      <Transition :name="`app-slide-${side ?? 'right'}`">
+        <DialogContent
+          v-if="open"
+          force-mount
+          :aria-describedby="undefined"
+          class="fixed z-50"
+          :class="panelClass"
+          @escape-key-down="preventIfLocked"
+          @pointer-down-outside="preventIfLocked"
+          @interact-outside="preventIfLocked"
+        >
+          <!-- reka requires a title for a11y; visually hidden, zero pixels. -->
+          <VisuallyHidden>
+            <DialogTitle>Panel</DialogTitle>
+          </VisuallyHidden>
+          <slot name="content" :close="close" />
+        </DialogContent>
+      </Transition>
+    </DialogPortal>
+  </DialogRoot>
 </template>
 
 <script setup lang="ts">
+import {
+  DialogRoot,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogTitle,
+  VisuallyHidden,
+} from "reka-ui";
+
 const props = defineProps<{
   open?: boolean;
   side?: "top" | "right" | "bottom" | "left";
   overlay?: boolean;
   dismissible?: boolean;
+  // accepted but unused — declared so the caller can pass it without a stray $attrs DOM attr
+  transition?: boolean;
   ui?: { overlay?: string };
 }>();
 
@@ -32,6 +58,11 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
 
 function close() {
   emit("update:open", false);
+}
+
+// dismissible:false blocks reka's Esc / outside-click close (cancelable emits).
+function preventIfLocked(e: { preventDefault: () => void }) {
+  if (props.dismissible === false) e.preventDefault();
 }
 
 const panelClass = computed(() => {

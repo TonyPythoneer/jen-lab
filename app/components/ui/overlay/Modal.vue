@@ -11,6 +11,7 @@
         <DialogContent
           v-if="open"
           force-mount
+          :aria-describedby="undefined"
           class="fixed inset-0 z-50 flex items-center justify-center p-4"
           @click.self="emit('update:open', false)"
         >
