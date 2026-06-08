@@ -126,6 +126,10 @@ export default defineConfig({
       // Velite's prebuilt content collections (generated/velite). Aliased so the
       // content shim and type imports skip the ../../ climb out of src/.
       "#velite": fileURLToPath(new URL("./generated/velite/index.js", import.meta.url)),
+      // The restaurants dataset as built by Velite. Pointed straight at the json
+      // (not via #velite) so useRestaurants can dynamic-import ONLY this chunk,
+      // keeping the 44KB out of the route chunk. Not exposed through content.ts.
+      "#food-map-data": fileURLToPath(new URL("./generated/velite/foodMap.json", import.meta.url)),
     },
   },
   server: {

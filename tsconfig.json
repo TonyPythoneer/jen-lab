@@ -29,7 +29,8 @@
     "paths": {
       "~": ["./src"],
       "~/*": ["./src/*"],
-      "#velite": ["./generated/velite"]
+      "#velite": ["./generated/velite"],
+      "#food-map-data": ["./generated/velite/foodMap.json"]
     }
   },
   "include": [

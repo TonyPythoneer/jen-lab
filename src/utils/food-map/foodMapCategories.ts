@@ -1,4 +1,4 @@
-import type { Category } from "~/assets/data/restaurants";
+import type { Category } from "~/composables/food-map/useRestaurants";
 
 // English names for the category list drawer (Chinese names are in categories.ts)
 export const CATEGORY_EN: Record<string, string> = {
