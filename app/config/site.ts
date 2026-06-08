@@ -1,6 +1,6 @@
-// Plain, framework-free site config.
-// Imported directly by the app's components (Footer, ContactLinks) AND by
-// Storybook's theme config — single source of truth so the two never drift.
+// Plain, framework-free site config — single source of truth so values never
+// drift. Imported by app components (Footer), vite.config.ts (fonts), and the
+// WordPress API util + sync script (WP_BASE).
 
 // Canonical site identity — single source for the domain so it never drifts
 // across the WP API base (utils/wpApi.ts) and the contact link + email below.
@@ -23,25 +23,6 @@ export const fonts = [
 export const googleFontsHref = `https://fonts.googleapis.com/css2?${fonts
   .map((f) => `family=${f.family.replace(/ /g, "+")}:${f.weights}`)
   .join("&")}&display=swap`;
-
-export const uiConfig = {
-  colors: {
-    primary: "digital-orange",
-    secondary: "cyber-violet",
-    neutral: "abyssal-ink",
-  },
-  button: {
-    compoundVariants: [
-      // Caldera ghost: neutral outline -> full fill reverse on hover
-      {
-        color: "neutral",
-        variant: "outline",
-        class:
-          "shadow-[inset_0_0_0_1.5px_var(--color-abyssal-ink)] ring-0 hover:bg-abyssal-ink hover:text-pure-white hover:shadow-none",
-      },
-    ],
-  },
-};
 
 export const contacts = [
   {

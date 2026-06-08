@@ -1,5 +1,4 @@
 import { ref } from "vue";
-import { uiConfig, contacts } from "../../app/config/site";
 
 // Minimal stand-ins for Nuxt composables. Storybook has no Nuxt runtime,
 // so these return just enough shape for components to render.
@@ -19,7 +18,6 @@ export const useRouter = () => ({
   back: () => {},
   forward: () => {},
 });
-export const useAppConfig = () => ({ ui: uiConfig, contacts });
 export const useRuntimeConfig = () => ({ public: {} as Record<string, unknown> });
 export const useState = <T>(_key: string, init?: () => T) => ref(init ? init() : undefined);
 export const useLazyAsyncData = <T>(_key: string, handler?: () => Promise<T> | T) => {

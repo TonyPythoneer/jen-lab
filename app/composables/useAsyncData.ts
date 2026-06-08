@@ -6,8 +6,6 @@ import { ref, watch, type Ref } from "vue";
 
 interface AsyncDataOptions<T> {
   immediate?: boolean;
-  default?: () => T;
-  transform?: (input: unknown) => T;
   server?: boolean;
   getCachedData?: () => T | null | undefined;
   watch?: unknown[];
@@ -19,7 +17,6 @@ export interface AsyncData<T> {
   error: Ref<Error | null>;
   status: Ref<"idle" | "pending" | "success" | "error">;
   refresh: () => Promise<void>;
-  execute: () => Promise<void>;
 }
 
 const cache = new Map<string, unknown>();
@@ -29,19 +26,17 @@ function create<T>(
   handler: () => T | Promise<T>,
   options: AsyncDataOptions<T> = {},
 ): AsyncData<T> {
-  const data = ref<T | null>(options.default ? options.default() : null) as Ref<T | null>;
+  const data = ref<T | null>(null) as Ref<T | null>;
   const pending = ref(false);
   const error = ref<Error | null>(null);
   const status = ref<"idle" | "pending" | "success" | "error">("idle");
-
-  const apply = (raw: unknown) => (options.transform ? options.transform(raw) : (raw as T));
 
   async function execute() {
     pending.value = true;
     status.value = "pending";
     error.value = null;
     try {
-      const result = apply(await handler());
+      const result = (await handler()) as T;
       data.value = result;
       cache.set(key, result);
       status.value = "success";
@@ -55,7 +50,7 @@ function create<T>(
 
   // Skip on server when caller opted out of SSR execution.
   if (import.meta.env.SSR && options.server === false) {
-    return { data, pending, error, status, refresh: execute, execute };
+    return { data, pending, error, status, refresh: execute };
   }
 
   // Custom cache lookup (e.g. per-page result cache in blog list).
@@ -63,7 +58,7 @@ function create<T>(
   if (customCached !== null && customCached !== undefined) {
     data.value = customCached;
     status.value = "success";
-    return { data, pending, error, status, refresh: execute, execute };
+    return { data, pending, error, status, refresh: execute };
   }
 
   if (cache.has(key)) {
@@ -78,7 +73,7 @@ function create<T>(
       status.value = "pending";
       raw
         .then((v) => {
-          data.value = apply(v);
+          data.value = v as T;
           cache.set(key, data.value);
           status.value = "success";
         })
@@ -90,7 +85,7 @@ function create<T>(
           pending.value = false;
         });
     } else {
-      const result = apply(raw); // sync (Velite) — set now so it prerenders
+      const result = raw as T; // sync (Velite) — set now so it prerenders
       data.value = result;
       cache.set(key, result);
       status.value = "success";
@@ -110,7 +105,7 @@ function create<T>(
     });
   }
 
-  return { data, pending, error, status, refresh: execute, execute };
+  return { data, pending, error, status, refresh: execute };
 }
 
 export function useAsyncData<T>(

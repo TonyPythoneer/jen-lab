@@ -35,7 +35,6 @@ const config: StorybookConfig = {
               [`${mocksDir}/nuxt`]: [
                 "useRoute",
                 "useRouter",
-                "useAppConfig",
                 "useRuntimeConfig",
                 "useState",
                 "useLazyAsyncData",

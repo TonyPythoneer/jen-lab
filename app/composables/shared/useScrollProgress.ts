@@ -1,16 +1,7 @@
 /**
- * useScrollProgress — turn an element's scroll position into a 0→1 number.
- *
- * ## What it's for
- * Drives "scroll-pinned" (sticky scrollytelling) sections: a tall outer
- * wrapper provides scroll runway while an inner panel stays `position: sticky`.
- * As the runway scrolls past, this composable reports how far through the pin
- * you are (0 = just pinned, 1 = about to release) so the consumer can map that
- * to any animation it likes (translate, opacity, scale, …).
- *
- * It only returns a number. It does NOT touch the DOM, set styles, or assume a
- * particular animation — that mapping stays in the consuming component, which is
- * the part that changes per use case.
+ * useScrollProgress — turn an element's scroll position into a 0→1 number for
+ * scroll-pinned (sticky) sections. It returns only the number; the consumer maps
+ * it to any animation it likes. It never touches the DOM or sets styles.
  *
  * ## Required DOM shape
  * The `target` must be the TALL outer wrapper, not the sticky child:
@@ -21,13 +12,6 @@
  *     <slot />
  *   </div>
  * </section>
- * ```
- *
- * ## Usage
- * ```ts
- * const wrap = useTemplateRef<HTMLElement>("wrap");
- * const { progress } = useScrollProgress(wrap);
- * const style = computed(() => ({ opacity: 1 - progress.value }));
  * ```
  *
  * ## Caveats

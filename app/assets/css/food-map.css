@@ -86,23 +86,6 @@
   outline-offset: 2px;
 }
 
-/* Nuxt UI token bridge. Nuxt UI components colour themselves from --ui-* design
-   tokens (the site's neutral palette). Re-point those tokens at the food-map
-   parchment tokens inside this scope so UButton / UInput / UBadge adopt the atlas
-   look with no per-component colour overrides. These tokens are static across all
-   four map themes (only the map tiles recolour), so this needs no theme wiring. */
-.food-map-page {
-  --ui-bg: var(--paper);
-  --ui-bg-elevated: var(--muted);
-  --ui-text: var(--foreground);
-  --ui-text-highlighted: var(--foreground);
-  --ui-text-muted: var(--muted-foreground);
-  --ui-text-dimmed: var(--muted-foreground);
-  --ui-border: var(--border);
-  --ui-border-accented: var(--foreground);
-  --ui-border-muted: var(--border-strong);
-}
-
 /* ===================== APP SHELL ===================== */
 
 .food-map-app {

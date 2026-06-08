@@ -1,7 +1,6 @@
 <template>
-  <!-- Uses inline section dispatch (not HomeContentBody):
-       sections get Caldera font-display headings, and portal/product sections
-       use responsive 2-col grids. -->
+  <!-- Inline section dispatch: sections get Caldera font-display headings;
+       portal/product sections use responsive 2-col grids. -->
   <div class="flex flex-col gap-12">
     <!-- Header: full viewport height, centered column — img → name → bio.
          Negative margins cancel SitePageContainer's pt-10 and px-4 so the
@@ -32,7 +31,7 @@
         >
           {{ page.profile.tabs[0]!.bio }}
         </p>
-        <!-- Multiple tabs: UTabs navigation + reactive bio below -->
+        <!-- Multiple tabs: AppTabs navigation + reactive bio below -->
         <template v-else>
           <AppTabs v-model="activeTab" :items="tabItems" class="w-full" />
           <p class="text-sm text-abyssal-ink/70 leading-relaxed whitespace-pre-line">

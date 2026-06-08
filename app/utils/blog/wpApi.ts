@@ -1,6 +1,5 @@
 import { WP_BASE } from "~/config/site";
 import { $fetch } from "ofetch";
-export { WP_BASE };
 
 // Field whitelists keep payloads lean (WP defaults include many unused properties)
 const POST_LIST_FIELDS =
@@ -19,10 +18,6 @@ export interface WpPost {
   tags: number[];
   categories: number[];
   jetpack_featured_media_url: string;
-  yoast_head_json?: {
-    description?: string;
-    og_image?: { url: string }[];
-  };
 }
 
 export interface WpPostsPage {
