@@ -2,14 +2,14 @@ import { describe, it, expect } from "vite-plus/test";
 import { diffBundles, renderMarkdown } from "../scripts/github/bundle-diff";
 
 const base = [
-  { page: "index.html", totalGz: 10240 },
-  { page: "blogs.html", totalGz: 20480 },
-  { page: "old.html", totalGz: 5120 },
+  { page: "index.html", totalGz: 10240, htmlGz: 5120 },
+  { page: "blogs.html", totalGz: 20480, htmlGz: 3072 },
+  { page: "old.html", totalGz: 5120, htmlGz: 1024 },
 ];
 const current = [
-  { page: "index.html", totalGz: 11264 },
-  { page: "blogs.html", totalGz: 20480 },
-  { page: "new.html", totalGz: 4096 },
+  { page: "index.html", totalGz: 11264, htmlGz: 5632 }, // assets +1KB, html +0.5KB
+  { page: "blogs.html", totalGz: 20480, htmlGz: 3072 },
+  { page: "new.html", totalGz: 4096, htmlGz: 2048 },
 ];
 
 describe("diffBundles", () => {
@@ -47,6 +47,27 @@ describe("diffBundles", () => {
     expect(d.verdict).toBe("🟢");
     expect(d.rows.find((r) => r.page === "index.html")!.delta).toBeNull();
   });
+
+  it("tracks HTML size as a separate dimension", () => {
+    const d = diffBundles(base, current);
+    const index = d.rows.find((r) => r.page === "index.html")!;
+    expect(index.htmlCur).toBe(5632);
+    expect(index.htmlDelta).toBe(512);
+    // Total delta sums every page like the assets total does:
+    // current (5632+3072+2048) − base (5120+3072+1024) = 1536.
+    expect(d.htmlDeltaTotal).toBe(1536);
+  });
+
+  it("leaves htmlDelta null when the baseline predates the HTML column", () => {
+    const d = diffBundles(
+      [{ page: "a.html", totalGz: 1000 }],
+      [{ page: "a.html", totalGz: 1000, htmlGz: 800 }],
+    );
+    const a = d.rows.find((r) => r.page === "a.html")!;
+    expect(a.htmlCur).toBe(800);
+    expect(a.htmlDelta).toBeNull();
+    expect(d.htmlDeltaTotal).toBeNull();
+  });
 });
 
 describe("renderMarkdown", () => {
@@ -65,6 +86,13 @@ describe("renderMarkdown", () => {
     );
     expect(md).toContain("| **Total** |");
     expect(md).toContain("🆕 new.html");
+  });
+
+  it("renders an HTML column with its own delta", () => {
+    const md = renderMarkdown(diffBundles(base, current), opts);
+    expect(md).toContain("| Page | Base | New | Δ | Δ% | HTML |");
+    const indexLine = md.split("\n").find((l) => l.includes("index.html"))!;
+    expect(indexLine).toContain("5.5KB (+0.5KB)"); // HTML grew while assets diff stays separate
   });
 
   it("shows the baseline-unavailable note when there is no baseline", () => {

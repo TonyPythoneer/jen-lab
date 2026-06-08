@@ -16,17 +16,19 @@ const kb = (bytes: number) => (bytes / 1024).toFixed(1) + " KB";
 
 interface Row {
   page: string;
+  htmlGz: number; // the prerendered .html document itself
   jsGz: number;
   cssGz: number;
-  totalGz: number;
+  totalGz: number; // JS + CSS (assets) — kept separate from HTML on purpose
 }
 
 const rows: Row[] = readdirSync(DIST)
   .filter((f) => f.endsWith(".html"))
   .map((html) => {
-    const text = readFileSync(join(DIST, html), "utf8");
+    const buf = readFileSync(join(DIST, html));
+    const htmlGz = gzipSync(buf).length;
     const assets = new Set<string>();
-    for (const match of text.matchAll(ASSET_RE)) assets.add(match[1]!);
+    for (const match of buf.toString("utf8").matchAll(ASSET_RE)) assets.add(match[1]!);
 
     let jsGz = 0;
     let cssGz = 0;
@@ -41,7 +43,7 @@ const rows: Row[] = readdirSync(DIST)
       if (asset.endsWith(".css")) cssGz += gz;
       else jsGz += gz;
     }
-    return { page: html, jsGz, cssGz, totalGz: jsGz + cssGz };
+    return { page: html, htmlGz, jsGz, cssGz, totalGz: jsGz + cssGz };
   })
   .sort((a, b) => b.totalGz - a.totalGz);
 
@@ -50,13 +52,19 @@ const rows: Row[] = readdirSync(DIST)
 if (process.argv.includes("--json")) {
   console.log(JSON.stringify(rows));
 } else {
-  const header = "Page".padEnd(26) + "JS".padStart(11) + "CSS".padStart(11) + "Total".padStart(11);
-  console.log("\nPer-page initial load (gzipped):\n");
+  const header =
+    "Page".padEnd(26) +
+    "HTML".padStart(11) +
+    "JS".padStart(11) +
+    "CSS".padStart(11) +
+    "Total".padStart(11);
+  console.log("\nPer-page initial load (gzipped). Total = JS+CSS; HTML is the prerendered doc.\n");
   console.log(header);
   console.log("-".repeat(header.length));
   for (const row of rows) {
     console.log(
       row.page.padEnd(26) +
+        kb(row.htmlGz).padStart(11) +
         kb(row.jsGz).padStart(11) +
         kb(row.cssGz).padStart(11) +
         kb(row.totalGz).padStart(11),
