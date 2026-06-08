@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
 import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
-import { badgeVariants, type BadgeVariants } from ".";
+import { badgeVariants, type BadgeVariants } from "./badge";
 
 defineOptions({ inheritAttrs: false });
 

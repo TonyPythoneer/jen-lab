@@ -1,8 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
-export { default as Badge } from "./Badge.vue";
-
 // Brand Badge on cva, using the shadcn bridge tokens (foreground=abyssal-ink,
 // primary-foreground=pure-white). Brand `default` = ink fill (NOT shadcn's orange
 // primary); `outline` = a 1px ring (not a border).

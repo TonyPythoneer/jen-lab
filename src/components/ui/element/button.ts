@@ -1,8 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
-export { default as Button } from "./Button.vue";
-
 // Brand Button on cva. Classes use the shadcn-bridge tokens (primary=digital-orange,
 // foreground=abyssal-ink, primary-foreground=pure-white, secondary=cyber-violet,
 // accent=ink/8, ring=digital-orange) so the look is identical and 100% on the

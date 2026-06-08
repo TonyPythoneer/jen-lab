@@ -75,17 +75,12 @@ const plugins = [
     directoryAsNamespace: true,
     // ui/<category>/<Name>.vue → bare <Name>. unplugin-vue-components strips EVERY
     // folder segment listed here, so ui/overlay/Modal.vue resolves to <Modal>.
-    globalNamespaces: [
-      "ui",
-      "element",
-      "navigation",
-      "overlay",
-      "page",
-      "utility",
-      "button",
-      "badge",
-      "skeleton",
-    ],
+    //
+    // Categories MUST mirror Nuxt UI's component taxonomy — file every ui/
+    // component under the Nuxt UI category it belongs to (element, navigation,
+    // overlay, page, utility). Do NOT invent per-component folders or new
+    // categories; pick the matching Nuxt UI bucket and put it there.
+    globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility"],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
     resolvers: [

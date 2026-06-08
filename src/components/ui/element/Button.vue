@@ -15,7 +15,7 @@
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import { cn } from "~/lib/utils";
 import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
-import { buttonVariants, type ButtonVariants } from ".";
+import { buttonVariants, type ButtonVariants } from "./button";
 
 defineOptions({ inheritAttrs: false });
 
