@@ -64,7 +64,6 @@
     }
   },
   "file_types": {
-    "Markdown": ["mdc"],
     "JSONC": ["tsconfig.json", "tsconfig.*.json", ".zed/*.json"]
   },
   "file_scan_exclusions": [
@@ -72,13 +71,13 @@
     "**/.svn",
     "**/.hg",
     "**/node_modules",
-    "**/.output",
     "**/.wrangler",
-    "**/.data",
     "**/.vite-hooks",
-    "**/.hypothesis",
     "**/dist",
     "**/.cache",
+    "**/generated",
+    "**/storybook-static",
+    "**/worker-configuration.d.ts",
     "**/pnpm-lock.yaml"
   ],
   "project_panel": {
