@@ -2,9 +2,7 @@
 // which are identical except for the slug and the head title. Each route file
 // keeps its own template (brand + display name) and calls this for the rest.
 export function useProfileRoute(opts: { slug: "jen-knows" | "jen-liu"; headTitle: string }) {
-  const { data: page } = useAsyncData(`profile:${opts.slug}`, () =>
-    queryCollection("home").path(`/home/${opts.slug}`).first(),
-  );
+  const page = computed(() => queryCollection("home").path(`/home/${opts.slug}`).first());
 
   useHead({ title: opts.headTitle });
 

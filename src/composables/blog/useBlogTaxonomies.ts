@@ -1,15 +1,10 @@
 // Categories + tags from content collections (synced via `pnpm sync:wp`).
-// Client-only to keep them off the SSR/hydration critical path.
+// Velite content is synchronous, so these are plain computeds — they now render
+// into the prerendered /blogs HTML instead of filling in client-side.
 export function useBlogTaxonomies() {
-  const { data: categories } = useAsyncData(
-    "wp-categories",
-    () => queryCollection("wpCategories").order("wpId", "DESC").all(),
-    { server: false },
-  );
-  const { data: tags } = useAsyncData(
-    "wp-tags",
-    () => queryCollection("wpTags").order("count", "DESC").order("wpId", "DESC").all(),
-    { server: false },
+  const categories = computed(() => queryCollection("wpCategories").order("wpId", "DESC").all());
+  const tags = computed(() =>
+    queryCollection("wpTags").order("count", "DESC").order("wpId", "DESC").all(),
   );
 
   const ready = computed(() => !!categories.value && !!tags.value);

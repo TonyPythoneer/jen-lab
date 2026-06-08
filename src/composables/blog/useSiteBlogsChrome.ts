@@ -1,6 +1,7 @@
 // Blog "chrome" = the page wording from content/site/blogs.yml, shared by the
-// layout's search modal and the blog list/detail pages. The shared "site:blogs"
-// key dedups, so the query runs once across all of them.
+// layout's search modal and the blog list/detail pages. Velite content is read
+// synchronously, so this is a plain computed — `{ data }` shape kept for the
+// three call sites that destructure it.
 export function useSiteBlogsChrome() {
-  return useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
+  return { data: computed(() => queryCollection("siteBlogs").first()) };
 }
