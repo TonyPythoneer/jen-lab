@@ -6,7 +6,7 @@
     "build": "pnpm gen:icons && velite build && vite-ssg build && vue-tsc --noEmit",
     "dev": "pnpm gen:icons && (velite --watch & vp dev)",
     "gen:icons": "jiti scripts/build-icon-subset.ts",
-    "bundle:report": "pnpm build && jiti scripts/bundle-report.ts",
+    "bundle:report": "pnpm build && jiti scripts/github/bundle-report.ts",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
     "check": "vp check && pnpm typecheck",

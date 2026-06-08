@@ -75,7 +75,7 @@ jobs:
 
       - name: Bundle report (current)
         if: always()
-        run: pnpm exec jiti scripts/bundle-report.ts --json > /tmp/current.json || true
+        run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json || true
 
       - name: Bundle report (baseline)
         if: always()
@@ -87,7 +87,7 @@ jobs:
           git worktree add /tmp/base "$BASE_SHA" || true
           if [ -d /tmp/base ]; then
             ( cd /tmp/base && pnpm install --frozen-lockfile && pnpm build \
-              && pnpm exec jiti "$GITHUB_WORKSPACE/scripts/bundle-report.ts" --json ) > /tmp/base.json || true
+              && pnpm exec jiti "$GITHUB_WORKSPACE/scripts/github/bundle-report.ts" --json ) > /tmp/base.json || true
           fi
 
       - name: Bundle diff
@@ -99,7 +99,7 @@ jobs:
           BASE_REF="$(gh pr view ${{ github.event.issue.number }} --json baseRefName -q .baseRefName)" \
           DEPLOY_SHA="$(git rev-parse HEAD)" \
           DEPLOY_MSG="$(git log -1 --format=%s)" \
-            pnpm exec jiti scripts/bundle-diff.ts /tmp/base.json /tmp/current.json > /tmp/diff.md || true
+            pnpm exec jiti scripts/github/bundle-diff.ts /tmp/base.json /tmp/current.json > /tmp/diff.md || true
 
       - name: Upsert PR comment
         if: always()

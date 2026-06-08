@@ -46,7 +46,7 @@ const rows: Row[] = readdirSync(DIST)
   .sort((a, b) => b.totalGz - a.totalGz);
 
 // `--json` emits the raw rows so a second build can be diffed against this one
-// (see scripts/bundle-diff.ts). Default stays the human-readable table.
+// (see scripts/github/bundle-diff.ts). Default stays the human-readable table.
 if (process.argv.includes("--json")) {
   console.log(JSON.stringify(rows));
 } else {

@@ -48,8 +48,6 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: pnpm/action-setup@v6
-        with:
-          version: 11.0.3
 
       - uses: actions/setup-node@v5
         with:
@@ -80,29 +78,14 @@ jobs:
 
       - name: Bundle report (current)
         if: always()
-        run: pnpm exec jiti scripts/bundle-report.ts --json > /tmp/current.json || true
+        run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json || true
 
-      - name: Bundle report (baseline)
-        if: always()
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          git fetch --depth=1 origin "$BASE_SHA" || true
-          git worktree add /tmp/base "$BASE_SHA" || true
-          if [ -d /tmp/base ]; then
-            ( cd /tmp/base && pnpm install --frozen-lockfile && pnpm build \
-              && pnpm exec jiti "$GITHUB_WORKSPACE/scripts/bundle-report.ts" --json ) > /tmp/base.json || true
-          fi
-
-      - name: Bundle diff
-        if: always()
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          DEPLOY_SHA: ${{ github.event.pull_request.merge_commit_sha }}
-          REPO: ${{ github.repository }}
-        run: |
-          DEPLOY_MSG="$(git log -1 --format=%s "$DEPLOY_SHA" 2>/dev/null || true)" \
-            pnpm exec jiti scripts/bundle-diff.ts /tmp/base.json /tmp/current.json > /tmp/diff.md || true
+      - name: Save bundle baseline
+        if: steps.deploy.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/current.json
+          key: bundle-baseline-${{ github.event.pull_request.base.ref }}-${{ github.sha }}
 
       - name: Upsert PR comment
         if: always()

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { diffBundles, renderMarkdown } from "../scripts/bundle-diff";
+import { diffBundles, renderMarkdown } from "../scripts/github/bundle-diff";
 
 const base = [
   { page: "index.html", totalGz: 10240 },

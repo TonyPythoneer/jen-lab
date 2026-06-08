@@ -1,6 +1,6 @@
 // Renders a markdown bundle-size diff for a deploy comment: each page's gzipped
 // total with delta + percent vs a baseline, plus the deployed commit line.
-// CLI: jiti scripts/bundle-diff.ts <base.json> <current.json>
+// CLI: jiti scripts/github/bundle-diff.ts <base.json> <current.json>
 //   env: BASE_REF, DEPLOY_SHA, DEPLOY_MSG, REPO
 import { readFileSync } from "node:fs";
 
