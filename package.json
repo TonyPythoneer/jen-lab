@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm gen:icons && velite build && vite-ssg build && vue-tsc --noEmit",
+    "build": "pnpm gen:icons && velite build --strict && vite-ssg build && vue-tsc --noEmit",
     "dev": "pnpm gen:icons && (velite --watch & vp dev)",
     "gen:icons": "jiti scripts/build-icon-subset.ts",
     "bundle:report": "pnpm build && jiti scripts/github/bundle-report.ts",
