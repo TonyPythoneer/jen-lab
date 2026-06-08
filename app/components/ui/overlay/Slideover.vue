@@ -16,16 +16,18 @@
         <DialogContent
           v-if="open"
           force-mount
-          :aria-describedby="undefined"
           class="fixed z-50"
           :class="panelClass"
           @escape-key-down="preventIfLocked"
           @pointer-down-outside="preventIfLocked"
           @interact-outside="preventIfLocked"
         >
-          <!-- reka requires a title for a11y; visually hidden, zero pixels. -->
-          <VisuallyHidden>
-            <DialogTitle>Panel</DialogTitle>
+          <!-- sr-only label + description: reka announces these on open (zero pixels). -->
+          <VisuallyHidden as-child>
+            <DialogTitle>{{ title ?? "Panel" }}</DialogTitle>
+          </VisuallyHidden>
+          <VisuallyHidden as-child>
+            <DialogDescription>{{ description ?? "Side panel content." }}</DialogDescription>
           </VisuallyHidden>
           <slot name="content" :close="close" />
         </DialogContent>
@@ -41,6 +43,7 @@ import {
   DialogOverlay,
   DialogContent,
   DialogTitle,
+  DialogDescription,
   VisuallyHidden,
 } from "reka-ui";
 
@@ -51,6 +54,8 @@ const props = defineProps<{
   dismissible?: boolean;
   // accepted but unused — declared so the caller can pass it without a stray $attrs DOM attr
   transition?: boolean;
+  title?: string; // sr-only dialog label (screen readers)
+  description?: string; // sr-only dialog description, announced on open
   ui?: { overlay?: string };
 }>();
 

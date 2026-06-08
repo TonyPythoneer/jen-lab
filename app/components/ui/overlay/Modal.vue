@@ -11,13 +11,15 @@
         <DialogContent
           v-if="open"
           force-mount
-          :aria-describedby="undefined"
           class="fixed inset-0 z-50 flex items-center justify-center p-4"
           @click.self="emit('update:open', false)"
         >
-          <!-- reka requires a title for a11y; visually hidden, zero pixels. -->
-          <VisuallyHidden>
-            <DialogTitle>Dialog</DialogTitle>
+          <!-- sr-only label + description: reka announces these on open (zero pixels). -->
+          <VisuallyHidden as-child>
+            <DialogTitle>{{ title ?? "Dialog" }}</DialogTitle>
+          </VisuallyHidden>
+          <VisuallyHidden as-child>
+            <DialogDescription>{{ description ?? "Dialog content." }}</DialogDescription>
           </VisuallyHidden>
           <div :class="cn('relative bg-pure-white rounded-card overflow-hidden', contentClass)">
             <slot name="content" />
@@ -35,6 +37,7 @@ import {
   DialogOverlay,
   DialogContent,
   DialogTitle,
+  DialogDescription,
   VisuallyHidden,
 } from "reka-ui";
 import { cn } from "~/lib/utils";
@@ -42,6 +45,8 @@ import { cn } from "~/lib/utils";
 const props = defineProps<{
   open?: boolean;
   fullscreen?: boolean;
+  title?: string; // sr-only dialog label (screen readers)
+  description?: string; // sr-only dialog description, announced on open
   ui?: { content?: string };
 }>();
 

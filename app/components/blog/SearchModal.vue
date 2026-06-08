@@ -5,6 +5,8 @@
     :overlay="true"
     :transition="true"
     :dismissible="true"
+    title="Blog search"
+    description="Search and filter blog posts"
     :ui="{ overlay: OVERLAY_CLASS }"
   >
     <template #content="{ close }">

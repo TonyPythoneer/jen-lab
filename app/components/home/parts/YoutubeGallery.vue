@@ -25,7 +25,13 @@
       </button>
     </div>
 
-    <Modal v-model:open="isOpen" :ui="{ content: 'p-0 overflow-hidden' }" fullscreen>
+    <Modal
+      v-model:open="isOpen"
+      :ui="{ content: 'p-0 overflow-hidden' }"
+      fullscreen
+      title="Video"
+      description="Embedded video player"
+    >
       <template #content>
         <div class="relative w-full h-full bg-black flex items-center justify-center">
           <!-- Close button comes after the iframe in DOM, so paint order keeps it on top — no z-index needed. -->

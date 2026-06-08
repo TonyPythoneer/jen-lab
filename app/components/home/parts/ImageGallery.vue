@@ -19,7 +19,11 @@
     </div>
   </div>
 
-  <Modal v-model:open="isOpen" :ui="{ content: 'max-w-4xl p-0 overflow-hidden' }">
+  <Modal
+    v-model:open="isOpen"
+    :ui="{ content: 'max-w-4xl p-0 overflow-hidden' }"
+    description="Enlarged image"
+  >
     <template #content>
       <img :src="selectedImage" class="w-full h-auto max-h-[85vh] object-contain" />
     </template>
