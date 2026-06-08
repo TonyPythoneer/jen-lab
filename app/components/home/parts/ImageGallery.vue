@@ -3,7 +3,7 @@
     <div
       v-for="(item, i) in images"
       :key="i"
-      class="relative rounded-card overflow-hidden aspect-[2/1] bg-ash-white group cursor-zoom-in"
+      class="relative rounded-card overflow-hidden aspect-square bg-ash-white group cursor-zoom-in"
       @click="openImage(item)"
     >
       <img
