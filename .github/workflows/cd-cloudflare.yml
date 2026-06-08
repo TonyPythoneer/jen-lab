@@ -78,6 +78,32 @@ jobs:
         if: always()
         run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
+      - name: Bundle report (current)
+        if: always()
+        run: pnpm exec jiti scripts/bundle-report.ts --json > /tmp/current.json || true
+
+      - name: Bundle report (baseline)
+        if: always()
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --depth=1 origin "$BASE_SHA" || true
+          git worktree add /tmp/base "$BASE_SHA" || true
+          if [ -d /tmp/base ]; then
+            ( cd /tmp/base && pnpm install --frozen-lockfile && pnpm build \
+              && pnpm exec jiti "$GITHUB_WORKSPACE/scripts/bundle-report.ts" --json ) > /tmp/base.json || true
+          fi
+
+      - name: Bundle diff
+        if: always()
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          DEPLOY_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          DEPLOY_MSG="$(git log -1 --format=%s "$DEPLOY_SHA" 2>/dev/null || true)" \
+            pnpm exec jiti scripts/bundle-diff.ts /tmp/base.json /tmp/current.json > /tmp/diff.md || true
+
       - name: Upsert PR comment
         if: always()
         uses: actions/github-script@v8
@@ -94,9 +120,14 @@ jobs:
             try {
               summary = fs.readFileSync("wrangler-summary.txt", "utf8").trim();
             } catch {}
+            let diff = "";
+            try {
+              diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
+            } catch {}
 
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\``
+              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+                (diff ? `\n\n${diff}` : "")
               : `${marker}\n❌ Cloudflare Pages deploy failed. ` +
                 `See the [workflow run](${runUrl}).`;
 

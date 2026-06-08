@@ -2,9 +2,7 @@
 import { useBlogSearch } from "~/composables/blog/useBlogSearch";
 // `site` is a `type: "data"` collection — data items have no `path` column
 // (that only exists for `type: "page"`), so query the single file directly.
-const { data: siteHeader } = await useAsyncData("site-header", () =>
-  queryCollection("site").first(),
-);
+const { data: siteHeader } = useAsyncData("site-header", () => queryCollection("site").first());
 const navItems = computed(() => siteHeader.value?.nav ?? []);
 
 const route = useRoute();
@@ -43,7 +41,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
       <!-- Logo + desktop nav -->
       <div class="flex items-center gap-3 shrink-0">
         <!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->
-        <NuxtLink
+        <RouterLink
           to="/"
           aria-label="Jen Lab home"
           class="flex items-center text-abyssal-ink overflow-hidden"
@@ -61,11 +59,11 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
           >
             JEN
           </span>
-        </NuxtLink>
+        </RouterLink>
 
         <!-- Desktop nav links -->
         <nav class="hidden md:flex items-center gap-2">
-          <NuxtLink
+          <RouterLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
@@ -77,14 +75,14 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
               item.label
             }}</span>
             <span class="col-start-1 row-start-1">{{ item.label }}</span>
-          </NuxtLink>
+          </RouterLink>
         </nav>
       </div>
 
       <!-- Socials + CTA + burger -->
       <div class="flex items-center gap-2 shrink-0">
         <!-- Search icon button -->
-        <UButton
+        <AppButton
           color="neutral"
           variant="ghost"
           icon="i-lucide-search"
@@ -109,7 +107,7 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
           aria-label="Toggle menu"
           @click="mobileOpen = !mobileOpen"
         >
-          <UIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-5" />
+          <AppIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-5" />
         </button>
       </div>
     </div>
@@ -127,14 +125,14 @@ const smoothEase = "cubic-bezier(0.32, 0.72, 0, 1)";
         v-if="mobileOpen"
         class="md:hidden mx-auto mt-2 max-w-300 bg-ash-white rounded-card shadow-lg p-4 space-y-2"
       >
-        <NuxtLink
+        <RouterLink
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
           class="block px-4 py-2 text-abyssal-ink hover:bg-basalt-canvas rounded-card transition-colors"
         >
           {{ item.label }}
-        </NuxtLink>
+        </RouterLink>
         <!-- Mobile: CTA -->
         <a
           href="#footer"

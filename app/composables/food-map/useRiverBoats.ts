@@ -32,7 +32,7 @@
 // =============================================================================
 
 import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
-import { FERRY_ROUTES } from "~/utils/food-map/ferry-routes";
+import { FERRY_ROUTES } from "~/utils/food-map/ferryRoutes";
 import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 export interface RiverBoatsController {
@@ -281,7 +281,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     const desired = measured.map((m) =>
       clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );
-    const alloc = new Array<number>(measured.length).fill(0);
+    const alloc = Array.from({ length: measured.length }, () => 0);
     const longestFirst = measured
       .map((_, i) => i)
       .sort((a, b) => measured[b]!.total - measured[a]!.total);

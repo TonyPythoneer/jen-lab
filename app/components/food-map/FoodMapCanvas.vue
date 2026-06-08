@@ -4,7 +4,7 @@ import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import type { MapTheme } from "~/composables/food-map/useFoodMapTheme";
 import { createRiverBoats, type RiverBoatsController } from "~/composables/food-map/useRiverBoats";
 import { createPinCanvas, type PinCanvasController } from "~/composables/food-map/usePinCanvas";
-import { simplifyFeatureCollection } from "~/utils/food-map/geo-simplify";
+import { simplifyFeatureCollection } from "~/utils/food-map/geoSimplify";
 
 // Dev tile-resolution toggle: @2x retina vs @1x. (Phones force @1x regardless.)
 export type TileMode = "raster2x" | "raster1x";
@@ -188,10 +188,10 @@ function buildBoundary() {
       data as Parameters<typeof simplifyFeatureCollection>[0],
       BOUNDARY_SIMPLIFY_EPSILON,
     );
-    if (import.meta.dev) {
+    if (import.meta.env.DEV) {
       console.info(`[food-map] boundary simplified in ${(performance.now() - t0).toFixed(1)}ms`);
     }
-  } else if (import.meta.dev) {
+  } else if (import.meta.env.DEV) {
     console.info("[food-map] boundary RAW (full jsdelivr geometry, ~174k pts)");
   }
 
@@ -375,7 +375,7 @@ onMounted(async () => {
 
   // Dev-only handle so a Playwright bench can toggle each layer and measure its
   // drag cost in isolation. Never exposed in prod builds.
-  if (import.meta.dev) {
+  if (import.meta.env.DEV) {
     (window as unknown as { __foodMapDebug?: unknown }).__foodMapDebug = {
       map,
       setBoats: (on: boolean) => boats?.setEnabled(on),

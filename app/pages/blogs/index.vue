@@ -1,7 +1,7 @@
 <template>
   <SitePageContainer>
     <!-- Header -->
-    <UPageHeader
+    <AppPageHeader
       :title="chrome?.listPage.title"
       :description="chrome?.listPage.subtitle"
       class="font-display min-h-[var(--first-section-h)] flex flex-col justify-center"
@@ -16,9 +16,9 @@
 
       <div v-else-if="error" class="text-center py-20">
         <p class="text-abyssal-ink/50 mb-4">{{ chrome?.listPage.loadingErrorMessage }}</p>
-        <UButton color="neutral" variant="outline" @click="refresh()">
+        <AppButton color="neutral" variant="outline" @click="refresh()">
           {{ chrome?.listPage.loadingErrorRetryButton }}
-        </UButton>
+        </AppButton>
       </div>
 
       <div v-else-if="posts.length" class="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-card">
@@ -27,8 +27,7 @@
           :key="post.id"
           :post="post"
           :to="{
-            name: 'blogs-slug',
-            params: { slug: [String(post.id)] },
+            path: `/blogs/${post.id}`,
             query: { title: post.slug },
           }"
           :tag-map="tagMap"
@@ -44,16 +43,16 @@
 
     <!-- Pagination -->
     <div class="flex justify-center border-t border-abyssal-ink/10 pt-6">
-      <UPagination
+      <AppPagination
         :page="currentPage"
         :total="totalPages * PER_PAGE"
         :items-per-page="PER_PAGE"
         :disabled="loading || totalPages <= 1"
         @update:page="currentPage = $event"
       >
-        <!-- Active page: orange fill via raw token (Nuxt UI `primary` semantic is not wired to digital-orange). -->
+        <!-- Active page: orange fill via raw token (no `primary` alias is wired to digital-orange). -->
         <template #item="{ item, page: activePage }">
-          <UButton
+          <AppButton
             v-if="item.type === 'page'"
             :label="String(item.value)"
             square
@@ -65,10 +64,11 @@
                 ? 'bg-digital-orange text-pure-white shadow-none hover:bg-digital-orange hover:text-pure-white disabled:bg-digital-orange aria-disabled:bg-digital-orange'
                 : undefined
             "
+            @click="currentPage = item.value as number"
           />
           <span v-else class="px-1.5 text-sm text-abyssal-ink/50">…</span>
         </template>
-      </UPagination>
+      </AppPagination>
     </div>
 
     <SharedScrollToTopButton />
@@ -85,9 +85,7 @@ const PER_PAGE = 20;
 const SKELETON_COUNT = 4;
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = await useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 useSeoMeta({
   title: () => chrome.value?.listPage.seoTitle,
   description: () => chrome.value?.listPage.seoDescription,
@@ -122,7 +120,7 @@ const {
   status,
   error,
   refresh,
-} = useLazyAsyncData(
+} = useAsyncData(
   fullKey.value,
   () =>
     fetchPosts({
@@ -153,7 +151,7 @@ const loading = computed(() => status.value === "pending");
 // #endregion
 
 // #region URL sync
-const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const lastQuery = useBlogLastQuery();
 
 // State → URL (one-way). Skip when leaving /blogs to avoid clobbering during navigation.
 watch([search, selectedCategoryIds, selectedTagIds, currentPage], () => {

@@ -8,7 +8,7 @@
 const DISPLAY_NAME = "Jen Knows";
 const HEAD_TITLE = "榛知 | NextSteps Academy";
 
-const { data: page } = useLazyAsyncData("profile:jen-knows", () =>
+const { data: page } = useAsyncData("profile:jen-knows", () =>
   queryCollection("home").path("/home/jen-knows").first(),
 );
 

@@ -20,7 +20,7 @@
 // previous file is left untouched.
 
 import { writeFile } from "node:fs/promises";
-import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferry-routes.ts";
+import type { FerryRoute, FerryStop } from "../app/utils/food-map/ferryRoutes";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 const OUTPUT = new URL("../app/assets/data/ferry-routes.json", import.meta.url);
@@ -108,7 +108,7 @@ const MAX_JOIN_GAP_M = 300;
 // gap. Returns one polyline per connected component.
 function stitchComponents(segsIn: LatLng[][]): LatLng[][] {
   const segs = segsIn.filter((s) => s.length >= 2);
-  const used = new Array<boolean>(segs.length).fill(false);
+  const used = Array.from({ length: segs.length }, () => false);
   const components: LatLng[][] = [];
 
   for (let seed = 0; seed < segs.length; seed++) {

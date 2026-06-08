@@ -1,8 +1,4 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
+# Dev/build outputs
 .cache
 dist
 
@@ -52,9 +48,6 @@ analyze.client.*.json
 .superpowers
 entities.json
 
-# planning / cockpit board (local scratch, not shipped)
-.planning/
-
 # MemPalace per-project files (issue #185)
 mempalace.yaml
 .playwright-mcp
@@ -73,3 +66,20 @@ outputs/
 /*.ico
 /*.tif
 /*.tiff
+
+# Generated build artifacts
+generated/
+dist/
+.nuxt/
+.output/
+auto-imports.d.ts
+components.d.ts
+typed-router.d.ts
+public/static/
+.eslintrc-auto-import.json
+.codegraph/
+
+# Planning scaffolding — GSD board + superpowers specs/plans are working files,
+# never committed. The guard-project-done CI fails the build if they reappear.
+.planning/
+docs/superpowers/

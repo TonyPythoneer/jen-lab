@@ -18,8 +18,18 @@ const MAX_PAGES = 1000;
 export type RawDeployment = {
   id?: string;
   created_on?: string;
+  // "production" | "preview" — set by Cloudflare on every deployment.
   environment?: string;
-  deployment_trigger?: { metadata?: { branch?: string } };
+  // Per-deployment URL, e.g. https://<hash>.jen-lab.pages.dev
+  url?: string;
+  // Stable branch/custom alias URLs; newest deployment's first alias is the
+  // "latest of this branch" link.
+  aliases?: string[];
+  // Build outcome: status is "success" | "failure" | "building" | etc.
+  latest_stage?: { name?: string; status?: string };
+  deployment_trigger?: {
+    metadata?: { branch?: string; commit_hash?: string; commit_message?: string };
+  };
 };
 
 type ApiResponse = {

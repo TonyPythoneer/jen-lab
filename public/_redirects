@@ -1,0 +1,6 @@
+# SPA fallback for Cloudflare Pages.
+# Prerendered routes (/, /jen-knows, /jen-liu, /blogs, /sydney-food-map) ship as
+# static .html and are served directly — static assets take precedence over this
+# rule. Client-only routes like /blogs/<id> have no prerendered file, so they
+# fall back to index.html (200) and vue-router renders them on the client.
+/*  /index.html  200

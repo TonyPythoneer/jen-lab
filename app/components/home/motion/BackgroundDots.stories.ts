@@ -14,7 +14,7 @@ export const Default: Story = {
   render: (args: any) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,
+    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
   }),
   args: {
     color: "var(--color-abyssal-ink)",
@@ -28,7 +28,7 @@ export const Sparse: Story = {
   render: (args: any) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,
+    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
   }),
   args: {
     color: "var(--color-digital-orange)",
@@ -42,7 +42,7 @@ export const Dense: Story = {
   render: (args: any) => ({
     components: { BackgroundDots },
     setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-gray-50"><BackgroundDots v-bind="args" /></div>`,
+    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
   }),
   args: {
     color: "var(--color-cyber-violet)",

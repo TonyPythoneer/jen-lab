@@ -1,6 +1,10 @@
-// Shared open/close flag so the header icon and the global modal stay in sync.
+import { ref } from "vue";
+
+// Module-level ref: one shared flag so the header icon and the global modal stay
+// in sync. SSG renders each route once, so there is no cross-request leakage.
+const open = ref(false);
+
 export function useBlogSearch() {
-  const open = useState("blog-search-open", () => false);
   return {
     open,
     openSearch: () => {

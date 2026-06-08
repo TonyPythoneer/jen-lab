@@ -100,16 +100,42 @@ const liuStyle = computed(() => ({
       <div
         class="relative z-10 border-t border-abyssal-ink/10 bg-basalt-canvas/40 backdrop-blur-sm py-4"
       >
-        <UMarquee>
-          <span
-            v-for="(s, i) in marqueeItems"
-            :key="s"
-            class="mx-6 inline-flex items-center gap-3 font-display text-3xl tracking-[0.02em] text-abyssal-ink/70"
-          >
-            {{ s }}
-          </span>
-        </UMarquee>
+        <!-- CSS marquee: content doubled so -50% translate creates a seamless loop -->
+        <div class="overflow-hidden">
+          <div class="marquee-track">
+            <span
+              v-for="s in marqueeItems"
+              :key="s"
+              class="mx-6 inline-flex items-center gap-3 font-display text-3xl tracking-[0.02em] text-abyssal-ink/70"
+              >{{ s }}</span
+            >
+            <span
+              v-for="s in marqueeItems"
+              :key="`d-${s}`"
+              aria-hidden="true"
+              class="mx-6 inline-flex items-center gap-3 font-display text-3xl tracking-[0.02em] text-abyssal-ink/70"
+              >{{ s }}</span
+            >
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+</style>

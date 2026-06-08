@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
-import type { Category } from "~/assets/data/pages/restaurants";
-import { CATEGORY_EN, categoryGlyph } from "~/utils/food-map/food-map-categories";
+import type { Category } from "~/assets/data/restaurants";
+import { CATEGORY_EN, categoryGlyph } from "~/utils/food-map/foodMapCategories";
 import { countByRegion, countByCuisine } from "~/utils/food-map/foodMapFilters";
 import { useFoodMapStore } from "~/composables/food-map/useFoodMapStore";
 
@@ -44,18 +44,20 @@ const visibleCategories = computed(() => {
 <template>
   <div class="food-topbar">
     <!-- Search: focusing it summons the list drawer -->
-    <UInput
-      v-model="store.state.search"
-      icon="i-lucide-search"
-      placeholder="雪梨食堂誌 — Search The Atlas"
-      class="food-topbar__search"
-      :ui="{
-        root: 'w-full',
-        base: 'rounded-full ring-0 px-[14px] py-[11px] text-[14px] bg-transparent',
-        leadingIcon: 'size-[16px]',
-      }"
-      @focus="store.openDrawer()"
-    />
+    <div class="food-topbar__search relative flex items-center">
+      <span
+        class="absolute left-[14px] top-1/2 -translate-y-1/2 pointer-events-none flex items-center"
+      >
+        <AppIcon name="i-lucide-search" class="size-[16px] text-current opacity-60" />
+      </span>
+      <input
+        v-model="store.state.search"
+        type="text"
+        placeholder="雪梨食堂誌 — Search The Atlas"
+        class="w-full rounded-full bg-transparent px-[14px] pl-[38px] py-[11px] text-[14px] outline-none ring-0"
+        @focus="store.openDrawer()"
+      />
+    </div>
 
     <!-- Filter chips: Area toggles first, then one chip per cuisine. Both are
          single-select and depend on each other — a district with no match under
@@ -90,8 +92,8 @@ const visibleCategories = computed(() => {
     </div>
 
     <!-- Home: the avatar picture itself is the link back to the site. -->
-    <NuxtLink to="/" class="food-topbar__home" aria-label="Back to home">
+    <RouterLink to="/" class="food-topbar__home" aria-label="Back to home">
       <img src="/favicon.128x128.webp" alt="Back to home" class="food-topbar__home-avatar" />
-    </NuxtLink>
+    </RouterLink>
   </div>
 </template>

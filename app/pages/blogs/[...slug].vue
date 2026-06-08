@@ -2,19 +2,19 @@
   <SitePageContainer>
     <!-- First section: back-nav + post header together fill the viewport -->
     <div class="min-h-[var(--first-section-h)] flex flex-col justify-center gap-6">
-      <NuxtLink
+      <RouterLink
         :to="{ path: '/blogs', query: lastQuery }"
         class="inline-flex items-center gap-1 text-sm text-abyssal-ink/50 hover:text-digital-orange transition-colors"
       >
-        <UIcon name="i-lucide-arrow-left" class="size-4" />
+        <AppIcon name="i-lucide-arrow-left" class="size-4" />
         {{ chrome?.detailPage.backLink }}
-      </NuxtLink>
+      </RouterLink>
 
       <div v-if="pending || error || !post" class="text-center py-20 text-abyssal-ink/50">
         {{ pending ? chrome?.detailPage.loadingMessage : chrome?.detailPage.notFoundMessage }}
       </div>
 
-      <UPageHeader
+      <AppPageHeader
         v-else
         :title="meta.title"
         :ui="{ title: 'font-display text-4xl md:text-5xl leading-tight' }"
@@ -26,7 +26,7 @@
             {{ formatDate(post.date) }}
           </span>
         </template>
-      </UPageHeader>
+      </AppPageHeader>
     </div>
 
     <!-- Featured image + post content (below the fold) -->
@@ -48,16 +48,16 @@
 <script setup lang="ts">
 import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
 
-const route = useRoute();
-const lastQuery = useState<Record<string, string>>("blogs:lastQuery", () => ({}));
+const route = useRoute("/blogs/[...slug]");
+const lastQuery = useBlogLastQuery();
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
-const { data: chrome } = await useAsyncData("site:blogs", () =>
-  queryCollection("siteBlogs").first(),
-);
+const { data: chrome } = useAsyncData("site:blogs", () => queryCollection("siteBlogs").first());
 
 // [...slug][0] is the post ID; rest is ignored (human-readable title comes from ?title= query)
-const postId = Number(route.params.slug?.[0]);
+// route.params.slug is a string with vue-router file routing; the Array.isArray guard is a defensive fallback
+const rawSlug = route.params.slug;
+const postId = Number(Array.isArray(rawSlug) ? rawSlug[0] : rawSlug);
 const validId = Number.isInteger(postId) && postId > 0;
 
 // Lazy (not useAsyncData): non-blocking, paints the shell + loading state first.
@@ -65,7 +65,7 @@ const {
   data: post,
   status,
   error,
-} = useLazyAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
+} = useAsyncData(`wp-post-${postId}`, () => fetchPost(postId), { immediate: validId });
 const pending = computed(() => validId && status.value === "pending");
 
 const meta = computed(() => {

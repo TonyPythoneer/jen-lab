@@ -10,7 +10,7 @@ export interface BlogListInit {
 
 /**
  * Pure blog-list state: filters, pagination, and the per-scope page cache.
- * No Nuxt-bound APIs — the consuming page owns `useLazyAsyncData` / URL sync
+ * No framework-bound APIs — the consuming page owns `useAsyncData` / URL sync
  * and feeds results back via `recordResult`. Keeps this unit-testable with
  * plain Vitest (see CLAUDE.md "When to extract a composable").
  */
