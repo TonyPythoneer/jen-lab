@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useBlogSearch } from "~/composables/blog/useBlogSearch";
-// `site` is a `type: "data"` collection — data items have no `path` column
-// (that only exists for `type: "page"`), so query the single file directly.
-const siteHeader = computed(() => queryCollection("site").first());
+import { site } from "#velite";
+// `site` is a single-row collection (content/site/header.yml) → take row 0.
+const siteHeader = computed(() => site[0]);
 const navItems = computed(() => siteHeader.value?.nav ?? []);
 
 const route = useRoute();

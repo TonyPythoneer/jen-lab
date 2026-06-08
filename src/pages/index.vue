@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pagesLayout } from "#velite";
+
 const COMPONENT_MAP: Record<string, ReturnType<typeof resolveComponent>> = {
   "section-hero": resolveComponent("HomeSectionHero"),
   "section-directions": resolveComponent("HomeSectionDirections"),
@@ -9,7 +11,7 @@ const COMPONENT_MAP: Record<string, ReturnType<typeof resolveComponent>> = {
 
 // Synchronous Velite read, so the homepage SEO from content is baked into the
 // prerendered HTML.
-const page = computed(() => queryCollection("pagesLayout").path("/pages-layout/home").first());
+const page = computed(() => pagesLayout.find((r) => r.path === "/pages-layout/home"));
 
 function sectionProps(section: { component: string; [key: string]: unknown }) {
   const { component, ...props } = section;
