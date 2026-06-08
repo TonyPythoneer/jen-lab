@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" v-bind="elementAttrs" :class="cn(cvaClass, uiBase, parentClass)">
+  <component :is="tag" v-bind="elementAttrs" :class="cn(variantClass, uiBase, parentClass)">
     <AppIcon v-if="icon" :name="icon" :class="iconSizeClass" class="shrink-0" />
     <span v-if="label !== undefined">{{ label }}</span>
     <slot v-else />
@@ -78,7 +78,7 @@ const COMBO: Record<string, string> = {
   "secondary-soft": "bg-cyber-violet/10 text-cyber-violet hover:bg-cyber-violet/20",
 };
 
-const cvaClass = computed(() =>
+const variantClass = computed(() =>
   cn(
     BASE,
     SIZE[props.size ?? "sm"],
