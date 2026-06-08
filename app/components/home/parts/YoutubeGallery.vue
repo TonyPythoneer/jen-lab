@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-3">
-    <div class="grid sm:grid-cols-2 gap-3 mb-8">
+    <div class="grid sm:grid-cols-2 gap-5">
       <button
         v-for="item in videos"
         :key="item.id"

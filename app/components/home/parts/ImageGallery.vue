@@ -1,5 +1,5 @@
 <template>
-  <div class="grid sm:grid-cols-2 gap-3 mb-8">
+  <div class="grid sm:grid-cols-2 gap-5">
     <div
       v-for="(item, i) in images"
       :key="i"
