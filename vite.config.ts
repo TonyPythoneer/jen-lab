@@ -8,6 +8,7 @@ import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { googleFontsHref } from "./app/config/site";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 
@@ -42,7 +43,22 @@ const homeComponents: Record<string, string> = {
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
 // distinct, so a direct annotation makes tsc recurse the PluginOption union too
 // deep (TS2321). One assertion on the whole array bridges them.
+// Build the Google Fonts <link> from app/config/site.ts and inject it at the
+// <!--google-fonts--> marker in index.html. Keeps the font list in one config.
+function injectFonts(): PluginOption {
+  return {
+    name: "inject-google-fonts",
+    transformIndexHtml(html: string) {
+      return html.replace(
+        "<!--google-fonts-->",
+        `<link rel="stylesheet" href="${googleFontsHref}" />`,
+      );
+    },
+  };
+}
+
 const plugins = [
+  injectFonts(),
   tailwindcss(),
   VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
   vue(),
