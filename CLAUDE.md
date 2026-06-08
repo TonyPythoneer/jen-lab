@@ -24,7 +24,7 @@
 
 ```bash
 # Vue 3 + Vite development
-pnpm dev:watch    # :3500. Port via DEV_PORT env (DEV_PORT=3600 pnpm dev:watch for a 2nd worktree). Runs velite --watch & vp dev in parallel. Also exposes /__inspect/ (vite-plugin-inspect). Check lsof before starting a duplicate.
+pnpm dev          # :3500. Port via DEV_PORT env (DEV_PORT=3600 pnpm dev for a 2nd worktree). Runs velite --watch & vp dev in parallel. Also exposes /__inspect/ (vite-plugin-inspect). Check lsof before starting a duplicate.
 pnpm build        # Build for production (Cloudflare Pages)
 pnpm preview      # Build + preview locally
 pnpm deploy       # Build + deploy to Cloudflare Pages
