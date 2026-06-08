@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
 
-const route = useRoute();
+const route = useRoute("/blogs/[...slug]");
 const lastQuery = useBlogLastQuery();
 
 // Page wording comes from content/site/blogs.yml (single source of truth).
