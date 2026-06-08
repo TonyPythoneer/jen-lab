@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt has been removed. All guidance below reflects the current Vite stack.
+> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt **and `@nuxt/ui`** have been removed. All guidance below reflects the current Vite stack.
+>
+> **UI layer:** shadcn-style `App*` components (`AppButton`, `AppBadge`, `AppModal`, `AppTabs`, `AppSkeleton`, `AppPageHeader`, `AppPopover`) built on **reka-ui** headless primitives. Variants come from **`class-variance-authority`** (`cva`); class merging from **`app/lib/utils.ts`** `cn()` (= `clsx` + `tailwind-merge`). These four packages are load-bearing — do not remove. There is no `U*` component set anymore.
 
 ## Constitution
 
@@ -58,12 +60,12 @@ Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**.
 Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import and component resolution plugins explicitly. `@vitejs/plugin-vue` is registered because vite-plus doesn't add it automatically.
 
 - **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"`.
-- **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus/Nuxt's TS setup; stories are dev-only.
+- **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus's TS setup; stories are dev-only.
 - **Import from `@storybook/vue3-vite`** (not `@storybook/vue3`).
 - **`Section*` components** get a `Default` story + an `InPage` story (`parameters: { layout: "fullscreen" }`, wrapped in `min-h-dvh bg-[var(--color-basalt-canvas)]`) for RWD viewport testing.
-- **Theme colors** in `main.ts` use Tailwind palette names (`orange`, `violet`, `zinc`) not brand token names — `@nuxt/ui` generates palette shades only for Tailwind colors. Brand tokens (`--color-digital-orange`, etc.) still load via `theme.css`.
-- **Single source for site config**: `app/config/site.ts` — both `app.config.ts` and `main.ts` import from here. Change colors/contacts there only.
-- **`app/storybook/StoryWrapper.vue`** wraps every story in `<UApp>` via the global decorator.
+- **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. There is no `@nuxt/ui` palette generation anymore — `App*` components style themselves with `cva` + brand-token utilities directly.
+- **Single source for site config**: `app/config/site.ts` (consumed by `main.ts`, the Storybook nuxt mock, and runtime components). `app.config.ts` is gone with Nuxt. Change colors/contacts there only.
+- **`app/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — `@nuxt/ui` was removed, so no `<UApp>`; stories don't use overlay/toast/tooltip.
 - **`pnpm build-storybook` known limitation**: fails on `shared/SnapCarousel.vue` because that component uses Vue 3.3 generic SFC syntax (`lang="ts" generic="T extends ..."`), which rolldown (the workspace vite-plus build engine) cannot compile in production mode. The **dev server** (`pnpm storybook`) handles it fine via the incremental compiler. No fix until rolldown adds generic SFC support.
 
 ## Component Organization
@@ -105,7 +107,7 @@ Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import
 - 2-space indent for Vue and TypeScript. Configured in `.zed/settings.json` for the Zed IDE.
 - File naming under `app/`: TS modules are **camelCase** — composables (`useRiverBoats.ts`) and plain utils (`geoSimplify.ts`, `foodMapFilters.ts`) alike. Vue components stay PascalCase (`FoodMapCanvas.vue`). A test mirrors its source name (`geoSimplify.ts` → `geoSimplify.test.ts`). No kebab-case for `.ts` modules.
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
-- No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<UButton color="neutral">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
+- No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<AppButton color="neutral" variant="outline">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
 - Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
 - Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Page.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
@@ -145,7 +147,7 @@ Never hardcode a hex/px a token already covers. Light-mode only — never write 
 **Typography:** `font-display` (Bebas Neue) for all h1/h2 — already heavy, never add `font-bold`. `font-sans` (DM Sans) for body. Section heading standard: `font-display tracking-[0.02em] leading-[0.94]`.
 
 **Never:** `dark:*`, raw `text-neutral-*` / `bg-rose-*` / `text-primary-500` utilities, `rounded-xl` on cards, `font-bold` on `font-display`.
-Note: Nuxt UI `color="neutral"` / `variant="outline"` props are component contract — keep them (they are not raw utilities).
+Note: `App*` component variant props (`color="neutral"` / `variant="outline"`, defined via `cva`) are component contract — keep them (they are not raw utilities).
 
 ## Working Preferences
 
