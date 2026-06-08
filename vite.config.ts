@@ -75,7 +75,16 @@ const plugins = [
     directoryAsNamespace: true,
     // ui/<category>/<Name>.vue → bare <Name>. unplugin-vue-components strips EVERY
     // folder segment listed here, so ui/overlay/Modal.vue resolves to <Modal>.
-    globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility", "button"],
+    globalNamespaces: [
+      "ui",
+      "element",
+      "navigation",
+      "overlay",
+      "page",
+      "utility",
+      "button",
+      "badge",
+    ],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
     resolvers: [
