@@ -83,6 +83,10 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./app", import.meta.url)),
     },
   },
+  server: {
+    host: true, // listen on 0.0.0.0 so the dev site is reachable on the LAN / phone
+    port: Number(process.env.DEV_PORT) || 3500,
+  },
   ssgOptions: {
     includedRoutes: () => ["/", "/jen-knows", "/jen-liu", "/blogs", "/sydney-food-map"],
   },

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm gen:icons && velite build && vite-ssg build",
-    "dev": "pnpm gen:icons && (velite --watch & vp dev --host 0.0.0.0 --port ${DEV_PORT:-3500})",
+    "dev": "pnpm gen:icons && (velite --watch & vp dev)",
     "gen:icons": "jiti scripts/build-icon-subset.ts",
     "bundle:report": "pnpm build && jiti scripts/bundle-report.ts",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
@@ -39,7 +39,6 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.111",
     "@iconify-json/simple-icons": "^1.2.85",
-    "@nuxt/ui": "^4.7.1",
     "@playwright/test": "^1.60.0",
     "@storybook/vue3-vite": "^10.4.1",
     "@tailwindcss/typography": "^0.5.19",
