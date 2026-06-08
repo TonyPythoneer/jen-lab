@@ -2,7 +2,9 @@
   <DialogRoot :open="open" @update:open="emit('update:open', $event)">
     <DialogPortal>
       <!-- Overlay -->
-      <Transition name="app-overlay">
+      <!-- `appear` so a panel that is mounted while already open still animates
+           in. The global search modal is lazy-mounted on its first open. -->
+      <Transition name="app-overlay" appear>
         <DialogOverlay
           v-if="open"
           force-mount
@@ -12,7 +14,7 @@
       </Transition>
 
       <!-- Panel -->
-      <Transition :name="`app-slide-${side ?? 'right'}`">
+      <Transition :name="`app-slide-${side ?? 'right'}`" appear>
         <DialogContent
           v-if="open"
           force-mount
