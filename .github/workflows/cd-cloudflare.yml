@@ -109,7 +109,7 @@ jobs:
             } catch {}
 
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+              ? `${marker}\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")
               : `${marker}\n❌ Cloudflare Pages deploy failed. ` +
                 `See the [workflow run](${runUrl}).`;
