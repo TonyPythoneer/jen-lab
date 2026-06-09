@@ -7,6 +7,7 @@
 # Both are read automatically by wrangler from the environment.
 
 name: 💬 PR Command · Preview
+# guide: Build this PR's branch and deploy it to Cloudflare Pages as a preview, then post the deployment URLs.
 
 on:
   issue_comment:

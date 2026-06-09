@@ -7,6 +7,7 @@
 # Both are read automatically by wrangler from the environment.
 
 name: 💬 PR Command · Delete Preview
+# guide: Delete all Cloudflare Pages preview deployments for this PR's branch.
 
 on:
   issue_comment:

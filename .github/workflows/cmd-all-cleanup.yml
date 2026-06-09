@@ -8,6 +8,7 @@
 # Both are read automatically by wrangler from the environment.
 
 name: 💬 PR Command · Cleanup
+# guide: Prune ALL Cloudflare Pages deployments project-wide, keeping only the latest `main` and latest `develop` build. Posts a report.
 
 on:
   issue_comment:
