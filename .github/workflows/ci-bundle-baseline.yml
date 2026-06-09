@@ -14,8 +14,9 @@ on:
   push:
     branches: [main, develop]
     # Only rebuild the baseline when something that can change the built bundle
-    # changed. Mirrors cd-go-to-deployment.yml's deploy filter so a docs-only push
-    # keeps the previous (still-valid) baseline instead of overwriting it.
+    # changed (this allowlist is the inverse of cd-deploy.yml's paths-ignore deny
+    # list — same intent, opposite style), so a docs-only push keeps the previous
+    # (still-valid) baseline instead of overwriting it.
     paths:
       - "src/**"
       - "content/**"

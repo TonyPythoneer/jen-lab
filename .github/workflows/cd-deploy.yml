@@ -26,7 +26,12 @@ on:
       - "docs/**"
       - "tasks/**"
       - "tests/**"
-      - "scripts/**"
+      # Only CI/tooling scripts are ignored. scripts/build-icon-subset.ts feeds the
+      # build (pnpm gen:icons), so a change there must still trigger a deploy.
+      - "scripts/github/**"
+      - "scripts/screenshot.ts"
+      - "scripts/sync-wp.ts"
+      - "scripts/sync-ferries-osm.ts"
       - "*.md"
       - ".gitignore"
       - ".prettierignore"
@@ -74,7 +79,7 @@ jobs:
 
       - name: Extract wrangler summary
         if: always()
-        run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
+        run: node scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
       # The bundle-size baseline is written by ci-bundle-baseline.yml on push to
       # main/develop, NOT here. A cache saved during this pull_request run would be
