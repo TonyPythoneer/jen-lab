@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+@theme {
+  --radius-card: var(--radius-caldera-card);
+  --radius-input: var(--radius-caldera-input);
+  --radius-button: var(--radius-caldera-pill);
+
+  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* shadcn-vue ⇄ 榛知 token bridge.
+   Maps shadcn's semantic tokens onto the brand tokens so every shadcn/cva
+   component renders the Caldera look. Light-mode only: no .dark block; the
+   @custom-variant + any baked `dark:*` utilities stay inert (no .dark on <html>).
+   `/NN` tints use color-mix so they stay derived from the source token (no hex). */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* shadcn radius scale — for any future shadcn part; brand card/pill radii are per-component. */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  --radius: 0.625rem; /* shadcn default; only governs rounded-sm/md/lg/xl */
+
+  --background: var(--color-basalt-canvas);
+  --foreground: var(--color-abyssal-ink);
+  --card: var(--color-ash-white);
+  --card-foreground: var(--color-abyssal-ink);
+  --popover: var(--color-pure-white);
+  --popover-foreground: var(--color-abyssal-ink);
+
+  --primary: var(--color-digital-orange);
+  --primary-foreground: var(--color-pure-white);
+  --secondary: var(--color-cyber-violet);
+  --secondary-foreground: var(--color-pure-white);
+
+  --muted: var(--color-ash-white);
+  --muted-foreground: color-mix(in oklab, var(--color-abyssal-ink) 50%, transparent);
+  --accent: color-mix(in oklab, var(--color-abyssal-ink) 8%, transparent);
+  --accent-foreground: var(--color-abyssal-ink);
+
+  --destructive: oklch(0.577 0.245 27.325); /* brand has no error token; keep shadcn red */
+
+  --border: color-mix(in oklab, var(--color-abyssal-ink) 10%, transparent);
+  --input: color-mix(in oklab, var(--color-abyssal-ink) 10%, transparent);
+  --ring: var(--color-digital-orange);
+}
+
+@layer base {
+  :root {
+    --site-header-h: 4.75rem;
+    /* header pt-3 + pill py-3 + h-10 content = 76px */
+    /* Composite var: viewport minus header minus any container top inset.
+       Containers override --page-inset-top; pages without a container use 0px. */
+    --page-inset-top: 0px;
+    --first-section-h: calc(100dvh - var(--site-header-h) - var(--page-inset-top));
+    /* Single source of truth for vertical rhythm: header→section→…→footer.
+           Drives breakout grid row-gap + layout top/bottom padding.
+
+           clamp(MIN, PREFERRED, MAX) resolves to max(MIN, min(PREFERRED, MAX)):
+             MIN  3rem = 48px   floor — never tighter than this on small phones
+             PREF 12vw          12% of viewport width — fluid, scales with screen
+             MAX  7rem = 112px  ceiling — never looser than this on wide screens
+
+           Crossover widths (where 12vw equals a bound: width = boundPx / 0.12):
+             <= 400px : 12vw <= 48px  -> pinned to MIN  (48px)
+             400-933px: 12vw fluid     -> e.g. 768px -> 92px, 900px -> 108px
+             >= 933px : 12vw >= 112px -> pinned to MAX (112px); most desktops land here */
+    --section-gap: clamp(3rem, 12vw, 7rem);
+  }
+
+  html {
+    background: var(--color-basalt-canvas);
+    color: var(--color-abyssal-ink);
+  }
+
+  :where(h1, h2, h3, [id]) {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Radius overrides (non-layered → beats all @layer utilities).
+ * Button sets rounded-button; declare outside @layer so it always wins.
+ */
+.rounded-button {
+  border-radius: var(--radius-button);
+}
+
+.rounded-input {
+  border-radius: var(--radius-input);
+}
+
+/*
+ * Project z-index layer policy
+ * ----------------------------
+ *  10  : local stacking inside an isolated parent (e.g. lift content above
+ *        sibling decorations that create their own stacking contexts via
+ *        transform/opacity animations).
+ *  30  : sticky/affixed page chrome that must overlap scrolled content
+ *        (mobile TOC header).
+ *  50  : page-level floating UI (scroll-to-top button, non-map pages only).
+ * 1000 : overlays anchored INSIDE the Leaflet map container (must beat
+ *        Leaflet's internal panes — controls top out around z 800).
+ * 1100 : floating UI on the Leaflet page that must sit above 1000-layer
+ *        in-map overlays.
+ *  z-40/z-50 : Modal / Slideover overlays (set directly in those components).
+ */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

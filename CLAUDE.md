@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt has been removed. All guidance below reflects the current Vite stack.
+> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt **and `@nuxt/ui`** have been removed. All guidance below reflects the current Vite stack.
+>
+> **UI layer:** UI components live in **`src/components/ui/<category>/`** (Nuxt UI taxonomy: `element` / `navigation` / `overlay` / `page` / `utility`) and are referenced with **NO prefix** — `<Button>`, `<Modal>`, `<Slideover>`, `<Tabs>`, `<Pagination>`, `<Popover>`, `<Badge>`, `<Skeleton>`, `<PageHeader>`, `<Icon>`, `<ClientOnly>` (unplugin-vue-components `globalNamespaces` strips the `ui/<category>` folder segments). The **interactive** ones are built on **`reka-ui`** headless primitives, so a11y is built in: `Modal`/`Slideover` → `Dialog`, `Tabs` → `Tabs`, `Pagination` → `Pagination`, `Popover` → `Popover` (focus trap, Esc, keyboard nav, ARIA, scroll-lock). The **native** ones (`Button`, `Badge`, `Icon`, `Skeleton`, `PageHeader`) have no reka-ui primitive — plain elements + Tailwind. Variants are plain TS maps merged via **`src/lib/utils.ts`** `cn()` (= `clsx` + `tailwind-merge`); **`class-variance-authority` is NOT installed or used.** Load-bearing: **`reka-ui`, `clsx`, `tailwind-merge`**.
 
 ## Constitution
 
@@ -17,6 +19,11 @@
     - **Violation**: editing tokens, running `pnpm check`, and reporting "done" without verifying the route in webwright.
     - **Violation**: building a click-to-flip card and stopping at "the code compiles" without ever rendering it.
   - If the change has no visible route, say so explicitly and ask which route to verify — do not skip verification silently.
+- Git flow
+  - Every development branch opens its PR against **`develop`**, never `main`. `main` only receives merges from `develop`.
+  - `develop` and `main` are PR-protected — never direct-push to either; always branch + PR.
+- Accessibility
+  - **Build for accessibility by leaning on `reka-ui` headless primitives** — they provide focus management, keyboard navigation, and ARIA. Do NOT hand-roll overlays/menus/tabs from raw `<div>`/`<button>` + `<Teleport>`; reach for the matching reka-ui primitive (`Dialog`, `Tabs`, `Popover`, `Pagination`, …) so the a11y is built in. Keep native elements (`<button>`, `<a>`) native — never replace them with `<div>`.
 - Else
   - Must respond in the language based on `language` field from `~/.claude/settings.json`.
 
@@ -58,26 +65,27 @@ Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**.
 Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import and component resolution plugins explicitly. `@vitejs/plugin-vue` is registered because vite-plus doesn't add it automatically.
 
 - **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"`.
-- **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus/Nuxt's TS setup; stories are dev-only.
+- **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus's TS setup; stories are dev-only.
 - **Import from `@storybook/vue3-vite`** (not `@storybook/vue3`).
 - **`Section*` components** get a `Default` story + an `InPage` story (`parameters: { layout: "fullscreen" }`, wrapped in `min-h-dvh bg-[var(--color-basalt-canvas)]`) for RWD viewport testing.
-- **Theme colors** in `main.ts` use Tailwind palette names (`orange`, `violet`, `zinc`) not brand token names — `@nuxt/ui` generates palette shades only for Tailwind colors. Brand tokens (`--color-digital-orange`, etc.) still load via `theme.css`.
-- **Single source for site config**: `app/config/site.ts` — both `app.config.ts` and `main.ts` import from here. Change colors/contacts there only.
-- **`app/storybook/StoryWrapper.vue`** wraps every story in `<UApp>` via the global decorator.
-- **`pnpm build-storybook` known limitation**: fails on `shared/SnapCarousel.vue` because that component uses Vue 3.3 generic SFC syntax (`lang="ts" generic="T extends ..."`), which rolldown (the workspace vite-plus build engine) cannot compile in production mode. The **dev server** (`pnpm storybook`) handles it fine via the incremental compiler. No fix until rolldown adds generic SFC support.
+- **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. There is no `@nuxt/ui` palette generation anymore — UI components style themselves with plain TS maps + `cn()` + brand-token utilities directly (no cva).
+- **Single source for site config**: `src/config/site.ts` (consumed by `main.ts`, `vite.config.ts` for the fonts link, and runtime components like `Footer`). `app.config.ts` is gone with Nuxt. Change colors/contacts there only.
+- **`src/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — `@nuxt/ui` was removed (no `<UApp>` provider), and reka-ui overlays/popovers need no app-level provider, so the plain wrapper is enough.
+- **`pnpm build-storybook` known limitation**: the production build (rolldown / vite-plus) fails with ~25 `[plugin vite:vue] "At least one <template> or <script> is required"` SFC-parse errors — a rolldown gap in the Storybook production path. The **dev server** (`pnpm storybook`) compiles fine via the incremental compiler, so use it. (The earlier `SnapCarousel.vue` generic-SFC cause is gone — that file was removed.)
 
 ## Component Organization
 
-**Directory = route domain.** Each subdirectory maps to the route it serves. Nuxt auto-import uses the directory as the component prefix.
+**Directory = route domain**, with two cross-cutting exceptions: **`ui/`** (headless-UI primitives) and **`shared/`** (cross-domain pieces). Each route subdirectory maps to the route it serves; auto-import uses the directory as the component prefix — EXCEPT the `ui/<category>/` folders, which are stripped to bare names (see UI layer above).
 
-| Directory   | Serves                           |
-| ----------- | -------------------------------- |
-| `site/`     | All pages (global layout)        |
-| `home/`     | `/`                              |
-| `blog/`     | `/blogs`, `/blogs/[slug]`        |
-| `food-map/` | `/sydney-food-map`               |
-| `profile/`  | `/jen-knows`, `/jen-liu`         |
-| `shared/`   | Cross-domain reusable primitives |
+| Directory   | Serves                                                                  |
+| ----------- | ----------------------------------------------------------------------- |
+| `site/`     | All pages (global layout)                                               |
+| `home/`     | `/`                                                                     |
+| `blog/`     | `/blogs`, `/blogs/[slug]`                                               |
+| `food-map/` | `/sydney-food-map`                                                      |
+| `profile/`  | `/jen-knows`, `/jen-liu`                                                |
+| `shared/`   | Cross-domain reusable primitives                                        |
+| `ui/`       | Headless-UI primitives — `ui/<category>/` → bare `<Button>`/`<Modal>`/… |
 
 **`Section` prefix = page consumes it directly.** A `Section*` component is a full-width block rendered inside `pages/`. No prefix = sub-component consumed by another component, not a page.
 
@@ -103,16 +111,16 @@ Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import
 ## Code Style
 
 - 2-space indent for Vue and TypeScript. Configured in `.zed/settings.json` for the Zed IDE.
-- File naming under `app/`: TS modules are **camelCase** — composables (`useRiverBoats.ts`) and plain utils (`geoSimplify.ts`, `foodMapFilters.ts`) alike. Vue components stay PascalCase (`FoodMapCanvas.vue`). A test mirrors its source name (`geoSimplify.ts` → `geoSimplify.test.ts`). No kebab-case for `.ts` modules.
+- File naming under `src/`: TS modules are **camelCase** — composables (`useRiverBoats.ts`) and plain utils (`geoSimplify.ts`, `foodMapFilters.ts`) alike. Vue components stay PascalCase (`FoodMapCanvas.vue`). A test mirrors its source name (`geoSimplify.ts` → `geoSimplify.test.ts`). No kebab-case for `.ts` modules.
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
-- No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<UButton color="neutral">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
+- No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<Button color="neutral" variant="outline">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
 - Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
-- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `app/components/profile/Page.vue`.
-- For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `app/components/site/Header.vue`.
+- Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `src/components/profile/Page.vue`.
+- For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `src/components/site/Header.vue`.
 
 ## Design System Quick Reference
 
-Token source of truth: `app/assets/css/theme.css` (raw) + `main.css` (semantic aliases).
+Token source of truth: `src/assets/css/theme.css` (raw) + `main.css` (semantic aliases).
 Never hardcode a hex/px a token already covers. Light-mode only — never write `dark:*`.
 
 **Colors** — brand tokens as `bg-*` / `text-*` / `border-*`, opacity via `/NN`:
@@ -145,7 +153,7 @@ Never hardcode a hex/px a token already covers. Light-mode only — never write 
 **Typography:** `font-display` (Bebas Neue) for all h1/h2 — already heavy, never add `font-bold`. `font-sans` (DM Sans) for body. Section heading standard: `font-display tracking-[0.02em] leading-[0.94]`.
 
 **Never:** `dark:*`, raw `text-neutral-*` / `bg-rose-*` / `text-primary-500` utilities, `rounded-xl` on cards, `font-bold` on `font-display`.
-Note: Nuxt UI `color="neutral"` / `variant="outline"` props are component contract — keep them (they are not raw utilities).
+Note: UI component variant props (`color="neutral"` / `variant="outline"`, defined via TS maps) are component contract — keep them (they are not raw utilities).
 
 ## Working Preferences
 
@@ -159,3 +167,20 @@ Note: Nuxt UI `color="neutral"` / `variant="outline"` props are component contra
   - If you are about to write a literal value that papers over a real bug, stop and surface the root cause to the user.
 - **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
 - **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
+
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+
+Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes and before getting started.
+- [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
+- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+
+<!--VITE PLUS END-->

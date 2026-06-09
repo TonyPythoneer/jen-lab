@@ -3,16 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm gen:icons && velite build && vite-ssg build",
+    "build": "pnpm gen:icons && velite build --strict && vite-ssg build && vue-tsc --noEmit",
     "dev": "pnpm gen:icons && (velite --watch & vp dev)",
     "gen:icons": "jiti scripts/build-icon-subset.ts",
-    "bundle:report": "pnpm build && jiti scripts/bundle-report.ts",
+    "bundle:report": "pnpm build && jiti scripts/github/bundle-report.ts",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
     "check": "vp check && pnpm typecheck",
     "typecheck": "vue-tsc --noEmit",
     "test": "vp test run",
-    "test:watch": "vp test",
     "preview": "pnpm build && pnpm dlx serve dist",
     "deploy": "pnpm build && wrangler pages deploy",
     "cf-typegen": "wrangler types",
@@ -25,7 +24,6 @@
     "@iconify/vue": "^5.0.1",
     "@types/leaflet": "^1.9.21",
     "@unhead/vue": "^3.1.3",
-    "@vueuse/router": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
@@ -34,8 +32,7 @@
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.2.2",
     "vue": "^3.5.32",
-    "vue-router": "^5.1.0",
-    "zod": "^4.4.1"
+    "vue-router": "^5.1.0"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.111",
@@ -48,7 +45,6 @@
     "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vueuse/core": "^14.3.0",
-    "fflate": "^0.8.2",
     "jiti": "2.7.0",
     "markdown-it": "^14.1.1",
     "markdown-it-link-attributes": "^4.0.1",
@@ -72,5 +68,5 @@
   "engines": {
     "node": ">=24 <25"
   },
-  "packageManager": "pnpm@11.0.3"
+  "packageManager": "pnpm@11.5.2"
 }

@@ -71,7 +71,6 @@ outputs/
 generated/
 dist/
 .nuxt/
-.output/
 auto-imports.d.ts
 components.d.ts
 typed-router.d.ts

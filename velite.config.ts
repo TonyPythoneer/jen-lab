@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { defineCollection, defineConfig, s } from "velite";
 import MarkdownIt from "markdown-it";
 // @ts-expect-error — no types published for this plugin
@@ -11,12 +12,38 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(link
   attrs: { target: "_blank", rel: "noopener" },
 });
 
+// velite's s.path() yields a slash-less path (e.g. "home/jen-knows"); prefix "/"
+// so it matches the app's absolute routes (content/home/jen-knows.md -> /home/jen-knows).
+const prefixPath = <T extends { path: string }>(data: T): T => ({ ...data, path: "/" + data.path });
+
+// Build-time icon validation. Lucide is the bundled set (see
+// scripts/build-icon-subset.ts), so a typo'd i-lucide-* name silently renders
+// nothing — verify it exists in the pack and fail the build instead. Other sets
+// (simple-icons, tdesign, ...) CDN-load at runtime and only get a format check.
+const lucideIconSet = JSON.parse(
+  readFileSync("node_modules/@iconify-json/lucide/icons.json", "utf8"),
+) as { icons: Record<string, unknown>; aliases?: Record<string, unknown> };
+const lucideNames = new Set([
+  ...Object.keys(lucideIconSet.icons),
+  ...Object.keys(lucideIconSet.aliases ?? {}),
+]);
+
+const iconName = s.string().refine(
+  (v) =>
+    v.startsWith("i-lucide-")
+      ? lucideNames.has(v.slice("i-lucide-".length))
+      : /^i-[a-z0-9]+-[a-z0-9-]+$/.test(v) || /^[a-z0-9-]+:[a-z0-9-]+$/.test(v),
+  (v) => ({
+    message: `Unknown icon "${v}". For lucide, the name must exist in @iconify-json/lucide; otherwise use i-<set>-<name> or <set>:<name>.`,
+  }),
+);
+
 const portalListSection = s.object({
   id: s.string(),
   label: s.string(),
   component: s.literal("portal-list"),
   portals: s.array(
-    s.object({ to: s.string(), icon: s.string(), title: s.string(), brief: s.string() }),
+    s.object({ to: s.string(), icon: iconName, title: s.string(), brief: s.string() }),
   ),
 });
 
@@ -80,8 +107,7 @@ const home = defineCollection({
         ]),
       ),
     })
-    // page path: content/home/jen-knows.md -> /home/jen-knows
-    .transform((data) => ({ ...data, path: "/" + data.path })),
+    .transform(prefixPath),
 });
 
 const pagesLayout = defineCollection({
@@ -147,7 +173,7 @@ const pagesLayout = defineCollection({
         ]),
       ),
     })
-    .transform((data) => ({ ...data, path: "/" + data.path })),
+    .transform(prefixPath),
 });
 
 const site = defineCollection({
@@ -213,8 +239,44 @@ const wpCategories = defineCollection({
   }),
 });
 
+const foodMap = defineCollection({
+  name: "foodMap",
+  pattern: "food-map/restaurants.yml",
+  single: true,
+  schema: s
+    .object({
+      categories: s.array(s.object({ id: s.string(), name: s.string(), color: s.string() })),
+      restaurants: s.array(
+        s.object({
+          id: s.string(),
+          name: s.string(),
+          categoryId: s.string(),
+          area: s.string(),
+          coordinates: s.object({ lat: s.number(), lng: s.number() }),
+          summary: s.string(),
+          description: s.string(),
+          priceRange: s.string(),
+          recommendations: s.array(s.string()),
+          googleMapsLink: s.string(),
+          photoUrl: s.string(),
+        }),
+      ),
+    })
+    // Build-time cross-check: every restaurant.categoryId must exist in categories.
+    // The old `as const` could not enforce this across the two arrays.
+    .superRefine((data, ctx) => {
+      const ids = new Set(data.categories.map((c) => c.id));
+      for (const r of data.restaurants)
+        if (!ids.has(r.categoryId))
+          ctx.addIssue({
+            code: "custom",
+            message: `restaurant "${r.id}" has categoryId "${r.categoryId}" not in categories`,
+          });
+    }),
+});
+
 export default defineConfig({
   root: "content",
   output: { data: "generated/velite", assets: "public/static", base: "/static/", clean: true },
-  collections: { home, pagesLayout, site, siteBlogs, wpTags, wpCategories },
+  collections: { home, pagesLayout, site, siteBlogs, wpTags, wpCategories, foodMap },
 });
