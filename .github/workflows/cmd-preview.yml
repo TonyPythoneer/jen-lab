@@ -6,7 +6,8 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 💬 PR Command · Preview
+name: 💬 Cmd · Preview
+# guide: Build this PR's branch and deploy it to Cloudflare Pages as a preview, then post the deployment URLs.
 
 on:
   issue_comment:
@@ -43,8 +44,6 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: pnpm/action-setup@v6
-        with:
-          version: 11.0.3
 
       - uses: actions/setup-node@v5
         with:
@@ -71,7 +70,7 @@ jobs:
 
       - name: Extract wrangler summary
         if: always()
-        run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
+        run: node scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
       - name: Bundle report (current)
         if: always()
@@ -122,11 +121,11 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
+            const header = `**[💬 Cmd · Preview](${runUrl})**`;
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+              ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")
-              : `${marker}\n❌ Preview deploy failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              : `${marker}\n${header}\n\n❌ Preview deploy failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

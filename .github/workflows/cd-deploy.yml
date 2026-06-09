@@ -6,7 +6,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 🚀 Deploy · Cloudflare
+name: 🚀 CD · Deploy
 
 on:
   pull_request:
@@ -26,7 +26,12 @@ on:
       - "docs/**"
       - "tasks/**"
       - "tests/**"
-      - "scripts/**"
+      # Only CI/tooling scripts are ignored. scripts/build-icon-subset.ts feeds the
+      # build (pnpm gen:icons), so a change there must still trigger a deploy.
+      - "scripts/github/**"
+      - "scripts/screenshot.ts"
+      - "scripts/sync-wp.ts"
+      - "scripts/sync-ferries-osm.ts"
       - "*.md"
       - ".gitignore"
       - ".prettierignore"
@@ -74,18 +79,11 @@ jobs:
 
       - name: Extract wrangler summary
         if: always()
-        run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
+        run: node scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
-      - name: Bundle report (current)
-        if: always()
-        run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json || true
-
-      - name: Save bundle baseline
-        if: steps.deploy.outcome == 'success'
-        uses: actions/cache/save@v4
-        with:
-          path: /tmp/current.json
-          key: bundle-baseline-${{ github.event.pull_request.base.ref }}-${{ github.sha }}
+      # The bundle-size baseline is written by ci-bundle-baseline.yml on push to
+      # main/develop, NOT here. A cache saved during this pull_request run would be
+      # scoped to refs/pull/N/merge and unreadable by future PRs.
 
       - name: Upsert PR comment
         if: always()
@@ -108,11 +106,11 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
+            const header = `**[🚀 CD · Deploy](${runUrl})**`;
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+              ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")
-              : `${marker}\n❌ Cloudflare Pages deploy failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              : `${marker}\n${header}\n\n❌ Cloudflare Pages deploy failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

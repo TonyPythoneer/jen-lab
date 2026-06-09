@@ -1,4 +1,4 @@
-name: 📦 Bundle Size
+name: 📦 CI · Bundle Size
 
 # Builds the site, diffs against the deployed baseline of the target branch,
 # and posts the result as a sticky PR comment so reviewers see it before merging.
@@ -42,7 +42,7 @@ jobs:
         run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json
 
       # Restore the most recent baseline from the target branch.
-      # Saved by cd-cloudflare.yml after each successful deploy.
+      # Saved by ci-bundle-baseline.yml on each push to main/develop.
       # Falls through gracefully if no cache exists yet (first PR on a new branch).
       - name: Restore bundle baseline
         uses: actions/cache/restore@v4
@@ -68,6 +68,10 @@ jobs:
           script: |
             const fs = require("node:fs");
             const marker = "<!-- ci-bundle-size -->";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            const header = `**[📦 CI · Bundle Size](${runUrl})**`;
             let diff = "";
             try {
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
@@ -86,14 +90,14 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existing.id,
-                body: `${marker}\n${diff}`,
+                body: `${marker}\n${header}\n\n${diff}`,
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.pull_request.number,
-                body: `${marker}\n${diff}`,
+                body: `${marker}\n${header}\n\n${diff}`,
               });
             }
 

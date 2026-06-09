@@ -2,7 +2,7 @@
 # This fails any PR targeting main whose source branch is not develop.
 # To make it blocking, add this job as a required status check on main
 # (a main-only ruleset) — see the PR description.
-name: 🛡️ Guard · Main Branch Source
+name: 🛡️ Guard · Main Source
 
 on:
   pull_request:

@@ -1,0 +1,57 @@
+name: 📦 CI · Bundle Baseline
+
+# Writes the bundle-size baseline that ci-bundle-size.yml diffs PRs against.
+#
+# WHY this runs on `push`, not on the deploy's `pull_request: closed`:
+# GitHub Actions scopes a cache to the git ref of the run that created it.
+# A cache written during a `pull_request` run is scoped to `refs/pull/N/merge`,
+# which NO other PR can read — so a baseline saved that way is invisible and the
+# diff always falls back to "baseline unavailable". A `push` to main/develop runs
+# on `refs/heads/<branch>`, so the cache lands on the branch (main = default) and
+# every later PR targeting that branch can restore it.
+
+on:
+  push:
+    branches: [main, develop]
+    # Only rebuild the baseline when something that can change the built bundle
+    # changed (this allowlist is the inverse of cd-deploy.yml's paths-ignore deny
+    # list — same intent, opposite style), so a docs-only push keeps the previous
+    # (still-valid) baseline instead of overwriting it.
+    paths:
+      - "src/**"
+      - "content/**"
+      - "scripts/build-icon-subset.ts"
+      - "scripts/github/bundle-report.ts"
+      - "vite.config.ts"
+      - "velite.config.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - name: Bundle report (current)
+        run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json
+
+      - name: Save bundle baseline
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/current.json
+          key: bundle-baseline-${{ github.ref_name }}-${{ github.sha }}
