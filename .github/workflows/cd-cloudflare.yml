@@ -76,16 +76,9 @@ jobs:
         if: always()
         run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
-      - name: Bundle report (current)
-        if: always()
-        run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json || true
-
-      - name: Save bundle baseline
-        if: steps.deploy.outcome == 'success'
-        uses: actions/cache/save@v4
-        with:
-          path: /tmp/current.json
-          key: bundle-baseline-${{ github.event.pull_request.base.ref }}-${{ github.sha }}
+      # The bundle-size baseline is written by ci-bundle-baseline.yml on push to
+      # main/develop, NOT here. A cache saved during this pull_request run would be
+      # scoped to refs/pull/N/merge and unreadable by future PRs.
 
       - name: Upsert PR comment
         if: always()
