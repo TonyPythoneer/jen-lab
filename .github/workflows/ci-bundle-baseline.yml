@@ -11,21 +11,15 @@ name: 📦 CI · Bundle Baseline
 # every later PR targeting that branch can restore it.
 
 on:
+  # Run on EVERY push to main/develop — no `paths:` filter. A paths allowlist
+  # looks like a cheap win (skip the build on docs-only pushes) but it means the
+  # very first baseline never gets seeded if the qualifying push hasn't happened
+  # yet — exactly the bug that left every PR showing "baseline unavailable". A
+  # build is ~45s; always having a current, readable baseline is worth it.
   push:
     branches: [main, develop]
-    # Only rebuild the baseline when something that can change the built bundle
-    # changed (this allowlist is the inverse of cd-deploy.yml's paths-ignore deny
-    # list — same intent, opposite style), so a docs-only push keeps the previous
-    # (still-valid) baseline instead of overwriting it.
-    paths:
-      - "src/**"
-      - "content/**"
-      - "scripts/build-icon-subset.ts"
-      - "scripts/github/bundle-report.ts"
-      - "vite.config.ts"
-      - "velite.config.ts"
-      - "package.json"
-      - "pnpm-lock.yaml"
+  # Manual trigger to seed a baseline on demand (e.g. right after this lands).
+  workflow_dispatch:
 
 permissions:
   contents: read
