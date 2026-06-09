@@ -42,8 +42,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PROJECT_NAME: jen-lab
         run: |
-          node --experimental-strip-types scripts/github/fetch-deployments.ts "$CLOUDFLARE_PROJECT_NAME" preview > deployments.json
-          node --experimental-strip-types scripts/github/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt || true
+          node scripts/github/fetch-deployments.ts "$CLOUDFLARE_PROJECT_NAME" preview > deployments.json
+          node scripts/github/preview-deployment-ids.ts deployments.json "$BRANCH" > ids.txt || true
           deleted=0; failed=0
           while read -r id; do
             if [ -n "$id" ] && pnpm exec wrangler pages deployment delete "$id" --project-name "$CLOUDFLARE_PROJECT_NAME" --force; then

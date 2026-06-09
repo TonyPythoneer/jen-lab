@@ -70,7 +70,7 @@ jobs:
 
       - name: Extract wrangler summary
         if: always()
-        run: node --experimental-strip-types scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
+        run: node scripts/github/wrangler-summary.ts deploy.log > wrangler-summary.txt || true
 
       - name: Bundle report (current)
         if: always()

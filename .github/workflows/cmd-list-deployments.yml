@@ -56,8 +56,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PROJECT_NAME: jen-lab
         run: |
-          node --experimental-strip-types scripts/github/fetch-deployments.ts "$CLOUDFLARE_PROJECT_NAME" > deployments.json
-          node --experimental-strip-types scripts/github/render-deployment-tree.ts deployments.json > report.md
+          node scripts/github/fetch-deployments.ts "$CLOUDFLARE_PROJECT_NAME" > deployments.json
+          node scripts/github/render-deployment-tree.ts deployments.json > report.md
 
       - name: Upload full tree artifact
         if: always()
