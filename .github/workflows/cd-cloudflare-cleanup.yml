@@ -69,12 +69,12 @@ jobs:
             const deleted = process.env.deleted || "0";
             const failed = process.env.failed || "0";
 
+            const header = `**[🧹 Deploy · Cleanup Old Versions](${runUrl})**`;
             const body = success
-              ? `${marker}\n🗑️ Deleted ${deleted} preview deployment(s) for ` +
+              ? `${marker}\n${header}\n\n🗑️ Deleted ${deleted} preview deployment(s) for ` +
                 `merged branch \`${branch}\`.` +
                 (failed !== "0" ? ` ${failed} could not be deleted.` : "")
-              : `${marker}\n❌ Cleanup failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              : `${marker}\n${header}\n\n❌ Cleanup failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

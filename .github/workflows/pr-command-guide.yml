@@ -20,8 +20,13 @@ jobs:
         with:
           script: |
             const marker = "<!-- pr-command-guide -->";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
             const body = [
               marker,
+              `**[📖 PR Command · Guide](${runUrl})**`,
+              "",
               "### Available commands",
               "Comment one of these on this PR (repo owner only):",
               "",
