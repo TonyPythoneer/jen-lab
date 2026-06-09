@@ -4,12 +4,12 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import vue from "@vitejs/plugin-vue";
 
-const appDir = fileURLToPath(new URL("../app", import.meta.url));
+const appDir = fileURLToPath(new URL("../src", import.meta.url));
 const mocksDir = fileURLToPath(new URL("./mocks", import.meta.url));
 
 const config: StorybookConfig = {
   framework: "@storybook/vue3-vite",
-  stories: ["../app/components/**/*.stories.@(ts|js)", "../.storybook/**/*.stories.@(ts|js)"],
+  stories: ["../src/components/**/*.stories.@(ts|js)", "../.storybook/**/*.stories.@(ts|js)"],
   addons: [],
   async viteFinal(viteConfig) {
     const { mergeConfig } = await import("vite" as string);
@@ -35,7 +35,6 @@ const config: StorybookConfig = {
               [`${mocksDir}/nuxt`]: [
                 "useRoute",
                 "useRouter",
-                "useAppConfig",
                 "useRuntimeConfig",
                 "useState",
                 "useLazyAsyncData",
@@ -54,6 +53,19 @@ const config: StorybookConfig = {
           dirs: [`${appDir}/components`],
           // Replicate Nuxt's component naming: home/Sprite.vue -> <HomeSprite>.
           directoryAsNamespace: true,
+          // Match vite.config: ui/<category>/<Name>.vue → bare <Name> so stories
+          // that render Modal/Button/Icon/… resolve them.
+          globalNamespaces: [
+            "ui",
+            "element",
+            "navigation",
+            "overlay",
+            "page",
+            "utility",
+            "button",
+            "badge",
+            "skeleton",
+          ],
           collapseSamePrefixes: true,
         }),
       ],

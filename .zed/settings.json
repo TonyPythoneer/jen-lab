@@ -64,7 +64,6 @@
     }
   },
   "file_types": {
-    "Markdown": ["mdc"],
     "JSONC": ["tsconfig.json", "tsconfig.*.json", ".zed/*.json"]
   },
   "file_scan_exclusions": [
@@ -72,24 +71,15 @@
     "**/.svn",
     "**/.hg",
     "**/node_modules",
-    "**/.output",
     "**/.wrangler",
-    "**/.data",
     "**/.vite-hooks",
-    "**/.hypothesis",
     "**/dist",
     "**/.cache",
+    "**/generated",
+    "**/storybook-static",
+    "**/worker-configuration.d.ts",
     "**/pnpm-lock.yaml"
   ],
-  "project_panel": {
-    "auto_reveal_entries": true,
-    "folder_icons": true
-  },
-  "search": {
-    "regex": false,
-    "case_sensitive": false,
-    "whole_word": false
-  },
   "terminal": {
     "working_directory": "current_project_directory",
     "env": {

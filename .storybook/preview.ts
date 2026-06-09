@@ -2,9 +2,9 @@ import type { Preview } from "@storybook/vue3-vite";
 import { setup } from "@storybook/vue3-vite";
 import { h, type App } from "vue";
 // @ts-expect-error — tsconfig doesn't cover .storybook/ context, but runtime works fine
-import StoryWrapper from "../app/storybook/StoryWrapper.vue";
+import StoryWrapper from "../src/storybook/StoryWrapper.vue";
 // @ts-expect-error - CSS import resolution in Storybook context
-import "../app/assets/css/main.css";
+import "../src/assets/css/main.css";
 
 // Minimal stand-ins for Nuxt's built-in components.
 const NuxtLink = {

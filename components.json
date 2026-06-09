@@ -4,17 +4,17 @@
   "typescript": true,
   "tailwind": {
     "config": "",
-    "css": "app/assets/css/main.css",
+    "css": "src/assets/css/main.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
-  "framework": "vite",
   "aliases": {
-    "components": "~/components/ui",
+    "components": "~/components",
     "composables": "~/composables",
-    "hooks": "~/composables",
-    "lib": "~/lib",
-    "utils": "~/lib/utils"
-  }
+    "utils": "~/lib/utils",
+    "ui": "~/components/ui",
+    "lib": "~/lib"
+  },
+  "iconLibrary": "lucide"
 }

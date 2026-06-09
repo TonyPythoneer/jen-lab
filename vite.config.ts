@@ -8,6 +8,7 @@ import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { googleFontsHref } from "./src/config/site";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 
@@ -23,10 +24,7 @@ const homeComponents: Record<string, string> = {
   HomeImageGallery: "parts/ImageGallery",
   HomeProduct: "parts/Product",
   HomeYoutubeGallery: "parts/YoutubeGallery",
-  HomeGlyphSvg: "art/GlyphSvg",
-  HomeHarbourBridgeSvg: "art/HarbourBridgeSvg",
   HomeOperaHouseSvg: "art/OperaHouseSvg",
-  HomeWaveSvg: "art/WaveSvg",
   HomeBackgroundDots: "motion/BackgroundDots",
   HomeBubbleTeaCss: "motion/BubbleTeaCss",
   HomeEnvelopeAnimation: "motion/EnvelopeAnimation",
@@ -42,11 +40,26 @@ const homeComponents: Record<string, string> = {
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
 // distinct, so a direct annotation makes tsc recurse the PluginOption union too
 // deep (TS2321). One assertion on the whole array bridges them.
+// Build the Google Fonts <link> from src/config/site.ts and inject it at the
+// <!--google-fonts--> marker in index.html. Keeps the font list in one config.
+function injectFonts(): PluginOption {
+  return {
+    name: "inject-google-fonts",
+    transformIndexHtml(html: string) {
+      return html.replace(
+        "<!--google-fonts-->",
+        `<link rel="stylesheet" href="${googleFontsHref}" />`,
+      );
+    },
+  };
+}
+
 const plugins = [
+  injectFonts(),
   tailwindcss(),
-  VueRouter({ routesFolder: "app/pages", dts: "typed-router.d.ts" }),
+  VueRouter({ routesFolder: "src/pages", dts: "typed-router.d.ts" }),
   vue(),
-  Layouts({ layoutsDirs: "app/layouts", defaultLayout: "default" }),
+  Layouts({ layoutsDirs: "src/layouts", defaultLayout: "default" }),
   AutoImport({
     imports: [
       "vue",
@@ -54,12 +67,20 @@ const plugins = [
       "@vueuse/core",
       { "@unhead/vue": ["useHead", "useSeoMeta", "useHeadSafe"] },
     ],
-    dirs: ["app/composables/**"],
+    dirs: ["src/composables/**"],
     dts: "auto-imports.d.ts",
   }),
   Components({
-    dirs: ["app/components"],
+    dirs: ["src/components"],
     directoryAsNamespace: true,
+    // ui/<category>/<Name>.vue → bare <Name>. unplugin-vue-components strips EVERY
+    // folder segment listed here, so ui/overlay/Modal.vue resolves to <Modal>.
+    //
+    // Categories MUST mirror Nuxt UI's component taxonomy — file every ui/
+    // component under the Nuxt UI category it belongs to (element, navigation,
+    // overlay, page, utility). Do NOT invent per-component folders or new
+    // categories; pick the matching Nuxt UI bucket and put it there.
+    globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility"],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
     resolvers: [
@@ -67,7 +88,7 @@ const plugins = [
         type: "component",
         resolve: (name: string) =>
           name in homeComponents
-            ? { from: path.resolve(ROOT, `app/components/home/${homeComponents[name]}.vue`) }
+            ? { from: path.resolve(ROOT, `src/components/home/${homeComponents[name]}.vue`) }
             : undefined,
       },
     ],
@@ -80,14 +101,35 @@ const plugins = [
 // which can't be augmented from here). Assert the arg type to allow the field;
 // every other key is still structurally checked.
 export default defineConfig({
+  lint: {
+    jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
+    rules: { "vite-plus/prefer-vite-plus-imports": "error" },
+    options: { typeAware: true, typeCheck: true },
+    ignorePatterns: ["dist/**", "generated/**", "storybook-static/**", ".agents/**", "tasks/**"],
+  },
   fmt: {
-    // Only format app source — skip committed-but-not-ours directories.
-    ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**"],
+    // Only format the web app source — skip planning docs and committed-but-not-ours dirs.
+    ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**", "docs/**"],
+  },
+  // Vue build-time feature flags. The app is 100% Composition API (<script setup>),
+  // so drop Options API support; also strip prod devtools + hydration-mismatch
+  // helpers. Tree-shakes a few KB out of the Vue runtime on every page.
+  define: {
+    __VUE_OPTIONS_API__: "false",
+    __VUE_PROD_DEVTOOLS__: "false",
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
   },
   plugins,
   resolve: {
     alias: {
-      "~": fileURLToPath(new URL("./app", import.meta.url)),
+      "~": fileURLToPath(new URL("./src", import.meta.url)),
+      // Velite's prebuilt content collections (generated/velite). Aliased so the
+      // content shim and type imports skip the ../../ climb out of src/.
+      "#velite": fileURLToPath(new URL("./generated/velite/index.js", import.meta.url)),
+      // The restaurants dataset as built by Velite. Pointed straight at the json
+      // (not via #velite) so useRestaurants can dynamic-import ONLY this chunk,
+      // keeping the 44KB out of the route chunk. Not exposed through content.ts.
+      "#food-map-data": fileURLToPath(new URL("./generated/velite/foodMap.json", import.meta.url)),
     },
   },
   server: {
