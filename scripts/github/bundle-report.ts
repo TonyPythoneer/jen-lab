@@ -53,21 +53,14 @@ if (process.argv.includes("--json")) {
   console.log(JSON.stringify(rows));
 } else {
   const name = (p: string) => p.replace(/\.html$/, "");
-  // Proportional bar: total relative to the heaviest page, eighth-block precision.
-  const eighths = ["", "▏", "▎", "▍", "▌", "▋", "▊", "▉"];
-  const max = Math.max(...rows.map((r) => r.totalGz), 1);
-  const bar = (v: number, width = 16) => {
-    const units = Math.round((v / max) * width * 8);
-    return "█".repeat(Math.floor(units / 8)) + eighths[units % 8]!;
-  };
   const sum = (k: "htmlGz" | "jsGz" | "cssGz" | "totalGz") => rows.reduce((a, r) => a + r[k], 0);
 
   const NAME = 18;
   const col = (s: string) => s.padStart(11);
-  const head = "Page".padEnd(NAME) + col("HTML") + col("JS") + col("CSS") + col("Total");
+  const head = "Page".padEnd(NAME) + col("HTML") + col("JS") + col("CSS") + col("JS+CSS");
   const rule = "─".repeat(head.length);
 
-  console.log("\nPer-page initial load, gzipped  ·  Total = JS+CSS  ·  HTML = prerendered doc\n");
+  console.log("");
   console.log(head);
   console.log(rule);
   for (const row of rows) {
@@ -76,9 +69,7 @@ if (process.argv.includes("--json")) {
         col(kb(row.htmlGz)) +
         col(kb(row.jsGz)) +
         col(kb(row.cssGz)) +
-        col(kb(row.totalGz)) +
-        "  " +
-        bar(row.totalGz),
+        col(kb(row.totalGz)),
     );
   }
   console.log(rule);

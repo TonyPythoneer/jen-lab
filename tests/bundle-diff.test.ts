@@ -1,23 +1,30 @@
 import { describe, it, expect } from "vite-plus/test";
 import { diffBundles, renderMarkdown } from "../scripts/github/bundle-diff";
 
+// jsGz + cssGz === totalGz, like the real report rows.
 const base = [
-  { page: "index.html", totalGz: 10240, htmlGz: 5120 },
-  { page: "blogs.html", totalGz: 20480, htmlGz: 3072 },
-  { page: "old.html", totalGz: 5120, htmlGz: 1024 },
+  { page: "index.html", htmlGz: 5120, jsGz: 8192, cssGz: 2048, totalGz: 10240 },
+  { page: "blogs.html", htmlGz: 3072, jsGz: 16384, cssGz: 4096, totalGz: 20480 },
+  { page: "old.html", htmlGz: 1024, jsGz: 4096, cssGz: 1024, totalGz: 5120 },
 ];
 const current = [
-  { page: "index.html", totalGz: 11264, htmlGz: 5632 }, // assets +1KB, html +0.5KB
-  { page: "blogs.html", totalGz: 20480, htmlGz: 3072 },
-  { page: "new.html", totalGz: 4096, htmlGz: 2048 },
+  { page: "index.html", htmlGz: 5632, jsGz: 9216, cssGz: 2048, totalGz: 11264 }, // assets +1KB (+10%)
+  { page: "blogs.html", htmlGz: 3072, jsGz: 16384, cssGz: 4096, totalGz: 20480 }, // unchanged
+  { page: "new.html", htmlGz: 2048, jsGz: 2048, cssGz: 2048, totalGz: 4096 },
 ];
 
 describe("diffBundles", () => {
-  it("computes per-page delta and percent", () => {
-    const d = diffBundles(base, current);
-    const index = d.rows.find((r) => r.page === "index.html")!;
-    expect(index.delta).toBe(1024);
+  it("computes per-page assets delta and percent", () => {
+    const index = diffBundles(base, current).rows.find((r) => r.page === "index.html")!;
+    expect(index.total.delta).toBe(1024);
     expect(index.pct).toBeCloseTo(10, 5);
+  });
+
+  it("tracks every column (HTML/JS/CSS) with its own delta", () => {
+    const index = diffBundles(base, current).rows.find((r) => r.page === "index.html")!;
+    expect(index.html.delta).toBe(512);
+    expect(index.js.delta).toBe(1024);
+    expect(index.css.delta).toBe(0);
   });
 
   it("marks new and removed pages", () => {
@@ -26,12 +33,18 @@ describe("diffBundles", () => {
     expect(d.rows.find((r) => r.page === "old.html")!.mark).toBe("➖");
   });
 
-  it("sums totals and flags >+5% page as 🟡", () => {
-    const d = diffBundles(base, current);
-    expect(d.verdict).toBe("🟡");
+  it("sums each column into totals", () => {
+    const t = diffBundles(base, current).totals;
+    // current (5632+3072+2048) − base (5120+3072+1024) = 1536
+    expect(t.html.delta).toBe(1536);
+    expect(t.total.cur).toBe(35840);
   });
 
-  it("flags >+10% total as 🔴", () => {
+  it("flags >+5% page as 🟡", () => {
+    expect(diffBundles(base, current).verdict).toBe("🟡");
+  });
+
+  it("flags >+10% overall total as 🔴", () => {
     const d = diffBundles([{ page: "a.html", totalGz: 1000 }], [{ page: "a.html", totalGz: 1200 }]);
     expect(d.verdict).toBe("🔴");
   });
@@ -45,28 +58,18 @@ describe("diffBundles", () => {
     const d = diffBundles(null, current);
     expect(d.hasBaseline).toBe(false);
     expect(d.verdict).toBe("🟢");
-    expect(d.rows.find((r) => r.page === "index.html")!.delta).toBeNull();
+    expect(d.rows.find((r) => r.page === "index.html")!.total.delta).toBeNull();
   });
 
-  it("tracks HTML size as a separate dimension", () => {
-    const d = diffBundles(base, current);
-    const index = d.rows.find((r) => r.page === "index.html")!;
-    expect(index.htmlCur).toBe(5632);
-    expect(index.htmlDelta).toBe(512);
-    // Total delta sums every page like the assets total does:
-    // current (5632+3072+2048) − base (5120+3072+1024) = 1536.
-    expect(d.htmlDeltaTotal).toBe(1536);
-  });
-
-  it("leaves htmlDelta null when the baseline predates the HTML column", () => {
+  it("leaves deltas null when the baseline predates the HTML/JS/CSS columns", () => {
     const d = diffBundles(
       [{ page: "a.html", totalGz: 1000 }],
-      [{ page: "a.html", totalGz: 1000, htmlGz: 800 }],
+      [{ page: "a.html", htmlGz: 800, jsGz: 800, cssGz: 200, totalGz: 1000 }],
     );
     const a = d.rows.find((r) => r.page === "a.html")!;
-    expect(a.htmlCur).toBe(800);
-    expect(a.htmlDelta).toBeNull();
-    expect(d.htmlDeltaTotal).toBeNull();
+    expect(a.html.cur).toBe(800);
+    expect(a.html.delta).toBeNull(); // baseline had no htmlGz to compare
+    expect(d.totals.html.delta).toBeNull();
   });
 });
 
@@ -78,31 +81,27 @@ describe("renderMarkdown", () => {
     repo: "TonyPythoneer/jen-lab",
   };
 
-  it("renders the commit link, heading verdict, and a total row", () => {
+  it("renders the commit link, verdict, the report's columns, and a total row", () => {
     const md = renderMarkdown(diffBundles(base, current), opts);
     expect(md).toContain("📦 Bundle size 🟡 vs `develop`");
     expect(md).toContain(
       "[`a1b2c3d`](https://github.com/TonyPythoneer/jen-lab/commit/a1b2c3d4e5f6) — fix: thing",
     );
+    expect(md).toContain("| Page | HTML | JS | CSS | JS+CSS |");
     expect(md).toContain("| **Total** |");
-    expect(md).toContain("🆕 new.html");
+    expect(md).toContain("🆕 new"); // .html stripped, like the report
   });
 
-  it("renders an HTML column with its own delta", () => {
+  it("appends a delta only to cells that moved", () => {
     const md = renderMarkdown(diffBundles(base, current), opts);
-    expect(md).toContain("| Page | Base | New | Δ | Δ% | HTML |");
-    const indexLine = md.split("\n").find((l) => l.includes("index.html"))!;
-    expect(indexLine).toContain("5.5KB (+0.5KB)"); // HTML grew while assets diff stays separate
+    const indexLine = md.split("\n").find((l) => l.startsWith("| index "))!;
+    expect(indexLine).toContain("(+1.0 KB)"); // JS and JS+CSS moved
+    const blogsLine = md.split("\n").find((l) => l.startsWith("| blogs "))!;
+    expect(blogsLine).not.toContain("("); // unchanged row → plain sizes, no deltas
   });
 
   it("shows the baseline-unavailable note when there is no baseline", () => {
     const md = renderMarkdown(diffBundles(null, current), opts);
     expect(md).toContain("baseline unavailable");
-  });
-
-  it("renders unchanged rows as a dash", () => {
-    const md = renderMarkdown(diffBundles(base, current), opts);
-    const blogsLine = md.split("\n").find((l) => l.includes("blogs.html"))!;
-    expect(blogsLine).toContain("| — | — |");
   });
 });
