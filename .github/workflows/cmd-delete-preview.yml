@@ -6,7 +6,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 💬 PR Command · Delete Preview
+name: 💬 Cmd · Delete Preview
 # guide: Delete all Cloudflare Pages preview deployments for this PR's branch.
 
 on:
@@ -87,7 +87,7 @@ jobs:
             const deleted = process.env.deleted || "0";
             const failed = process.env.failed || "0";
 
-            const header = `**[💬 PR Command · Delete Preview](${runUrl})**`;
+            const header = `**[💬 Cmd · Delete Preview](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n🗑️ Deleted ${deleted} preview deployment(s) for ` +
                 `branch \`${branch}\`.` +

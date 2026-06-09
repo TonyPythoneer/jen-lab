@@ -6,7 +6,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 💬 PR Command · Preview
+name: 💬 Cmd · Preview
 # guide: Build this PR's branch and deploy it to Cloudflare Pages as a preview, then post the deployment URLs.
 
 on:
@@ -121,7 +121,7 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
-            const header = `**[💬 PR Command · Preview](${runUrl})**`;
+            const header = `**[💬 Cmd · Preview](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")

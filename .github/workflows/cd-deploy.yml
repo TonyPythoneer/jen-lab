@@ -6,7 +6,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 🚀 Deploy · Cloudflare
+name: 🚀 CD · Deploy
 
 on:
   pull_request:
@@ -106,7 +106,7 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
-            const header = `**[🚀 Deploy · Cloudflare](${runUrl})**`;
+            const header = `**[🚀 CD · Deploy](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")

@@ -1,4 +1,4 @@
-name: 📦 Bundle Baseline
+name: 📦 CI · Bundle Baseline
 
 # Writes the bundle-size baseline that ci-bundle-size.yml diffs PRs against.
 #

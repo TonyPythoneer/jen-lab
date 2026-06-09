@@ -7,7 +7,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 💬 PR Command · Cleanup
+name: 💬 Cmd · All Cleanup
 # guide: Prune ALL Cloudflare Pages deployments project-wide, keeping only the latest `main` and latest `develop` build. Posts a report.
 
 on:
@@ -89,7 +89,7 @@ jobs:
             const failed = process.env.failed || "0";
             const failNote =
               failed !== "0" ? `\n\n⚠️ ${failed} deployment(s) could not be deleted.` : "";
-            const header = `**[💬 PR Command · Cleanup](${runUrl})**`;
+            const header = `**[💬 Cmd · All Cleanup](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n${report || "Cleanup ran but produced no report."}${failNote}`
               : `${marker}\n${header}\n\n❌ All-cleanup failed.`;

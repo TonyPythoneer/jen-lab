@@ -7,7 +7,7 @@
 #   CLOUDFLARE_API_TOKEN   token with the "Cloudflare Pages: Read" permission
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 
-name: 💬 PR Command · List Deployments
+name: 💬 Cmd · List Deployments
 # guide: Print a branch-grouped tree of every Cloudflare Pages deployment (read-only — never deletes). Posts the tree and uploads the full tree as an artifact.
 
 on:
@@ -84,7 +84,7 @@ jobs:
               report = fs.readFileSync("report.md", "utf8").trim();
             } catch {}
 
-            const header = `**[💬 PR Command · List Deployments](${runUrl})**`;
+            const header = `**[💬 Cmd · List Deployments](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n${report || "Ran but produced no report."}`
               : `${marker}\n${header}\n\n❌ List deployments failed.`;

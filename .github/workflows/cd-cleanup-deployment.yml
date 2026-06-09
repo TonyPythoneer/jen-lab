@@ -6,7 +6,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: 🧹 Deploy · Cleanup Old Versions
+name: 🧹 CD · Cleanup Deployment
 
 on:
   pull_request:
@@ -69,7 +69,7 @@ jobs:
             const deleted = process.env.deleted || "0";
             const failed = process.env.failed || "0";
 
-            const header = `**[🧹 Deploy · Cleanup Old Versions](${runUrl})**`;
+            const header = `**[🧹 CD · Cleanup Deployment](${runUrl})**`;
             const body = success
               ? `${marker}\n${header}\n\n🗑️ Deleted ${deleted} preview deployment(s) for ` +
                 `merged branch \`${branch}\`.` +

@@ -7,7 +7,7 @@
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
 # Both are read automatically by wrangler from the environment.
 
-name: ⏰ Scheduled · Cloudflare Cleanup
+name: ⏰ Cronjob · Cleanup Deployment
 
 on:
   schedule:

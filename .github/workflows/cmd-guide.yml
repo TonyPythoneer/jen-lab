@@ -4,7 +4,7 @@
 # command. Each cmd-*.yml just needs a `# guide: <description>` line near its top;
 # the command name is read from its `startsWith(github.event.comment.body, '/...')`.
 
-name: 📖 PR Command · Guide
+name: 📖 Cmd · Guide
 
 on:
   pull_request:
@@ -59,7 +59,7 @@ jobs:
               `/actions/runs/${context.runId}`;
             const body = [
               marker,
-              `**[📖 PR Command · Guide](${runUrl})**`,
+            `**[📖 Cmd · Guide](${runUrl})**`,
               "",
               "### Available commands",
               "Comment one of these on this PR (repo owner only):",

@@ -1,4 +1,4 @@
-name: 📦 Bundle Size
+name: 📦 CI · Bundle Size
 
 # Builds the site, diffs against the deployed baseline of the target branch,
 # and posts the result as a sticky PR comment so reviewers see it before merging.
@@ -71,7 +71,7 @@ jobs:
             const runUrl =
               `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
               `/actions/runs/${context.runId}`;
-            const header = `**[📦 Bundle Size](${runUrl})**`;
+            const header = `**[📦 CI · Bundle Size](${runUrl})**`;
             let diff = "";
             try {
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
