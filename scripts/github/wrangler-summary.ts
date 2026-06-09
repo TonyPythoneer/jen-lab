@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const MARKERS = ["✨", "🌎"];
+const MARKERS = ["✨", "🌎", "🌐"];
 
 export function extractWranglerSummary(log: string): string {
   return log

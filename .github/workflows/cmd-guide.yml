@@ -1,0 +1,91 @@
+# Auto-posts a comment listing the available slash commands when a PR is opened.
+# The commands themselves live in .github/workflows/cmd-*.yml and are owner-only.
+# This guide auto-detects every cmd-*.yml — you never edit this file when adding a
+# command. Each cmd-*.yml just needs a `# guide: <description>` line near its top;
+# the command name is read from its `startsWith(github.event.comment.body, '/...')`.
+
+name: 📖 Cmd · Guide
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  guide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Post command guide
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const dir = ".github/workflows";
+            // Exclude this guide itself — it shares the cmd- prefix but is not a command.
+            const files = fs
+              .readdirSync(dir)
+              .filter(
+                (f) =>
+                  f.startsWith("cmd-") && f.endsWith(".yml") && f !== "cmd-guide.yml",
+              );
+
+            // Each cmd-*.yml gives us a command name and a one-line description:
+            //   name  ← startsWith(github.event.comment.body, '/<name>')
+            //   desc  ← a `# guide: <text>` comment line
+            const commands = [];
+            for (const file of files) {
+              const text = fs.readFileSync(path.join(dir, file), "utf8");
+              const name = text.match(
+                /startsWith\(\s*github\.event\.comment\.body\s*,\s*'\/([^']+)'/,
+              )?.[1];
+              const desc = text.match(/^#\s*guide:\s*(.+)$/m)?.[1]?.trim();
+              if (!name || !desc) {
+                core.warning(`${file}: missing command match or "# guide:" line — skipped`);
+                continue;
+              }
+              commands.push({ name, desc });
+            }
+            commands.sort((a, b) => a.name.localeCompare(b.name));
+
+            const marker = "<!-- pr-command-guide -->";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            const body = [
+              marker,
+            `**[📖 Cmd · Guide](${runUrl})**`,
+              "",
+              "### Available commands",
+              "Comment one of these on this PR (repo owner only):",
+              "",
+              ...commands.map((c) => `- \`/${c.name}\` — ${c.desc}`),
+            ].join("\n");
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
