@@ -42,7 +42,7 @@ jobs:
         run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json
 
       # Restore the most recent baseline from the target branch.
-      # Saved by cd-cloudflare.yml after each successful deploy.
+      # Saved by ci-bundle-baseline.yml on each push to main/develop.
       # Falls through gracefully if no cache exists yet (first PR on a new branch).
       - name: Restore bundle baseline
         uses: actions/cache/restore@v4
