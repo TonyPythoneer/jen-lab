@@ -88,10 +88,10 @@ jobs:
             const failed = process.env.failed || "0";
             const failNote =
               failed !== "0" ? `\n\n⚠️ ${failed} deployment(s) could not be deleted.` : "";
+            const header = `**[💬 PR Command · Cleanup](${runUrl})**`;
             const body = success
-              ? `${marker}\n${report || "Cleanup ran but produced no report."}${failNote}`
-              : `${marker}\n❌ All-cleanup failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              ? `${marker}\n${header}\n\n${report || "Cleanup ran but produced no report."}${failNote}`
+              : `${marker}\n${header}\n\n❌ All-cleanup failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

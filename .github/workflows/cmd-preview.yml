@@ -120,11 +120,11 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
+            const header = `**[💬 PR Command · Preview](${runUrl})**`;
             const body = success
-              ? `${marker}\n\`\`\`\n${summary || "Deployed."}\n\`\`\`` +
+              ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")
-              : `${marker}\n❌ Preview deploy failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              : `${marker}\n${header}\n\n❌ Preview deploy failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

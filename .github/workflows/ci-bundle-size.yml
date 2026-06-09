@@ -68,6 +68,10 @@ jobs:
           script: |
             const fs = require("node:fs");
             const marker = "<!-- ci-bundle-size -->";
+            const runUrl =
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            const header = `**[📦 Bundle Size](${runUrl})**`;
             let diff = "";
             try {
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
@@ -86,14 +90,14 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existing.id,
-                body: `${marker}\n${diff}`,
+                body: `${marker}\n${header}\n\n${diff}`,
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.pull_request.number,
-                body: `${marker}\n${diff}`,
+                body: `${marker}\n${header}\n\n${diff}`,
               });
             }
 

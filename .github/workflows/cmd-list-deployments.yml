@@ -83,10 +83,10 @@ jobs:
               report = fs.readFileSync("report.md", "utf8").trim();
             } catch {}
 
+            const header = `**[💬 PR Command · List Deployments](${runUrl})**`;
             const body = success
-              ? `${marker}\n${report || "Ran but produced no report."}`
-              : `${marker}\n❌ List deployments failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              ? `${marker}\n${header}\n\n${report || "Ran but produced no report."}`
+              : `${marker}\n${header}\n\n❌ List deployments failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

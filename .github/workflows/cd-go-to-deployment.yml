@@ -101,11 +101,11 @@ jobs:
               diff = fs.readFileSync("/tmp/diff.md", "utf8").trim();
             } catch {}
 
+            const header = `**[🚀 Deploy · Cloudflare](${runUrl})**`;
             const body = success
-              ? `${marker}\n${summary || "Deployed."}` +
+              ? `${marker}\n${header}\n\n${summary || "Deployed."}` +
                 (diff ? `\n\n${diff}` : "")
-              : `${marker}\n❌ Cloudflare Pages deploy failed. ` +
-                `See the [workflow run](${runUrl}).`;
+              : `${marker}\n${header}\n\n❌ Cloudflare Pages deploy failed.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
