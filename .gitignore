@@ -32,9 +32,6 @@ logs
 .dev.vars*
 !.dev.vars.example
 
-# git
-.hypothesis
-
 # claude
 .claude/settings.local.json
 .claude/worktrees/
@@ -70,16 +67,13 @@ outputs/
 # Generated build artifacts
 generated/
 dist/
-.nuxt/
 auto-imports.d.ts
 components.d.ts
 typed-router.d.ts
 public/static/
-.eslintrc-auto-import.json
 .codegraph/
 .understand-anything/
 .lean-ctx/
-.sonda/
 
 # Planning scaffolding — GSD board + superpowers specs/plans are working files,
 # never committed. The guard-project-done CI fails the build if they reappear.
