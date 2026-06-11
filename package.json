@@ -19,7 +19,8 @@
     "sync:wp": "jiti scripts/sync-wp.ts",
     "sync:ferries:osm": "jiti scripts/sync-ferries-osm.ts",
     "ai:screenshot": "jiti scripts/screenshot.ts",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "kg:vue": "jiti scripts/kg-vue/index.ts"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.1",
@@ -53,6 +54,7 @@
     "rolldown": "catalog:",
     "sonda": "^0.12.1",
     "storybook": "^10.4.1",
+    "typescript": "~5.9.3",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-fonts": "^2.0.0",
     "unplugin-vue-components": "^32.1.0",
@@ -63,6 +65,7 @@
     "vite-plus": "catalog:",
     "vite-ssg": "^28.3.0",
     "vitest": "catalog:",
+    "vue-component-meta": "^3.3.3",
     "vue-tsc": "^3.3.3",
     "wrangler": "^4.86.0",
     "yaml": "^2.8.4"
