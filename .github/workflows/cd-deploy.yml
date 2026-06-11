@@ -29,7 +29,6 @@ on:
       # Only CI/tooling scripts are ignored. scripts/build-icon-subset.ts feeds the
       # build (pnpm gen:icons), so a change there must still trigger a deploy.
       - "scripts/github/**"
-      - "scripts/screenshot.ts"
       - "scripts/sync-wp.ts"
       - "scripts/sync-ferries-osm.ts"
       - "*.md"

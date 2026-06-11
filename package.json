@@ -7,7 +7,6 @@
     "dev": "pnpm gen:icons && (velite --watch & vp dev)",
     "gen:icons": "jiti scripts/build-icon-subset.ts",
     "bundle:report": "pnpm build && jiti scripts/github/bundle-report.ts",
-    "inspect": "SONDA=true pnpm build",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "build-storybook": "storybook build",
     "check": "vp check && pnpm typecheck",
@@ -18,11 +17,8 @@
     "cf-typegen": "wrangler types",
     "sync:wp": "jiti scripts/sync-wp.ts",
     "sync:ferries:osm": "jiti scripts/sync-ferries-osm.ts",
-    "ai:screenshot": "jiti scripts/screenshot.ts",
     "prepare": "vp config",
     "kg:vue": "jiti scripts/kg-vue/index.ts",
-    "bench:build": "time vite-ssg build",
-    "bench:vize": "VIZE=true pnpm bench:build",
     "verify:ssg": "jiti scripts/ci/assert-ssg-output.ts"
   },
   "dependencies": {
@@ -56,7 +52,6 @@
     "markdown-it-link-attributes": "^4.0.1",
     "playwright": "^1.60.0",
     "rolldown": "catalog:",
-    "sonda": "^0.12.1",
     "storybook": "^10.4.1",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^21.0.0",

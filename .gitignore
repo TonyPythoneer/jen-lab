@@ -79,7 +79,6 @@ public/static/
 .codegraph/
 .understand-anything/
 .lean-ctx/
-.sonda/
 
 # Planning scaffolding — GSD board + superpowers specs/plans are working files,
 # never committed. The guard-project-done CI fails the build if they reappear.
