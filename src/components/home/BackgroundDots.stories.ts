@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import BackgroundDots from "./BackgroundDots.vue";
 
 const meta = {
-  title: "home/motion/BackgroundDots",
+  title: "home/BackgroundDots",
   component: BackgroundDots,
 } satisfies Meta<typeof BackgroundDots>;
 

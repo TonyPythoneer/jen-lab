@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import DirectionPair from "./DirectionPair.vue";
 
 const meta = {
-  title: "home/parts/DirectionPair",
+  title: "home/DirectionPair",
   component: DirectionPair,
 } satisfies Meta<typeof DirectionPair>;
 

@@ -8,11 +8,8 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { createRequire } from "node:module";
 import { googleFontsHref } from "./src/config/site";
-
-const ROOT = fileURLToPath(new URL(".", import.meta.url));
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
 // compiler for vize (Rust). Off by default — production builds stay on plugin-vue.
@@ -30,26 +27,6 @@ const vueRouterEsm = require.resolve("vue-router").replace(/index\.cjs$/, "vue-r
 // Velite content is PREBUILT (pnpm script: `velite build && vite-ssg build`) so
 // generated/velite/ exists before the bundler resolves the content shim. An
 // in-build plugin with clean:true raced the bundler and wiped the output.
-
-// D5: home/ flattens to <Home<Filename>> across art/motion/parts/sections and is
-// used cross-domain. Precomputed Map → valid absolute import (NOT a glob).
-const homeComponents: Record<string, string> = {
-  HomeBuyButton: "parts/BuyButton",
-  HomeDirectionPair: "parts/DirectionPair",
-  HomeImageGallery: "parts/ImageGallery",
-  HomeProduct: "parts/Product",
-  HomeYoutubeGallery: "parts/YoutubeGallery",
-  HomeOperaHouseSvg: "art/OperaHouseSvg",
-  HomeBackgroundDots: "motion/BackgroundDots",
-  HomeBubbleTeaCss: "motion/BubbleTeaCss",
-  HomeEnvelopeAnimation: "motion/EnvelopeAnimation",
-  HomePortal: "motion/Portal",
-  HomeSectionBlog3D: "sections/SectionBlog3D",
-  HomeSectionDirections: "sections/SectionDirections",
-  HomeSectionHero: "sections/SectionHero",
-  HomeSectionNewsletter: "sections/SectionNewsletter",
-  HomeSectionSupport: "sections/SectionSupport",
-};
 
 // Plugins are typed against the `vite` package; defineConfig/PluginOption come
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
@@ -100,15 +77,6 @@ const plugins = [
     globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility"],
     collapseSamePrefixes: true,
     dts: "components.d.ts",
-    resolvers: [
-      {
-        type: "component",
-        resolve: (name: string) =>
-          name in homeComponents
-            ? { from: path.resolve(ROOT, `src/components/home/${homeComponents[name]}.vue`) }
-            : undefined,
-      },
-    ],
   }),
   Inspect(),
 ] as PluginOption[];
