@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Product from "./Product.vue";
 
 const meta = {
-  title: "home/parts/Product",
+  title: "home/Product",
   component: Product,
 } satisfies Meta<typeof Product>;
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import YoutubeGallery from "./YoutubeGallery.vue";
 
 const meta = {
-  title: "home/parts/YoutubeGallery",
+  title: "home/YoutubeGallery",
   component: YoutubeGallery,
 } satisfies Meta<typeof YoutubeGallery>;
 

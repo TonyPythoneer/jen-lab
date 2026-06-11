@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Portal from "./Portal.vue";
 
-const meta = { title: "home/motion/Portal", component: Portal } satisfies Meta<typeof Portal>;
+const meta = { title: "home/Portal", component: Portal } satisfies Meta<typeof Portal>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
