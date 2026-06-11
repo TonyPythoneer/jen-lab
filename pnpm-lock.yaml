@@ -106,9 +106,6 @@ importers:
       rolldown:
         specifier: 'catalog:'
         version: 1.0.1
-      sonda:
-        specifier: ^0.12.1
-        version: 0.12.1
       storybook:
         specifier: ^10.4.1
         version: 10.4.1(@testing-library/dom@10.4.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vite-plus@0.1.24(@types/node@25.7.0)(@voidzero-dev/vite-plus-core@0.1.24(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.47.1)(typescript@5.9.3)(yaml@2.9.0))(esbuild@0.27.7)(jiti@2.7.0)(jsdom@28.1.0)(terser@5.47.1)(typescript@5.9.3)(yaml@2.9.0))
@@ -4020,11 +4017,6 @@ packages:
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
-
-  sonda@0.12.1:
-    resolution: {integrity: sha512-yF47wZ4+pYRkjVe6kCKqwED8ir5wWxSbNvoxiJYsDjtA2OfyyKuFzBpXDI2tDVukRQQtUv38IZIJdy/MzPMpsw==}
-    engines: {node: '>=22.12'}
-    hasBin: true
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -8174,11 +8166,6 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
-
-  sonda@0.12.1:
-    dependencies:
-      '@jridgewell/remapping': 2.3.5
-      open: 11.0.0
 
   source-map-js@1.2.1: {}
 

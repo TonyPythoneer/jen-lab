@@ -7,7 +7,6 @@ import Layouts from "vite-plugin-vue-layouts-next";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
-import Sonda from "sonda/vite";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -17,7 +16,7 @@ const ROOT = fileURLToPath(new URL(".", import.meta.url));
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
 // compiler for vize (Rust). Off by default — production builds stay on plugin-vue.
-//   VIZE=true pnpm build   /   VIZE=true pnpm dev   /   pnpm bench:vize
+//   VIZE=true pnpm build   /   VIZE=true pnpm dev
 const USE_VIZE = !!process.env.VIZE;
 
 // vize emits CJS-interop for SFC script imports, so `vue-router` resolves to its
@@ -112,9 +111,6 @@ const plugins = [
     ],
   }),
   Inspect(),
-  // SONDA=true pnpm build → generates dist/sonda-report.html (module-level analysis)
-  // Default builds remain byte-identical (no sourcemaps, no plugin overhead).
-  ...(process.env.SONDA ? [Sonda()] : []),
 ] as PluginOption[];
 
 // `ssgOptions` is read by vite-ssg at build time, but vite-plus's defineConfig
@@ -141,10 +137,6 @@ export default defineConfig({
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
   },
   plugins,
-  build: {
-    // Sourcemaps only when running SONDA=true pnpm build (for Sonda analysis).
-    sourcemap: process.env.SONDA ? true : false,
-  },
   resolve: {
     // vize-only: it compiles SFC script imports as CJS interop, duplicating vue-router
     // (ESM copy used by vite-ssg + CJS copy used by SFCs) — the duplicate has different
