@@ -40,7 +40,7 @@ const newsletterDotField = {
       aria-hidden="true"
       class="absolute inset-0 w-full h-full opacity-15 pointer-events-none"
     />
-    <HomeBackgroundDots v-bind="newsletterDotField" />
+    <SharedBackgroundDots v-bind="newsletterDotField" />
 
     <div class="relative z-10 max-w-2xl mx-auto space-y-6">
       <h2

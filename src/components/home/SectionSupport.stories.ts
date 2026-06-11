@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import SectionSupport from "./SectionSupport.vue";
 
 const meta = {
-  title: "home/sections/SectionSupport",
+  title: "home/SectionSupport",
   component: SectionSupport,
 } satisfies Meta<typeof SectionSupport>;
 

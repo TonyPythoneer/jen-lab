@@ -166,7 +166,6 @@ Note: UI component variant props (`color="neutral"` / `variant="outline"`, defin
   - **Violation**: hardcoding a computed value (color, position, size) that should come from a token, prop, or layout rule, just to ship.
   - If you are about to write a literal value that papers over a real bug, stop and surface the root cause to the user.
 - **Failing processes** — after 2 failed attempts to start a local process (dev server, locked DB), stop and ask the user how to proceed.
-- **Commits** — never commit unless the user explicitly asks; the user reviews changes before committing.
 
 <!--VITE PLUS START-->
 
