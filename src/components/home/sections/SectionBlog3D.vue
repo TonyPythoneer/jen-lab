@@ -49,6 +49,12 @@
 
 <script setup lang="ts">
 import { fetchPosts, stripHtml } from "~/utils/blog/wpApi";
+// Shared neon-arc utility, imported here (not globally) so it ships only in this
+// component's chunk. A plain .css import is global (non-scoped) `.neon-arc`, same
+// as a `<style src>` block — but imported via the script so the `~` alias resolves
+// under BOTH the stable plugin-vue path and the vize compiler (vize can't resolve
+// aliases inside `<style src>`).
+import "~/assets/css/effects/neon-arc.css";
 
 const props = withDefaults(
   defineProps<{
@@ -152,10 +158,6 @@ function deactivate() {
 onClickOutside(assemblyRef, deactivate);
 onKeyStroke("Escape", deactivate);
 </script>
-
-<!-- Shared neon-arc utility, imported here (not globally) so it ships only in
-     this component's chunk. Must stay non-scoped: `.neon-arc` is a global class. -->
-<style src="~/assets/css/effects/neon-arc.css"></style>
 
 <style scoped>
 .blog3dv2-wrapper {
