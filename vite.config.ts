@@ -6,6 +6,7 @@ import Layouts from "vite-plugin-vue-layouts-next";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
+import Sonda from "sonda/vite";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { googleFontsHref } from "./src/config/site";
@@ -94,6 +95,9 @@ const plugins = [
     ],
   }),
   Inspect(),
+  // SONDA=true pnpm build → generates dist/sonda-report.html (module-level analysis)
+  // Default builds remain byte-identical (no sourcemaps, no plugin overhead).
+  ...(process.env.SONDA ? [Sonda()] : []),
 ] as PluginOption[];
 
 // `ssgOptions` is read by vite-ssg at build time, but vite-plus's defineConfig
@@ -120,6 +124,10 @@ export default defineConfig({
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
   },
   plugins,
+  build: {
+    // Sourcemaps only when running SONDA=true pnpm build (for Sonda analysis).
+    sourcemap: process.env.SONDA ? true : false,
+  },
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./src", import.meta.url)),
