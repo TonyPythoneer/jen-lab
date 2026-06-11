@@ -20,7 +20,10 @@
     "sync:ferries:osm": "jiti scripts/sync-ferries-osm.ts",
     "ai:screenshot": "jiti scripts/screenshot.ts",
     "prepare": "vp config",
-    "kg:vue": "jiti scripts/kg-vue/index.ts"
+    "kg:vue": "jiti scripts/kg-vue/index.ts",
+    "bench:build": "time vite-ssg build",
+    "bench:vize": "VIZE=true pnpm bench:build",
+    "verify:ssg": "jiti scripts/ci/assert-ssg-output.ts"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.1",
@@ -46,6 +49,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^6.0.7",
+    "@vizejs/vite-plugin": "0.203.0",
     "@vueuse/core": "^14.3.0",
     "jiti": "2.7.0",
     "markdown-it": "^14.1.1",
