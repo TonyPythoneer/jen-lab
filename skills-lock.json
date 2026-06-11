@@ -7,46 +7,11 @@
       "skillPath": "skills/taste-skill/SKILL.md",
       "computedHash": "57dc99e66100bc27df0a40e5bf56bb22b621a302adcab305890fbf187ec0debf"
     },
-    "grill-with-docs": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
-      "computedHash": "a5c65e76275008b469962f7bee8b34866f1c9b0709f4886e71c8e731735640e4"
-    },
     "handoff": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/handoff/SKILL.md",
       "computedHash": "1a78d774f8a59db5daa6e65e20a6596872fa8cde769f9a6e3a09b678dd5ae8cc"
-    },
-    "pnpm": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "skillPath": "skills/pnpm/SKILL.md",
-      "computedHash": "0e72c2b2563556bc027cd025d0b3e11bf7147f362f4815ac9ad083ccbac55750"
-    },
-    "vite": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "skillPath": "skills/vite/SKILL.md",
-      "computedHash": "f6b076920b1a2d8300dd2a2a66962e40c35102231b74af7d336cf47b999ba4a3"
-    },
-    "vue": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "computedHash": "cb120821c275a351b6e3c154d82cf62a9277b6260c2c30b3101f688928a3428b"
-    },
-    "vueuse": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "skillPath": "skills/vueuse/SKILL.md",
-      "computedHash": "7eca29674d7ed64d0825a58f1fcd847256de570b1663c0824039aceb7232760e"
-    },
-    "writing-web-documentation": {
-      "source": "onmax/nuxt-skills",
-      "sourceType": "github",
-      "skillPath": "skills/writing-web-documentation/SKILL.md",
-      "computedHash": "78d28a486868c980c3962f459ddd18e9444cad0d8941b88778ee47489059c099"
     }
   }
 }
