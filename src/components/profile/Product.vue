@@ -62,7 +62,7 @@
     </Transition>
 
     <!-- Buy interstitial: countdown ring + sparks, then redirects to the store. -->
-    <HomeBuyButton v-model:open="buyOpen" :purchase-url="purchaseUrl" />
+    <ProfileBuyButton v-model:open="buyOpen" :purchase-url="purchaseUrl" />
   </div>
 </template>
 
@@ -79,7 +79,7 @@ defineProps<{
 }>();
 
 // Info drawer toggle (top-right button) and the buy interstitial toggle
-// (handed to HomeBuyButton, which owns the countdown + redirect).
+// (handed to ProfileBuyButton, which owns the countdown + redirect).
 const open = ref(false);
 const buyOpen = ref(false);
 </script>

@@ -57,14 +57,14 @@
       <!-- portal-list: 2-col responsive grid -->
       <template v-if="section.component === 'portal-list'">
         <div class="grid sm:grid-cols-2 gap-3">
-          <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
+          <ProfilePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
         </div>
       </template>
 
       <!-- product-list: 2-col responsive grid -->
       <template v-else-if="section.component === 'product-list'">
         <div class="grid sm:grid-cols-2 gap-5">
-          <HomeProduct
+          <ProfileProduct
             v-for="product in section.products"
             :key="product.purchaseUrl"
             v-bind="product"
@@ -78,7 +78,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeYoutubeGallery :videos="gallery.videos" />
+          <ProfileYoutubeGallery :videos="gallery.videos" />
         </div>
       </template>
 
@@ -88,7 +88,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeImageGallery :images="gallery.images" />
+          <ProfileImageGallery :images="gallery.images" />
         </div>
       </template>
     </section>
