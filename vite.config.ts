@@ -112,6 +112,14 @@ export default defineConfig({
     // Every browser in the modern build target supports <link rel="modulepreload">
     // natively, so vite's injected polyfill is dead weight in the entry chunk.
     modulePreload: { polyfill: false },
+    rollupOptions: {
+      // @vueuse/core ships two misplaced /* #__PURE__ */ comments that Rolldown
+      // flags on every build. Mute the noise from deps; first-party code still warns.
+      onLog(level, log, handler) {
+        if (log.code === "INVALID_ANNOTATION" && log.id?.includes("node_modules")) return;
+        handler(level, log);
+      },
+    },
   },
   resolve: {
     // vize-only: it compiles SFC script imports as CJS interop, duplicating vue-router
