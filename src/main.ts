@@ -10,12 +10,15 @@ import "./assets/css/main.css";
 import lucideData from "../generated/icons/lucide.json";
 // @ts-ignore
 import simpleIconsData from "../generated/icons/simple-icons.json";
+// @ts-ignore
+import streamlineFreehandData from "../generated/icons/streamline-freehand.json";
 
 // Bundle the used icons so they render in SSG HTML and match client hydration.
 // The subsets are built from the source by scripts/build-icon-subset.ts, which
 // fails the build if a referenced icon is missing (offline mode has no fallback).
 addCollection(lucideData);
 addCollection(simpleIconsData);
+addCollection(streamlineFreehandData);
 
 // vite-ssg wires @unhead/vue internally; pages just call useHead/useSeoMeta.
 export const createApp = ViteSSG(App, {

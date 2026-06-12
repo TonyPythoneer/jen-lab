@@ -22,6 +22,10 @@ const SCAN_EXT = /\.(vue|ts|md|ya?ml|json)$/;
 const PACKS = [
   { prefix: "lucide", pack: "node_modules/@iconify-json/lucide/icons.json" },
   { prefix: "simple-icons", pack: "node_modules/@iconify-json/simple-icons/icons.json" },
+  {
+    prefix: "streamline-freehand",
+    pack: "node_modules/@iconify-json/streamline-freehand/icons.json",
+  },
 ];
 
 // Read every scannable source file once, then match each pack against the lot.
@@ -38,8 +42,10 @@ mkdirSync(OUT_DIR, { recursive: true });
 const missing: string[] = [];
 
 for (const { prefix, pack } of PACKS) {
-  // Collect every `i-<prefix>-<name>` referenced in the source.
-  const re = new RegExp(`i-${prefix}-([a-z0-9-]+)`, "g");
+  // Collect every `i-<prefix>-<name>` reference. Icon.vue accepts both the
+  // hyphen form (i-lucide-x) and the colon form (i-streamline-freehand:foo), so
+  // match either separator after the prefix.
+  const re = new RegExp(`i-${prefix}[-:]([a-z0-9-]+)`, "g");
   const used = new Set<string>();
   for (const match of allText.matchAll(re)) used.add(match[1]!);
 

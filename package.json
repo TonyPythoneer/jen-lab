@@ -39,6 +39,7 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.111",
     "@iconify-json/simple-icons": "^1.2.85",
+    "@iconify-json/streamline-freehand": "^1.2.1",
     "@playwright/test": "^1.60.0",
     "@storybook/vue3-vite": "^10.4.1",
     "@tailwindcss/typography": "^0.5.19",
