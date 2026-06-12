@@ -38,7 +38,6 @@ pnpm deploy       # Build + deploy to Cloudflare Pages
 
 # Storybook — component preview (standalone)
 pnpm storybook        # Component preview at :6006
-pnpm build-storybook  # Build static Storybook to storybook-static/
 
 # development scripts
 pnpm sync:wp      # Sync tags and categories from WordPress
@@ -71,7 +70,7 @@ Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import
 - **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. There is no `@nuxt/ui` palette generation anymore — UI components style themselves with plain TS maps + `cn()` + brand-token utilities directly (`Button`/`Badge` use cva for their variants).
 - **Single source for site config**: `src/config/site.ts` (consumed by `main.ts`, `vite.config.ts` for the fonts link, and runtime components like `Footer`). `app.config.ts` is gone with Nuxt. Change colors/contacts there only.
 - **`src/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — `@nuxt/ui` was removed (no `<UApp>` provider), and reka-ui overlays/popovers need no app-level provider, so the plain wrapper is enough.
-- **`pnpm build-storybook` known limitation**: the production build (rolldown / vite-plus) fails with ~25 `[plugin vite:vue] "At least one <template> or <script> is required"` SFC-parse errors — a rolldown gap in the Storybook production path. The **dev server** (`pnpm storybook`) compiles fine via the incremental compiler, so use it. (The earlier `SnapCarousel.vue` generic-SFC cause is gone — that file was removed.)
+- **Storybook is dev-server only** (`pnpm storybook`). There is intentionally no `build-storybook` script: the production build (rolldown / vite-plus) fails with ~25 `[plugin vite:vue] "At least one <template> or <script> is required"` SFC-parse errors — a rolldown gap in the Storybook prod path — and it was unused in practice. The dev server compiles fine via the incremental compiler.
 
 ## Component Organization
 

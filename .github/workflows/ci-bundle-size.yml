@@ -8,7 +8,8 @@ on:
     paths:
       - "src/**"
       - "content/**"
-      - "scripts/build-icon-subset.ts"
+      - "scripts/lib/**"
+      - "vite/**"
       - "scripts/github/bundle-report.ts"
       - "scripts/github/bundle-diff.ts"
       - "vite.config.ts"

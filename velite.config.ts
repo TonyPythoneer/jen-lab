@@ -17,7 +17,7 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(link
 const prefixPath = <T extends { path: string }>(data: T): T => ({ ...data, path: "/" + data.path });
 
 // Build-time icon validation. Lucide is the bundled set (see
-// scripts/build-icon-subset.ts), so a typo'd i-lucide-* name silently renders
+// vite/codegenIcons.ts), so a typo'd i-lucide-* name silently renders
 // nothing — verify it exists in the pack and fail the build instead. Other sets
 // (simple-icons, tdesign, ...) CDN-load at runtime and only get a format check.
 const lucideIconSet = JSON.parse(

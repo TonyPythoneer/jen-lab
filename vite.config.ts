@@ -10,6 +10,7 @@ import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { googleFontsHref } from "./src/config/site";
+import { codegenIcons } from "./vite/codegenIcons";
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
 // compiler for vize (Rust). Off by default — production builds stay on plugin-vue.
@@ -48,6 +49,8 @@ function injectFonts(): PluginOption {
 
 const plugins = [
   injectFonts(),
+  // Keeps generated/icons/*.json in sync on dev + build (was `pnpm gen:icons`).
+  codegenIcons(),
   tailwindcss(),
   VueRouter({ routesFolder: "src/pages", dts: "typed-router.d.ts" }),
   // Vue SFC compiler. VIZE=true → vize (Rust, experimental); else stable plugin-vue.

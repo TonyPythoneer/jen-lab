@@ -6,7 +6,7 @@ import { routes } from "vue-router/auto-routes";
 import { addCollection } from "@iconify/vue/offline";
 import App from "./RootApp.vue";
 import "./assets/css/main.css";
-// @ts-ignore — generated subsets (scripts/build-icon-subset.ts), no bundled types
+// @ts-ignore — generated subsets (vite/codegenIcons.ts), no bundled types
 import lucideData from "../generated/icons/lucide.json";
 // @ts-ignore
 import simpleIconsData from "../generated/icons/simple-icons.json";
@@ -14,7 +14,7 @@ import simpleIconsData from "../generated/icons/simple-icons.json";
 import streamlineFreehandData from "../generated/icons/streamline-freehand.json";
 
 // Bundle the used icons so they render in SSG HTML and match client hydration.
-// The subsets are built from the source by scripts/build-icon-subset.ts, which
+// The subsets are built from the source by the codegen-icons Vite plugin, which
 // fails the build if a referenced icon is missing (offline mode has no fallback).
 addCollection(lucideData);
 addCollection(simpleIconsData);
