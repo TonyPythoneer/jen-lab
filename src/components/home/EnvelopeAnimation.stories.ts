@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => ({
     components: { EnvelopeAnimation },
-    template: `<div class="flex justify-center items-center h-80 bg-white"><EnvelopeAnimation /></div>`,
+    template: `<div class="flex justify-center items-center h-80 bg-pure-white"><EnvelopeAnimation /></div>`,
   }),
   args: {},
 };

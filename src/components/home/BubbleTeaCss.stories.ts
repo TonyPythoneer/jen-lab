@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => ({
     components: { BubbleTeaCss },
-    template: `<div class="flex justify-center items-center h-80 bg-white"><BubbleTeaCss /></div>`,
+    template: `<div class="flex justify-center items-center h-80 bg-pure-white"><BubbleTeaCss /></div>`,
   }),
   args: {},
 };

@@ -5,17 +5,18 @@ import BackgroundDots from "./BackgroundDots.vue";
 const meta = {
   title: "shared/BackgroundDots",
   component: BackgroundDots,
+  // Dots need a surface + positioning context — the wrapper is part of the demo.
+  render: (args: any) => ({
+    components: { BackgroundDots },
+    setup: () => ({ args }),
+    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
+  }),
 } satisfies Meta<typeof BackgroundDots>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args: any) => ({
-    components: { BackgroundDots },
-    setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
-  }),
   args: {
     color: "var(--color-abyssal-ink)",
     size: 1.5,
@@ -25,11 +26,6 @@ export const Default: Story = {
 };
 
 export const Sparse: Story = {
-  render: (args: any) => ({
-    components: { BackgroundDots },
-    setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
-  }),
   args: {
     color: "var(--color-digital-orange)",
     size: 2,
@@ -39,11 +35,6 @@ export const Sparse: Story = {
 };
 
 export const Dense: Story = {
-  render: (args: any) => ({
-    components: { BackgroundDots },
-    setup: () => ({ args }),
-    template: `<div class="relative w-full h-80 bg-ash-white"><BackgroundDots v-bind="args" /></div>`,
-  }),
   args: {
     color: "var(--color-cyber-violet)",
     size: 1,

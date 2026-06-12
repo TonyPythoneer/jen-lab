@@ -5,6 +5,15 @@ import YoutubeGallery from "./YoutubeGallery.vue";
 const meta = {
   title: "profile/YoutubeGallery",
   component: YoutubeGallery,
+  render: (args) => ({
+    components: { YoutubeGallery },
+    setup: () => ({ args }),
+    template: `
+      <div class="p-6 max-w-4xl">
+        <YoutubeGallery v-bind="args" />
+      </div>
+    `,
+  }),
 } satisfies Meta<typeof YoutubeGallery>;
 
 export default meta;
@@ -20,43 +29,16 @@ export const Default: Story = {
   args: {
     videos: mockVideos,
   },
-  render: (args) => ({
-    components: { YoutubeGallery },
-    setup: () => ({ args }),
-    template: `
-      <div class="p-6 max-w-4xl">
-        <YoutubeGallery v-bind="args" />
-      </div>
-    `,
-  }),
 };
 
 export const SingleVideo: Story = {
   args: {
     videos: [mockVideos[0]],
   },
-  render: (args) => ({
-    components: { YoutubeGallery },
-    setup: () => ({ args }),
-    template: `
-      <div class="p-6 max-w-4xl">
-        <YoutubeGallery v-bind="args" />
-      </div>
-    `,
-  }),
 };
 
 export const ManyVideos: Story = {
   args: {
     videos: [...mockVideos, ...mockVideos, mockVideos[0]],
   },
-  render: (args) => ({
-    components: { YoutubeGallery },
-    setup: () => ({ args }),
-    template: `
-      <div class="p-6 max-w-4xl">
-        <YoutubeGallery v-bind="args" />
-      </div>
-    `,
-  }),
 };
