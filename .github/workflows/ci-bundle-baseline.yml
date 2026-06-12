@@ -14,19 +14,23 @@ on:
   push:
     branches: [main, develop]
     # Only rebuild the baseline when something that can change the built bundle
-    # changed (this allowlist is the inverse of cd-deploy.yml's paths-ignore deny
-    # list — same intent, opposite style), so a docs-only push keeps the previous
-    # (still-valid) baseline instead of overwriting it.
+    # changed, so a docs-only push keeps the previous (still-valid) baseline
+    # instead of overwriting it. Must stay in sync with ci-bundle-size.yml.
     paths:
       - "src/**"
+      # Storybook never ships, so stories cannot change the bundle.
+      - "!**/*.stories.ts"
+      - "!src/storybook/**"
       - "content/**"
       - "scripts/lib/**"
-      - "vite/**"
+      - "configs/**"
       - "scripts/github/bundle-report.ts"
+      - "index.html"
       - "vite.config.ts"
       - "velite.config.ts"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
 
 permissions:
   contents: read

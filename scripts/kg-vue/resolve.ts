@@ -19,7 +19,7 @@ export function resolveSpecifier(
 
   let base: string;
   if (spec === "~") base = "src";
-  else if (spec.startsWith("~/")) base = "src/" + spec.slice(2);
+  else if (spec.startsWith("~/")) base = `src/${spec.slice(2)}`;
   else if (spec.startsWith("./") || spec.startsWith("../")) {
     base = posix.normalize(posix.join(posix.dirname(fromFileRel), spec));
   } else {

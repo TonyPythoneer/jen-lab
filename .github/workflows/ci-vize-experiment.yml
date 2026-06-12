@@ -15,25 +15,39 @@ on:
   pull_request:
     paths:
       - "src/**"
+      # Storybook never ships, so stories cannot change either compiler's output.
+      - "!**/*.stories.ts"
+      - "!src/storybook/**"
+      - "configs/**"
+      - "content/**"
+      - "scripts/lib/**"
       - "scripts/ci/**"
+      - "index.html"
       - "vite.config.ts"
       - "velite.config.ts"
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "tsconfig*.json"
-      - ".github/workflows/ci-vize.yml"
+      - ".github/workflows/ci-vize-experiment.yml"
   push:
     branches: [chore/vize, develop, main]
     paths:
       - "src/**"
+      - "!**/*.stories.ts"
+      - "!src/storybook/**"
+      - "configs/**"
+      - "content/**"
+      - "scripts/lib/**"
       - "scripts/ci/**"
+      - "index.html"
       - "vite.config.ts"
       - "velite.config.ts"
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
-      - ".github/workflows/ci-vize.yml"
+      - "tsconfig*.json"
+      - ".github/workflows/ci-vize-experiment.yml"
 
 permissions:
   contents: read

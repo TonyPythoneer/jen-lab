@@ -19,9 +19,9 @@ const iconifyId = computed(() => {
   const bare = n.slice(2);
   if (bare.includes(":")) return bare;
   for (const prefix of MULTI_WORD_PREFIXES) {
-    if (bare.startsWith(prefix + "-")) return prefix + ":" + bare.slice(prefix.length + 1);
+    if (bare.startsWith(`${prefix}-`)) return `${prefix}:${bare.slice(prefix.length + 1)}`;
   }
   const dash = bare.indexOf("-");
-  return dash === -1 ? bare : bare.slice(0, dash) + ":" + bare.slice(dash + 1);
+  return dash === -1 ? bare : `${bare.slice(0, dash)}:${bare.slice(dash + 1)}`;
 });
 </script>

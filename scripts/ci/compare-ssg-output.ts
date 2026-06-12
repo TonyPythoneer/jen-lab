@@ -111,17 +111,16 @@ function printTable(vue: Result, vize: Result) {
   );
   // Metric column left-aligned; numeric columns right-aligned (header stays left).
   const renderRow = (cells: string[], isHeader: boolean) =>
-    "  " +
-    cells
+    `  ${cells
       .map((c, col) => {
         const w = widths[col] ?? 0;
         return col === 0 || isHeader ? c.padEnd(w) : c.padStart(w);
       })
-      .join("   ");
+      .join("   ")}`;
 
   console.log(`\nSSG output — plugin-vue (stable) vs vize (Rust)\n`);
   console.log(renderRow(header, true));
-  console.log("  " + widths.map((w) => "─".repeat(w)).join("───"));
+  console.log(`  ${widths.map((w) => "─".repeat(w)).join("───")}`);
   for (const row of rows) console.log(renderRow(row, false));
 }
 

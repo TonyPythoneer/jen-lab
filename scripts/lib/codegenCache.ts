@@ -27,5 +27,5 @@ export function isFresh(name: string, fp: string, outputs: string[] = []): boole
 export function saveCache(name: string, fp: string): void {
   const file = join(CACHE_DIR, `${name}.json`);
   mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, JSON.stringify({ fingerprint: fp }) + "\n");
+  writeFileSync(file, `${JSON.stringify({ fingerprint: fp })}\n`);
 }

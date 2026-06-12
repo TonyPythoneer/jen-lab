@@ -64,7 +64,7 @@ for (const block of blocks) {
 
   writeFileSync(join(FONTS_DIR, file), await fetchBytes(url));
   downloaded++;
-  outCss += block.replace(url, `/fonts/${file}`).trim() + "\n";
+  outCss += `${block.replace(url, `/fonts/${file}`).trim()}\n`;
 }
 
 writeFileSync(

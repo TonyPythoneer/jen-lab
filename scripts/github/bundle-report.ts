@@ -7,7 +7,7 @@ import { gzipSync } from "node:zlib";
 const DIST = "dist";
 const ASSET_RE = /(?:src|href)="(\/assets\/[^"]+\.(?:js|css))"/g;
 
-const kb = (bytes: number) => (bytes / 1024).toFixed(1) + " KB";
+const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`;
 
 interface Row {
   page: string;

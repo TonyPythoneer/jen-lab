@@ -101,7 +101,7 @@ export function diffBundles(base: Row[] | null, current: Row[]): Diff {
   return { rows, totals, pct, verdict, hasBaseline };
 }
 
-const kb = (n: number) => (n / 1024).toFixed(1) + " KB";
+const kb = (n: number) => `${(n / 1024).toFixed(1)} KB`;
 const signed = (n: number) => (n >= 0 ? "+" : "") + kb(n);
 
 // "12.8 KB" normally; "12.8 KB (+0.5 KB)" when it moved vs the baseline.

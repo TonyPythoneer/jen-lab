@@ -60,14 +60,14 @@ for (const webp of eligible) {
   // Keep the .avif only if it's actually smaller than the source .webp.
   if (statSync(avif).size < statSync(webp).size) {
     // Manifest holds the PUBLIC URL of the .webp (leading slash, posix).
-    winners.push("/" + relative(PUBLIC_DIR, webp).split("\\").join("/"));
+    winners.push(`/${relative(PUBLIC_DIR, webp).split("\\").join("/")}`);
   } else {
     rmSync(avif);
     skippedLarger++;
   }
 }
 
-writeFileSync(MANIFEST, JSON.stringify(winners.sort(), null, 2) + "\n");
+writeFileSync(MANIFEST, `${JSON.stringify(winners.sort(), null, 2)}\n`);
 saveCache("avif", fp);
 console.log(
   `[avif] ${winners.length} webp have a smaller .avif (encoded ${converted}, dropped ${skippedLarger} larger) → ${MANIFEST}`,

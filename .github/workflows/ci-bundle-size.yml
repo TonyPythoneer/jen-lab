@@ -7,15 +7,20 @@ on:
   pull_request:
     paths:
       - "src/**"
+      # Storybook never ships, so stories cannot change the bundle.
+      - "!**/*.stories.ts"
+      - "!src/storybook/**"
       - "content/**"
       - "scripts/lib/**"
-      - "vite/**"
+      - "configs/**"
       - "scripts/github/bundle-report.ts"
       - "scripts/github/bundle-diff.ts"
+      - "index.html"
       - "vite.config.ts"
       - "velite.config.ts"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - ".github/workflows/ci-bundle-size.yml"
 
 permissions:

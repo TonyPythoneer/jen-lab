@@ -17,7 +17,7 @@
              Ring width + animation length are fed to the scoped CSS as vars. -->
         <div
           class="relative"
-          :style="{ '--ring-width': ringWidth + 'px', '--anim-duration': durationMs + 'ms' }"
+          :style="{ '--ring-width': `${ringWidth}px`, '--anim-duration': `${durationMs}ms` }"
           @click.stop
         >
           <!-- Pill-shaped ring matching the button; depletes clockwise from the top. -->
@@ -29,11 +29,11 @@
             :key="i"
             class="buy-spark"
             :style="{
-              '--a': s.angle + 'deg',
-              '--dist': s.dist + 'px',
-              '--size': s.size + 'px',
-              '--delay': s.delay + 's',
-              '--dur': s.dur + 's',
+              '--a': `${s.angle}deg`,
+              '--dist': `${s.dist}px`,
+              '--size': `${s.size}px`,
+              '--delay': `${s.delay}s`,
+              '--dur': `${s.dur}s`,
             }"
             aria-hidden="true"
           />

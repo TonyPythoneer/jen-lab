@@ -12,34 +12,30 @@ on:
   pull_request:
     types: [closed]
     branches: [main, develop]
-    # Skip the deploy when a merged PR touches ONLY files that cannot change the
-    # built site (CI, docs, editor config, tests, helper scripts). If any file
-    # outside this list changed, the deploy still runs. Note: `*.md` matches only
-    # root-level docs (README, CLAUDE, ...); blog posts live in content/*.md and
-    # are intentionally NOT ignored, so editing a post still deploys.
-    paths-ignore:
-      - ".github/**"
-      - ".claude/**"
-      - ".agents/**"
-      - ".zed/**"
-      - ".storybook/**"
-      - "docs/**"
-      - "tasks/**"
-      - "tests/**"
-      # Only CI/tooling scripts are ignored. The icon codegen that feeds the
-      # build lives in vite/codegenIcons.ts + scripts/lib/ (NOT ignored), so a
-      # change there must still trigger a deploy.
-      - "scripts/github/**"
-      - "scripts/sync-wp.ts"
-      - "scripts/sync-ferries-osm.ts"
-      - "*.md"
-      - ".gitignore"
-      - ".prettierignore"
-      - "renovate.json"
-      - "skills-lock.json"
-      - "tsconfig.scripts.json"
-      - "tsconfig.stories.json"
-      - "tsconfig.test.json"
+    # Allowlist of build inputs: deploy runs only when a merged PR touches
+    # something that can change the built site. Anything not listed here is
+    # none of this workflow's business. A new build-input directory MUST be
+    # added here AND to the CI workflows' path lists.
+    paths:
+      - "src/**"
+      # Storybook is dev-server only; stories and the story wrapper never ship.
+      - "!**/*.stories.ts"
+      - "!src/storybook/**"
+      - "configs/**"
+      - "content/**"
+      - "public/**"
+      - "server/**"
+      - "_cloudflare/**"
+      # Icon codegen helpers feed the build; other scripts/ are CI/dev tooling.
+      - "scripts/lib/**"
+      - "index.html"
+      - "vite.config.ts"
+      - "velite.config.ts"
+      - "wrangler.jsonc"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "tsconfig*.json"
 
 permissions:
   contents: read
