@@ -1,10 +1,7 @@
-// Dependent filter maths for the food map: Region (`area`) and Cuisine
-// (`categoryId`) are two single-select facets that constrain each other.
-// Each facet's option counts are taken against the dataset filtered by the
-// OTHER facet only, so the value you already picked never narrows its own list
-// (it stays switchable). Options that reach zero are dropped from the count
-// record, which is how the UI knows to hide / disable them — that is what makes
-// impossible combinations impossible to select.
+// Dependent filter maths: Region and Cuisine are single-select facets that
+// constrain each other. Each facet's counts are taken under the OTHER facet's
+// selection only, so a picked value never narrows its own list; options that
+// reach zero drop out, making impossible combinations unpickable.
 
 export interface RestaurantFacets {
   area: string;

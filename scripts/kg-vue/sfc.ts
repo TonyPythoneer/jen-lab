@@ -1,11 +1,11 @@
-// AST extraction for .vue and .ts source. Replaces the prototype's regex scan.
+// AST extraction for .vue and .ts source.
 //
 // Why AST, not regex:
 //  - template tags: a real parse sees <food-map-canvas> (kebab-case) and ignores
-//    tags written inside comments or strings — the regex could not.
-//  - composables: walking the script AST lets us drop a name that is a LOCAL
-//    binding (a same-named const/import), killing the prototype's false positives
-//    where any mention of `useFoo` — even in a comment — drew an edge.
+//    tags written inside comments or strings.
+//  - composables: walking the script AST drops names that are LOCAL bindings
+//    (a same-named const/import), so a `useFoo` mention in a comment or string
+//    never draws a false edge.
 import { parse, babelParse } from "vue/compiler-sfc";
 
 export type SfcExtract = {

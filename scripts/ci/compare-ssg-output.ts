@@ -3,11 +3,10 @@
 // Builds the app once per compiler, measures the prerendered HTML / JS / CSS
 // weight and the `vite-ssg build` time, and prints a side-by-side table.
 //
-// It also keeps the old content gate: a green build is NOT proof the pages
-// rendered. vize once collapsed every route to a ~957-byte shell with an empty
-// <div id="app"> when its CJS interop duplicated vue-router and broke SSR
-// provide/inject. So each build is checked for real content, and the run fails
-// loudly if either compiler drops a route — the VIZE flag can't regress silently.
+// It also gates on content: a green build is NOT proof the pages rendered — a
+// broken SSR can still emit a ~1KB shell with an empty <div id="app">. Each build
+// is checked for real content, and the run fails loudly if either compiler drops
+// a route, so the VIZE flag can't regress silently.
 //
 // Icon codegen + velite run ONCE up front: their output does not depend on VIZE, so
 // the only timed step is `vite-ssg build` — the part the compiler choice actually

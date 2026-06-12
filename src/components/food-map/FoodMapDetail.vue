@@ -9,8 +9,6 @@ defineProps<{
 
 const store = useFoodMapStore();
 
-// Close dismisses the detail back to the initial collapsed peek (drop the place
-// and close the sheet). There is no separate back button — close covers it.
 // Close the panel first, then drop the place only after the close transition
 // (opacity 220ms / transform 320ms) finishes — otherwise the list view swaps in
 // while the panel is still fading and flashes on screen.

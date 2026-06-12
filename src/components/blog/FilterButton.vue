@@ -110,16 +110,13 @@ function isIndeterminate(item: FilterTreeItem): boolean {
 function toggle(item: FilterTreeItem, parent?: FilterTreeItem) {
   const set = new Set(props.modelValue);
   if (set.has(item.value)) {
-    // Deselect this item and all its children
     set.delete(item.value);
     for (const c of item.children ?? []) set.delete(c.value);
-    // Parent is no longer fully selected
     if (parent) set.delete(parent.value);
   } else {
-    // Select this item and propagate to all children
     set.add(item.value);
     for (const c of item.children ?? []) set.add(c.value);
-    // Bubble up: select parent if all siblings are now selected
+    // Bubble up: select the parent once all its children are selected.
     if (parent) {
       const allSelected = (parent.children ?? []).every((c) => set.has(c.value));
       if (allSelected) set.add(parent.value);

@@ -9,10 +9,9 @@
 // the food-map serif (Crimson Pro) stay on Google Fonts — a full CJK face is
 // megabytes, only worth self-hosting with a per-glyph subset (a separate job).
 //
-// USAGE: `pnpm gen:fonts` (needs internet — this agent can't run it). It writes
-// public/fonts/*.woff2 + src/assets/css/fonts.css, then prints the two wiring
-// edits. Commit the woff2 + css; the deploy build then needs no network. Re-run
-// to refresh. Outputs are committed, not generated/ — same pattern as gen:avif.
+// USAGE: `pnpm gen:fonts` (needs internet). Writes public/fonts/*.woff2 +
+// src/assets/css/fonts.css. Commit both; the deploy build then needs no network.
+// Outputs are committed, not generated/ — same pattern as gen:avif.
 
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";

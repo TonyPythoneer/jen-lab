@@ -1,10 +1,6 @@
 // Draws every restaurant pin onto ONE canvas (see useCanvasLayer for why) and
 // answers hit-tests so the map's click/hover can find the pin under the pointer.
-//
-// A pin is a white disc + a coloured ring + the category emoji baked once per
-// category. States: selected = bigger, drawn last (on top); hovered-group =
-// slightly bigger + category-colour ring; faded = the rest dimmed. No shadow, no
-// transition, no animation (all dropped on purpose for weak-phone compositing).
+// No shadow, no transition, no animation — kept out for weak-phone compositing.
 
 import type { Map as LeafletMap } from "leaflet";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
@@ -18,21 +14,18 @@ export interface PinCanvasController {
   setSelected(id: string | null): void;
   setHovered(categoryId: string | null): void;
   redraw(): void;
-  // container-pixel pointer → restaurant id under it (within a finger-friendly
-  // radius), or null. Used by the Stage to wire click + hover.
+  // Container-pixel pointer → restaurant id under it (finger-friendly radius), or null.
   hitTest(containerX: number, containerY: number): string | null;
   destroy(): void;
 }
 
 const EMOJI_BAKE = 64; // offscreen bake size in px; drawn down → stays crisp
 const INK = "#2c241a";
-// Head centre sits this × radius above the tip. √2 reproduces the original DOM pin
-// (a rounded square rotated 45° — chubby, not elongated).
+// Head centre sits this × radius above the tip (a rotated square's centre-to-corner).
 const HEAD_RATIO = Math.SQRT2;
 
-// Draw the pin body: a 2R square with border-radius 50%/50%/50%/0 rotated 45°, so
-// its one sharp corner points straight down at the tip (x, y) — the canvas version
-// of the original DOM `.r-pin`. Caller sets globalAlpha; we keep fill/stroke local.
+// Pin body: a 2R square with border-radius 50%/50%/50%/0 rotated 45°, so its one
+// sharp corner points straight down at the tip (x, y). Caller sets globalAlpha.
 function drawPinBody(
   ctx: CanvasRenderingContext2D,
   x: number,

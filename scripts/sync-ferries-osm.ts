@@ -97,8 +97,8 @@ function metres(a: LatLng, b: LatLng): number {
 }
 
 // Largest gap we will bridge when joining two ways. Ways in a clean route share a
-// node (gap ~0); a multi-hundred-metre gap means a different leg, which must NOT
-// be bridged — that is what drew straight lines across the harbour and over land.
+// node (gap ~0); a multi-hundred-metre gap means a different leg — bridging it
+// would draw straight lines across the harbour and over land.
 const MAX_JOIN_GAP_M = 300;
 
 // Join a set of way geometries into one or more continuous polylines. Starting
