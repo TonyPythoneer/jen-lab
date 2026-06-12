@@ -2,14 +2,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Page from "./Page.vue";
 
-const meta = {
-  title: "profile/Page",
-  component: Page,
-} satisfies Meta<typeof Page>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 const mockPageData: any = {
   profile: {
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=96&h=96&fit=crop",
@@ -73,10 +65,11 @@ const mockPageData: any = {
       ],
     },
   ],
-  _path: "/about",
 };
 
-export const Default: Story = {
+const meta = {
+  title: "profile/Page",
+  component: Page,
   args: {
     page: mockPageData,
     displayName: "Jen",
@@ -85,31 +78,15 @@ export const Default: Story = {
   render: (args) => ({
     components: { Page },
     setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)]">
-        <Page v-bind="args" />
-      </div>
-    `,
+    template: `<Page v-bind="args" />`,
   }),
-};
+} satisfies Meta<typeof Page>;
 
-export const JenLiuBrand: Story = {
-  args: {
-    page: mockPageData,
-    displayName: "Jen",
-    brand: "jen-liu",
-  },
-  render: (args) => ({
-    components: { Page },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)]">
-        <Page v-bind="args" />
-      </div>
-    `,
-  }),
-};
+export default meta;
+type Story = StoryObj<typeof meta>;
 
+export const Default: Story = {};
+export const JenLiuBrand: Story = { args: { brand: "jen-liu" } };
 export const MinimalPage: Story = {
   args: {
     page: {
@@ -124,18 +101,6 @@ export const MinimalPage: Story = {
         ],
       },
       sections: [],
-      _path: "/about",
     },
-    displayName: "Jen",
-    brand: "jen-knows",
   },
-  render: (args) => ({
-    components: { Page },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)]">
-        <Page v-bind="args" />
-      </div>
-    `,
-  }),
 };

@@ -10,25 +10,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {},
-  render: (args) => ({
-    components: { SectionHero },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)]">
-        <SectionHero v-bind="args" />
-      </div>
-    `,
-  }),
-};
+export const Default: Story = {};
 
 export const InPage: Story = {
-  parameters: { layout: "fullscreen" },
   render: (args) => ({
     components: { SectionHero },
     setup: () => ({ args }),
-    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionHero v-bind="args" /></div>`,
+    template: `<div class="min-h-dvh"><SectionHero v-bind="args" /></div>`,
   }),
-  args: {},
 };

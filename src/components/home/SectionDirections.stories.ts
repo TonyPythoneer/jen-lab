@@ -10,16 +10,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {},
-};
+export const Default: Story = {};
 
 export const InPage: Story = {
-  parameters: { layout: "fullscreen" },
   render: (args) => ({
     components: { SectionDirections },
     setup: () => ({ args }),
-    template: `<div class="min-h-dvh bg-[var(--color-basalt-canvas)]"><SectionDirections v-bind="args" /></div>`,
+    template: `<div class="min-h-dvh"><SectionDirections v-bind="args" /></div>`,
   }),
-  args: {},
 };
