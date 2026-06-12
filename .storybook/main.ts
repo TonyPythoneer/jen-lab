@@ -1,5 +1,7 @@
 import type { StorybookConfig } from "@storybook/vue3-vite";
-import { googleFontsHref } from "../configs/vite/plugins/injectFonts";
+// Explicit .ts extension: Storybook loads main.ts under strict ESM resolution
+// (extensionless relative imports are flagged — see its FAQ).
+import { googleFontsHref } from "../configs/vite/plugins/injectFonts.ts";
 
 const config: StorybookConfig = {
   framework: {

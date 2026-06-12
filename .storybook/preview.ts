@@ -1,37 +1,37 @@
 import type { Preview } from "@storybook/vue3-vite";
 import { setup } from "@storybook/vue3-vite";
-import { h, type App } from "vue";
+import { type App } from "vue";
+import { createMemoryHistory, createRouter } from "vue-router";
+import { createHead } from "@unhead/vue/client";
+import { addCollection } from "@iconify/vue/offline";
 // @ts-expect-error — tsconfig doesn't cover .storybook/ context, but runtime works fine
 import StoryWrapper from "../src/storybook/StoryWrapper.vue";
 // @ts-expect-error - CSS import resolution in Storybook context
 import "../src/assets/css/main.css";
+// Generated icon subsets (configs/vite/plugins/codegenIcons.ts) — same set src/main.ts bundles.
+// @ts-ignore — generated JSON, no bundled types
+import lucideData from "../generated/icons/lucide.json";
+// @ts-ignore — generated JSON, no bundled types
+import simpleIconsData from "../generated/icons/simple-icons.json";
+// @ts-ignore — generated JSON, no bundled types
+import streamlineFreehandData from "../generated/icons/streamline-freehand.json";
 
-// Minimal stand-ins for Nuxt's built-in components.
-const NuxtLink = {
-  props: { to: { type: [String, Object], default: "#" } },
-  setup(props: any, { slots }: any) {
-    const href = typeof props.to === "string" ? props.to : "#";
-    return () => h("a", { href }, slots.default?.());
-  },
-};
-const NuxtImg = {
-  inheritAttrs: false,
-  props: { src: String, alt: String },
-  setup(props: any, { attrs }: any) {
-    return () => h("img", { ...attrs, src: props.src, alt: props.alt });
-  },
-};
-const ClientOnly = {
-  setup(_: any, { slots }: any) {
-    return () => slots.default?.();
-  },
-};
+// Offline icon runtime, registered exactly like src/main.ts — <Icon> renders for real.
+addCollection(lucideData);
+addCollection(simpleIconsData);
+addCollection(streamlineFreehandData);
+
+// Real app runtime, not mocks: stories exercise the same router/unhead APIs the site
+// uses (RouterLink, useRoute/useRouter, useHead/useSeoMeta). Catch-all route renders
+// nothing — stories never navigate for real.
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [{ path: "/:pathMatch(.*)*", component: { render: () => null } }],
+});
 
 setup((app: App) => {
-  app.component("NuxtLink", NuxtLink);
-  app.component("NuxtImg", NuxtImg);
-  app.component("NuxtPicture", NuxtImg);
-  app.component("ClientOnly", ClientOnly);
+  app.use(router);
+  app.use(createHead());
 });
 
 const preview: Preview = {
@@ -43,6 +43,15 @@ const preview: Preview = {
   ],
   parameters: {
     layout: "fullscreen",
+    backgrounds: {
+      // Brand surfaces from theme.css (loaded via main.css above).
+      options: {
+        canvas: { name: "Canvas", value: "var(--color-basalt-canvas)" },
+        ash: { name: "Ash", value: "var(--color-ash-white)" },
+        white: { name: "White", value: "var(--color-pure-white)" },
+        ink: { name: "Ink", value: "var(--color-abyssal-ink)" },
+      },
+    },
     viewport: {
       options: {
         mobile: { name: "Mobile", styles: { width: "390px", height: "844px" } },
@@ -50,7 +59,10 @@ const preview: Preview = {
       },
     },
   },
-  initialGlobals: { viewport: { value: "desktop", isRotated: false } },
+  initialGlobals: {
+    viewport: { value: "desktop", isRotated: false },
+    backgrounds: { value: "canvas" },
+  },
 };
 
 export default preview;
