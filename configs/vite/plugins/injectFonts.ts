@@ -10,7 +10,8 @@ const fonts = [
   { family: "Noto Serif TC", weights: "wght@400;500;600;700" },
 ];
 
-const googleFontsHref = `https://fonts.googleapis.com/css2?${fonts
+// Exported for Storybook's previewHead — both surfaces load the same font set.
+export const googleFontsHref = `https://fonts.googleapis.com/css2?${fonts
   .map((f) => `family=${f.family.replace(/ /g, "+")}:${f.weights}`)
   .join("&")}&display=swap`;
 
