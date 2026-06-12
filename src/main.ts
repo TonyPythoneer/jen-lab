@@ -6,7 +6,7 @@ import { routes } from "vue-router/auto-routes";
 import { addCollection } from "@iconify/vue/offline";
 import App from "./RootApp.vue";
 import "./assets/css/main.css";
-// @ts-ignore — generated subsets (vite/codegenIcons.ts), no bundled types
+// @ts-ignore — generated subsets (configs/vite/plugins/codegenIcons.ts), no bundled types
 import lucideData from "../generated/icons/lucide.json";
 // @ts-ignore
 import simpleIconsData from "../generated/icons/simple-icons.json";

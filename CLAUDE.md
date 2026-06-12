@@ -27,6 +27,10 @@
 - Git flow
   - Every development branch opens its PR against **`develop`**, never `main`. `main` only receives merges from `develop`.
   - `develop` and `main` are PR-protected — never direct-push to either; always branch + PR.
+- CI/CD triggers — allowlist only
+  - **Every workflow declares its required inputs as a `paths` allowlist; never `paths-ignore`.** A workflow's trigger answers "what do I depend on" — anything not listed is none of its business. Allowlists track the build's (closed, stable) input set; deny lists chase the repo's (open, ever-growing) noise set.
+  - A new build-input directory must be added to **all** path-filtered workflows together (`cd-deploy`, `ci-app-test`, `ci-bundle-size`, `ci-bundle-baseline`, `ci-vize-experiment`).
+  - `guard-*` workflows stay unfiltered — they are required checks; a path filter would leave merges stuck on "Expected".
 - Accessibility
   - **Build for accessibility by leaning on `reka-ui` headless primitives** — they provide focus management, keyboard navigation, and ARIA. Do NOT hand-roll overlays/menus/tabs from raw `<div>`/`<button>` + `<Teleport>`; reach for the matching reka-ui primitive (`Dialog`, `Tabs`, `Popover`, `Pagination`, …) so the a11y is built in. Keep native elements (`<button>`, `<a>`) native — never replace them with `<div>`.
 - Else

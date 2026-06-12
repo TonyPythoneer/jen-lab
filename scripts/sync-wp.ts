@@ -1,7 +1,7 @@
 import { mkdir, readdir, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { stringify } from "yaml";
-import { WP_BASE } from "../src/config/site";
+import { WP_BASE } from "../src/settings";
 
 interface WpTaxonomyRaw {
   id: number;

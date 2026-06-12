@@ -9,7 +9,7 @@ export type EnrichReport = { enriched: number; failed: number };
 const TYPE_CAP = 300;
 
 function cap(s: string): string {
-  return s.length > TYPE_CAP ? s.slice(0, TYPE_CAP) + "…" : s;
+  return s.length > TYPE_CAP ? `${s.slice(0, TYPE_CAP)}…` : s;
 }
 
 // Enriches every `.vue` file node already in the graph with a `vueMeta` field.

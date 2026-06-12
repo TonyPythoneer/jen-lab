@@ -1,5 +1,5 @@
 {
-  // Single Vite/Vue tsconfig for the whole repo — app, tests, scripts, shared.
+  // Single Vite/Vue tsconfig for the whole repo — app, configs, tests, scripts, shared.
   // No .nuxt/ dependency. node + DOM types are auto-included (no `types` field),
   // so browser app code and node scripts both type-check from here.
   // `types` is pinned to vite-plus/client + node (explicit types disables auto @types inclusion).
@@ -36,6 +36,8 @@
   "include": [
     "*.d.ts",
     "vite.config.ts",
+    "velite.config.ts",
+    "configs/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",

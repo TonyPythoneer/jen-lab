@@ -79,8 +79,8 @@ export function createCanvasLayer(
       canvas.width = w;
       canvas.height = h;
     }
-    canvas.style.width = size.x + "px";
-    canvas.style.height = size.y + "px";
+    canvas.style.width = `${size.x}px`;
+    canvas.style.height = `${size.y}px`;
   }
 
   function draw() {

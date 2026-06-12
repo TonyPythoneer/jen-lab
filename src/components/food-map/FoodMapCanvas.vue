@@ -259,8 +259,8 @@ function onMapMouseMove(e: {
   const id = pinCanvas.hitTest(e.containerPoint.x, e.containerPoint.y);
   if (id === hoveredPinId) {
     if (id && hoverTip) {
-      hoverTip.style.left = e.containerPoint.x + "px";
-      hoverTip.style.top = e.containerPoint.y + "px";
+      hoverTip.style.left = `${e.containerPoint.x}px`;
+      hoverTip.style.top = `${e.containerPoint.y}px`;
     }
     return;
   }
@@ -270,8 +270,8 @@ function onMapMouseMove(e: {
   mapEl.value.style.cursor = r ? "pointer" : "";
   if (r && hoverTip) {
     hoverTip.textContent = r.name;
-    hoverTip.style.left = e.containerPoint.x + "px";
-    hoverTip.style.top = e.containerPoint.y + "px";
+    hoverTip.style.left = `${e.containerPoint.x}px`;
+    hoverTip.style.top = `${e.containerPoint.y}px`;
     hoverTip.style.display = "block";
   } else if (hoverTip) {
     hoverTip.style.display = "none";

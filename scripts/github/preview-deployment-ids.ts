@@ -22,5 +22,5 @@ if (process.argv[1]?.endsWith("preview-deployment-ids.ts")) {
     process.exit(1);
   }
   const ids = previewDeploymentIds(readFileSync(path, "utf8"), branch);
-  if (ids.length > 0) process.stdout.write(ids.join("\n") + "\n");
+  if (ids.length > 0) process.stdout.write(`${ids.join("\n")}\n`);
 }

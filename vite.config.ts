@@ -9,8 +9,8 @@ import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { googleFontsHref } from "./src/config/site";
-import { codegenIcons } from "./vite/codegenIcons";
+import { codegenIcons } from "./configs/vite/plugins/codegenIcons";
+import { injectFonts } from "./configs/vite/plugins/injectFonts";
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
 // compiler for vize (Rust). Off by default — production builds stay on plugin-vue.
@@ -38,20 +38,6 @@ const iconifyOfflineEsm = require
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
 // distinct, so a direct annotation makes tsc recurse the PluginOption union too
 // deep (TS2321). One assertion on the whole array bridges them.
-// Build the Google Fonts <link> from src/config/site.ts and inject it at the
-// <!--google-fonts--> marker in index.html. Keeps the font list in one config.
-function injectFonts(): PluginOption {
-  return {
-    name: "inject-google-fonts",
-    transformIndexHtml(html: string) {
-      return html.replace(
-        "<!--google-fonts-->",
-        `<link rel="stylesheet" href="${googleFontsHref}" />`,
-      );
-    },
-  };
-}
-
 const plugins = [
   injectFonts(),
   // Keeps generated/icons/*.json in sync on dev + build (was `pnpm gen:icons`).
@@ -96,7 +82,12 @@ const plugins = [
 export default defineConfig({
   lint: {
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
-    rules: { "vite-plus/prefer-vite-plus-imports": "error" },
+    rules: {
+      "vite-plus/prefer-vite-plus-imports": "error",
+      "prefer-template": "error",
+      "no-template-curly-in-string": "error",
+      "no-useless-concat": "error",
+    },
     options: { typeAware: true, typeCheck: true },
     ignorePatterns: ["dist/**", "generated/**", "storybook-static/**", ".agents/**", "tasks/**"],
   },

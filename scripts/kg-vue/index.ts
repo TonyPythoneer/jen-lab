@@ -76,8 +76,9 @@ function printUsageHint(withMeta: boolean): void {
     '      • "Which components render Button.vue?"        (depends_on edges)',
     '      • "What composables does the food map use?"    (calls edges)',
     '      • "What renders on the / route?"               (serves edges)',
-    "  /understand-explain <file>   deep-dive one file using its edges" +
-      (withMeta ? " + typed props/emits" : ""),
+    `  /understand-explain <file>   deep-dive one file using its edges${
+      withMeta ? " + typed props/emits" : ""
+    }`,
     "",
     withMeta
       ? "  Typed props/emits/slots are on each component node (vueMeta). They show in" +

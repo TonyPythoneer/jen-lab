@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { contacts } from "~/config/site";
+import { siteFooter } from "#velite";
+import { computed } from "vue";
 
-const socials = contacts;
+// siteFooter is a single-file collection — [0] is always present when footer.yml exists.
+const socials = computed(() => siteFooter[0]!.socials);
 
 const footerDotField = {
   color: "var(--color-pixel-glare)",
