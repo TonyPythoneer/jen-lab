@@ -48,7 +48,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.9.3",
     "@vitejs/plugin-vue": "^6.0.7",
-    "@vizejs/vite-plugin": "0.204.0",
+    "@vizejs/vite-plugin": "0.206.0",
     "@vueuse/core": "^14.3.0",
     "jiti": "2.7.0",
     "markdown-it": "^14.2.0",

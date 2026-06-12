@@ -6,20 +6,17 @@ allowBuilds:
   vue-demi: true
   workerd: true
 catalog:
-  rolldown: "^1.0.1"
+  rolldown: "^1.1.1"
   vite: npm:@voidzero-dev/vite-plus-core@^0.1.24
   vite-plus: latest
   vitest: npm:@voidzero-dev/vite-plus-test@latest
 minimumReleaseAgeExclude:
-  - "@vizejs/native-darwin-arm64@0.204.0"
-  - "@vizejs/native-linux-arm64-gnu@0.204.0"
-  - "@vizejs/native-linux-arm64-musl@0.204.0"
-  - "@vizejs/native-linux-x64-gnu@0.204.0"
-  - "@vizejs/native-linux-x64-musl@0.204.0"
-  - "@vizejs/native-win32-x64-msvc@0.204.0"
-  - "@vizejs/native@0.204.0"
-  - "@vizejs/vite-plugin@0.204.0"
-  - vize@0.204.0
+  - "@vizejs/*"
+  - vize
+  - "@typescript/native-preview"
+  - "@typescript/native-preview-*"
+  - rolldown
+  - "@rolldown/*"
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
