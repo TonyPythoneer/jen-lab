@@ -85,11 +85,15 @@ const liuStyle = computed(() => ({
             <img
               :src="portraitKnowsSrc"
               :style="knowsStyle"
+              width="270"
+              height="938"
               class="h-[180px] md:h-[252px] w-auto will-change-transform"
             />
             <img
               :src="portraitLiuSrc"
               :style="liuStyle"
+              width="317"
+              height="938"
               class="h-[180px] md:h-[252px] w-auto will-change-transform"
             />
           </div>

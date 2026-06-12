@@ -105,6 +105,11 @@ export default defineConfig({
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
   },
   plugins,
+  build: {
+    // Every browser in the modern build target supports <link rel="modulepreload">
+    // natively, so vite's injected polyfill is dead weight in the entry chunk.
+    modulePreload: { polyfill: false },
+  },
   resolve: {
     // vize-only: it compiles SFC script imports as CJS interop, duplicating vue-router
     // (ESM copy used by vite-ssg + CJS copy used by SFCs) — the duplicate has different

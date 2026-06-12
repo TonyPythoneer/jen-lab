@@ -1,0 +1,8 @@
+# Cloudflare Pages headers.
+# Build assets under /assets/* are content-hashed by Vite, so their URL changes
+# whenever the bytes change. That makes them safe to cache forever — the browser
+# never needs to revalidate, and a new deploy is picked up via the new hashed URL.
+# Scope this ONLY to /assets/*. Never cache index.html / route HTML this way, or
+# browsers would pin a stale deploy.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
