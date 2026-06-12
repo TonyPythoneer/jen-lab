@@ -45,7 +45,7 @@ const panelHiddenClass = computed(() =>
         coloredSide === 'right' ? 'order-1 md:order-2' : 'order-1',
       ]"
     >
-      <img
+      <SharedPicture
         :src="imageSrc"
         :alt="imageAlt"
         loading="lazy"

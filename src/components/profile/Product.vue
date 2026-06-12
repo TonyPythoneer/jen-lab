@@ -6,7 +6,7 @@
          Title/brief/purchase moved off the card (detail in the info drawer, buying in the buy
          button), so the image takes over the height the detail block used to occupy. -->
     <div class="relative aspect-[2/1] bg-basalt-canvas">
-      <img
+      <SharedPicture
         v-if="banner"
         :src="banner"
         :alt="title"
