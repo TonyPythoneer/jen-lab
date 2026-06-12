@@ -5,10 +5,11 @@ name: 🦀 CI · Vize Compiler
 #   VIZE=true     → vize (Rust, experimental)
 #
 # This CI proves the SAME app renders correct prerendered HTML under BOTH
-# compilers. vize is pre-1.0 and can exit 0 while every page collapses to an
-# empty shell (its CJS-interop once duplicated vue-router and broke SSR
-# provide/inject), so each build is followed by a content gate — `pnpm verify:ssg`
-# fails the run if any route did not actually render.
+# compilers. `pnpm compare:ssg` builds the app once per compiler, prints an
+# HTML / JS / CSS / build-time comparison table, and gates content: vize is
+# pre-1.0 and can exit 0 while every page collapses to an empty shell (its
+# CJS-interop once duplicated vue-router and broke SSR provide/inject), so the
+# run fails if either compiler dropped a route.
 
 on:
   pull_request:
@@ -38,19 +39,9 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: build · ${{ matrix.label }}
+  compare:
+    name: compare · plugin-vue vs vize
     runs-on: ubuntu-latest
-    strategy:
-      # Don't cancel the vize leg if the stable leg fails (or vice versa) — we
-      # want to see both results on every run.
-      fail-fast: false
-      matrix:
-        include:
-          - label: plugin-vue (stable)
-            vize: ""
-          - label: vize (experimental)
-            vize: "true"
     steps:
       - uses: actions/checkout@v5
 
@@ -63,13 +54,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Full pipeline: gen:icons → velite build → vite-ssg build → vue-tsc.
-      # VIZE selects the SFC compiler inside vite-ssg build.
-      - name: Build (VIZE=${{ matrix.vize }})
-        env:
-          VIZE: ${{ matrix.vize }}
-        run: pnpm build
-
-      # Hard gate: a green build is not proof the pages rendered.
-      - name: Verify prerendered output is real content
-        run: pnpm verify:ssg
+      # compare:ssg builds the app once per compiler (VIZE off → plugin-vue,
+      # VIZE=true → vize), prints an HTML/JS/CSS/build-time table, and fails the
+      # run if either compiler did not render real content. The shared gen:icons
+      # + velite preflight runs once; only `vite-ssg build` is timed per compiler.
+      - name: Compare prerendered output across compilers
+        run: pnpm compare:ssg
