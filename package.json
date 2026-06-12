@@ -12,7 +12,7 @@
     "gen:fonts": "jiti scripts/build-fonts.ts",
     "gen:avif": "jiti scripts/build-avif.ts",
     "bundle:report": "pnpm build && jiti scripts/github/bundle-report.ts",
-    "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
+    "storybook": "velite build && storybook dev -p ${STORYBOOK_PORT:-6006}",
     "check": "vp check && pnpm typecheck",
     "typecheck": "vue-tsc --noEmit",
     "test": "vp test run",
