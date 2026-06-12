@@ -6,7 +6,7 @@
       class="relative rounded-card overflow-hidden aspect-square bg-ash-white group cursor-zoom-in"
       @click="openImage(item)"
     >
-      <img
+      <SharedPicture
         :src="item"
         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         loading="lazy"
@@ -25,7 +25,7 @@
     description="Enlarged image"
   >
     <template #content>
-      <img :src="selectedImage" class="w-full h-auto max-h-[85vh] object-contain" />
+      <SharedPicture :src="selectedImage" class="w-full h-auto max-h-[85vh] object-contain" />
     </template>
   </Modal>
 </template>
