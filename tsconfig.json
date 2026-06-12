@@ -28,9 +28,7 @@
     "useDefineForClassFields": true,
     "paths": {
       "~": ["./src"],
-      "~/*": ["./src/*"],
-      "#velite": ["./generated/velite"],
-      "#food-map-data": ["./generated/velite/foodMap.json"]
+      "~/*": ["./src/*"]
     }
   },
   "include": [

@@ -2,6 +2,10 @@
   "name": "jen-lab",
   "private": true,
   "type": "module",
+  "imports": {
+    "#velite": "./generated/velite/index.js",
+    "#food-map-data": "./generated/velite/foodMap.json"
+  },
   "scripts": {
     "build": "velite build --strict && vite-ssg build && vue-tsc --noEmit",
     "dev": "velite --watch & vp dev",
