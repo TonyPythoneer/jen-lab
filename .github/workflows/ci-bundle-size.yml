@@ -48,13 +48,15 @@ jobs:
         run: pnpm exec jiti scripts/github/bundle-report.ts --json > /tmp/current.json
 
       # Restore the most recent baseline from the target branch.
-      # Saved by ci-bundle-baseline.yml on each push to main/develop.
+      # Saved by ci-bundle-baseline.yml on each push to main/develop; the key's
+      # base.sha is an exact hit when the PR targets the branch head, otherwise
+      # restore-keys falls back to the newest baseline on that branch.
       # Falls through gracefully if no cache exists yet (first PR on a new branch).
       - name: Restore bundle baseline
         uses: actions/cache/restore@v4
         with:
           path: /tmp/base.json
-          key: bundle-baseline-${{ github.base_ref }}-${{ github.event.pull_request.head.sha }}
+          key: bundle-baseline-${{ github.base_ref }}-${{ github.event.pull_request.base.sha }}
           restore-keys: |
             bundle-baseline-${{ github.base_ref }}-
 
