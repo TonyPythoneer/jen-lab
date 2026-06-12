@@ -24,6 +24,11 @@ const USE_VIZE = !!process.env.VIZE;
 // `vue-router/auto-routes` (the unplugin-vue-router virtual module) is untouched.
 const require = createRequire(import.meta.url);
 const vueRouterEsm = require.resolve("vue-router").replace(/index\.cjs$/, "vue-router.node.mjs");
+// @iconify/vue/offline has the same dual-instance failure: main.ts registers icons
+// in the ESM copy, vize-compiled SFCs read the CJS copy → SSR ships no icon SVGs.
+const iconifyOfflineEsm = require
+  .resolve("@iconify/vue/offline")
+  .replace(/offline\.js$/, "offline.mjs");
 
 // Velite content is PREBUILT (pnpm script: `velite build && vite-ssg build`) so
 // generated/velite/ exists before the bundler resolves the content shim. An
@@ -112,6 +117,14 @@ export default defineConfig({
     // Every browser in the modern build target supports <link rel="modulepreload">
     // natively, so vite's injected polyfill is dead weight in the entry chunk.
     modulePreload: { polyfill: false },
+    rollupOptions: {
+      // @vueuse/core ships two misplaced /* #__PURE__ */ comments that Rolldown
+      // flags on every build. Mute the noise from deps; first-party code still warns.
+      onLog(level, log, handler) {
+        if (log.code === "INVALID_ANNOTATION" && log.id?.includes("node_modules")) return;
+        handler(level, log);
+      },
+    },
   },
   resolve: {
     // vize-only: it compiles SFC script imports as CJS interop, duplicating vue-router
@@ -121,7 +134,12 @@ export default defineConfig({
     ...(USE_VIZE ? { dedupe: ["vue", "vue-router", "@vue/runtime-core", "@vue/runtime-dom"] } : {}),
     alias: [
       // Exact match: force the single ESM vue-router (vize only — see note above).
-      ...(USE_VIZE ? [{ find: /^vue-router$/, replacement: vueRouterEsm }] : []),
+      ...(USE_VIZE
+        ? [
+            { find: /^vue-router$/, replacement: vueRouterEsm },
+            { find: /^@iconify\/vue\/offline$/, replacement: iconifyOfflineEsm },
+          ]
+        : []),
       { find: "~", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
       // Velite's prebuilt content collections (generated/velite). Aliased so the
       // content shim and type imports skip the ../../ climb out of src/.

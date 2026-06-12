@@ -1,0 +1,28 @@
+/* WordPress post body (v-html) on /blogs/[slug]. Lives outside the SFC because
+   vize skips Tailwind over SFC <style> blocks, and v-html children defeat scoping anyway. */
+@reference "./main.css";
+@plugin "@tailwindcss/typography";
+
+.wp-content {
+  @apply prose prose-neutral max-w-none;
+}
+
+.wp-content .wp-block-gallery {
+  @apply flex flex-wrap gap-4 my-8 p-0 list-none;
+}
+
+.wp-content .wp-block-gallery > figure {
+  @apply m-0 flex-1 min-w-[200px];
+}
+
+.wp-content .wp-block-image img {
+  @apply w-full h-auto rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300;
+}
+
+.wp-content .aligncenter {
+  @apply flex justify-center mx-auto;
+}
+
+.wp-content .wp-block-image.aligncenter {
+  @apply flex justify-center;
+}
