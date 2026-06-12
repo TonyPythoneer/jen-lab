@@ -2,9 +2,8 @@
   <div
     class="relative rounded-card shadow-sm overflow-hidden bg-ash-white border border-abyssal-ink/8"
   >
-    <!-- Image fills the whole card. basalt-canvas shows while it decodes or if `banner` is unset.
-         Title/brief/purchase moved off the card (detail in the info drawer, buying in the buy
-         button), so the image takes over the height the detail block used to occupy. -->
+    <!-- Image fills the whole card (detail lives in the info drawer, buying in the buy
+         button). basalt-canvas shows while it decodes or if `banner` is unset. -->
     <div class="relative aspect-[2/1] bg-basalt-canvas">
       <SharedPicture
         v-if="banner"
@@ -67,9 +66,8 @@
 </template>
 
 <script setup lang="ts">
-// `descriptionHtml` is pre-rendered at build (see velite.config.ts).
-// `description` is the markdown source — declared only to absorb the
-// spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
+// descriptionHtml is build-rendered (velite.config.ts); `description` only
+// absorbs the v-bind="product" spread so Vue doesn't warn on an unknown attr.
 defineProps<{
   banner?: string;
   title: string;

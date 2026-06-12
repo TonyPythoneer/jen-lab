@@ -1,25 +1,12 @@
-// Generates AVIF siblings for the site's content images and a manifest of which
-// ones won.
-//
-// WHY: the gallery / product / hero images are authored as .webp in public/.
-// AVIF is typically 20-30% smaller, but not always — tiny images can come out
-// larger. So we convert, KEEP the .avif only when it actually beats the .webp,
-// and record the winners in a manifest. The <Picture> component reads that
-// manifest and only emits an <picture><source type="image/avif"> when a real,
-// smaller .avif exists — so the browser never fetches a missing or worse file.
-//
-// Run via `pnpm gen:avif`. Re-run after adding/replacing images. Output (.avif
-// files + manifest) is committed so the deploy doesn't need sharp. A run whose
-// inputs are unchanged is skipped entirely (no sharp load); pass `--force` to
-// re-encode regardless.
+// Converts public/ .webp images to AVIF, keeping each .avif only when it beats
+// its source; <Picture> reads the resulting manifest of winners.
+// Run `pnpm gen:avif` after changing images (`--force` re-encodes); commit the outputs.
 import { writeFileSync, readdirSync, statSync, existsSync, rmSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fingerprint, isFresh, saveCache } from "./lib/codegenCache";
 
 const PUBLIC_DIR = "public";
-// Committed (not under generated/) so the deploy build needs neither sharp nor a
-// gen step — <Picture> imports this list directly. Re-run `pnpm gen:avif` after
-// changing images; commit the new .avif files and this manifest together.
+// Committed (not generated/) so the deploy build needs neither sharp nor a gen step.
 const MANIFEST = "src/lib/avifManifest.json";
 // Below this, AVIF's win is marginal and its encode cost / larger-than-webp risk
 // isn't worth it (avatars, tiny portraits). Convert only the heavy content set.
@@ -36,9 +23,8 @@ function walk(dir: string): string[] {
   return out;
 }
 
-// The eligible source images decide every output, so fingerprint them (path +
-// size + mtime) along with the encode params. Unchanged inputs → identical
-// .avif/manifest, so the whole run (and sharp itself) can be skipped.
+// Fingerprint the inputs (path + size + mtime) and encode params — when unchanged,
+// the whole run (and sharp's startup) can be skipped.
 const eligible = walk(PUBLIC_DIR)
   .filter((webp) => statSync(webp).size >= MIN_BYTES)
   .sort();

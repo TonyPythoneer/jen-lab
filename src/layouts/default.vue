@@ -8,9 +8,8 @@
 
     <SiteFooter />
 
-    <!-- Deferred off the global bundle: the modal (and its reka Dialog) only
-         loads the first time search opens. searchMounted latches true so the
-         modal stays mounted after — the close animation still plays. -->
+    <!-- Loads on first search open; searchMounted latches true afterwards so the
+         close animation still plays. -->
     <BlogSearchModal
       v-if="searchMounted"
       :placeholder="chrome?.search.placeholder"

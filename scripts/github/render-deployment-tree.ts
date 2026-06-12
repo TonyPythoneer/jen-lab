@@ -132,8 +132,7 @@ export function renderDeploymentTree(deployments: RawDeployment[], opts: TreeOpt
 }
 
 // CLI: `node --experimental-strip-types scripts/github/render-deployment-tree.ts <json-file>`
-// Prints the (size-capped) tree to stdout and writes the full tree to
-// deployments-tree.md for upload as a workflow artifact.
+// Prints the size-capped tree; writes the full tree to deployments-tree.md (CI artifact).
 if (process.argv[1]?.endsWith("render-deployment-tree.ts")) {
   const jsonPath = process.argv[2];
   if (!jsonPath) {

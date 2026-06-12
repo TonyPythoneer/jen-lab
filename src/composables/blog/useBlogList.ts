@@ -7,10 +7,7 @@ export interface BlogListInit {
   page?: unknown;
 }
 
-/**
- * Pure blog-list state: filters and pagination.
- * No framework-bound APIs — the consuming page owns fetch and URL sync.
- */
+// Pure blog-list state (filters + pagination); the consuming page owns fetch and URL sync.
 export function useBlogList(init: BlogListInit) {
   // Filter state
   const search = ref(typeof init.q === "string" ? init.q : "");

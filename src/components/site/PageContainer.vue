@@ -16,15 +16,8 @@ defineProps<{ breakout?: boolean }>();
 </template>
 
 <style scoped>
-/*
-  CSS Grid Breakout: three named columns so child sections can either
-  stay within the 1200px content column or span edge-to-edge via
-  the "full" column lines. No JS, no negative margins.
-
-  Usage in child sections:
-    default  → stays within content column automatically
-    .full-bleed → add this class to break out to full viewport width
-*/
+/* CSS Grid breakout — no JS, no negative margins. Children default to the
+   1200px content column; .full-bleed spans edge-to-edge. */
 .page-breakout {
   display: grid;
   grid-template-columns:

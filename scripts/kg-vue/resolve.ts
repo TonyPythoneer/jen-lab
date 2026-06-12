@@ -1,6 +1,5 @@
-// Resolves an import specifier from a source file to a real repo-relative path.
-// Mirrors vite.config.ts resolve.alias (~/ -> src/, #velite, #food-map-data).
-// Bare npm specifiers return null — they are external, not a project edge.
+// Resolves an import specifier to a repo-relative path, mirroring vite.config.ts
+// resolve.alias. Bare npm specifiers return null — external, not a project edge.
 import { posix } from "node:path";
 
 // Known virtual aliases → fixed generated targets (see vite.config.ts resolve.alias).

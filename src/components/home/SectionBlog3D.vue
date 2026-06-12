@@ -49,11 +49,8 @@
 
 <script setup lang="ts">
 import { fetchPosts, stripHtml } from "~/utils/blog/wpApi";
-// Shared neon-arc utility, imported here (not globally) so it ships only in this
-// component's chunk. A plain .css import is global (non-scoped) `.neon-arc`, same
-// as a `<style src>` block — but imported via the script so the `~` alias resolves
-// under BOTH the stable plugin-vue path and the vize compiler (vize can't resolve
-// aliases inside `<style src>`).
+// Imported here (not globally) so it ships only in this chunk — via the script,
+// not `<style src>`, because vize can't resolve the `~` alias there.
 import "~/assets/css/effects/neon-arc.css";
 
 const props = withDefaults(
@@ -81,14 +78,8 @@ onMounted(async () => {
   postsPage.value = await fetchPosts({ perPage: props.postCount });
 });
 
-// Image sizing knob — tune PHOTON_FIT below.
-// Cards are 2/3 portrait, locked to desktop max 432x648 (--w: 18em + 1.5em font),
-// rendered with object-fit: cover (crop to fill). Source images come through Jetpack
-// Photon (*.wp.com); its fit=W,H query resizes at the CDN, so a smaller fit means a
-// smaller GPU texture and less stutter while the ring spins.
-//   "432,648"   1x         lightest, slightly soft on HiDPI
-//   "640,960"   ~1.5x      current, balanced
-//   "864,1296"  2x retina  sharpest, heaviest
+// Jetpack Photon CDN-resizes via fit=W,H: a smaller fit means a smaller GPU
+// texture and less spin stutter. Cards max 432x648, so "640,960" ≈ 1.5x density.
 const PHOTON_FIT = "640,960";
 function downscalePhoton(url: string): string {
   try {
@@ -119,19 +110,13 @@ const items = computed(() =>
 
 const n = computed(() => Math.max(items.value.length, 1));
 
-// Only front-facing cards are clickable-to-flip. Stops mis-clicks on far/side cards,
-// since CSS 3D hit-testing isn't depth-sorted. Clicking a front card flips it and
-// pauses the spin (enters detail); exit via the X button, Escape, or click-outside.
-// Heuristic: a front card has the widest projected box under perspective, avoiding
-// fragile angle/sign math.
+// CSS 3D hit-testing isn't depth-sorted, so only front cards may flip. "Front" =
+// widest projected box under perspective — no fragile angle/sign math.
 const assemblyRef = ref<HTMLElement>();
 const activeIndex = ref<number | null>(null);
 
-// Front-ness tolerance (tunable): a card counts as front (flippable) when its
-// projected width >= widest card x FRONT_RATIO.
-//   1.0   strictest — only the centre card flips
-//   lower looser — more near-front cards flip
-//   ~0.5  several front cards flip (current); too low lets side cards flip again
+// A card is front (flippable) when its projected width >= widest card × this.
+// 1.0 = only the centre card; too low lets side cards flip again.
 const FRONT_RATIO = 0.475;
 
 function isFrontCard(card: HTMLElement): boolean {
@@ -191,7 +176,6 @@ onKeyStroke("Escape", deactivate);
   perspective: 50em;
 }
 
-/* ── Assembly: GPU compositor spin, no cascade ────────────────────────────── */
 @keyframes blog3dv2-spin {
   to {
     rotate: 0 1 0 -1turn;
@@ -227,13 +211,11 @@ article {
   cursor: pointer;
   transform: rotatey(calc(var(--i) * 1turn / var(--n))) translatez(var(--z));
 
-  /* Flip only the JS-activated front card (.is-active), set on click/focus. Other
-     cards stay clickable but never flip — kills far/side mis-flips and double-flips. */
+  /* Only the JS-activated front card flips (see isFrontCard in the script). */
   &.is-active {
     --hov: 1;
-    /* Lift the active card outward along its own normal (toward the camera) so
-       neighbour cards stop occluding its side/bottom edges — otherwise the
-       spinning border arc vanishes wherever a neighbour overlaps it. */
+    /* Lift the active card toward the camera so neighbours stop occluding its
+       edges — otherwise the spinning border arc vanishes where they overlap. */
     transform: rotatey(calc(var(--i) * 1turn / var(--n))) translatez(calc(var(--z) - 6em));
   }
   /* Two-face flip: header (title) and figure (image) sit back-to-back; --hov adds a
@@ -260,17 +242,15 @@ figure {
   grid-area: 1 / 1;
 }
 
-/* Only header (the title back-face) needs an image background; figure shows the
-   image via <img>, so a figure background would be redundant — one less GPU texture. */
+/* Only header needs the image background — figure shows it via <img>, so a
+   second background would just cost another GPU texture. */
 article header {
   background: var(--url) 50% / cover #121212;
   align-content: end;
 }
 
-/* Neon surround on the flipped (active) card. The spinning arc comes from the
-   shared `.neon-arc` utility (assets/css/neon-arc.css); only the per-card tuning
-   lives here. Drop the default offset drop-shadow — its bottom-right #000 blur
-   would paint over the thin arc on those edges. */
+/* The arc comes from the shared .neon-arc utility; only per-card tuning here.
+   The default drop-shadow would paint over the thin arc, so it goes. */
 article.is-active {
   --neon-arc-ring: 12px;
 }
@@ -301,8 +281,8 @@ figure {
   rotate: y calc(var(--hov) * 0.5turn);
 }
 
-/* Make card content the hit area (drives :hover; the title face holds hover after the
-   flip so it doesn't jitter). Whether a card flips is gated by .is-front above. */
+/* Card content is the hit area; the title face holds hover after the flip so it
+   doesn't jitter. Whether a card flips is gated by isFrontCard() in the script. */
 h3,
 img,
 a {
@@ -334,8 +314,7 @@ img {
   }
 }
 
-/* Close button: sits on the title face (visible after flip), top-right, fully round.
-   Lives inside <header>, which is backface-hidden, so it's only hittable when flipped. */
+/* Lives inside <header>, which is backface-hidden, so it's only hittable when flipped. */
 .card-close {
   position: absolute;
   top: 0.6em;

@@ -16,9 +16,8 @@ function toggleSheet() {
   else store.openDrawer();
 }
 
-// The close (X) button dismisses everything back to the initial collapsed peek:
-// drop any picked place AND collapse the sheet. (Back, by contrast, only drops
-// the place and stays expanded on the list.)
+// Close (X) resets to the collapsed peek: drop the picked place AND collapse.
+// (Back only drops the place, staying expanded on the list.)
 function closeToPeek() {
   store.selectRestaurant(null);
   store.closeDrawer();

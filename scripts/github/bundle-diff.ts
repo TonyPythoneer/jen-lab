@@ -1,8 +1,5 @@
-// Renders a markdown bundle-size diff for a deploy comment. Columns mirror the
-// CLI bundle report (HTML · JS · CSS · JS+CSS) so the two reads stay consistent;
-// each cell shows the new gzipped size, with its delta vs the baseline appended
-// when it moved. JS+CSS is the assets total the verdict tracks; HTML is the
-// prerendered doc (informational — it never drives the verdict).
+// Renders a markdown bundle-size diff for the deploy comment. Columns mirror the
+// CLI bundle report; JS+CSS drives the verdict, HTML is informational.
 // CLI: jiti scripts/github/bundle-diff.ts <base.json> <current.json>
 //   env: BASE_REF, DEPLOY_SHA, DEPLOY_MSG, REPO
 import { readFileSync } from "node:fs";

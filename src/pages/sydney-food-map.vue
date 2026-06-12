@@ -10,9 +10,8 @@ useSeoMeta({
   description: "An atlas of personally visited restaurants across Sydney.",
 });
 
-// Load the atlas serif fonts directly from Google Fonts. The css2 endpoint
-// serves the Traditional-Chinese unicode-range subsets, so 雪梨食堂誌 /
-// category names render in Noto Serif TC instead of a system fallback.
+// Atlas serif fonts from Google Fonts — css2 serves the Traditional-Chinese
+// unicode-range subsets, so 雪梨食堂誌 renders in Noto Serif TC.
 useHead({
   link: [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },

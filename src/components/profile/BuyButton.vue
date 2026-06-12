@@ -143,9 +143,8 @@ onBeforeUnmount(clearTimer);
   initial-value: 0deg;
 }
 
-/* Pill-shaped ring matching the button: a conic gradient masked to a thick
- * band. The transparent wedge grows clockwise from the top (12 o'clock), so
- * the line disappears top → top-right → right → … until it is gone. */
+/* Pill ring: a conic gradient masked to a band. The transparent wedge grows
+   clockwise from 12 o'clock, erasing the line top → right → bottom → gone. */
 .buy-ring {
   position: absolute;
   inset: -0.85rem;

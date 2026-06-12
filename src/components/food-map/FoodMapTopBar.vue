@@ -17,8 +17,7 @@ const AREAS = [
   { id: "Suburbs", name: "城郊", sub: "Suburbs" },
 ] as const;
 
-// Dependent filter maths — each facet's counts come from the dataset under the
-// OTHER facet's current selection, so Region and Cuisine constrain each other.
+// Region and Cuisine constrain each other — see foodMapFilters.
 const selection = computed(() => ({
   region: store.state.selectedArea,
   cuisine: store.state.selectedCategoryId,
@@ -26,8 +25,7 @@ const selection = computed(() => ({
 const regionCounts = computed(() => countByRegion(props.allRestaurants, selection.value));
 const cuisineCounts = computed(() => countByCuisine(props.allRestaurants, selection.value));
 
-// Cuisines with no match under the selected region drop out entirely, so an
-// impossible region+cuisine pair can never be picked.
+// Cuisines with no match under the selected region drop out entirely.
 const activeCategories = computed(() =>
   props.categories.filter((c) => (cuisineCounts.value[c.id] ?? 0) > 0),
 );
@@ -58,9 +56,7 @@ const visibleCategories = computed(() => {
       />
     </div>
 
-    <!-- Filter chips: Area toggles first, then one chip per cuisine. Both are
-         single-select and depend on each other — a district with no match under
-         the active cuisine is disabled; counts update live. Scrolls sideways. -->
+    <!-- Filter chips: area toggles first, then one chip per cuisine. Scrolls sideways. -->
     <div class="food-topbar__chips">
       <button
         v-for="a in AREAS"

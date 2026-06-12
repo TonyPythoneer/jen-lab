@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useScrollProgress } from "~/composables/shared/useScrollProgress";
-// Card copy comes from content/pages-layout/home.md (section-directions block).
-// Each card only picks a `colorKey`; this component owns the actual Tailwind
-// classes and the left/right layout so editors never touch CSS.
+// Card copy comes from content/pages-layout/home.md; cards pick a colorKey only.
+// This component owns the Tailwind classes, so editors never touch CSS.
 const COLOR_MAP = {
   violet: {
     colorBg: "bg-cyber-violet",

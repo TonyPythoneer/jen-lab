@@ -1,15 +1,5 @@
-// A thin custom Leaflet canvas layer.
-//
-// WHY: Leaflet draws each marker as its own DOM element with a translate3d, so 77
-// restaurant pins + 32 boats become 100+ GPU compositor layers — which a weak phone
-// can't recomposite per frame while the map is dragged. Drawing them all onto ONE
-// <canvas> collapses that to a single layer that pans as a bitmap.
-//
-// The canvas sits in its own map pane. During a pan the whole pane is transformed by
-// Leaflet, so the canvas rides along for free (no redraw). We only reposition +
-// redraw when the gesture ends (moveend/zoomend) — the same trick Leaflet's own
-// canvas renderer uses. A zoomanim handler scales the canvas with the tiles so pins
-// don't detach mid-zoom, then it snaps back crisp at zoomend.
+// Custom Leaflet canvas layer: all markers draw onto ONE canvas (one compositor
+// layer instead of 100+ DOM markers), repositioned only when a gesture ends.
 
 import type { Map as LeafletMap, Point } from "leaflet";
 
@@ -20,10 +10,8 @@ export interface CanvasDrawHelpers {
   project: (lat: number, lng: number) => { x: number; y: number };
   size: { x: number; y: number };
   dpr: number;
-  // Live zoom-animation scale (1 when steady). The canvas itself is CSS-scaled by
-  // this during a zoom; draw marker SIZES divided by it so they end up a constant
-  // screen size (like Google) instead of pulsing with the zoom. Positions are
-  // unaffected — the canvas transform still moves them with the tiles.
+  // Live zoom-animation scale (1 when steady). Divide marker SIZES by it so they
+  // hold a constant screen size instead of pulsing; positions are unaffected.
   zoomScale: number;
 }
 
@@ -38,8 +26,8 @@ export interface CanvasLayerController {
   destroy(): void;
 }
 
-// Cap the backing store at 1.5× device pixels — a full-screen canvas at DPR 3 is a
-// huge bitmap to fill on every redraw; 1.5× is near-indistinguishable and far cheaper.
+// Cap the backing store: a full-screen canvas at DPR 3 is a huge bitmap to fill
+// on every redraw; 1.5× is near-indistinguishable and far cheaper.
 const DPR_CAP = 1.5;
 
 export function createCanvasLayer(
@@ -56,10 +44,8 @@ export function createCanvasLayer(
   }
   const pane = map.getPane(opts.paneName)!;
 
-  // `leaflet-zoom-animated` is what makes our setTransform() math correct + smooth:
-  // it sets `transform-origin: 0 0` (so a zoom's scale pivots from the top-left, the
-  // way setTransform assumes — otherwise markers stay put / drift), and adds the zoom
-  // CSS transition so a button/wheel zoom eases instead of snapping.
+  // `leaflet-zoom-animated` sets transform-origin 0 0 (the pivot setTransform
+  // assumes — otherwise markers drift) and the easing zoom CSS transition.
   const canvas = L.DomUtil.create(
     "canvas",
     "food-canvas-layer leaflet-zoom-animated",
@@ -71,10 +57,8 @@ export function createCanvasLayer(
   pane.appendChild(canvas);
   const ctx = canvas.getContext("2d")!;
 
-  // The view captured at the last settle (reset). During a zoom these stay FROZEN at
-  // the pre-zoom view, so we keep drawing marker positions in the pre-zoom projection
-  // and let the canvas's CSS transform move them with the tiles. Re-projecting against
-  // the live map mid-zoom would drift (Leaflet sets the map to the target zoom up front).
+  // View FROZEN at the last settle: mid-zoom we keep drawing in the pre-zoom
+  // projection and let the CSS transform move it — live re-projection would drift.
   let origin: Point = map.containerPointToLayerPoint([0, 0]);
   let startPixelOrigin: Point = map.getPixelOrigin();
   let curZoom = map.getZoom();
@@ -103,9 +87,8 @@ export function createCanvasLayer(
     const size = map.getSize();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size.x, size.y);
-    // Project in the FROZEN (captured) zoom, not the live map — equals the live
-    // projection when steady, and stays correct mid-zoom (the CSS transform animates
-    // the position). Equivalent to latLngToLayerPoint(ll) − origin at capture time.
+    // Project in the FROZEN zoom, not the live map — identical when steady, and
+    // stays correct mid-zoom (the CSS transform animates the position).
     const project = (lat: number, lng: number) => {
       const pp = map.project([lat, lng], curZoom);
       return { x: pp.x - startPixelOrigin.x - origin.x, y: pp.y - startPixelOrigin.y - origin.y };
@@ -148,20 +131,16 @@ export function createCanvasLayer(
     draw();
   }
 
-  // Transform the canvas to match an in-flight view (mirrors L.Renderer._updateTransform),
-  // so pins/boats stay glued to the map during an animation instead of snapping at the
-  // end. `center`/`zoom` are the animation's current target.
+  // Match the canvas to an in-flight view (mirrors L.Renderer._updateTransform) so
+  // markers stay glued to the map during an animation instead of snapping at the end.
   function applyViewTransform(center: ReturnType<LeafletMap["getCenter"]>, zoom: number) {
     try {
       const scale = map.getZoomScale(zoom, curZoom);
       const mapAny = map as unknown as {
         _getNewPixelOrigin: (c: typeof center, z: number) => Point;
       };
-      // Our canvas content is drawn at (layerPoint − origin) in the pre-zoom view, so a
-      // bitmap pixel maps to absolute pixel (startPixelOrigin + origin + Q). The transform
-      // must scale that by the zoom and re-anchor to the NEW pixel origin. Including the
-      // `origin` term is what was missing — without it, a pan before a zoom (origin ≠ 0)
-      // drifts the markers by scale × origin, worst on an off-centre pinch.
+      // Scale the bitmap's absolute pixel base (startPixelOrigin + origin) by the
+      // zoom and re-anchor to the new pixel origin; dropping `origin` drifts markers.
       const offset = startPixelOrigin
         .add(origin)
         .multiplyBy(scale)
@@ -190,9 +169,8 @@ export function createCanvasLayer(
   reset();
 
   return {
-    // Steady-state redraw (boat motion, selection/hover changes). Refreshes the
-    // captured view so positions stay exact — but NOT mid-zoom (zoomRaf active), where
-    // re-capturing at the target zoom would drift the markers off the tiles.
+    // Steady-state redraw. Re-captures the view for exact positions — but never
+    // mid-zoom, where capturing at the target zoom would drift markers off the tiles.
     redraw() {
       if (zoomRaf == null) captureView();
       draw();
