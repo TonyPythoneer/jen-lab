@@ -12,9 +12,8 @@ import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
 
 defineOptions({ inheritAttrs: false });
 
-// Brand Badge on cva, using the shadcn bridge tokens (foreground=abyssal-ink,
-// primary-foreground=pure-white). Brand `default` = ink fill (NOT shadcn's orange
-// primary); `outline` = a 1px ring (not a border).
+// Brand Badge on cva + shadcn bridge tokens. Brand `default` = ink fill (NOT
+// shadcn's orange primary); `outline` = a 1px ring, not a border.
 const badgeVariants = cva("inline-flex items-center font-medium rounded-button", {
   variants: {
     variant: {

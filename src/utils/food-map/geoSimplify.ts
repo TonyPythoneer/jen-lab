@@ -1,14 +1,5 @@
-// Douglas-Peucker simplification for GeoJSON outlines.
-//
-// WHY: the Sydney suburb-boundary GeoJSON has ~174k vertices across 471 suburbs.
-// The map reprojects every one of them (lat/lng → pixel) on each zoom and uploads
-// them as one giant layer on each pan — the dominant cost behind drag jank on a
-// weak phone GPU. These are faint decorative outlines, so we can drop the vast
-// majority of points with no visible change. Run this once after the data loads.
-//
-// Coordinates are GeoJSON order: [lng, lat]. Epsilon is in degrees; at Sydney's
-// latitude ~0.0005 deg ≈ 45 m, a few pixels at street zoom — invisible on a 0.5
-// opacity hairline.
+// Douglas-Peucker for GeoJSON outlines: the ~174k-vertex suburb boundary is the
+// dominant drag-jank cost. Coordinates are GeoJSON [lng, lat]; epsilon in degrees.
 
 type Position = [number, number];
 
@@ -30,7 +21,6 @@ function perpDistance(p: Position, a: Position, b: Position): number {
 export function simplifyRing(points: Position[], epsilon: number): Position[] {
   if (points.length < 3) return points.slice();
 
-  // Find the point farthest from the chord between the two endpoints.
   let maxDist = 0;
   let index = 0;
   const first = points[0]!;
@@ -43,7 +33,6 @@ export function simplifyRing(points: Position[], epsilon: number): Position[] {
     }
   }
 
-  // Keep the farthest point and recurse on both halves; else drop the middle.
   if (maxDist > epsilon) {
     const left = simplifyRing(points.slice(0, index + 1), epsilon);
     const right = simplifyRing(points.slice(index), epsilon);
@@ -97,8 +86,7 @@ interface FeatureCollectionLike {
   features?: FeatureLike[];
 }
 
-// Simplify a FeatureCollection's geometry in place and return it. Counts the
-// vertices before/after so callers can log the reduction.
+// Simplify a FeatureCollection's geometry in place and return it.
 export function simplifyFeatureCollection(
   fc: FeatureCollectionLike,
   epsilon: number,

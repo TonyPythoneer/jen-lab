@@ -1,9 +1,8 @@
 <template>
   <DialogRoot :open="open" @update:open="emit('update:open', $event)">
     <DialogPortal>
-      <!-- Overlay -->
-      <!-- `appear` so a panel that is mounted while already open still animates
-           in. The global search modal is lazy-mounted on its first open. -->
+      <!-- Overlay. `appear` so a panel mounted while already open (the lazy-mounted
+           search modal) still animates in. -->
       <Transition name="app-overlay" appear>
         <DialogOverlay
           v-if="open"

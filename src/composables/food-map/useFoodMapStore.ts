@@ -1,13 +1,8 @@
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import { filterRestaurants } from "~/utils/food-map/foodMapFilters";
 
-// Module-level state — all food-map components share the same reactive object.
-// Safe during SSR/prerender because: (1) all values are immutable defaults, and
-// (2) mutations only happen via user interaction, which never fires server-side.
-// If this composable is ever called outside <ClientOnly> in a new route, revisit.
-//
-// Region (`selectedArea`) and Cuisine (`selectedCategoryId`) are two single-select
-// facets that AND-combine and depend on each other (see foodMapFilters).
+// Module-level reactive state shared by all food-map components. SSR-safe only
+// because mutations come from user interaction — revisit if used outside <ClientOnly>.
 const state = reactive({
   search: "",
   selectedCategoryId: null as string | null,

@@ -16,18 +16,13 @@ const props = withDefaults(
     hoveredCategoryId: string | null;
     theme: MapTheme;
     boatsEnabled: boolean;
-    // Dev-only layer switches: let us turn each static vector layer off on its own
-    // and measure how much it costs while the map is dragged. Default true so prod
-    // (where the toggles are not exposed) always shows the full network.
+    // Dev-only perf levers (A/B on a real phone). Defaults show the full network
+    // in prod, where the toggles are not exposed.
     courseLinesVisible?: boolean;
     wharfDotsVisible?: boolean;
     boundaryVisible?: boolean;
-    // Off = use the full-resolution jsdelivr CDN geometry (no thinning) so the
-    // perf cost can be compared on a real phone. Default on (simplified).
-    boundarySimplified?: boolean;
-    // Dev tile-resolution comparison: @2x retina vs @1x. (Phones force @1x anyway.)
+    boundarySimplified?: boolean; // off = full-resolution boundary geometry
     tileMode?: TileMode;
-    // Dev levers still worth A/B-ing on a real phone.
     maxBoundsEnabled?: boolean; // pen the map into the data box
     idleTiles?: boolean; // only fetch tiles when the drag stops
   }>(),
@@ -50,9 +45,8 @@ const emit = defineEmits<{
 
 const SYDNEY_CENTER: [number, number] = [-33.8675, 151.208];
 const BOUNDARY_URL = "https://cdn.jsdelivr.net/gh/tim-massey/sydney-geojson@master/sydney.geojson";
-// The raw boundary has ~174k vertices — the heaviest thing the map reprojects on
-// zoom and composites on pan. These are faint hairline outlines, so we thin them
-// hard right after download. ~0.0005 deg ≈ 45 m, a few pixels at street zoom.
+// The raw boundary has ~174k vertices — the dominant pan/zoom cost. They are
+// faint hairlines, so thin hard: 0.0005 deg ≈ 45 m, a few pixels at street zoom.
 const BOUNDARY_SIMPLIFY_EPSILON = 0.0005;
 
 const mapEl = ref<HTMLDivElement | null>(null);
@@ -62,14 +56,12 @@ let L: typeof import("leaflet") | null = null;
 let map: LeafletMap | null = null;
 let tileLayer: TileLayer | null = null;
 let boundaryLayer: GeoJSON | null = null;
-// Suburb labels are DOM markers, so we only keep the ones in view on the map at a
-// time (viewport-culled) instead of all ~470 — see updateLabels.
+// Suburb labels are DOM markers — only the in-view ones are mounted (see updateLabels).
 let labelMarkers: { m: Marker; ll: LatLng }[] = [];
-// The raw downloaded boundary, kept pristine so a dev switch can rebuild the layer
-// either simplified or full-resolution (jsdelivr CDN) for an on-device comparison.
+// Kept pristine so buildBoundary can rebuild either simplified or full-resolution.
 let rawBoundary: unknown = null;
 let boundaryZoomHandler: (() => void) | null = null;
-// The padded box around all restaurant points; the dev maxBounds toggle reapplies it.
+// Padded box around all restaurant points; the dev maxBounds toggle reapplies it.
 let dataBounds: import("leaflet").LatLngBounds | null = null;
 let boats: RiverBoatsController | null = null;
 let pinCanvas: PinCanvasController | null = null;
@@ -92,9 +84,8 @@ function applyTheme(theme: MapTheme) {
   }
 }
 
-// Build the basemap for the current theme. Phones get the @1x (256px) tiles — a
-// quarter of the @2x retina pixels — which a weak GPU composites far cheaper while
-// panning; desktop keeps @2x for crispness. The dev dropdown can still force @1x.
+// Phones get @1x tiles (a quarter of the @2x pixels — far cheaper for a weak GPU
+// to composite while panning); desktop keeps @2x for crispness.
 function applyBasemap() {
   if (!map || !L) return;
   if (tileLayer) {
@@ -107,27 +98,21 @@ function applyBasemap() {
   const url = force1x ? src.url.replace("{r}", "") : src.url;
   tileLayer = L.tileLayer(url, {
     ...(src.options as any),
-    // Only fetch/swap tiles once the drag stops, and keep fewer off-screen tiles.
-    // While the finger is moving, the map just translates the tiles already on
-    // screen — no per-frame tile DOM churn.
+    // Fetch/swap tiles only once the drag stops — no per-frame tile DOM churn.
     updateWhenIdle: props.idleTiles,
     updateWhenZooming: false,
     keepBuffer: props.idleTiles ? 1 : 2,
   }).addTo(map);
 }
 
-// Pen the map into the box around all restaurant points plus a small margin, so
-// dragging can never wander into empty tiles. Mirrors the old map's fixed maxBounds
-// but computed from the live data ("the max coords of all points, give or take").
+// Pen the map into the box around all restaurant points plus a margin, so
+// dragging can never wander into empty tiles.
 function fitMaxBoundsToData(list: EnrichedRestaurant[]) {
   if (!map || !L || !list.length) return;
   const data = L.latLngBounds(list.map((r) => [r.coordinates.lat, r.coordinates.lng]));
 
-  // Pad the wall so even an edge pin can be flown to the centre of the mobile
-  // "room" (the open band between the search bar and the detail sheet). The pin
-  // sits at roomCentre, which is above the map centre, so the map centre must be
-  // able to travel ~half the viewport past the pin — convert that pixel offset to
-  // lat/lng at the selection zoom (15) and pad every side by it.
+  // Pad the wall so an edge pin can still be flown to the mobile "room" centre:
+  // convert that pixel offset to lat/lng at selection zoom 15, pad every side.
   const size = map.getSize();
   const selZoom = 15;
   const roomCentre = (64 + size.y * 0.38) / 2; // searchBar 64px ↔ sheet top 0.38h
@@ -150,7 +135,6 @@ function fitMaxBoundsToData(list: EnrichedRestaurant[]) {
   applyMaxBounds();
 }
 
-// Apply or clear the pen-in box per the dev toggle. (25% breathing room baked in.)
 function applyMaxBounds() {
   if (!map || !L) return;
   map.setMaxBounds(props.maxBoundsEnabled && dataBounds ? dataBounds : (undefined as never));
@@ -167,11 +151,8 @@ function loadBoundaries() {
     .catch((e) => console.warn("Suburb boundary overlay unavailable:", e?.message ?? e));
 }
 
-// Build (or rebuild) the boundary + labels from the cached raw data. With
-// `boundarySimplified` on we thin the ~174k outline to a few thousand points
-// before Leaflet sees it; off uses the full jsdelivr CDN geometry, so a dev can
-// feel the difference on a real phone. Tears the old layers down first so the
-// switch can be flipped repeatedly without leaking zoom listeners.
+// Rebuild boundary + labels from the cached raw data, tearing the old layers
+// down first so the dev switch never leaks zoom listeners.
 function buildBoundary() {
   if (!map || !L || !rawBoundary) return;
 
@@ -233,8 +214,8 @@ function buildBoundary() {
   updateLabels();
 }
 
-// Keep only the suburb labels currently in view on the map (zoom ≥ 14), instead of
-// all ~470 DOM markers — that viewport cull is what keeps the label layer cheap.
+// Mount only the labels in view at zoom ≥ 14 — the viewport cull is what keeps
+// ~470 DOM markers cheap.
 function updateLabels() {
   if (!map) return;
   const show = props.boundaryVisible && map.getZoom() >= 14;
@@ -247,7 +228,6 @@ function updateLabels() {
   }
 }
 
-// Show / hide the suburb boundary polylines (labels follow via updateLabels).
 function applyBoundaryVisible(on: boolean) {
   if (!map) return;
   if (boundaryLayer) {
@@ -257,8 +237,7 @@ function applyBoundaryVisible(on: boolean) {
   updateLabels();
 }
 
-// All pins live on one canvas now (see usePinCanvas). These just feed it data +
-// state; the heavy DOM-per-marker rendering is gone.
+// Pins render on one shared canvas (see usePinCanvas); these feed it data + state.
 function buildMarkers(list: EnrichedRestaurant[]) {
   pinCanvas?.setData(list);
 }
@@ -269,8 +248,8 @@ function applyHover() {
   pinCanvas?.setHovered(props.hoveredCategoryId);
 }
 
-// Desktop hover: find the pin under the cursor, highlight its category group, and
-// show a name tooltip. Mobile (no hover) never runs this.
+// Desktop hover: highlight the category group under the cursor + show a name
+// tooltip. Mobile (no hover) never runs this.
 let hoveredPinId: string | null = null;
 function onMapMouseMove(e: {
   containerPoint: { x: number; y: number };
@@ -305,9 +284,8 @@ function onMapMouseOut() {
   if (mapEl.value) mapEl.value.style.cursor = "";
 }
 
-// Registered synchronously: inside the async onMounted it would run after the
-// first `await` with no active instance and silently never fire, leaking the
-// boats rAF + resize listener. The refs it touches are module-level lets above.
+// Registered synchronously: inside the async onMounted it would land after the
+// first `await` with no active instance — never firing, leaking rAF + listeners.
 onUnmounted(() => {
   if (invalidate) window.removeEventListener("resize", invalidate);
   boats?.destroy();
@@ -329,14 +307,11 @@ onMounted(async () => {
     attributionControl: true,
     minZoom: 11,
     maxZoom: 18,
-    // Render every vector layer (suburb boundary, ferry course lines, wharf dots)
-    // onto ONE canvas instead of a big SVG DOM tree. The suburb boundary alone is
-    // thousands of vertices; as SVG it is the heaviest thing to composite while the
-    // map is dragged on a weak phone GPU. A canvas pans as a single bitmap.
+    // Every vector layer renders onto ONE canvas instead of a big SVG DOM tree —
+    // a canvas pans as a single bitmap, which a weak phone GPU can composite.
     preferCanvas: true,
-    // Hard wall at the edge of the data (see fitMaxBoundsToData). Keeps the user
-    // from panning into empty ocean where the map would keep loading new tiles —
-    // the old (smooth) map did the same with a fixed box + viscosity 1.0.
+    // Hard wall at the data edge (see fitMaxBoundsToData) so the user can't pan
+    // into empty ocean and keep loading tiles.
     maxBoundsViscosity: 1.0,
   });
 
@@ -344,19 +319,17 @@ onMounted(async () => {
   fitMaxBoundsToData(props.restaurants);
   loadBoundaries();
 
-  // All restaurant pins render on one canvas (no DOM-per-marker). Feed it data.
   pinCanvas = createPinCanvas(map, L);
   buildMarkers(props.restaurants);
   applySelection();
   applyHover();
 
-  // Desktop hover tooltip element; positioned in container pixels on mousemove.
   hoverTip = document.createElement("div");
   hoverTip.className = "food-tip";
   hoverTip.style.display = "none";
   mapEl.value.appendChild(hoverTip);
 
-  // Pins are pixels now, so hit-test on the map itself for click + hover.
+  // Pins are canvas pixels, so click + hover hit-test on the map itself.
   map.on("click", (e) => {
     const pt = (e as unknown as { containerPoint: { x: number; y: number } }).containerPoint;
     const id = pinCanvas?.hitTest(pt.x, pt.y);
@@ -367,14 +340,13 @@ onMounted(async () => {
     map.getContainer().addEventListener("mouseleave", onMapMouseOut);
   }
 
-  // Build the ferry network once; it lives across every theme (only re-tinted).
+  // Built once; a theme change only recolours it, never rebuilds.
   boats = createRiverBoats(map, L);
   boats.setEnabled(props.boatsEnabled);
   boats.setCourseLinesVisible(props.courseLinesVisible);
   boats.setWharfDotsVisible(props.wharfDotsVisible);
 
-  // Dev-only handle so a Playwright bench can toggle each layer and measure its
-  // drag cost in isolation. Never exposed in prod builds.
+  // Dev-only handle for a Playwright bench to toggle each layer in isolation.
   if (import.meta.env.DEV) {
     (window as unknown as { __foodMapDebug?: unknown }).__foodMapDebug = {
       map,
@@ -385,11 +357,8 @@ onMounted(async () => {
     };
   }
 
-  // While the map is panned/zoomed: freeze the ferries AND drop the GPU-expensive
-  // tints (tile filter + grain/wash blend — see `.is-interacting` in food-map.css)
-  // so weak mobile GPUs stay smooth. Everything restores the moment the map settles.
-  // Freeze the ferry animation while the map is panned/zoomed so its per-frame
-  // canvas redraw doesn't compete with the gesture; resume when it settles.
+  // Freeze the ferry animation during pan/zoom so its per-frame canvas redraw
+  // doesn't compete with the gesture; resume when the map settles.
   map.on("movestart zoomstart", () => boats?.pause());
   map.on("moveend zoomend", () => boats?.resume());
 
@@ -410,9 +379,8 @@ onMounted(async () => {
       const bounds = L.latLngBounds(list.map((r) => [r.coordinates.lat, r.coordinates.lng]));
       try {
         if (window.innerWidth <= 640) {
-          // The list sheet covers the lower 62dvh on mobile, and the search +
-          // filter chips float over the top. Reserve both so the whole group is
-          // framed in the open band, not crammed under the sheet.
+          // Reserve the list sheet (lower 62dvh) and the floating search/chips
+          // so the group is framed in the open band, not crammed under either.
           const h = map.getSize().y;
           map.fitBounds(bounds, {
             animate: true,
@@ -435,9 +403,8 @@ onMounted(async () => {
       if (!r || !map || !L) return;
       const latlng = L.latLng(r.coordinates.lat, r.coordinates.lng);
       const zoom = Math.max(map.getZoom(), 15);
-      // On mobile the detail sheet covers the lower part of the screen. Centre the
-      // pin in the open band between the search bar and the sheet top, so it is
-      // neither hidden by the sheet nor tucked under the input bar.
+      // Mobile: centre the pin in the open band between the search bar and the
+      // detail sheet, so neither covers it.
       if (window.innerWidth <= 640) {
         const h = map.getSize().y;
         const searchBarBottom = 64; // search row: 14 top + ~45 tall + margin
@@ -458,7 +425,6 @@ onMounted(async () => {
     () => props.theme,
     (t) => {
       applyTheme(t);
-      // One network across every style — theme only re-tints, never rebuilds.
       boats?.refreshTheme();
     },
   );

@@ -100,8 +100,7 @@ const initialQuery = route.query;
 const { search, selectedCategoryIds, selectedTagIds, currentPage, scopeKey, fullKey } =
   useBlogList(initialQuery);
 
-// Taxonomies (categories + tags from content collections — sync via `pnpm sync:wp`).
-// Client-only: defers taxonomy fetch off SSR/hydration critical path.
+// Taxonomies come from content collections (sync via `pnpm sync:wp`).
 const { tags } = useBlogTaxonomies();
 const tagMap = computed(() => Object.fromEntries((tags.value ?? []).map((t) => [t.wpId, t.name])));
 
@@ -139,7 +138,6 @@ async function load() {
 
 // New filter scope wipes the cache first so it cannot grow unbounded across sessions.
 watch(scopeKey, () => loadPosts.clear());
-// Client-only (was server:false): fetch on the client, refetch when the key changes.
 watch(fullKey, load, { immediate: true });
 
 watch(currentPage, async () => {

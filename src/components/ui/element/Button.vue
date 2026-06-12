@@ -20,10 +20,8 @@ import { useSplitClassAttrs } from "~/composables/shared/useSplitClassAttrs";
 
 defineOptions({ inheritAttrs: false });
 
-// Brand Button on cva. Classes use the shadcn-bridge tokens (primary=digital-orange,
-// foreground=abyssal-ink, primary-foreground=pure-white, secondary=cyber-violet,
-// accent=ink/8, ring=digital-orange) so the look is identical and 100% on the
-// shadcn token system. The color×variant matrix lives in compoundVariants.
+// Brand Button on cva, styled 100% via the shadcn bridge tokens
+// (primary=digital-orange, secondary=cyber-violet, …); the matrix is in compoundVariants.
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-1.5 rounded-button font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {

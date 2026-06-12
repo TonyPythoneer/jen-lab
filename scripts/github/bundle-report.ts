@@ -1,10 +1,5 @@
-// Reports the initial download weight of each prerendered page.
-//
-// Each dist/<route>.html lists the JS and CSS it loads up front (the entry
-// script, its modulepreload links, and stylesheets). Summing those files —
-// raw and gzipped — gives the real "what does this page cost" number, per page.
-//
-// Run after `pnpm build`. Used locally and in CI (see .github/workflows).
+// Reports each prerendered page's initial download weight: the entry script,
+// modulepreloads, and stylesheets its dist HTML loads, raw + gzipped. Run after `pnpm build`.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";

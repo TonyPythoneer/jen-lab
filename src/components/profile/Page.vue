@@ -2,9 +2,8 @@
   <!-- Inline section dispatch: sections get Caldera font-display headings;
        portal/product sections use responsive 2-col grids. -->
   <div class="flex flex-col gap-12">
-    <!-- Header: full viewport height, centered column — img → name → bio.
-         Negative margins cancel SitePageContainer's pt-10 and px-4 so the
-         hero truly fills edge-to-edge from just below the site header. -->
+    <!-- Header: full-viewport centered column. Negative margins cancel
+         SitePageContainer's pt-10/px-4 so the hero fills edge-to-edge. -->
     <div
       class="flex items-center justify-center h-[calc(100dvh-var(--site-header-h))] -mt-10 -mx-4 sm:-mx-6 lg:-mx-8"
     >
@@ -57,14 +56,14 @@
       <!-- portal-list: 2-col responsive grid -->
       <template v-if="section.component === 'portal-list'">
         <div class="grid sm:grid-cols-2 gap-3">
-          <HomePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
+          <ProfilePortal v-for="portal in section.portals" :key="portal.to" v-bind="portal" />
         </div>
       </template>
 
       <!-- product-list: 2-col responsive grid -->
       <template v-else-if="section.component === 'product-list'">
         <div class="grid sm:grid-cols-2 gap-5">
-          <HomeProduct
+          <ProfileProduct
             v-for="product in section.products"
             :key="product.purchaseUrl"
             v-bind="product"
@@ -78,7 +77,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeYoutubeGallery :videos="gallery.videos" />
+          <ProfileYoutubeGallery :videos="gallery.videos" />
         </div>
       </template>
 
@@ -88,7 +87,7 @@
           <h3 v-if="gallery.label" class="text-sm font-semibold text-abyssal-ink/60">
             {{ gallery.label }}
           </h3>
-          <HomeImageGallery :images="gallery.images" />
+          <ProfileImageGallery :images="gallery.images" />
         </div>
       </template>
     </section>

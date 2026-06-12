@@ -30,7 +30,7 @@ const currentYear = new Date().getFullYear();
       class="relative bg-abyssal-ink text-pure-white rounded-card p-10 flex flex-col justify-between gap-5 overflow-hidden"
     >
       <!-- Dark-radial dotfield: pixel-glare dots fading from top-right corner -->
-      <HomeBackgroundDots v-bind="footerDotField" />
+      <SharedBackgroundDots v-bind="footerDotField" />
       <!-- Brand mark + wordmark -->
       <RouterLink to="/" class="flex items-center gap-2.5 w-fit">
         <img src="/favicon.128x128.webp" alt="" class="size-7 rounded-full shrink-0" />

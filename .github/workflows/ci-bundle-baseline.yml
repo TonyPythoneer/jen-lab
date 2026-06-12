@@ -20,7 +20,8 @@ on:
     paths:
       - "src/**"
       - "content/**"
-      - "scripts/build-icon-subset.ts"
+      - "scripts/lib/**"
+      - "vite/**"
       - "scripts/github/bundle-report.ts"
       - "vite.config.ts"
       - "velite.config.ts"

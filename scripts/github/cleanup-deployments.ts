@@ -54,9 +54,8 @@ export function planCleanup(
   // Decide which deployment ids to KEEP. Everything else is deleted.
   const keepIds = new Set<string>();
 
-  // 1. The newest production deployment is the live `main` build. Protect it by
-  //    environment, not branch name, so it survives even when a deployment is
-  //    missing branch metadata (e.g. a CI deploy made in detached HEAD).
+  // 1. Newest production deployment = the live main build. Protected by environment,
+  //    not branch name — branch metadata can be missing (detached-HEAD CI deploys).
   const newestProd = deployments
     .filter((d) => d.environment === "production" && typeof d.id === "string")
     .sort(byNewest)[0];

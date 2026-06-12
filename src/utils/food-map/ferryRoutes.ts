@@ -1,10 +1,5 @@
-// Sydney Ferries network — the shared route data layer.
-//
-// Geometry comes from OpenStreetMap (`route=ferry`), the SAME source the basemaps
-// render, so our route lines + boats sit exactly on top of the faint ferry lines
-// baked into the tiles instead of drifting off them. Run `pnpm sync:ferries:osm`
-// (scripts/sync-ferries-osm.ts) to refresh it via the Overpass API. The data shape
-// never changes — map themes only repaint it, they never decide which routes exist.
+// Sydney Ferries route data from OSM (route=ferry) — the basemaps' own source, so
+// lines + boats sit exactly on the tiles' ferry lines. Refresh: `pnpm sync:ferries:osm`.
 
 import data from "../../assets/data/ferry-routes.json";
 

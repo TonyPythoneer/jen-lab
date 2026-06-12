@@ -1,8 +1,7 @@
 import { wpCategories, wpTags } from "#velite";
 
 // Categories + tags from content collections (synced via `pnpm sync:wp`).
-// Velite content is synchronous, so these are plain computeds — they now render
-// into the prerendered /blogs HTML instead of filling in client-side.
+// Velite is synchronous, so plain computeds — they render into the prerendered HTML.
 export function useBlogTaxonomies() {
   const categories = computed(() => [...wpCategories].sort((a, b) => b.wpId - a.wpId));
   const tags = computed(() => [...wpTags].sort((a, b) => b.count - a.count || b.wpId - a.wpId));

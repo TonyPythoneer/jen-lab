@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-// Aliased so the SFC's own global name <Icon> (this component) never collides
-// with the iconify primitive it renders.
-import { Icon as IconifyIcon } from "@iconify/vue";
+// Aliased so this component's global <Icon> name never collides with the iconify
+// primitive. /offline drops the CDN runtime — icons are bundled in main.ts.
+import { Icon as IconifyIcon } from "@iconify/vue/offline";
 
 const props = defineProps<{ name: string }>();
 

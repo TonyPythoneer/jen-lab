@@ -1,9 +1,5 @@
-// Plain, framework-free site config — single source of truth so values never
-// drift. Imported by app components (Footer), vite.config.ts (fonts), and the
-// WordPress API util + sync script (WP_BASE).
-
-// Canonical site identity — single source for the domain so it never drifts
-// across the WP API base (utils/wpApi.ts) and the contact link + email below.
+// Framework-free site config — the single source so values never drift.
+// Imported by components, vite.config.ts, and the WP sync script.
 const SITE_DOMAIN = "jenliu.com.au";
 export const SITE_ORIGIN = `https://${SITE_DOMAIN}`;
 export const SITE_EMAIL = `jen@${SITE_DOMAIN}`;

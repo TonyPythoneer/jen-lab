@@ -29,9 +29,8 @@ export interface MapTheme {
   vars: MapThemeVars;
 }
 
-// Parchment FX removed, so the two old OSM themes (hand-tint / engraving) became
-// identical — only the basemap source now distinguishes a theme. Kept the two
-// genuinely-different basemaps: CARTO Voyager (colour) and plain OSM (ink).
+// Only the basemap source distinguishes a theme: CARTO Voyager (colour) and
+// plain OSM (ink).
 export const MAP_THEMES: MapTheme[] = [
   {
     id: "voyager",

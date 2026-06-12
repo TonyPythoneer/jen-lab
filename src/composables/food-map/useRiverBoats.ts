@@ -1,57 +1,22 @@
-// =============================================================================
-// useRiverBoats — Sydney Ferries SIMULATION (painter + vessel movement)
-// -----------------------------------------------------------------------------
-// Renders the shared route data layer (FERRY_ROUTES) and drives vessels along it
-// as a believable, active ferry network. Depends ONLY on Leaflet (the `map`
-// passed in) + FERRY_ROUTES. It knows nothing about Vue, the store, or drawers.
-//
-// ── ONE NETWORK, EVERY MAP STYLE ─────────────────────────────────────────────
-// The route network is DATA, not decoration. Course lines + wharves are built ONCE
-// into one Leaflet layer group; the moving fleet is drawn on a dedicated canvas
-// (see useCanvasLayer — one layer for the whole fleet, not one DOM marker each).
-// Switching the cartographic style never rebuilds or hides the network. The route
-// styling is DECOUPLED from the theme: colours are fixed in networkColors() so the
-// network reads identically on every basemap. (Per-theme tinting was the old bug —
-// a blue line on the blue-water style dropped out of sight.)
-//
-// ── VESSELS FOLLOW REAL ROUTE GEOMETRY (no free movement, no shortcuts) ───────
-// A vessel is parametrised by `pos` = metres travelled along its route polyline,
-// so it is ALWAYS attached to the path. It runs as a point-to-point service:
-//     terminal A → (pause at each intermediate wharf) → terminal B → reverse → …
-// It never jumps to a random position and never disappears mid-route — at a
-// terminal it lays over briefly, then sails the return journey. Bidirectional
-// traffic comes free: half the vessels on a route start from each terminal.
-//
-// ── FREQUENCY-DRIVEN FLEET ───────────────────────────────────────────────────
-// Each route's vessel count scales with its length, capped by maxShipsPerRoute
-// and the global shipCount. Per-vessel speed variance keeps movement un-synced.
-//
-// ── PERF / DEGRADATION ───────────────────────────────────────────────────────
-// One rAF loop total (dt clamped); pauses on document.hidden; prefers-reduced-
-// motion places vessels statically. Enabled-state is owned by the caller.
-// =============================================================================
+// Sydney Ferries simulation: the FERRY_ROUTES network built once + vessels sailing
+// on one shared canvas. A vessel's `pos` (metres along its polyline) pins it to the path.
 
 import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
 import { FERRY_ROUTES } from "~/utils/food-map/ferryRoutes";
 import { createCanvasLayer, type CanvasLayerController } from "./useCanvasLayer";
 
 export interface RiverBoatsController {
-  // Re-read --boat-route/--boat-ink and recolour lines, wharf dots, and boats.
+  // Re-assert the fixed network colours after a basemap swap.
   refreshTheme(): void;
-  // Show + animate the whole network, or hide it.
   setEnabled(on: boolean): void;
   isEnabled(): boolean;
-  // Freeze / unfreeze the animation WITHOUT hiding the fleet. Used while the map
-  // is panned or zoomed so the per-frame marker updates don't compete with the
-  // map's own interaction work; the boats ride along, frozen, then resume.
+  // Freeze/unfreeze the animation without hiding the fleet — used during pan/zoom
+  // so the per-frame redraws don't compete with the map's own interaction work.
   pause(): void;
   resume(): void;
-  // Show / hide the static SVG layers on their own. These exist so a dev tool can
-  // isolate how much each vector layer costs while dragging the map. They do NOT
-  // touch the boats or the enabled-state — they only add/remove the sub-group.
+  // Dev-only: show/hide each static vector layer to profile its drag cost.
   setCourseLinesVisible(on: boolean): void;
   setWharfDotsVisible(on: boolean): void;
-  // Stop rAF, remove the layer, drop listeners.
   destroy(): void;
 }
 
@@ -86,31 +51,27 @@ interface Vessel {
   facingRight: boolean;
 }
 
-// ── TUNABLE CONFIG ───────────────────────────────────────────────────────────
 const CONFIG = {
   shipCount: 32, // global soft cap on simultaneous vessels
   maxShipsPerRoute: 6, // per-route ceiling (avoids crowding)
 
-  // On-screen pace. Real ferries are ~8 m/s; we compress time so the network
-  // feels lively. effective m/s = baseSpeedMetresPerSec * shipSpeedMultiplier.
+  // On-screen pace, time-compressed (real ferries are ~8 m/s).
+  // effective m/s = baseSpeedMetresPerSec * shipSpeedMultiplier.
   baseSpeedMetresPerSec: 70,
   shipSpeedMultiplier: 1.8,
 
-  // Each vessel gets its own multiplier in [min,max] → natural movement.
+  // Each vessel gets its own multiplier in [min,max] so movement stays un-synced.
   speedVarianceMin: 0.82,
   speedVarianceMax: 1.25,
 
-  // Service realism: pause at each wharf, longer layover at terminals (sec).
+  // Pause at each wharf, longer layover at terminals (seconds).
   dwellSeconds: 1.4,
   terminalLayoverSeconds: 3.2,
 
   // ~1 vessel per this many metres of route (then clamped by the caps above).
   metresPerVessel: 2600,
 
-  // Dash must read as a continuous line on ANY basemap. A very sparse dash (the
-  // old "1 6") only joins up over textured terrain; on the blue style's blank
-  // water the dots got lost, so routes looked like they vanished. Denser dash +
-  // slightly heavier weight keeps them legible on featureless water too.
+  // Dense dash + slightly heavier weight so routes stay legible on featureless water.
   routeLine: { weight: 1.5, dashArray: "5 4" },
   wharfRadius: 2.6,
 };
@@ -123,15 +84,12 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
 
 export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsController {
-  // Source from FERRY_ROUTES, keeping only routes with usable geometry.
   const routes = FERRY_ROUTES.filter(
     (r) => r.path && r.path.length > 1 && r.stops && r.stops.length >= 2,
   );
 
   const layer: LayerGroup = L.layerGroup();
-  // Course lines and wharf dots live in their own sub-groups so a dev tool can
-  // toggle each layer independently and measure how much each one costs while
-  // the map is dragged. Boats are added straight to `layer`.
+  // Own sub-groups so the dev toggles can show/hide each layer independently.
   const courseGroup: LayerGroup = L.layerGroup();
   const wharfGroup: LayerGroup = L.layerGroup();
   const reduced = prefersReducedMotion();
@@ -143,13 +101,11 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   let lastTs = 0;
   let running = false;
 
-  // The caller owns this; default off until setEnabled is called. Declared before
-  // the boat canvas because its onDraw (run once at creation) reads it.
+  // Declared before the boat canvas: its onDraw (run once at creation) reads it.
   let enabled = false;
 
-  // The boats render on their own canvas (one layer for the whole fleet) instead
-  // of one DOM marker each — see useCanvasLayer for why. Solid sail-ship silhouette
-  // as a single Path2D, faces RIGHT; the draw mirrors it for left-bound travel.
+  // Sail-ship silhouette as a single Path2D. Faces RIGHT; the draw mirrors it
+  // for left-bound travel.
   let boatInk = "#2c2418";
   const boatPath = new Path2D(
     "M11.45 3.2h1.1v12.6h-1.1z" +
@@ -212,16 +168,12 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     return { lat, lng, dx };
   }
 
-  // Ferry styling is DECOUPLED from the map theme on purpose. The route layer must
-  // read the same on every basemap — warm parchment, blue water, or topographic —
-  // so its colours are fixed here, not pulled from the theme's --boat-* vars. This
-  // is why some routes used to vanish on the blue "Harbour Blue" style: a per-theme
-  // blue line over blue water dropped out. A fixed dark ink shows on all of them.
+  // Fixed colours, never theme vars: the network must read the same on every
+  // basemap — a theme-tinted line can vanish over same-coloured water.
   function networkColors(): { route: string; ink: string } {
     return { route: "rgba(46, 36, 26, 0.62)", ink: "#2c2418" };
   }
 
-  // ── BUILD the whole network from CONFIG (runs once) ──────────────────────────
   function build() {
     layer.clearLayers();
     courseGroup.clearLayers();
@@ -248,7 +200,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       .filter((m) => m.total > 0);
     if (!measured.length) return;
 
-    // Course line + wharf dots per route.
     measured.forEach((m) => {
       const lineOptions: import("leaflet").PolylineOptions = {
         interactive: false,
@@ -273,11 +224,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       });
     });
 
-    // Allocate vessels by route length, then fit the global shipCount budget,
-    // longest routes first. A route can get ZERO boats — its course line still
-    // draws. This matters because we carry every OSM ferry way (for parity with
-    // the basemap), including many short legs; without a 0 floor each tiny leg
-    // would force a boat and the fleet would explode past shipCount.
+    // Allocate by route length, longest first, within the shipCount budget. A route
+    // may get ZERO boats — a 1-boat floor on every tiny OSM leg would blow the budget.
     const desired = measured.map((m) =>
       clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );
@@ -338,7 +286,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     }
   }
 
-  // ── SIMULATION LOOP ──────────────────────────────────────────────────────────
   function frame(ts: number) {
     if (!running) return;
     const dt = lastTs ? Math.min((ts - lastTs) / 1000, 0.1) : 0;
@@ -351,7 +298,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       const step = v.speed * dt;
 
       if (step >= remaining) {
-        // Arrived at the next wharf / terminal.
         v.pos = target;
         const atTerminal = target <= 0 || target >= v.total;
         v.dwellUntil =
@@ -366,7 +312,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       v.lng = p.lng;
       v.facingRight = (v.dir > 0 ? p.dx : -p.dx) >= 0;
     }
-    // One canvas redraw for the whole fleet this frame.
     boatCanvas.redraw();
     rafId = window.requestAnimationFrame(frame);
   }
@@ -389,9 +334,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
   }
   document.addEventListener("visibilitychange", onVisibility);
 
-  // Apply the current enabled-state: show + animate, or hide the whole network.
-  // The boatCanvas.redraw() also covers reduced-motion (start() is a no-op there,
-  // so this single draw places the static fleet) and clears it when disabled.
+  // The redraw also covers reduced-motion (start() is a no-op there, so this one
+  // draw places the static fleet) and clears the canvas when disabled.
   function applyEnabled() {
     if (enabled) {
       if (!map.hasLayer(layer)) layer.addTo(map);
@@ -403,9 +347,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     boatCanvas.redraw();
   }
 
-  // Called after every map-style swap. Colours are fixed (see networkColors), so
-  // this only re-asserts them and keeps the network on top — the route look is the
-  // same on every theme by design.
   function refreshTheme() {
     const colors = networkColors();
     courseLines.forEach((pl) => pl.setStyle({ color: colors.route }));
@@ -414,7 +355,6 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
     boatCanvas.redraw();
   }
 
-  // Build the network once; the caller decides enabled via setEnabled.
   build();
   if (reduced) stop();
 
@@ -424,8 +364,7 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       enabled = !!val;
       applyEnabled();
     },
-    // Freeze (stop the rAF, keep the fleet on the map) and unfreeze (start() is a
-    // no-op if disabled or reduced-motion, so resume is always safe to call).
+    // start() no-ops when disabled or reduced-motion, so resume is always safe.
     pause: stop,
     resume: start,
     setCourseLinesVisible(on: boolean) {
