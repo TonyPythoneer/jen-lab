@@ -1,17 +1,22 @@
 # CLAUDE.md
 
-> **Stack (2026-06):** This repo runs **Vue 3 + Vite** (vite-plus, vite-ssg, Velite, reka-ui). Nuxt **and `@nuxt/ui`** have been removed. All guidance below reflects the current Vite stack.
+> **Stack:** Vue 3 + Vite (vite-plus, vite-ssg, Velite, reka-ui), deployed to Cloudflare Pages.
 >
-> **UI layer:** UI components live in **`src/components/ui/<category>/`** (Nuxt UI taxonomy: `element` / `navigation` / `overlay` / `page` / `utility`) and are referenced with **NO prefix** — `<Button>`, `<Modal>`, `<Slideover>`, `<Tabs>`, `<Pagination>`, `<Popover>`, `<Badge>`, `<Skeleton>`, `<PageHeader>`, `<Icon>`, `<ClientOnly>` (unplugin-vue-components `globalNamespaces` strips the `ui/<category>` folder segments). The **interactive** ones are built on **`reka-ui`** headless primitives, so a11y is built in: `Modal`/`Slideover` → `Dialog`, `Tabs` → `Tabs`, `Pagination` → `Pagination`, `Popover` → `Popover` (focus trap, Esc, keyboard nav, ARIA, scroll-lock). The **native** ones (`Button`, `Badge`, `Icon`, `Skeleton`, `PageHeader`) have no reka-ui primitive — plain elements + Tailwind. Variants are mostly plain TS maps merged via **`src/lib/utils.ts`** `cn()` (= `clsx` + `tailwind-merge`); **`Button` and `Badge` build their variants with `class-variance-authority` (cva)** instead. Load-bearing: **`reka-ui`, `clsx`, `tailwind-merge`, `class-variance-authority`**.
+> **UI layer:** components live in **`src/components/ui/<category>/`** (`element` / `navigation` / `overlay` / `page` / `utility`) and are referenced with **NO prefix** — `<Button>`, `<Modal>`, `<Slideover>`, `<Tabs>`, `<Pagination>`, `<Popover>`, `<Badge>`, `<Skeleton>`, `<PageHeader>`, `<Icon>`, `<ClientOnly>` (unplugin-vue-components `globalNamespaces` strips the folder segments).
+>
+> - **Interactive** components wrap **`reka-ui`** headless primitives — `Modal`/`Slideover` → `Dialog`, `Tabs` → `Tabs`, `Pagination` → `Pagination`, `Popover` → `Popover` — so focus trap, Esc, keyboard nav, ARIA, and scroll-lock come built in.
+> - **Native** components (`Button`, `Badge`, `Icon`, `Skeleton`, `PageHeader`) are plain elements + Tailwind.
+> - **Variants:** plain TS maps merged via `cn()` (`src/lib/utils.ts` = `clsx` + `tailwind-merge`); `Button`/`Badge` use **cva**. Load-bearing deps: `reka-ui`, `clsx`, `tailwind-merge`, `class-variance-authority`.
 
 ## Constitution
 
-- Professionalism
+- Professionalism — comments & docs serve two readers at once
+  - **WHY**: for humans, good text carries judgment — it gives direction and drives action. For machines, it IS the prompt — stale or bloated text poisons every future session.
   - Must use **plain English** in code & comments regardless of how complex the logic is, as if writing for a 15–18-year-old.
-    - **WHY** - so any human can step in without explanation
-  - Must refine any code & comments I write to **plain English**.
-  - Must stop inflating code and comments as you must validate them and ensure they are concise and succinct
-  - Must review your output and simplify it as much as possible through self-reflection and rumination.
+  - **Code explains itself first**: spend effort on naming (balanced against name length) before reaching for a comment.
+  - **A comment states its function in 1–2 lines.** Examples (usage commands, code snippets) are exempt. A 3rd line is a signal: compress it or improve the naming.
+  - **Forward-looking only**: state the present constraint, never the history behind it. Ban "the old X", "was removed", "used to", change-log narration, and tuning-option tables.
+  - Must review your output and simplify it before declaring done.
 - UI testing
   - Must predict **style** & **animation** by calculating first. No browser when the resulting screen is calculable.
   - When you **cannot** predict the resulting screen by calculation, driving **webwright / Playwright in the background** is your last step. This is the single path for **all** visual verification — style, animation, and interaction alike. Use the **webwright** skill (`/webwright:run` for one-shot, `/webwright:craft` for reusable); it drives a local Playwright browser and saves screenshots + an action log as evidence.
@@ -67,10 +72,10 @@ Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import
 - **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus's TS setup; stories are dev-only.
 - **Import from `@storybook/vue3-vite`** (not `@storybook/vue3`).
 - **`Section*` components** get a `Default` story + an `InPage` story (`parameters: { layout: "fullscreen" }`, wrapped in `min-h-dvh bg-[var(--color-basalt-canvas)]`) for RWD viewport testing.
-- **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. There is no `@nuxt/ui` palette generation anymore — UI components style themselves with plain TS maps + `cn()` + brand-token utilities directly (`Button`/`Badge` use cva for their variants).
-- **Single source for site config**: `src/config/site.ts` (consumed by `main.ts`, `vite.config.ts` for the fonts link, and runtime components like `Footer`). `app.config.ts` is gone with Nuxt. Change colors/contacts there only.
-- **`src/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — `@nuxt/ui` was removed (no `<UApp>` provider), and reka-ui overlays/popovers need no app-level provider, so the plain wrapper is enough.
-- **Storybook is dev-server only** (`pnpm storybook`). There is intentionally no `build-storybook` script: the production build (rolldown / vite-plus) fails with ~25 `[plugin vite:vue] "At least one <template> or <script> is required"` SFC-parse errors — a rolldown gap in the Storybook prod path — and it was unused in practice. The dev server compiles fine via the incremental compiler.
+- **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. UI components style themselves with plain TS maps + `cn()` + brand-token utilities (`Button`/`Badge` use cva).
+- **Single source for site config**: `src/config/site.ts` (consumed by `main.ts`, `vite.config.ts`, and runtime components like `Footer`). Change colors/contacts there only.
+- **`src/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — reka-ui overlays/popovers need no app-level provider.
+- **Storybook is dev-server only** (`pnpm storybook`); intentionally NO `build-storybook` script — the rolldown prod build fails with ~25 SFC-parse errors in the Storybook path. The dev server compiles fine.
 
 ## Component Organization
 
@@ -113,7 +118,7 @@ Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import
 - File naming under `src/`: TS modules are **camelCase** — composables (`useRiverBoats.ts`) and plain utils (`geoSimplify.ts`, `foodMapFilters.ts`) alike. Vue components stay PascalCase (`FoodMapCanvas.vue`). A test mirrors its source name (`geoSimplify.ts` → `geoSimplify.test.ts`). No kebab-case for `.ts` modules.
 - Prefer full config path over destructured aliases: use `pages.home.items` not `home.items` or `items`. Keeps data origin visible in templates.
 - No hardcoded strings in Vue templates for domain identifiers/labels/keys. Define constants in `<script setup>` and bind via `:id`, `:label`, etc. Variant prop literals (e.g. `<Button color="neutral" variant="outline">`, `<HomeSprite half="left">`) are part of the component contract and stay inline.
-- Default to no comments. Add a comment only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a workaround tied to a library internal.
+- Default to no comments. Add one only when the WHY is non-obvious — a hidden constraint, an intentional non-idiom (e.g. lazy chunk-split intent in `useRestaurants`), or a library workaround — and keep it to 1–2 lines (see Constitution).
 - Exception: in Vue templates, label implicit sub-components with a one-word section comment (e.g. `<!-- Banner -->`, `<!-- Contacts -->`) when the template contains multiple distinct visual regions but extracting them into separate `.vue` files would be over-splitting (no reuse, no isolated state). Pure structural marker, not a WHAT-explanation. See `src/components/profile/Page.vue`.
 - For components with multiple distinct DOM groups (e.g. a nav bar), add short comments on each group so the template is scannable. Prefix with `Desktop:` / `Mobile:` when a block is breakpoint-specific. Include a one-line WHY on non-obvious dynamic behaviour (e.g. `<!-- Logo: avatar always visible; "JEN" text slides out when scrolled -->`). See `src/components/site/Header.vue`.
 
