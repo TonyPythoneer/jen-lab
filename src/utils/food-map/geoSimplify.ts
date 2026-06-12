@@ -1,10 +1,5 @@
-// Douglas-Peucker simplification for GeoJSON outlines.
-//
-// WHY: the suburb-boundary GeoJSON has ~174k vertices — the dominant cost behind
-// drag jank on a weak phone GPU. The outlines are faint hairlines, so most points
-// can go with no visible change. Run once after the data loads.
-//
-// Coordinates are GeoJSON order: [lng, lat]. Epsilon is in degrees.
+// Douglas-Peucker for GeoJSON outlines: the ~174k-vertex suburb boundary is the
+// dominant drag-jank cost. Coordinates are GeoJSON [lng, lat]; epsilon in degrees.
 
 type Position = [number, number];
 

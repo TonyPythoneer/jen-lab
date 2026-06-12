@@ -32,8 +32,7 @@ withDefaults(
 const heroDotField = { opacity: 0.08, spacing: 28 };
 
 // #region Scroll-pinned exit animation
-// useScrollProgress (see its docs for the wrapper/sticky DOM shape) drives the
-// portraits off-screen — knows → left, liu → right — as the runway scrolls.
+// useScrollProgress drives the portraits off-screen (knows → left, liu → right).
 const pinWrapper = useTemplateRef<HTMLElement>("pinWrapper");
 const { progress } = useScrollProgress(pinWrapper);
 

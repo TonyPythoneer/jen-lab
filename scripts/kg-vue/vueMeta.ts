@@ -1,10 +1,5 @@
-// v2 enrichment: type-resolved props/emits/slots from vue-component-meta (Volar's
-// engine). This is the one thing the manifests + compiler-sfc AST cannot do —
-// e.g. Button's `color?: ButtonVariants["color"]` only expands to
-// "primary" | "neutral" | "secondary" when a real type-checker reads it.
-//
-// Expensive: createChecker builds a full TS program over tsconfig (~the cost of
-// `vue-tsc --noEmit`), so this runs only behind --meta, never by default.
+// Type-resolved props/emits/slots via vue-component-meta (Volar) — the one thing
+// the AST can't do. createChecker costs ~a full vue-tsc run, so only behind --meta.
 import { join } from "node:path";
 import { createChecker } from "vue-component-meta";
 import type { KnowledgeGraph } from "./graph";

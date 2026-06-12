@@ -2,11 +2,8 @@
 // @ts-ignore — generated manifest (scripts/build-avif.ts), no bundled types
 import avifManifest from "~/lib/avifManifest.json";
 
-// Drop-in for <img> that serves a smaller AVIF when one was generated
-// (scripts/build-avif.ts → avifManifest.json), falling back to the original
-// .webp. display:contents makes the <picture> layout-transparent so the <img>
-// stays the real layout child, and inheritAttrs:false + v-bind="$attrs" forwards
-// class / style / loading / alt straight to it.
+// <img> drop-in: serves the smaller AVIF (see avifManifest) with .webp fallback.
+// display:contents keeps the <img> the layout child; $attrs forwards straight to it.
 defineOptions({ inheritAttrs: false });
 
 const props = defineProps<{ src: string }>();

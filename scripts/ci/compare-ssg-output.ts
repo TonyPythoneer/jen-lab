@@ -1,18 +1,5 @@
-// Compare the prerendered SSG output between the two Vue SFC compilers:
-// stable @vitejs/plugin-vue ("Vue") vs vize ("Rust", behind the VIZE flag).
-// Builds the app once per compiler, measures the prerendered HTML / JS / CSS
-// weight and the `vite-ssg build` time, and prints a side-by-side table.
-//
-// It also gates on content: a green build is NOT proof the pages rendered — a
-// broken SSR can still emit a ~1KB shell with an empty <div id="app">. Each build
-// is checked for real content, and the run fails loudly if either compiler drops
-// a route, so the VIZE flag can't regress silently.
-//
-// Icon codegen + velite run ONCE up front: their output does not depend on VIZE, so
-// the only timed step is `vite-ssg build` — the part the compiler choice actually
-// changes. vue-tsc is skipped here (typecheck is compiler-agnostic and already
-// covered by the check / typecheck job).
-//
+// Builds the app once per SFC compiler (plugin-vue vs vize), prints a weight/time
+// table, and fails loudly unless every route rendered real content (not an empty shell).
 // Usage: jiti scripts/ci/compare-ssg-output.ts
 
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
@@ -138,9 +125,8 @@ function printTable(vue: Result, vize: Result) {
   for (const row of rows) console.log(renderRow(row, false));
 }
 
-// Build one compiler, time only its `vite-ssg build`, weigh the dist, and gate
-// its content. Called once per compiler, in order — each build overwrites dist,
-// so measuring happens right after the build, before the next one runs.
+// Build one compiler, time only its `vite-ssg build`, weigh dist, gate content.
+// Each build overwrites dist, so measure immediately, before the next build runs.
 function buildAndMeasure(label: string, vize: string): { result: Result; failures: string[] } {
   console.log(`\n→ vite-ssg build with ${label} (VIZE=${vize || "<unset>"})`);
   const start = performance.now();

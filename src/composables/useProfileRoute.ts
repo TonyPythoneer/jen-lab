@@ -1,8 +1,7 @@
 import { home } from "#velite";
 
-// Shared data + SEO wiring for the two profile routes (/jen-knows, /jen-liu),
-// which are identical except for the slug and the head title. Each route file
-// keeps its own template (brand + display name) and calls this for the rest.
+// Shared data + SEO wiring for /jen-knows and /jen-liu — identical routes except
+// slug and head title; each route file keeps its own template.
 export function useProfileRoute(opts: { slug: "jen-knows" | "jen-liu"; headTitle: string }) {
   const page = computed(() => home.find((r) => r.path === `/home/${opts.slug}`));
 

@@ -1,9 +1,6 @@
 /**
- * Turns a scroll-pinned (sticky) section's scroll position into a 0→1 progress
- * number. Returns only the number — it never touches the DOM or sets styles.
- *
- * `target` must be the TALL outer wrapper (the scroll runway), not the sticky
- * child that pins inside it:
+ * 0→1 progress for a scroll-pinned (sticky) section. `target` is the TALL outer
+ * wrapper (the runway), not the sticky child that pins inside it:
  *
  * ```vue
  * <section ref="wrap" class="h-[200vh]">
@@ -11,9 +8,7 @@
  * </section>
  * ```
  *
- * Caveats: `position: sticky` silently breaks if ANY ancestor sets overflow;
- * progress is 0 during SSR and until mount, so the rest-state must look correct
- * at 0; the math assumes the sticky child is roughly viewport-tall.
+ * sticky silently breaks if any ancestor sets overflow; progress is 0 until mount.
  */
 export function useScrollProgress(target: MaybeRefOrGetter<HTMLElement | null>) {
   const { top, height } = useElementBounding(target);

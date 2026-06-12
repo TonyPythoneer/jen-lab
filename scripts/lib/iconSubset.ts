@@ -1,15 +1,5 @@
-// Builds small icon collections holding only the icons the site uses.
-//
-// WHY: Icon.vue renders through @iconify/vue's OFFLINE entry (no CDN runtime),
-// so every referenced icon MUST be bundled — a missing one renders blank, there
-// is no network fallback. This scans the source for `i-<prefix>-<name>` and
-// writes one subset per pack that main.ts addCollection()s. The full packs are
-// large (lucide ~1774, simple-icons ~3300); the site uses ~30, so the subsets
-// are tiny. A referenced icon missing from its pack is reported back so the
-// caller can FAIL loudly — a typo can't ship as an invisible gap.
-//
-// This module is the shared core: the Vite plugin (vite/codegenIcons.ts) and the
-// compare:ssg preflight both call runIconCodegen() — no standalone CLI needed.
+// Builds per-pack icon subsets with only the icons the site references. Icon.vue
+// renders OFFLINE (a missing icon is blank), so callers must FAIL loudly on missing.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { fingerprint, isFresh, saveCache } from "./codegenCache";
@@ -40,9 +30,8 @@ export interface IconScan {
   fingerprint: string;
 }
 
-// Scan src/ + content/ for `i-<prefix>-<name>` references and fingerprint them.
-// Cheap relative to a write: the fingerprint folds in each pack's size+mtime, so
-// a pack upgrade (same names, new icon data) also busts the cache.
+// Scan src/ + content/ for `i-<prefix>-<name>` references. The fingerprint folds
+// in each pack's size+mtime, so a pack upgrade also busts the cache.
 export function scanUsedIcons(): IconScan {
   const sources: string[] = [];
   for (const dir of SCAN_DIRS) {
@@ -75,9 +64,8 @@ export interface IconWrite {
   missing: string[];
 }
 
-// Pull each referenced icon out of its full pack and write the subset. Writes
-// only when the content actually changed, so a no-op run won't churn the file
-// (and trigger a needless dev reload of main.ts's static JSON import).
+// Write each subset only when its content changed — a no-op run must not churn
+// the file and trigger a needless dev reload of main.ts's static JSON import.
 export function writeIconSubsets(used: Map<string, Set<string>>): IconWrite {
   mkdirSync(OUT_DIR, { recursive: true });
   const written: IconWrite["written"] = [];
@@ -125,10 +113,8 @@ export interface IconCodegen {
   missing: string[];
 }
 
-// Full cached generate: scan → skip if the fingerprint cache is fresh → write the
-// changed subsets → save the cache. Shared by the Vite plugin and the compare:ssg
-// preflight so neither needs a standalone gen:icons script. Missing icons are
-// returned, not thrown — each caller fails in its own way.
+// Cached generate: scan → skip on fresh fingerprint → write changed subsets.
+// Missing icons are returned, not thrown — each caller fails its own way.
 export function runIconCodegen(): IconCodegen {
   const { used, fingerprint: fp } = scanUsedIcons();
   if (isFresh(CACHE_NAME, fp, OUTPUT_FILES)) {

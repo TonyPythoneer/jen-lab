@@ -13,9 +13,8 @@ import simpleIconsData from "../generated/icons/simple-icons.json";
 // @ts-ignore
 import streamlineFreehandData from "../generated/icons/streamline-freehand.json";
 
-// Bundle the used icons so they render in SSG HTML and match client hydration.
-// The subsets are built from the source by the codegen-icons Vite plugin, which
-// fails the build if a referenced icon is missing (offline mode has no fallback).
+// Bundle the used icons so SSG HTML matches client hydration. The codegen-icons
+// plugin builds the subsets and fails the build on a missing icon (no CDN fallback).
 addCollection(lucideData);
 addCollection(simpleIconsData);
 addCollection(streamlineFreehandData);
@@ -23,9 +22,7 @@ addCollection(streamlineFreehandData);
 // vite-ssg wires @unhead/vue internally; pages just call useHead/useSeoMeta.
 export const createApp = ViteSSG(App, {
   routes: setupLayouts(routes),
-  // SPA nav keeps the old scroll position by default. Reset to top on a fresh
-  // navigation, jump to a #hash target when present, and restore the saved
-  // position on back/forward.
+  // Top on fresh navigation, honour #hash, restore position on back/forward.
   scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) return savedPosition;
     if (to.hash) return { el: to.hash };

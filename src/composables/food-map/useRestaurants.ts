@@ -11,10 +11,8 @@ export type EnrichedRestaurant = Restaurant & {
   categoryName: string;
 };
 
-// `await import(...)` keeps the restaurants dataset (44KB, Velite-built
-// foodMap.json) in its own Vite chunk rather than folding it into the route
-// chunk. It is deliberately NOT exposed via content.ts/queryCollection (that
-// path is a static #velite import). Do NOT replace with a static import.
+// Dynamic import keeps the 44KB dataset in its own chunk, deliberately outside
+// the static #velite path. Do NOT replace with a static import.
 async function loadData() {
   const { categories, restaurants } = (await import("#food-map-data")).default as foodMap;
 

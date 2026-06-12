@@ -1,8 +1,5 @@
-// Reads the three generated manifests that hold the edges auto-import hides from
-// source: components.d.ts (auto-registered components), auto-imports.d.ts
-// (auto-imported composables/APIs), and typed-router.d.ts (page -> route map).
-// These files are the literal compile-time truth — a bare <Button> with no import
-// line resolves to a real .vue path here.
+// Reads the generated manifests (components.d.ts, auto-imports.d.ts,
+// typed-router.d.ts) — the compile-time truth for edges auto-import hides from source.
 
 // Matches `Name: typeof import('path')` in both components.d.ts and auto-imports.d.ts.
 const DTS_IMPORT_RE = /(\w+):\s*typeof import\('([^']+)'\)/g;

@@ -1,6 +1,5 @@
-// Split $attrs into `parentClass` (the caller's `class`, merged via cn so it is
-// not applied twice) and `restAttrs` (everything else, forwarded to the root).
-// Shared by App* components that set `inheritAttrs: false`.
+// Split $attrs into parentClass (the caller's class, merged via cn — never applied
+// twice) and restAttrs (forwarded). For components with inheritAttrs:false.
 export function useSplitClassAttrs() {
   const attrs = useAttrs();
   const parentClass = computed(() => (attrs.class as string) ?? "");

@@ -49,9 +49,8 @@
 
 <script setup lang="ts">
 import { fetchPosts, stripHtml } from "~/utils/blog/wpApi";
-// Shared neon-arc utility, imported here (not globally) so it ships only in this
-// component's chunk. Imported via the script, not `<style src>`, because vize
-// can't resolve the `~` alias inside `<style src>`.
+// Imported here (not globally) so it ships only in this chunk — via the script,
+// not `<style src>`, because vize can't resolve the `~` alias there.
 import "~/assets/css/effects/neon-arc.css";
 
 const props = withDefaults(
@@ -79,9 +78,8 @@ onMounted(async () => {
   postsPage.value = await fetchPosts({ perPage: props.postCount });
 });
 
-// Jetpack Photon (*.wp.com) resizes at the CDN via fit=W,H — a smaller fit means
-// a smaller GPU texture and less stutter while the ring spins. Cards render at
-// max 432x648, so "640,960" ≈ 1.5x: balanced between soft (1x) and heavy (2x).
+// Jetpack Photon CDN-resizes via fit=W,H: a smaller fit means a smaller GPU
+// texture and less spin stutter. Cards max 432x648, so "640,960" ≈ 1.5x density.
 const PHOTON_FIT = "640,960";
 function downscalePhoton(url: string): string {
   try {
@@ -112,9 +110,8 @@ const items = computed(() =>
 
 const n = computed(() => Math.max(items.value.length, 1));
 
-// Only front-facing cards flip on click — CSS 3D hit-testing isn't depth-sorted,
-// so far/side cards would otherwise catch clicks. "Front" = widest projected box
-// under perspective, which avoids fragile angle/sign math.
+// CSS 3D hit-testing isn't depth-sorted, so only front cards may flip. "Front" =
+// widest projected box under perspective — no fragile angle/sign math.
 const assemblyRef = ref<HTMLElement>();
 const activeIndex = ref<number | null>(null);
 
@@ -252,9 +249,8 @@ article header {
   align-content: end;
 }
 
-/* The spinning arc comes from the shared `.neon-arc` utility; only per-card
-   tuning lives here. The default drop-shadow must go — its #000 blur would
-   paint over the thin arc on the bottom-right edges. */
+/* The arc comes from the shared .neon-arc utility; only per-card tuning here.
+   The default drop-shadow would paint over the thin arc, so it goes. */
 article.is-active {
   --neon-arc-ring: 12px;
 }

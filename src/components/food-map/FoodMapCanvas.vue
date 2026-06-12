@@ -111,9 +111,8 @@ function fitMaxBoundsToData(list: EnrichedRestaurant[]) {
   if (!map || !L || !list.length) return;
   const data = L.latLngBounds(list.map((r) => [r.coordinates.lat, r.coordinates.lng]));
 
-  // Pad the wall so even an edge pin can be flown to the centre of the mobile
-  // "room" (the open band between the search bar and the detail sheet): convert
-  // that pixel offset to lat/lng at the selection zoom (15) and pad every side.
+  // Pad the wall so an edge pin can still be flown to the mobile "room" centre:
+  // convert that pixel offset to lat/lng at selection zoom 15, pad every side.
   const size = map.getSize();
   const selZoom = 15;
   const roomCentre = (64 + size.y * 0.38) / 2; // searchBar 64px ↔ sheet top 0.38h
@@ -152,9 +151,8 @@ function loadBoundaries() {
     .catch((e) => console.warn("Suburb boundary overlay unavailable:", e?.message ?? e));
 }
 
-// Build (or rebuild) the boundary + labels from the cached raw data. Tears the
-// old layers down first so the dev switch can flip repeatedly without leaking
-// zoom listeners.
+// Rebuild boundary + labels from the cached raw data, tearing the old layers
+// down first so the dev switch never leaks zoom listeners.
 function buildBoundary() {
   if (!map || !L || !rawBoundary) return;
 
@@ -286,9 +284,8 @@ function onMapMouseOut() {
   if (mapEl.value) mapEl.value.style.cursor = "";
 }
 
-// Registered synchronously: inside the async onMounted it would run after the
-// first `await` with no active instance and silently never fire, leaking the
-// boats rAF + resize listener. The refs it touches are module-level lets above.
+// Registered synchronously: inside the async onMounted it would land after the
+// first `await` with no active instance — never firing, leaking rAF + listeners.
 onUnmounted(() => {
   if (invalidate) window.removeEventListener("resize", invalidate);
   boats?.destroy();

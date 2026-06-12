@@ -1,7 +1,5 @@
-// Dependent filter maths: Region and Cuisine are single-select facets that
-// constrain each other. Each facet's counts are taken under the OTHER facet's
-// selection only, so a picked value never narrows its own list; options that
-// reach zero drop out, making impossible combinations unpickable.
+// Region and Cuisine are single-select facets that constrain each other: counts
+// are taken under the OTHER facet only, and zero-count options drop out.
 
 export interface RestaurantFacets {
   area: string;

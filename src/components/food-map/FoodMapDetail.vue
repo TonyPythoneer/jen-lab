@@ -9,9 +9,8 @@ defineProps<{
 
 const store = useFoodMapStore();
 
-// Close the panel first, then drop the place only after the close transition
-// (opacity 220ms / transform 320ms) finishes — otherwise the list view swaps in
-// while the panel is still fading and flashes on screen.
+// Drop the place only after the close transition (~320ms) ends — otherwise the
+// list view swaps in mid-fade and flashes.
 function close() {
   store.closeDrawer();
   setTimeout(() => store.selectRestaurant(null), 340);

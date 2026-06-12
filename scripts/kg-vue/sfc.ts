@@ -1,11 +1,5 @@
-// AST extraction for .vue and .ts source.
-//
-// Why AST, not regex:
-//  - template tags: a real parse sees <food-map-canvas> (kebab-case) and ignores
-//    tags written inside comments or strings.
-//  - composables: walking the script AST drops names that are LOCAL bindings
-//    (a same-named const/import), so a `useFoo` mention in a comment or string
-//    never draws a false edge.
+// AST extraction for .vue/.ts. A real parse (vs regex) sees kebab-case tags,
+// ignores comments/strings, and skips local bindings that shadow auto-imports.
 import { parse, babelParse } from "vue/compiler-sfc";
 
 export type SfcExtract = {
@@ -14,18 +8,15 @@ export type SfcExtract = {
   composableCandidates: string[]; // identifier uses that are NOT locally bound
 };
 
-// camelize("food-map-canvas") -> "foodMapCanvas"; capitalize -> "FoodMapCanvas".
-// unplugin-vue-components resolves tags this way, so both <FoodMapCanvas> and
-// <food-map-canvas> map onto the same PascalCase manifest key.
+// unplugin-vue-components resolves tags via camelize + capitalize, so kebab-case
+// and PascalCase forms map onto the same manifest key.
 function toPascal(tag: string): string {
   const camel = tag.replace(/-(\w)/g, (_m, c: string) => c.toUpperCase());
   return camel.charAt(0).toUpperCase() + camel.slice(1);
 }
 
-// ElementTypes.COMPONENT from @vue/compiler-core. The SFC parser already
-// classifies <div> as ELEMENT (0) and <Button> / <food-map-canvas> / <RouterLink>
-// as COMPONENT (1) — including kebab-case — so this is the exact native-vs-component
-// filter we want, with no hardcoded HTML tag list.
+// ElementTypes.COMPONENT from @vue/compiler-core — the parser already classifies
+// native (0) vs component (1) tags, kebab-case included. No hardcoded tag list.
 const COMPONENT_TAG_TYPE = 1;
 
 // Walk the compiled template AST collecting component tag names. Native elements

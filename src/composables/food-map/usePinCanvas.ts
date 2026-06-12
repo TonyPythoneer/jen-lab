@@ -1,6 +1,5 @@
-// Draws every restaurant pin onto ONE canvas (see useCanvasLayer for why) and
-// answers hit-tests so the map's click/hover can find the pin under the pointer.
-// No shadow, no transition, no animation — kept out for weak-phone compositing.
+// Draws every restaurant pin onto ONE canvas (see useCanvasLayer) and answers
+// hit-tests. No shadow/transition/animation — kept out for weak-phone compositing.
 
 import type { Map as LeafletMap } from "leaflet";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";

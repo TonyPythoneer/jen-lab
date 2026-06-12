@@ -1,23 +1,6 @@
-// Sync Sydney Ferries route geometry from OpenStreetMap (Overpass API).
-//
-// The map's basemaps (CARTO Voyager, OSM Standard, OpenTopoMap) are ALL rendered
-// from OpenStreetMap, and they draw EVERY way tagged `route=ferry`. To make our
-// route layer match the faint ferry lines baked into the tiles, we must cover the
-// same ways — not just the ones wrapped in a route relation.
-//
-// OSM -> FerryRoute mapping:
-//   relation[route=ferry] -> main services. Grouped by `ref` (F1..F10, CCLC, …);
-//     the richest relation per code is kept and its member ways stitched into one
-//     ordered `path`. Member `stop` nodes become the wharves.
-//   way[route=ferry]      -> any ferry way NOT already covered by a kept relation
-//     (services with no relation, e.g. Rose Bay / Shark Island, and dropped
-//     direction/variant legs) is added too, stitched by connectivity. This is what
-//     keeps us consistent with what the basemap actually paints.
-//
-// Run (no API key needed; Overpass is open):
-//   pnpm sync:ferries:osm
-// Force-overwrites ferry-routes.json on a fully successful run; on failure the
-// previous file is left untouched.
+// Sync Sydney Ferries route geometry from OSM (Overpass), covering every
+// `route=ferry` way to match the basemaps. Only overwrites JSON on full success.
+//   pnpm sync:ferries:osm   (no API key needed)
 
 import { writeFile } from "node:fs/promises";
 import type { FerryRoute, FerryStop } from "../src/utils/food-map/ferryRoutes";
@@ -96,16 +79,12 @@ function metres(a: LatLng, b: LatLng): number {
   return R * Math.hypot(x, y);
 }
 
-// Largest gap we will bridge when joining two ways. Ways in a clean route share a
-// node (gap ~0); a multi-hundred-metre gap means a different leg — bridging it
-// would draw straight lines across the harbour and over land.
+// Max gap to bridge when joining ways: connected ways share a node (gap ~0); a
+// bigger gap is a different leg — bridging it draws straight lines over land.
 const MAX_JOIN_GAP_M = 300;
 
-// Join a set of way geometries into one or more continuous polylines. Starting
-// from each unused segment, we greedily attach (at either end) the nearest unused
-// segment while the join stays within MAX_JOIN_GAP_M. Segments that cannot connect
-// start a new component — so NO way is ever dropped and none is bridged across a
-// gap. Returns one polyline per connected component.
+// Greedily join way geometries end-to-end within MAX_JOIN_GAP_M; unconnectable
+// segments start a new component, so nothing is dropped or falsely bridged.
 function stitchComponents(segsIn: LatLng[][]): LatLng[][] {
   const segs = segsIn.filter((s) => s.length >= 2);
   const used = Array.from({ length: segs.length }, () => false);
@@ -220,9 +199,8 @@ function buildRoutes(relations: OverpassRelation[], ways: OverpassWay[]): FerryR
     });
   }
 
-  // 2) Every ferry way NOT covered by a kept relation — grouped by ref/name so a
-  // service split across several ways becomes one route, then stitched into its
-  // connected components. This is what closes the gap with the basemap.
+  // 2) Ferry ways not covered by a kept relation, grouped by ref/name and
+  // stitched — this closes the gap with what the basemap paints.
   const leftover = ways.filter((w) => !covered.has(w.id) && (w.geometry?.length ?? 0) >= 2);
   const groups = new Map<string, OverpassWay[]>();
   for (const w of leftover) {

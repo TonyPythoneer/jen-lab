@@ -1,10 +1,6 @@
-// kg:vue — inject source-true Vue edges (and optional typed metadata) into the
-// understand-anything knowledge graph.
-//
+// kg:vue — inject source-true Vue edges into the understand-anything knowledge graph.
+// Needs fresh manifests (run `pnpm dev` or `pnpm build` first; gated below).
 //   pnpm kg:vue [--meta] [--dry-run] [--out dep-graph.json] [--kg <path>]
-//
-// Run after `/understand`. Requires fresh manifests — run `pnpm dev` or
-// `pnpm build` once first (the hard freshness gate below enforces this).
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, posix, resolve } from "node:path";
 import { buildDepGraph, injectVueEdges, type KnowledgeGraph } from "./graph";
@@ -45,9 +41,8 @@ function assertManifestsFresh(root: string): void {
   }
 }
 
-// Climb from `start` until a sibling .understand-anything/knowledge-graph.json
-// is found. From the main checkout it hits immediately; from a worktree under
-// .claude/worktrees/* it climbs out to the main checkout where /understand writes.
+// Climb until a sibling .understand-anything/knowledge-graph.json appears —
+// worktrees under .claude/worktrees/* climb out to the main checkout.
 function findKgPath(start: string): string | null {
   let dir = start;
   for (;;) {

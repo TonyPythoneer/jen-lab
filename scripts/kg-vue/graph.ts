@@ -1,6 +1,5 @@
-// Builds the source-true Vue dependency graph and upserts it into the
-// understand-anything knowledge-graph.json. Edges come from the manifests +
-// compiler-sfc AST; this module turns them into the plugin's own node/edge shape.
+// Builds the Vue dependency graph (manifests + compiler-sfc AST) and upserts it
+// into the understand-anything knowledge-graph.json in the plugin's node/edge shape.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, posix } from "node:path";
 import { parseDtsImports, parseRouteFileInfo, resolveManifestPath } from "./manifests";
@@ -111,10 +110,8 @@ export type InjectReport = {
   routesAdded: number;
 };
 
-// All injected edges carry this prefix in `description` so re-runs can find and
-// replace exactly their own edges. The edge schema is NOT passthrough, so a
-// custom field would be stripped on the plugin's next load — the marker must
-// live in a schema-valid field.
+// Prefix on every injected edge's `description`, so re-runs replace exactly their
+// own edges. Must live in a schema-valid field — custom fields get stripped on load.
 export const KG_VUE_MARKER = "[kg:vue]";
 
 const KIND_TO_EDGE: Record<DepEdgeKind, { type: string; weight: number }> = {

@@ -1,17 +1,6 @@
-// Self-hosts the Latin brand fonts as same-origin woff2.
-//
-// WHY: the brand chrome (display headings in Bebas Neue, body in DM Sans) is
-// served from Google Fonts, which costs a render-blocking googleapis -> gstatic
-// two-connection chain on first paint. Self-hosting makes them same-origin,
-// hashable, and preloadable. Both fonts are OFL, so this is permitted.
-//
-// SCOPE: Latin faces only. The CJK families (Noto Sans TC, Noto Serif TC) and
-// the food-map serif (Crimson Pro) stay on Google Fonts — a full CJK face is
-// megabytes, only worth self-hosting with a per-glyph subset (a separate job).
-//
-// USAGE: `pnpm gen:fonts` (needs internet). Writes public/fonts/*.woff2 +
-// src/assets/css/fonts.css. Commit both; the deploy build then needs no network.
-// Outputs are committed, not generated/ — same pattern as gen:avif.
+// Self-hosts the Latin brand fonts (OFL) as same-origin woff2, cutting Google
+// Fonts' render-blocking chain. CJK families stay remote — full faces are megabytes.
+// USAGE: `pnpm gen:fonts` (needs internet); commit the woff2 + fonts.css outputs.
 
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -28,8 +17,8 @@ const FAMILIES = ["Bebas+Neue:wght@400", "DM+Sans:wght@400;500;700"];
 const FONTS_DIR = "public/fonts";
 const CSS_OUT = "src/assets/css/fonts.css";
 
-// The font set + UA decide the output. Unchanged + fonts.css present → no need to
-// re-hit Google Fonts. `--force` re-fetches (e.g. Google refreshed the faces).
+// Font set + UA decide the output — unchanged with fonts.css present means no
+// refetch. `--force` re-fetches (e.g. Google refreshed the faces).
 const fp = fingerprint(FAMILIES, UA);
 if (!process.argv.includes("--force") && isFresh("fonts", fp, [CSS_OUT])) {
   console.log(`[fonts] config unchanged — skipped. Use --force to re-fetch.`);
@@ -53,9 +42,8 @@ mkdirSync(FONTS_DIR, { recursive: true });
 const cssUrl = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => `family=${f}`).join("&")}&display=swap`;
 const googleCss = await fetchText(cssUrl);
 
-// Google returns one @font-face per (family, weight, style, unicode-range), each
-// with a single gstatic woff2 url(). Download each, name it deterministically
-// from those fields, and rewrite the url() to the local /fonts/ path.
+// Google returns one @font-face per (family, weight, style, range), each with one
+// gstatic woff2 url(): download it, name it from those fields, point url() at /fonts/.
 const blocks = googleCss.match(/@font-face\s*\{[^}]*\}/g) ?? [];
 const counters = new Map<string, number>();
 let outCss = "";

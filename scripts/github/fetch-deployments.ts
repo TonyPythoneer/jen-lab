@@ -1,11 +1,5 @@
-// Fetch ALL Cloudflare Pages deployments for a project, following pagination.
-//
-// Why not `wrangler pages deployment list`? Two reasons, both fatal for cleanup:
-//   1. It returns only the first page (~25) — no pagination — so older
-//      deployments are never seen.
-//   2. Its `--json` output remaps keys to {Id, Branch, ...} and drops
-//      created_on, which the cleanup scripts cannot read.
-// The raw REST API returns the full, raw deployment objects the scripts expect.
+// Fetch ALL Cloudflare Pages deployments via the REST API, following pagination.
+// (`wrangler pages deployment list` only returns the first ~25 and remaps the keys.)
 
 const API_BASE = "https://api.cloudflare.com/client/v4";
 
@@ -82,8 +76,7 @@ export async function fetchAllDeployments(opts: {
 }
 
 // CLI: `node --experimental-strip-types scripts/github/fetch-deployments.ts <project-name> [environment]`
-// Reads CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN from the environment.
-// Prints the full deployment array as JSON to stdout.
+// Needs CLOUDFLARE_ACCOUNT_ID + CLOUDFLARE_API_TOKEN; prints the deployment array as JSON.
 if (process.argv[1]?.endsWith("fetch-deployments.ts")) {
   const [, , projectName, env] = process.argv;
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;

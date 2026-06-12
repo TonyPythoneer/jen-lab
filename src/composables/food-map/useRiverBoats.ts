@@ -1,11 +1,5 @@
-// Sydney Ferries simulation. Builds the FERRY_ROUTES network (course lines +
-// wharf dots) once into a Leaflet layer group and moves vessels along it on a
-// single shared canvas (see useCanvasLayer). Depends only on Leaflet + FERRY_ROUTES.
-//
-// A vessel's position is `pos` = metres travelled along its route polyline, so it
-// can never leave the path: it sails terminal to terminal, pausing at each wharf,
-// then reverses. One rAF loop total (dt clamped); pauses on document.hidden;
-// prefers-reduced-motion renders the fleet statically.
+// Sydney Ferries simulation: the FERRY_ROUTES network built once + vessels sailing
+// on one shared canvas. A vessel's `pos` (metres along its polyline) pins it to the path.
 
 import type { Map as LeafletMap, LayerGroup, Polyline, CircleMarker } from "leaflet";
 import { FERRY_ROUTES } from "~/utils/food-map/ferryRoutes";
@@ -230,10 +224,8 @@ export function createRiverBoats(map: LeafletMap, L: LeafletNS): RiverBoatsContr
       });
     });
 
-    // Allocate vessels by route length, longest first, within the shipCount
-    // budget. A route may get ZERO boats (its course line still draws): the data
-    // carries every OSM ferry way, and a 1-boat floor on each tiny leg would
-    // blow the budget.
+    // Allocate by route length, longest first, within the shipCount budget. A route
+    // may get ZERO boats — a 1-boat floor on every tiny OSM leg would blow the budget.
     const desired = measured.map((m) =>
       clamp(Math.round(m.total / CONFIG.metresPerVessel), 0, CONFIG.maxShipsPerRoute),
     );

@@ -66,9 +66,8 @@
 </template>
 
 <script setup lang="ts">
-// `descriptionHtml` is pre-rendered at build (see velite.config.ts).
-// `description` is the markdown source — declared only to absorb the
-// spread from `v-bind="product"` so Vue doesn't warn about an unknown attr.
+// descriptionHtml is build-rendered (velite.config.ts); `description` only
+// absorbs the v-bind="product" spread so Vue doesn't warn on an unknown attr.
 defineProps<{
   banner?: string;
   title: string;

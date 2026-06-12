@@ -26,9 +26,8 @@ const imageStyle = computed(() => {
   return { transform: `translateX(${dir * props.scrollProgress * EXIT_VW}vw)` };
 });
 
-// Mobile: white card slides in from the same side as its desktop position
-// coloredSide="right" → white is on the left in desktop → slides in from left (-x)
-// coloredSide="left"  → white is on the right in desktop → slides in from right (+x)
+// Mobile: the white card slides in from the side it occupies on desktop —
+// coloredSide="right" puts white on the left, so it slides in from the left.
 const isOpen = ref(false);
 const panelHiddenClass = computed(() =>
   props.coloredSide === "right" ? "-translate-x-full" : "translate-x-full",
