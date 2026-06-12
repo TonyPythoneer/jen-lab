@@ -59,7 +59,7 @@ pnpm test         # Run tests (Vitest)
 
 ## Architecture
 
-Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes (via `vite-ssg`): `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (Velite content), `/sydney-food-map` (Leaflet map). `/styleguide` is an internal dev styleguide — not in `ssgOptions.includedRoutes`.
+Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**. Prerendered routes (via `vite-ssg`): `/` (landing), `/jen-knows` + `/jen-liu` (profile pages, both render `ProfilePage`), `/blogs` + `/blogs/[...slug]` (Velite content), `/sydney-food-map` (Leaflet map).
 
 **Non-obvious constraints:**
 
@@ -70,16 +70,21 @@ Vue 3 + Vite personal site for "榛知雪梨", deployed to **Cloudflare Pages**.
 
 ## Storybook
 
-Standalone `@storybook/vue3-vite` — `.storybook/main.ts` registers auto-import and component resolution plugins explicitly. `@vitejs/plugin-vue` is registered because vite-plus doesn't add it automatically.
+Standalone `@storybook/vue3-vite`, dev-server only (`pnpm storybook`, port via `STORYBOOK_PORT`). Intentionally NO `build-storybook` script — the rolldown prod build fails on the Storybook path; the dev server compiles fine.
 
-- **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"`.
+- **Isolated pipeline:** `framework.options.builder.viteConfigPath` points at `.storybook/vite.config.ts`; the app's `vite.config.ts` never loads into Storybook. Shared bits (auto-import presets, ui globalNamespaces) come from `configs/vite/sharedPipeline.ts` — edit there, never copy.
+- **Real runtime, no mocks:** `preview.ts` installs a memory-history vue-router, `@unhead/vue/client` head, and registers the generated offline icon subsets — stories run the same APIs as the app. `#velite` resolves via `package.json#imports` (the storybook script runs `velite build` first).
+- **Stories co-locate** with components: `Foo.vue` ↔ `Foo.stories.ts`, title = `"<dir>/<Name>"` (e.g. `ui/element/Button`).
+- **Story style:** args-first CSF3 — shared defaults in `meta.args`/`meta.render`, `fn()` from `storybook/test` for emitted events, brand tokens only (no raw gray/blue utilities), no background-only wrappers (global brand `backgrounds` defaults to the canvas token).
+- **Runtime template strings skip unplugin-vue-components** — a story template referencing another project component (e.g. `<Button>`) must import and register it in the render's `components` explicitly.
 - **`// @ts-nocheck` required** on every story file — `@storybook/vue3-vite`'s `StoryObj<>` inference doesn't align with vite-plus's TS setup; stories are dev-only.
 - **Import from `@storybook/vue3-vite`** (not `@storybook/vue3`).
-- **`Section*` components** get a `Default` story + an `InPage` story (`parameters: { layout: "fullscreen" }`, wrapped in `min-h-dvh bg-[var(--color-basalt-canvas)]`) for RWD viewport testing.
+- **`Section*` components** get a `Default` story (bare component) + an `InPage` story (wrapped in `min-h-dvh`) for RWD viewport testing (viewports: mobile 390 / desktop 1440 only).
+- **Overlay stories render open** (`open: true` args or the real composable — SearchModal opens via `useBlogSearch().openSearch()`) so the canvas is never blank.
+- **`@storybook/addon-a11y`** gives a per-story axe panel — check it when touching ui/ primitives.
 - **Brand tokens** (`--color-digital-orange`, etc.) load via `theme.css`. UI components style themselves with plain TS maps + `cn()` + brand-token utilities (`Button`/`Badge` use cva).
 - **Single source for site config**: `src/config/site.ts` (consumed by `main.ts`, `vite.config.ts`, and runtime components like `Footer`). Change colors/contacts there only.
 - **`src/storybook/StoryWrapper.vue`** wraps every story in a plain `<div class="isolate">` — reka-ui overlays/popovers need no app-level provider.
-- **Storybook is dev-server only** (`pnpm storybook`); intentionally NO `build-storybook` script — the rolldown prod build fails with ~25 SFC-parse errors in the Storybook path. The dev server compiles fine.
 
 ## Component Organization
 
