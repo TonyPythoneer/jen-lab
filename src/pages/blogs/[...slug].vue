@@ -48,6 +48,9 @@
 <script setup lang="ts">
 import { fetchPost, stripHtml, formatDate } from "~/utils/blog/wpApi";
 import { useSiteBlogsChrome } from "~/composables/blog/useSiteBlogsChrome";
+// Imported via the script (not an SFC <style>) so Tailwind processes it under
+// vize too — vize skips Tailwind over SFC style blocks.
+import "~/assets/css/wp-content.css";
 
 const route = useRoute("/blogs/[...slug]");
 const lastQuery = useBlogLastQuery();
@@ -96,32 +99,3 @@ useSeoMeta({
   twitterCard: "summary_large_image",
 });
 </script>
-
-<style scoped>
-@reference "~/assets/css/main.css";
-@plugin "@tailwindcss/typography";
-
-.wp-content {
-  @apply prose prose-neutral max-w-none;
-}
-
-.wp-content :deep(.wp-block-gallery) {
-  @apply flex flex-wrap gap-4 my-8 p-0 list-none;
-}
-
-.wp-content :deep(.wp-block-gallery > figure) {
-  @apply m-0 flex-1 min-w-[200px];
-}
-
-.wp-content :deep(.wp-block-image img) {
-  @apply w-full h-auto rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300;
-}
-
-.wp-content :deep(.aligncenter) {
-  @apply flex justify-center mx-auto;
-}
-
-.wp-content :deep(.wp-block-image.aligncenter) {
-  @apply flex justify-center;
-}
-</style>
