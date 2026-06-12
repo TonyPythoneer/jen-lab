@@ -11,15 +11,15 @@ catalog:
   vite-plus: latest
   vitest: npm:@voidzero-dev/vite-plus-test@latest
 minimumReleaseAgeExclude:
-  - "@vizejs/native-darwin-arm64@0.203.0"
-  - "@vizejs/native-linux-arm64-gnu@0.203.0"
-  - "@vizejs/native-linux-arm64-musl@0.203.0"
-  - "@vizejs/native-linux-x64-gnu@0.203.0"
-  - "@vizejs/native-linux-x64-musl@0.203.0"
-  - "@vizejs/native-win32-x64-msvc@0.203.0"
-  - "@vizejs/native@0.203.0"
-  - "@vizejs/vite-plugin@0.203.0"
-  - vize@0.203.0
+  - "@vizejs/native-darwin-arm64@0.204.0"
+  - "@vizejs/native-linux-arm64-gnu@0.204.0"
+  - "@vizejs/native-linux-arm64-musl@0.204.0"
+  - "@vizejs/native-linux-x64-gnu@0.204.0"
+  - "@vizejs/native-linux-x64-musl@0.204.0"
+  - "@vizejs/native-win32-x64-msvc@0.204.0"
+  - "@vizejs/native@0.204.0"
+  - "@vizejs/vite-plugin@0.204.0"
+  - vize@0.204.0
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
