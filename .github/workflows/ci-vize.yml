@@ -56,7 +56,7 @@ jobs:
 
       # compare:ssg builds the app once per compiler (VIZE off → plugin-vue,
       # VIZE=true → vize), prints an HTML/JS/CSS/build-time table, and fails the
-      # run if either compiler did not render real content. The shared gen:icons
-      # + velite preflight runs once; only `vite-ssg build` is timed per compiler.
+      # run if either compiler did not render real content. The shared icon
+      # codegen + velite preflight runs once; only `vite-ssg build` is timed.
       - name: Compare prerendered output across compilers
         run: pnpm compare:ssg

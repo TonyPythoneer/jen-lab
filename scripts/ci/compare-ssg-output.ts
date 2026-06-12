@@ -9,7 +9,7 @@
 // provide/inject. So each build is checked for real content, and the run fails
 // loudly if either compiler drops a route — the VIZE flag can't regress silently.
 //
-// gen:icons + velite run ONCE up front: their output does not depend on VIZE, so
+// Icon codegen + velite run ONCE up front: their output does not depend on VIZE, so
 // the only timed step is `vite-ssg build` — the part the compiler choice actually
 // changes. vue-tsc is skipped here (typecheck is compiler-agnostic and already
 // covered by the check / typecheck job).
@@ -20,6 +20,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { performance } from "node:perf_hooks";
+import { runIconCodegen } from "../lib/iconSubset";
 
 const DIST = "dist";
 
@@ -152,8 +153,14 @@ function buildAndMeasure(label: string, vize: string): { result: Result; failure
 }
 
 // --- preflight: VIZE-invariant, run once, not timed --------------------------
-console.log("→ preflight: gen:icons + velite build (output does not depend on VIZE)");
-run("pnpm", ["run", "gen:icons"]);
+console.log("→ preflight: icon codegen + velite build (output does not depend on VIZE)");
+const icons = runIconCodegen();
+if (icons.missing.length) {
+  console.error(
+    `[compare:ssg] referenced icons missing from their pack: ${icons.missing.join(", ")}`,
+  );
+  process.exit(1);
+}
 run("pnpm", ["exec", "velite", "build", "--strict"]);
 
 // --- build + measure each compiler (VIZE="" → plugin-vue; "true" → vize) ------
