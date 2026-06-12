@@ -2,9 +2,32 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import DirectionPair from "./DirectionPair.vue";
 
+// The two brand color sets SectionDirections actually feeds this component.
+const orange = {
+  colorBg: "bg-digital-orange",
+  subtitleClass: "text-digital-orange",
+  ctaClass: "bg-digital-orange hover:bg-digital-orange/90",
+};
+const violet = {
+  colorBg: "bg-cyber-violet",
+  subtitleClass: "text-cyber-violet",
+  ctaClass: "bg-cyber-violet hover:bg-cyber-violet/90",
+};
+
 const meta = {
   title: "home/DirectionPair",
   component: DirectionPair,
+  render: (args) => ({
+    components: { DirectionPair },
+    setup: () => ({ args }),
+    template: `
+      <div class="h-screen flex items-center justify-center p-8">
+        <div class="w-full h-96">
+          <DirectionPair v-bind="args" />
+        </div>
+      </div>
+    `,
+  }),
 } satisfies Meta<typeof DirectionPair>;
 
 export default meta;
@@ -12,85 +35,46 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    colorBg: "bg-sydney-sky",
+    ...orange,
     imageSrc: "/home/jen-knows.webp",
     imageAlt: "Jen profile",
     title: "Career",
     subtitle: "and Beyond",
-    subtitleClass: "text-digital-orange",
     description:
       "Explore the professional journey and insights from years of experience in diverse industries.",
     ctaLabel: "Learn More",
-    ctaClass: "bg-digital-orange hover:bg-[#e34800]",
-    ctaTo: "/about",
+    ctaTo: "/jen-knows",
     coloredSide: "left",
     scrollProgress: 0,
   },
-  render: (args) => ({
-    components: { DirectionPair },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)] h-screen flex items-center justify-center p-8">
-        <div class="w-full h-96">
-          <DirectionPair v-bind="args" />
-        </div>
-      </div>
-    `,
-  }),
 };
 
 export const RightAligned: Story = {
   args: {
-    colorBg: "bg-rose-100",
+    ...violet,
     imageSrc: "/home/jen-liu.webp",
     imageAlt: "Jen profile",
     title: "Travel",
     subtitle: "Stories",
-    subtitleClass: "text-orange-600",
     description: "Discover stories and hidden gems from travels around the world.",
     ctaLabel: "Explore",
-    ctaClass: "bg-orange-600 hover:bg-orange-700",
-    ctaTo: "/blogs",
+    ctaTo: "/jen-liu",
     coloredSide: "right",
     scrollProgress: 0,
   },
-  render: (args) => ({
-    components: { DirectionPair },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)] h-screen flex items-center justify-center p-8">
-        <div class="w-full h-96">
-          <DirectionPair v-bind="args" />
-        </div>
-      </div>
-    `,
-  }),
 };
 
 export const WithScrollProgress: Story = {
   args: {
-    colorBg: "bg-blue-100",
+    ...violet,
     imageSrc: "/home/jen-knows.webp",
     imageAlt: "Jen profile",
     title: "Development",
     subtitle: "Journey",
-    subtitleClass: "text-blue-600",
     description: "Technical skills and projects built over the years.",
     ctaLabel: "View Work",
-    ctaClass: "bg-blue-600 hover:bg-blue-700",
-    ctaTo: "/work",
+    ctaTo: "/blogs",
     coloredSide: "left",
     scrollProgress: 0.5,
   },
-  render: (args) => ({
-    components: { DirectionPair },
-    setup: () => ({ args }),
-    template: `
-      <div class="bg-[var(--color-basalt-canvas)] h-screen flex items-center justify-center p-8">
-        <div class="w-full h-96">
-          <DirectionPair v-bind="args" />
-        </div>
-      </div>
-    `,
-  }),
 };
