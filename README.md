@@ -37,12 +37,12 @@ The build runs on `@vitejs/plugin-vue`; the Rust compiler **vize** is wired behi
 
 # Stack
 
-| Layer          | Tech                                                                          |
-| -------------- | ----------------------------------------------------------------------------- |
+| Layer          | Tech                                                                              |
+| -------------- | --------------------------------------------------------------------------------- |
 | Frontend       | Vue 3 · TypeScript · Vite+ (`vp`) · vite-ssg · Velite · reka-ui · Tailwind CSS v4 |
-| Infrastructure | Cloudflare Pages                                                               |
-| Content / CMS  | WordPress REST API · Velite content collections                                |
-| Map            | Leaflet                                                                        |
+| Infrastructure | Cloudflare Pages                                                                  |
+| Content / CMS  | WordPress REST API · Velite content collections                                   |
+| Map            | Leaflet                                                                           |
 
 ---
 
