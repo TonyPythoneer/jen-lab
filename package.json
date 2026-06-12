@@ -19,7 +19,7 @@
     "sync:ferries:osm": "jiti scripts/sync-ferries-osm.ts",
     "prepare": "vp config",
     "kg:vue": "jiti scripts/kg-vue/index.ts",
-    "verify:ssg": "jiti scripts/ci/assert-ssg-output.ts"
+    "compare:ssg": "jiti scripts/ci/compare-ssg-output.ts"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.1",
