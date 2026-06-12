@@ -15,7 +15,8 @@ const config: StorybookConfig = {
     },
   },
   stories: ["../src/components/**/*.stories.@(ts|js)"],
-  addons: [],
+  // Per-story axe audit panel — verifies the reka-ui a11y strategy story by story.
+  addons: ["@storybook/addon-a11y"],
   // Same Google Fonts the app injects at its <!--google-fonts--> marker.
   previewHead: (head = "") => `${head}
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -44,6 +44,7 @@
     "@iconify-json/simple-icons": "^1.2.86",
     "@iconify-json/streamline-freehand": "^1.2.1",
     "@playwright/test": "^1.60.0",
+    "@storybook/addon-a11y": "^10.4.4",
     "@storybook/vue3-vite": "^10.4.3",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.0",
