@@ -4,8 +4,9 @@
 
 <script setup lang="ts">
 // Aliased so the SFC's own global name <Icon> (this component) never collides
-// with the iconify primitive it renders.
-import { Icon as IconifyIcon } from "@iconify/vue";
+// with the iconify primitive it renders. The /offline entry drops the ~29KB-raw
+// CDN runtime — every icon is bundled offline via addCollection in main.ts.
+import { Icon as IconifyIcon } from "@iconify/vue/offline";
 
 const props = defineProps<{ name: string }>();
 
