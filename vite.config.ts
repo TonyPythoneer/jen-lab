@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { codegenIcons } from "./configs/vite/plugins/codegenIcons";
 import { injectFonts } from "./configs/vite/plugins/injectFonts";
+import { autoImportPresets, uiGlobalNamespaces } from "./configs/vite/sharedPipeline";
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
 // compiler for vize (Rust). Off by default — production builds stay on plugin-vue.
@@ -49,26 +50,15 @@ const plugins = [
   USE_VIZE ? vize({ templateSyntax: "quirks" }) : vue(),
   Layouts({ layoutsDirs: "src/layouts", defaultLayout: "default" }),
   AutoImport({
-    imports: [
-      "vue",
-      "vue-router",
-      "@vueuse/core",
-      { "@unhead/vue": ["useHead", "useSeoMeta", "useHeadSafe"] },
-    ],
+    imports: autoImportPresets,
     dirs: ["src/composables/**"],
     dts: "auto-imports.d.ts",
   }),
   Components({
     dirs: ["src/components"],
     directoryAsNamespace: true,
-    // ui/<category>/<Name>.vue → bare <Name>. unplugin-vue-components strips EVERY
-    // folder segment listed here, so ui/overlay/Modal.vue resolves to <Modal>.
-    //
-    // Categories MUST mirror Nuxt UI's component taxonomy — file every ui/
-    // component under the Nuxt UI category it belongs to (element, navigation,
-    // overlay, page, utility). Do NOT invent per-component folders or new
-    // categories; pick the matching Nuxt UI bucket and put it there.
-    globalNamespaces: ["ui", "element", "navigation", "overlay", "page", "utility"],
+    // Strips ui/<category>/ segments to bare names — taxonomy doc in sharedPipeline.ts.
+    globalNamespaces: uiGlobalNamespaces,
     collapseSamePrefixes: true,
     dts: "components.d.ts",
   }),
