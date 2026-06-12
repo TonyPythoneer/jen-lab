@@ -184,6 +184,14 @@ const site = defineCollection({
   }),
 });
 
+const siteFooter = defineCollection({
+  name: "siteFooter",
+  pattern: "site/footer.yml",
+  schema: s.object({
+    socials: s.array(s.object({ label: s.string(), url: s.string(), icon: iconName })),
+  }),
+});
+
 const siteBlogs = defineCollection({
   name: "siteBlogs",
   pattern: "site/blogs.yml",
@@ -278,5 +286,5 @@ const foodMap = defineCollection({
 export default defineConfig({
   root: "content",
   output: { data: "generated/velite", assets: "public/static", base: "/static/", clean: true },
-  collections: { home, pagesLayout, site, siteBlogs, wpTags, wpCategories, foodMap },
+  collections: { home, pagesLayout, site, siteFooter, siteBlogs, wpTags, wpCategories, foodMap },
 });

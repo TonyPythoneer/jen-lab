@@ -9,7 +9,6 @@ import Components from "unplugin-vue-components/vite";
 import Inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { googleFontsHref } from "./src/config/site";
 import { codegenIcons } from "./vite/codegenIcons";
 
 // Experimental feature flag: VIZE=true swaps the stable @vitejs/plugin-vue SFC
@@ -38,8 +37,21 @@ const iconifyOfflineEsm = require
 // from `vite-plus`. The two Plugin types are structurally the same but nominally
 // distinct, so a direct annotation makes tsc recurse the PluginOption union too
 // deep (TS2321). One assertion on the whole array bridges them.
-// Build the Google Fonts <link> from src/config/site.ts and inject it at the
-// <!--google-fonts--> marker in index.html. Keeps the font list in one config.
+// The Google Fonts the whole site loads. Add a family here, not in index.html.
+const fonts = [
+  { family: "Bebas Neue", weights: "wght@400" },
+  { family: "Crimson Pro", weights: "ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700" },
+  { family: "DM Sans", weights: "wght@400;500;700" },
+  { family: "Inter", weights: "wght@400;500;700" },
+  { family: "Noto Sans TC", weights: "wght@400;500;700;900" },
+  { family: "Noto Serif TC", weights: "wght@400;500;600;700" },
+];
+
+const googleFontsHref = `https://fonts.googleapis.com/css2?${fonts
+  .map((f) => `family=${f.family.replace(/ /g, "+")}:${f.weights}`)
+  .join("&")}&display=swap`;
+
+// Inject the font <link> at the <!--google-fonts--> marker in index.html at build time.
 function injectFonts(): PluginOption {
   return {
     name: "inject-google-fonts",

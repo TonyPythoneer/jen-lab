@@ -1,0 +1,22 @@
+socials:
+  - label: Threads
+    url: https://www.threads.com/@jenknowsau
+    icon: i-simple-icons-threads
+  - label: Facebook
+    url: https://www.facebook.com/jenliuau/
+    icon: i-simple-icons-facebook
+  - label: Instagram
+    url: https://www.instagram.com/jenknowsau/
+    icon: i-simple-icons-instagram
+  - label: Wordpress
+    url: https://jenliu.com.au/
+    icon: i-simple-icons-wordpress
+  - label: LinkedIn
+    url: https://www.linkedin.com/in/jenliuau/
+    icon: i-simple-icons-linkedin
+  - label: YouTube
+    url: https://www.youtube.com/@jenliuau
+    icon: i-simple-icons-youtube
+  - label: Email
+    url: mailto:jen@jenliu.com.au
+    icon: i-lucide-mail
