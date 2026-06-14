@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vite-plus/test";
-import { computeBbox, makeProjector } from "~/utils/food-map/foodMap3DProjection";
+import {
+  computeBbox,
+  makeProjector,
+  tileXToLng,
+  tileYToLat,
+  makeTerrainProjector,
+} from "~/utils/food-map/foodMap3DProjection";
 
 const pts = [
   { lat: -33.8855, lng: 151.1925 },
@@ -36,5 +42,34 @@ describe("makeProjector", () => {
     const east = proj.project(151.215, -33.86);
     const west = proj.project(151.194, -33.86);
     expect(east.x).toBeGreaterThan(west.x);
+  });
+});
+
+describe("tile grid helpers", () => {
+  it("tileXToLng maps tile 0 to -180 and the midpoint to 0", () => {
+    expect(tileXToLng(0, 1)).toBeCloseTo(-180, 6);
+    expect(tileXToLng(1, 1)).toBeCloseTo(0, 6);
+  });
+  it("tileYToLat maps the middle row to the equator and the top row above it", () => {
+    expect(tileYToLat(1, 1)).toBeCloseTo(0, 6);
+    expect(tileYToLat(0, 2)).toBeGreaterThan(0);
+  });
+});
+
+describe("makeTerrainProjector", () => {
+  // The baked Sydney grid (z14, 3 tiles wide x 5 tall).
+  const grid = { z: 14, x0: 15072, x1: 15074, y0: 9829, y1: 9833 };
+  const p = makeTerrainProjector(grid, 2000);
+
+  it("scales the east-west span to targetUnits", () => {
+    expect(p.mapW).toBeCloseTo(2000, 3);
+  });
+  it("is taller than wide for this north-south bbox", () => {
+    expect(p.mapD).toBeGreaterThan(p.mapW);
+  });
+  it("centers the grid: the NW tile corner sits at (-mapW/2, -mapD/2)", () => {
+    const nw = p.project(tileXToLng(grid.x0, grid.z), tileYToLat(grid.y0, grid.z));
+    expect(nw.x).toBeCloseTo(-p.mapW / 2, 3);
+    expect(nw.z).toBeCloseTo(-p.mapD / 2, 3);
   });
 });

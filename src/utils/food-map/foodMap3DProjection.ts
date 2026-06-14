@@ -70,3 +70,56 @@ export function makeProjector(bbox: Bbox, targetUnits: number): Projector {
     },
   };
 }
+
+export interface TileGrid {
+  z: number;
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+}
+
+// Slippy-tile edge → lng/lat. Inverse of the bake script's tiling; used to derive
+// the terrain's Mercator bounds from the baked tile grid.
+export function tileXToLng(x: number, z: number): number {
+  return (x / 2 ** z) * 360 - 180;
+}
+export function tileYToLat(y: number, z: number): number {
+  const n = Math.PI - (2 * Math.PI * y) / 2 ** z;
+  return (Math.atan(Math.sinh(n)) * 180) / Math.PI;
+}
+
+export interface TerrainProjector {
+  mapW: number;
+  mapD: number;
+  m2u: number;
+  project(lng: number, lat: number): ScenePoint;
+  /** grid UV: u 0→1 west→east, v 0→1 north→south */
+  worldToUV(x: number, z: number): { u: number; v: number };
+}
+
+// Projection locked to a baked tile grid so the terrain mesh, imagery texture and
+// markers all align. East-west span scales to targetUnits; north maps to -z.
+export function makeTerrainProjector(grid: TileGrid, targetUnits: number): TerrainProjector {
+  const mx0 = lngToMercatorX(tileXToLng(grid.x0, grid.z));
+  const mx1 = lngToMercatorX(tileXToLng(grid.x1 + 1, grid.z));
+  const myN = latToMercatorY(tileYToLat(grid.y0, grid.z));
+  const myS = latToMercatorY(tileYToLat(grid.y1 + 1, grid.z));
+  const m2u = targetUnits / (mx1 - mx0);
+  const mapW = (mx1 - mx0) * m2u;
+  const mapD = (myN - myS) * m2u;
+  return {
+    mapW,
+    mapD,
+    m2u,
+    project(lng, lat) {
+      return {
+        x: (lngToMercatorX(lng) - mx0) * m2u - mapW / 2,
+        z: (myN - latToMercatorY(lat)) * m2u - mapD / 2,
+      };
+    },
+    worldToUV(x, z) {
+      return { u: (x + mapW / 2) / mapW, v: (z + mapD / 2) / mapD };
+    },
+  };
+}

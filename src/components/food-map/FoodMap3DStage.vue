@@ -13,6 +13,7 @@ const emit = defineEmits<{
 }>();
 
 const host = ref<HTMLDivElement | null>(null);
+const loading = ref(true);
 let scene: FoodMap3DScene | null = null;
 let resizeObserver: ResizeObserver | null = null;
 
@@ -21,8 +22,11 @@ onMounted(() => {
   scene = new FoodMap3DScene(host.value);
   scene.onSelect((id) => emit("select", id));
   scene.onHover((id) => emit("hover", id));
-  scene.setData(props.restaurants);
-  scene.setSelected(props.selectedId);
+  scene
+    .setData(props.restaurants)
+    .then(() => scene?.setSelected(props.selectedId))
+    .catch((e) => console.error("[food-map-3d] terrain load failed", e))
+    .finally(() => (loading.value = false));
   resizeObserver = new ResizeObserver(() => scene?.resize());
   resizeObserver.observe(host.value);
 });
@@ -40,7 +44,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="host" class="fm3d-stage" />
+  <div ref="host" class="fm3d-stage">
+    <div v-if="loading" class="fm3d-stage__loading">Loading Sydney…</div>
+  </div>
 </template>
 
 <style scoped>
@@ -50,5 +56,15 @@ onBeforeUnmount(() => {
   height: 100%;
   overflow: hidden;
   cursor: grab;
+}
+.fm3d-stage__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-abyssal-ink);
+  opacity: 0.55;
+  font-size: 14px;
+  pointer-events: none;
 }
 </style>

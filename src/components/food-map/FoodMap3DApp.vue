@@ -43,6 +43,11 @@ function close() {
       <p class="fm3d-info__summary">{{ selected.summary }}</p>
       <a :href="selected.googleMapsLink" target="_blank" rel="noopener">Open in Google Maps →</a>
     </aside>
+
+    <!-- Attribution (required: Sentinel-2 imagery is CC BY 4.0) -->
+    <div class="fm3d-credit">
+      Imagery © EOX Sentinel-2 cloudless · CC BY 4.0 · Elevation SRTM/USGS
+    </div>
   </div>
 </template>
 
@@ -122,5 +127,17 @@ function close() {
 .fm3d-info a {
   font-size: 13px;
   color: var(--color-digital-orange);
+}
+.fm3d-credit {
+  position: absolute;
+  left: 18px;
+  bottom: 12px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--color-abyssal-ink) 60%, transparent);
+  background: color-mix(in srgb, var(--color-ash-white) 72%, transparent);
+  padding: 2px 8px;
+  border-radius: 5px;
+  pointer-events: none;
 }
 </style>

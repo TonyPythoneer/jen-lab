@@ -2,14 +2,16 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
-import { computeBbox, makeProjector, type Projector } from "~/utils/food-map/foodMap3DProjection";
 import { fitDistanceForRadius, labelOpacity } from "~/utils/food-map/foodMap3DView";
 import { readCssVarsFromDocument, type BrandPalette } from "~/utils/food-map/brandPalette";
-import { buildHarbour } from "./sydneyHarbour";
+import { loadTerrain, type Terrain } from "./foodMap3DTerrain";
 
 const TARGET_UNITS = 2000;
 const FOV = 50;
-const PIN_HEIGHT = 34;
+const VEXAG = 3; // Sydney is flat; lift the slight relief so it reads in 3D.
+const TERRAIN_SEG = 256;
+const PIN_HEIGHT = 26;
+const TILES_BASE = "/food-map-3d";
 
 interface Marker {
   id: string;
@@ -31,7 +33,7 @@ export class FoodMap3DScene {
   private palette: BrandPalette;
   private worldGroup = new THREE.Group();
   private markers: Marker[] = [];
-  private projector: Projector | null = null;
+  private terrain: Terrain | null = null;
   private selectedId: string | null = null;
   private hoveredId: string | null = null;
   private selectCb: ((id: string | null) => void) | null = null;
@@ -45,9 +47,8 @@ export class FoodMap3DScene {
     const w = container.clientWidth || 1;
     const h = container.clientHeight || 1;
 
-    // near=10 (not 1): a tiny near plane wrecks depth precision at this distance,
-    // making the water and land z-fight.
-    this.camera = new THREE.PerspectiveCamera(FOV, w / h, 10, 40000);
+    // near=10 (not 1): a tiny near plane wrecks depth precision at this distance.
+    this.camera = new THREE.PerspectiveCamera(FOV, w / h, 10, 60000);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -69,11 +70,11 @@ export class FoodMap3DScene {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
     this.controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
-    this.controls.minPolarAngle = THREE.MathUtils.degToRad(18);
+    this.controls.minPolarAngle = THREE.MathUtils.degToRad(15);
 
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa0a6, 1.0));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.05);
-    sun.position.set(-1, 2, 1.2);
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x8d99a6, 1.05));
+    const sun = new THREE.DirectionalLight(0xfff4e6, 1.0);
+    sun.position.set(-1, 1.6, 0.8);
     this.scene.add(sun);
     this.scene.add(this.worldGroup);
 
@@ -90,17 +91,23 @@ export class FoodMap3DScene {
     this.hoverCb = cb;
   }
 
-  setData(restaurants: EnrichedRestaurant[]): void {
+  async setData(restaurants: EnrichedRestaurant[]): Promise<void> {
     this.clearWorld();
-    const pts = restaurants.map((r) => ({ lat: r.coordinates.lat, lng: r.coordinates.lng }));
-    const projector = makeProjector(computeBbox(pts), TARGET_UNITS);
-    this.projector = projector;
-
-    this.worldGroup.add(this.buildLand());
-    this.worldGroup.add(buildHarbour(projector, this.palette));
-    for (const r of restaurants) this.addMarker(r, projector);
-
-    this.frameCamera(projector);
+    const terrain = await loadTerrain(
+      TILES_BASE,
+      TARGET_UNITS,
+      VEXAG,
+      TERRAIN_SEG,
+      this.renderer.capabilities.getMaxAnisotropy(),
+    );
+    if (this.disposed) {
+      terrain.dispose();
+      return;
+    }
+    this.terrain = terrain;
+    this.worldGroup.add(terrain.mesh);
+    for (const r of restaurants) this.addMarker(r, terrain);
+    this.frameCamera(restaurants, terrain);
   }
 
   setSelected(id: string | null): void {
@@ -131,39 +138,28 @@ export class FoodMap3DScene {
 
   // --- internals ---
 
-  private buildLand(): THREE.Mesh {
-    const geo = new THREE.PlaneGeometry(TARGET_UNITS * 8, TARGET_UNITS * 8);
-    geo.rotateX(-Math.PI / 2);
-    const mat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(this.palette["basalt-canvas"]),
-      roughness: 0.95,
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.name = "land";
-    return mesh;
-  }
-
-  private addMarker(r: EnrichedRestaurant, projector: Projector): void {
-    const p = projector.project(r.coordinates.lng, r.coordinates.lat);
+  private addMarker(r: EnrichedRestaurant, terrain: Terrain): void {
+    const { x, z } = terrain.project(r.coordinates.lng, r.coordinates.lat);
+    const y = terrain.sampleHeight(r.coordinates.lng, r.coordinates.lat);
     const baseColor = new THREE.Color(r.categoryColor);
     const group = new THREE.Group();
-    group.position.set(p.x, 0, p.z);
+    group.position.set(x, y, z);
 
     const stem = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1.2, PIN_HEIGHT, 8),
+      new THREE.CylinderGeometry(1, 1, PIN_HEIGHT, 8),
       new THREE.MeshStandardMaterial({
         color: baseColor.clone().multiplyScalar(0.7),
-        roughness: 0.6,
+        roughness: 0.5,
       }),
     );
     stem.position.y = PIN_HEIGHT / 2;
     group.add(stem);
 
     const head = new THREE.Mesh(
-      new THREE.SphereGeometry(8, 18, 14),
-      new THREE.MeshStandardMaterial({ color: baseColor, roughness: 0.4 }),
+      new THREE.SphereGeometry(6, 18, 14),
+      new THREE.MeshStandardMaterial({ color: baseColor, roughness: 0.35 }),
     );
-    head.position.y = PIN_HEIGHT + 4;
+    head.position.y = PIN_HEIGHT + 3;
     head.userData.markerId = r.id;
     group.add(head);
 
@@ -171,7 +167,7 @@ export class FoodMap3DScene {
     div.className = "fm3d-label";
     div.textContent = r.name;
     const label = new CSS2DObject(div);
-    label.position.set(0, PIN_HEIGHT + 20, 0);
+    label.position.set(0, PIN_HEIGHT + 14, 0);
     label.center.set(0.5, 1);
     group.add(label);
 
@@ -179,13 +175,27 @@ export class FoodMap3DScene {
     this.markers.push({ id: r.id, group, head, label, baseColor });
   }
 
-  private frameCamera(projector: Projector): void {
-    const radius = Math.max(projector.width, projector.depth) * 0.5;
+  // Frame the camera to the restaurant area (terrain extends beyond for context).
+  private frameCamera(restaurants: EnrichedRestaurant[], terrain: Terrain): void {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    for (const r of restaurants) {
+      const { x, z } = terrain.project(r.coordinates.lng, r.coordinates.lat);
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minZ = Math.min(minZ, z);
+      maxZ = Math.max(maxZ, z);
+    }
+    const cx = (minX + maxX) / 2;
+    const cz = (minZ + maxZ) / 2;
+    const radius = 0.5 * Math.hypot(maxX - minX, maxZ - minZ) * 1.15;
     const dist = fitDistanceForRadius(radius, FOV);
-    this.camera.position.set(0, dist * 0.8, dist * 0.85);
-    this.controls.target.set(0, 0, 0);
-    this.controls.minDistance = dist * 0.35;
-    this.controls.maxDistance = dist * 1.9;
+    this.camera.position.set(cx, dist * 0.85, cz + dist * 0.85);
+    this.controls.target.set(cx, 0, cz);
+    this.controls.minDistance = dist * 0.22;
+    this.controls.maxDistance = dist * 2.4;
     this.controls.update();
   }
 
@@ -194,15 +204,14 @@ export class FoodMap3DScene {
       const active = m.id === this.selectedId || m.id === this.hoveredId;
       const mat = m.head.material as THREE.MeshStandardMaterial;
       mat.emissive.copy(active ? m.baseColor : new THREE.Color(0x000000));
-      m.head.scale.setScalar(active ? 1.5 : 1);
+      m.head.scale.setScalar(active ? 1.6 : 1);
     }
   }
 
   private updateLabelOpacity(): void {
     const camDist = this.camera.position.distanceTo(this.controls.target);
-    // Restaurant labels stay hidden when zoomed out (77 names would overlap) and
-    // fade in as you zoom closer. Hovered/selected always shows below.
-    const base = labelOpacity(camDist, TARGET_UNITS * 0.3, TARGET_UNITS * 0.7);
+    // Hidden when zoomed out (77 names would overlap), fade in on zoom.
+    const base = labelOpacity(camDist, TARGET_UNITS * 0.45, TARGET_UNITS * 1.0);
     for (const m of this.markers) {
       const active = m.id === this.selectedId || m.id === this.hoveredId;
       (m.label.element as HTMLElement).style.opacity = String(active ? 1 : base);
@@ -210,7 +219,7 @@ export class FoodMap3DScene {
   }
 
   private pick(): string | null {
-    if (!this.projector) return null;
+    if (!this.terrain) return null;
     this.raycaster.setFromCamera(this.pointer, this.camera);
     const heads = this.markers.map((m) => m.head);
     const hit = this.raycaster.intersectObjects(heads, false)[0];
@@ -238,6 +247,8 @@ export class FoodMap3DScene {
   };
 
   private clearWorld(): void {
+    this.terrain?.dispose();
+    this.terrain = null;
     this.markers = [];
     for (let i = this.worldGroup.children.length - 1; i >= 0; i--) {
       const child = this.worldGroup.children[i]!;
