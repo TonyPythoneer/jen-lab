@@ -82,6 +82,8 @@ export class FoodMap3DScene {
     this.renderer.domElement.addEventListener("click", this.onClick);
 
     this.loop();
+
+    if (import.meta.env.DEV) (globalThis as Record<string, unknown>).__fm3dScene = this;
   }
 
   onSelect(cb: (id: string | null) => void): void {
