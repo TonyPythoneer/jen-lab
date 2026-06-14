@@ -1,10 +1,21 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import { fitDistanceForRadius, labelOpacity } from "~/utils/food-map/foodMap3DView";
 import { readCssVarsFromDocument, type BrandPalette } from "~/utils/food-map/brandPalette";
 import { loadTerrain, type Terrain } from "./foodMap3DTerrain";
+import { LANDMARK_MODELS, type LandmarkModel } from "./landmarks";
+
+// Dispose a material and any textures it references (GLTF models bring their own).
+function disposeMaterial(mat: THREE.Material): void {
+  for (const value of Object.values(mat)) {
+    if (value instanceof THREE.Texture) value.dispose();
+  }
+  mat.dispose();
+}
 
 const TARGET_UNITS = 2000;
 const FOV = 50;
@@ -33,6 +44,8 @@ export class FoodMap3DScene {
   private palette: BrandPalette;
   private worldGroup = new THREE.Group();
   private markers: Marker[] = [];
+  private landmarks: THREE.Group[] = [];
+  private gltfLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   private terrain: Terrain | null = null;
   private selectedId: string | null = null;
   private hoveredId: string | null = null;
@@ -110,6 +123,7 @@ export class FoodMap3DScene {
     this.worldGroup.add(terrain.mesh);
     for (const r of restaurants) this.addMarker(r, terrain);
     this.frameCamera(restaurants, terrain);
+    void this.loadLandmarks(terrain);
   }
 
   setSelected(id: string | null): void {
@@ -175,6 +189,37 @@ export class FoodMap3DScene {
 
     this.worldGroup.add(group);
     this.markers.push({ id: r.id, group, head, label, baseColor });
+  }
+
+  private async loadLandmarks(terrain: Terrain): Promise<void> {
+    await Promise.all(
+      LANDMARK_MODELS.map((m) =>
+        this.loadLandmark(m, terrain).catch((e) => console.error(`landmark ${m.id} failed`, e)),
+      ),
+    );
+  }
+
+  // Drop one .glb on the terrain: scaled so its longest side spans targetSize,
+  // re-origined to its footprint centre + base so it sits flush and rotates in place.
+  private async loadLandmark(model: LandmarkModel, terrain: Terrain): Promise<void> {
+    const gltf = await this.gltfLoader.loadAsync(model.url);
+    if (this.disposed) return;
+    const obj = gltf.scene;
+    const box = new THREE.Box3().setFromObject(obj);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    obj.position.set(-center.x, -box.min.y, -center.z);
+
+    const group = new THREE.Group();
+    group.add(obj);
+    group.scale.setScalar(model.targetSize / Math.max(size.x, size.z));
+    group.rotation.y = model.rotationY;
+    const { x, z } = terrain.project(model.lng, model.lat);
+    group.position.set(x, terrain.sampleHeight(model.lng, model.lat), z);
+    group.name = `landmark-${model.id}`;
+
+    this.worldGroup.add(group);
+    this.landmarks.push(group);
   }
 
   // Frame the camera to the restaurant area (terrain extends beyond for context).
@@ -252,6 +297,7 @@ export class FoodMap3DScene {
     this.terrain?.dispose();
     this.terrain = null;
     this.markers = [];
+    this.landmarks = [];
     for (let i = this.worldGroup.children.length - 1; i >= 0; i--) {
       const child = this.worldGroup.children[i]!;
       this.worldGroup.remove(child);
@@ -259,8 +305,8 @@ export class FoodMap3DScene {
         const mesh = o as THREE.Mesh;
         mesh.geometry?.dispose?.();
         const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
-        if (Array.isArray(m)) m.forEach((x) => x.dispose());
-        else m?.dispose?.();
+        if (Array.isArray(m)) m.forEach(disposeMaterial);
+        else if (m) disposeMaterial(m);
       });
     }
   }
