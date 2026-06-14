@@ -5,7 +5,6 @@ import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import { computeBbox, makeProjector, type Projector } from "~/utils/food-map/foodMap3DProjection";
 import { fitDistanceForRadius, labelOpacity } from "~/utils/food-map/foodMap3DView";
 import { readCssVarsFromDocument, type BrandPalette } from "~/utils/food-map/brandPalette";
-import { LANDMARKS } from "./landmarks";
 import { buildHarbour } from "./sydneyHarbour";
 
 const TARGET_UNITS = 2000;
@@ -94,18 +93,11 @@ export class FoodMap3DScene {
   setData(restaurants: EnrichedRestaurant[]): void {
     this.clearWorld();
     const pts = restaurants.map((r) => ({ lat: r.coordinates.lat, lng: r.coordinates.lng }));
-    for (const l of LANDMARKS) pts.push({ lat: l.lat, lng: l.lng });
     const projector = makeProjector(computeBbox(pts), TARGET_UNITS);
     this.projector = projector;
 
     this.worldGroup.add(this.buildLand());
     this.worldGroup.add(buildHarbour(projector, this.palette));
-    for (const l of LANDMARKS) {
-      const g = l.build(this.palette);
-      const p = projector.project(l.lng, l.lat);
-      g.position.set(p.x, 0, p.z);
-      this.worldGroup.add(g);
-    }
     for (const r of restaurants) this.addMarker(r, projector);
 
     this.frameCamera(projector);
