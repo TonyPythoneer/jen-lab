@@ -1,0 +1,14 @@
+.fm3d-label {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-abyssal-ink);
+  background: color-mix(in srgb, var(--color-ash-white) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-abyssal-ink) 12%, transparent);
+  border-radius: 6px;
+  padding: 2px 7px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  user-select: none;
+}
