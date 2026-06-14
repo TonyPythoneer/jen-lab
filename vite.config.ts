@@ -139,7 +139,14 @@ export default defineConfig({
     port: Number(process.env.DEV_PORT) || 3500,
   },
   ssgOptions: {
-    includedRoutes: () => ["/", "/jen-knows", "/jen-liu", "/blogs", "/sydney-food-map", "/sydney-food-map-3d"],
+    includedRoutes: () => [
+      "/",
+      "/jen-knows",
+      "/jen-liu",
+      "/blogs",
+      "/sydney-food-map",
+      "/sydney-food-map-3d",
+    ],
   },
   staged: { "*.{ts,vue}": "vp check --fix" },
 } as Parameters<typeof defineConfig>[0]);

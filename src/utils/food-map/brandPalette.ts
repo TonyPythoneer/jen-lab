@@ -17,7 +17,8 @@ export type BrandPalette = Record<BrandToken, string>;
 // for testability; the runtime helper reads from the document root.
 export function resolveBrandPalette(read: (varName: string) => string): BrandPalette {
   const out = {} as BrandPalette;
-  for (const token of BRAND_TOKENS) out[token] = (read(`--color-${token}`) || "").trim() || "#000000";
+  for (const token of BRAND_TOKENS)
+    out[token] = (read(`--color-${token}`) || "").trim() || "#000000";
   return out;
 }
 
