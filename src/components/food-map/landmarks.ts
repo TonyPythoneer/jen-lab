@@ -9,36 +9,48 @@ export interface Landmark {
   build: (palette: BrandPalette) => THREE.Object3D;
 }
 
-// A single white sail: a half-sphere stretched and tilted.
-function sail(height: number, tilt: number): THREE.Mesh {
-  const geo = new THREE.SphereGeometry(1, 24, 16, 0, Math.PI);
-  geo.scale(20, height, 34);
-  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55, side: THREE.DoubleSide });
+// A single white shell: an upper-quarter sphere standing up and leaning back.
+function shell(w: number, h: number, d: number, lean: number): THREE.Mesh {
+  const geo = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI, 0, Math.PI / 2);
+  geo.scale(w, h, d);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.5,
+    side: THREE.DoubleSide,
+  });
   const mesh = new THREE.Mesh(geo, mat);
-  mesh.rotation.x = -Math.PI / 2 + tilt;
+  mesh.rotation.x = lean;
   return mesh;
 }
 
 export function buildOperaHouse(palette: BrandPalette): THREE.Object3D {
   const g = new THREE.Group();
   const podium = new THREE.Mesh(
-    new THREE.BoxGeometry(120, 10, 70),
-    new THREE.MeshStandardMaterial({ color: new THREE.Color(palette["ash-white"]), roughness: 0.8 }),
+    new THREE.BoxGeometry(135, 8, 84),
+    new THREE.MeshStandardMaterial({
+      color: new THREE.Color(palette["ash-white"]),
+      roughness: 0.8,
+    }),
   );
-  podium.position.y = 5;
+  podium.position.y = 4;
   g.add(podium);
-  const heights = [70, 58, 44, 30];
-  heights.forEach((h, i) => {
-    const s = sail(h, 0.12 * i);
-    s.position.set(-40 + i * 26, 10, 6 - i * 4);
-    g.add(s);
-  });
-  // a small second cluster
-  heights.slice(0, 2).forEach((h, i) => {
-    const s = sail(h * 0.7, 0.18 + 0.1 * i);
-    s.position.set(36 + i * 18, 10, -16);
-    g.add(s);
-  });
+  // Two rows of decreasing shells, each row leaning outward like the real sails.
+  const sizes: [number, number, number][] = [
+    [34, 56, 30],
+    [27, 44, 25],
+    [21, 33, 20],
+    [14, 22, 14],
+  ];
+  for (const row of [
+    { z: 15, lean: 0.5 },
+    { z: -15, lean: -0.5 },
+  ]) {
+    sizes.forEach(([w, h, d], i) => {
+      const s = shell(w, h, d, row.lean);
+      s.position.set(-32 + i * 20, 8, row.z);
+      g.add(s);
+    });
+  }
   g.name = "opera-house";
   return g;
 }
@@ -69,6 +81,18 @@ export function buildHarbourBridge(palette: BrandPalette): THREE.Object3D {
 }
 
 export const LANDMARKS: Landmark[] = [
-  { id: "opera-house", name: "Sydney Opera House", lat: -33.8568, lng: 151.2153, build: buildOperaHouse },
-  { id: "harbour-bridge", name: "Sydney Harbour Bridge", lat: -33.852, lng: 151.211, build: buildHarbourBridge },
+  {
+    id: "opera-house",
+    name: "Sydney Opera House",
+    lat: -33.8568,
+    lng: 151.2153,
+    build: buildOperaHouse,
+  },
+  {
+    id: "harbour-bridge",
+    name: "Sydney Harbour Bridge",
+    lat: -33.852,
+    lng: 151.211,
+    build: buildHarbourBridge,
+  },
 ];

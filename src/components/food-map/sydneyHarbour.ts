@@ -33,7 +33,7 @@ export function buildHarbour(projector: Projector, palette: BrandPalette): THREE
     side: THREE.DoubleSide,
   });
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = 0.4; // just above the land plane to avoid z-fighting
+  mesh.position.y = 2; // sits above the land plane; pairs with camera near=10 to avoid z-fighting
   mesh.name = "harbour";
   return mesh;
 }

@@ -46,9 +46,11 @@ export class FoodMap3DScene {
     const w = container.clientWidth || 1;
     const h = container.clientHeight || 1;
 
-    this.camera = new THREE.PerspectiveCamera(FOV, w / h, 1, 40000);
+    // near=10 (not 1): a tiny near plane wrecks depth precision at this distance,
+    // making the water and land z-fight.
+    this.camera = new THREE.PerspectiveCamera(FOV, w / h, 10, 40000);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(w, h);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -138,7 +140,7 @@ export class FoodMap3DScene {
   // --- internals ---
 
   private buildLand(): THREE.Mesh {
-    const geo = new THREE.PlaneGeometry(TARGET_UNITS * 2.4, TARGET_UNITS * 2.4);
+    const geo = new THREE.PlaneGeometry(TARGET_UNITS * 8, TARGET_UNITS * 8);
     geo.rotateX(-Math.PI / 2);
     const mat = new THREE.MeshStandardMaterial({
       color: new THREE.Color(this.palette["basalt-canvas"]),
@@ -157,7 +159,10 @@ export class FoodMap3DScene {
 
     const stem = new THREE.Mesh(
       new THREE.CylinderGeometry(1.2, 1.2, PIN_HEIGHT, 8),
-      new THREE.MeshStandardMaterial({ color: baseColor.clone().multiplyScalar(0.7), roughness: 0.6 }),
+      new THREE.MeshStandardMaterial({
+        color: baseColor.clone().multiplyScalar(0.7),
+        roughness: 0.6,
+      }),
     );
     stem.position.y = PIN_HEIGHT / 2;
     group.add(stem);
@@ -203,9 +208,9 @@ export class FoodMap3DScene {
 
   private updateLabelOpacity(): void {
     const camDist = this.camera.position.distanceTo(this.controls.target);
-    const near = TARGET_UNITS * 0.55;
-    const far = TARGET_UNITS * 2.0;
-    const base = labelOpacity(camDist, near, far);
+    // Restaurant labels stay hidden when zoomed out (77 names would overlap) and
+    // fade in as you zoom closer. Hovered/selected always shows below.
+    const base = labelOpacity(camDist, TARGET_UNITS * 0.3, TARGET_UNITS * 0.7);
     for (const m of this.markers) {
       const active = m.id === this.selectedId || m.id === this.hoveredId;
       (m.label.element as HTMLElement).style.opacity = String(active ? 1 : base);
