@@ -3,6 +3,7 @@ import {
   makeTerrainProjector,
   type TileGrid,
   type ScenePoint,
+  type Bbox,
 } from "~/utils/food-map/foodMap3DProjection";
 
 interface TerrainMeta extends TileGrid {
@@ -18,6 +19,9 @@ export interface Terrain {
   project(lng: number, lat: number): ScenePoint;
   /** world-Y of the terrain surface at lng/lat — markers sit on this */
   sampleHeight(lng: number, lat: number): number;
+  /** Level the terrain within innerR into a pad (smooth skirt out to outerR) so a
+   *  rigid model sits flush on the coarse DEM relief; returns the pad's world-Y. */
+  flattenAround(cx: number, cz: number, innerR: number, outerR: number): number;
   mapW: number;
   mapD: number;
   attribution: string;
@@ -59,17 +63,6 @@ async function compositeTiles(
   return canvas;
 }
 
-// Map a north-up plane's vertices to the satellite texture's UV space.
-function gridUVs(geo: THREE.PlaneGeometry, w: number, d: number): void {
-  const pos = geo.attributes.position!;
-  const uv = geo.attributes.uv!;
-  for (let i = 0; i < pos.count; i++) {
-    const u = (pos.getX(i) + w / 2) / w;
-    const v = (pos.getZ(i) + d / 2) / d;
-    uv.setXY(i, u, 1 - v); // imagery north-up
-  }
-}
-
 // Loads the baked DEM + imagery, decodes Terrarium elevation, and builds a
 // displaced satellite-textured terrain. Landmarks are real 3D models placed by
 // the scene; the terrain is just the textured ground they sit on.
@@ -79,6 +72,7 @@ export async function loadTerrain(
   vexag: number,
   segments: number,
   anisotropy: number,
+  crop: Bbox,
 ): Promise<Terrain> {
   const meta = (await (await fetch(`${baseUrl}/meta.json`)).json()) as TerrainMeta;
   const proj = makeTerrainProjector(meta, targetUnits);
@@ -89,9 +83,12 @@ export async function loadTerrain(
   const demH = dem.height;
   const px = dem.getContext("2d")!.getImageData(0, 0, demW, demH).data;
   const height = new Float32Array(demW * demH);
+  // Terrarium decode. A handful of NoData pixels decode to <-1000m and would
+  // spike the mesh downward, so clamp those back to sea level (real min ≈ -13m).
   for (let i = 0; i < height.length; i++) {
     const j = i * 4;
-    height[i] = px[j]! * 256 + px[j + 1]! + px[j + 2]! / 256 - 32768;
+    const metres = px[j]! * 256 + px[j + 1]! + px[j + 2]! / 256 - 32768;
+    height[i] = metres < -50 ? 0 : metres;
   }
   const sampleHeightPx = (u: number, v: number): number => {
     const fx = Math.min(Math.max(u, 0), 1) * (demW - 1);
@@ -121,14 +118,19 @@ export async function loadTerrain(
   tex.anisotropy = anisotropy;
   tex.needsUpdate = true;
 
-  // displaced + textured terrain mesh
-  const geo = new THREE.PlaneGeometry(proj.mapW, proj.mapD, segments, segments);
+  // Mesh cropped to the restaurant bbox + margin, not the full tile span (the
+  // tiles reach well past the pins). Texture/DEM still cover all tiles, so each
+  // cropped vertex's UV maps to its spot in the full composite.
+  const nw = proj.project(crop.minLng, crop.maxLat);
+  const se = proj.project(crop.maxLng, crop.minLat);
+  const geo = new THREE.PlaneGeometry(se.x - nw.x, se.z - nw.z, segments, segments);
   geo.rotateX(-Math.PI / 2);
-  gridUVs(geo, proj.mapW, proj.mapD);
+  geo.translate((nw.x + se.x) / 2, 0, (nw.z + se.z) / 2);
   const pos = geo.attributes.position!;
+  const uv = geo.attributes.uv!;
   for (let i = 0; i < pos.count; i++) {
-    const u = (pos.getX(i) + proj.mapW / 2) / proj.mapW;
-    const v = (pos.getZ(i) + proj.mapD / 2) / proj.mapD;
+    const { u, v } = proj.worldToUV(pos.getX(i), pos.getZ(i));
+    uv.setXY(i, u, 1 - v);
     pos.setY(i, sampleHeightPx(u, v) * proj.m2u * vexag);
   }
   geo.computeVertexNormals();
@@ -143,6 +145,25 @@ export async function loadTerrain(
     mapW: proj.mapW,
     mapD: proj.mapD,
     attribution: meta.attribution,
+    flattenAround(cx, cz, innerR, outerR) {
+      const within: number[] = [];
+      for (let i = 0; i < pos.count; i++) {
+        if (Math.hypot(pos.getX(i) - cx, pos.getZ(i) - cz) <= innerR) within.push(pos.getY(i));
+      }
+      within.sort((a, b) => a - b);
+      // Pad sits at the footprint's low ground (p20), below the DEM's spurious peak.
+      const padY = within.length ? within[Math.floor(0.2 * (within.length - 1))]! : 0;
+      for (let i = 0; i < pos.count; i++) {
+        const d = Math.hypot(pos.getX(i) - cx, pos.getZ(i) - cz);
+        if (d >= outerR) continue;
+        let t = d <= innerR ? 0 : (d - innerR) / (outerR - innerR);
+        t = t * t * (3 - 2 * t); // smoothstep skirt: flat pad → original relief
+        pos.setY(i, padY * (1 - t) + pos.getY(i) * t);
+      }
+      pos.needsUpdate = true;
+      geo.computeVertexNormals();
+      return padY;
+    },
     dispose() {
       geo.dispose();
       tex.dispose();

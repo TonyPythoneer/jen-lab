@@ -6,6 +6,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import type { EnrichedRestaurant } from "~/composables/food-map/useRestaurants";
 import { fitDistanceForRadius, labelOpacity } from "~/utils/food-map/foodMap3DView";
 import { readCssVarsFromDocument, type BrandPalette } from "~/utils/food-map/brandPalette";
+import { computeBbox, type Bbox } from "~/utils/food-map/foodMap3DProjection";
 import { loadTerrain, type Terrain } from "./foodMap3DTerrain";
 import { LANDMARK_MODELS, type LandmarkModel } from "./landmarks";
 
@@ -17,12 +18,26 @@ function disposeMaterial(mat: THREE.Material): void {
   mat.dispose();
 }
 
+// Grow a lng/lat bbox by a fraction of its span on every side.
+function expandBbox(b: Bbox, frac: number): Bbox {
+  const dLat = (b.maxLat - b.minLat) * frac;
+  const dLng = (b.maxLng - b.minLng) * frac;
+  return {
+    minLat: b.minLat - dLat,
+    maxLat: b.maxLat + dLat,
+    minLng: b.minLng - dLng,
+    maxLng: b.maxLng + dLng,
+  };
+}
+
 const TARGET_UNITS = 2000;
 const FOV = 50;
 const VEXAG = 3; // Sydney is flat; lift the slight relief so it reads in 3D.
 const TERRAIN_SEG = 256;
 const PIN_HEIGHT = 26;
 const TILES_BASE = "/food-map-3d";
+// Grow the terrain past the restaurant bbox so pins don't sit on the edge.
+const CROP_MARGIN = 0.12;
 
 interface Marker {
   id: string;
@@ -108,12 +123,14 @@ export class FoodMap3DScene {
 
   async setData(restaurants: EnrichedRestaurant[]): Promise<void> {
     this.clearWorld();
+    const crop = expandBbox(computeBbox(restaurants.map((r) => r.coordinates)), CROP_MARGIN);
     const terrain = await loadTerrain(
       TILES_BASE,
       TARGET_UNITS,
       VEXAG,
       TERRAIN_SEG,
       this.renderer.capabilities.getMaxAnisotropy(),
+      crop,
     );
     if (this.disposed) {
       terrain.dispose();
@@ -212,14 +229,37 @@ export class FoodMap3DScene {
 
     const group = new THREE.Group();
     group.add(obj);
-    group.scale.setScalar(model.targetSize / Math.max(size.x, size.z));
+    const scale = model.targetSize / Math.max(size.x, size.z);
+    group.scale.setScalar(scale);
     group.rotation.y = model.rotationY;
     const { x, z } = terrain.project(model.lng, model.lat);
-    group.position.set(x, terrain.sampleHeight(model.lng, model.lat), z);
+    group.position.set(x, this.seatLandmark(model, terrain, x, z, size, scale), z);
     group.name = `landmark-${model.id}`;
 
     this.worldGroup.add(group);
     this.landmarks.push(group);
+  }
+
+  // Seat a landmark on the terrain. Pad-seated models (opera) flatten their
+  // footprint to a level pad — the coarse DEM relief would float or bury a rigid
+  // model; span structures (bridge) rest on the mesh surface as-is.
+  private seatLandmark(
+    model: LandmarkModel,
+    terrain: Terrain,
+    x: number,
+    z: number,
+    size: THREE.Vector3,
+    scale: number,
+  ): number {
+    if (model.flattenPad) {
+      const r = 0.5 * Math.hypot(size.x * scale, size.z * scale);
+      return terrain.flattenAround(x, z, r, r * 2.5);
+    }
+    terrain.mesh.updateMatrixWorld();
+    this.raycaster.ray.origin.set(x, 1e4, z);
+    this.raycaster.ray.direction.set(0, -1, 0);
+    const hit = this.raycaster.intersectObject(terrain.mesh, false)[0];
+    return hit ? hit.point.y : terrain.sampleHeight(model.lng, model.lat);
   }
 
   // Frame the camera to the restaurant area (terrain extends beyond for context).
@@ -237,11 +277,13 @@ export class FoodMap3DScene {
     }
     const cx = (minX + maxX) / 2;
     const cz = (minZ + maxZ) / 2;
-    const radius = 0.5 * Math.hypot(maxX - minX, maxZ - minZ) * 1.15;
+    // The crop already pads the terrain edges, so skip the extra fit margin and
+    // pull the default camera in tight on the restaurant cluster.
+    const radius = 0.5 * Math.hypot(maxX - minX, maxZ - minZ);
     const dist = fitDistanceForRadius(radius, FOV);
-    this.camera.position.set(cx, dist * 0.85, cz + dist * 0.85);
+    this.camera.position.set(cx, dist * 0.7, cz + dist * 0.7);
     this.controls.target.set(cx, 0, cz);
-    this.controls.minDistance = dist * 0.22;
+    this.controls.minDistance = dist * 0.2;
     this.controls.maxDistance = dist * 2.4;
     this.controls.update();
   }

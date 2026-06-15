@@ -12,6 +12,9 @@ export interface LandmarkModel {
   targetSize: number;
   /** yaw in radians, set to the model's real-world bearing */
   rotationY: number;
+  /** Flatten the footprint into a level pad before seating — for models that
+   *  rest ON the ground. Omit for span structures (a bridge) that cross water. */
+  flattenPad?: boolean;
   /** CC-BY author — fill in from the model's download source before publishing */
   credit: string;
 }
@@ -24,17 +27,18 @@ export const LANDMARK_MODELS: LandmarkModel[] = [
     lng: 151.2153,
     url: "/food-map-3d/models/opera-house.glb",
     targetSize: 55,
-    rotationY: 0,
+    rotationY: 1.361,
+    flattenPad: true,
     credit: "",
   },
   {
     id: "harbour-bridge",
     name: "Sydney Harbour Bridge",
-    lat: -33.8535,
-    lng: 151.2112,
+    lat: -33.8524,
+    lng: 151.2102,
     url: "/food-map-3d/models/harbour-bridge.glb",
-    targetSize: 170,
-    rotationY: 1.357,
+    targetSize: 285,
+    rotationY: 1.065,
     credit: "",
   },
 ];
