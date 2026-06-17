@@ -1,4 +1,4 @@
-import { defineConfig, type PluginOption } from "vite-plus";
+import { configDefaults, defineConfig, type PluginOption } from "vite-plus";
 import vue from "@vitejs/plugin-vue";
 import vize from "@vizejs/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
@@ -90,6 +90,10 @@ export default defineConfig({
     },
     options: { typeAware: true, typeCheck: true },
     ignorePatterns: ["dist/**", "generated/**", "storybook-static/**", ".agents/**", "tasks/**"],
+  },
+  // Worktrees under .claude/ carry their own test files; keep vitest scoped to this checkout.
+  test: {
+    exclude: [...configDefaults.exclude, ".claude/**"],
   },
   fmt: {
     // Only format the web app source — skip planning docs and committed-but-not-ours dirs.
