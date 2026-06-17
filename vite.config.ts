@@ -91,8 +91,7 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     ignorePatterns: ["dist/**", "generated/**", "storybook-static/**", ".agents/**", "tasks/**"],
   },
-  // Whitelist where tests live so vitest never wanders into .claude/ worktrees or
-  // other checkouts. Anything outside these roots is intentionally not discovered.
+  // Whitelist test roots so vitest never wanders into .claude/ worktrees.
   test: {
     include: ["src/**/*.{test,spec}.ts", "tests/**/*.{test,spec}.ts"],
   },
