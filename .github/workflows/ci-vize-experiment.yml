@@ -28,6 +28,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - ".node-version"
       - "tsconfig*.json"
       - ".github/workflows/ci-vize-experiment.yml"
   push:
@@ -46,6 +47,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - ".node-version"
       - "tsconfig*.json"
       - ".github/workflows/ci-vize-experiment.yml"
 
@@ -61,7 +63,7 @@ jobs:
 
       - uses: voidzero-dev/setup-vp@v1
         with:
-          node-version: "24"
+          node-version-file: ".node-version"
           cache: true
           run-install: false
 

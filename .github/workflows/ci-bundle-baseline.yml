@@ -35,6 +35,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - ".node-version"
       - ".github/workflows/ci-bundle-baseline.yml"
 
 permissions:
@@ -48,7 +49,7 @@ jobs:
 
       - uses: voidzero-dev/setup-vp@v1
         with:
-          node-version: "24"
+          node-version-file: ".node-version"
           cache: true
           run-install: false
 
