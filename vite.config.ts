@@ -91,6 +91,10 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     ignorePatterns: ["dist/**", "generated/**", "storybook-static/**", ".agents/**", "tasks/**"],
   },
+  // Whitelist test roots so vitest never wanders into .claude/ worktrees.
+  test: {
+    include: ["src/**/*.{test,spec}.ts", "tests/**/*.{test,spec}.ts"],
+  },
   fmt: {
     // Only format the web app source — skip planning docs and committed-but-not-ours dirs.
     ignorePatterns: [".agents/**", "AGENTS.md", "tasks/**", ".vscode/**", "docs/**"],
