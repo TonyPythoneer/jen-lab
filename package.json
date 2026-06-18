@@ -69,7 +69,6 @@
     "vite-plugin-vue-layouts-next": "^2.1.0",
     "vite-plus": "catalog:",
     "vite-ssg": "^28.3.0",
-    "vitest": "catalog:",
     "vue-component-meta": "^3.3.5",
     "vue-tsc": "^3.3.5",
     "wrangler": "^4.100.0",
@@ -78,7 +77,7 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "24"
+      "version": "^24.11.0"
     }
   },
   "engines": {
