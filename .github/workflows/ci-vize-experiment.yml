@@ -61,7 +61,6 @@ jobs:
 
       - uses: pnpm/setup@v1
         with:
-          runtime: node@24
           cache: true
           install: false
 
