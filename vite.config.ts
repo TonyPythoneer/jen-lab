@@ -45,7 +45,8 @@ const plugins = [
   tailwindcss(),
   VueRouter({ routesFolder: "src/pages", dts: "typed-router.d.ts" }),
   // Vue SFC compiler. VIZE=true → vize (Rust, experimental); else stable plugin-vue.
-  // quirks keeps Vue-compatible template parsing (no <div/> → <div></div> rewrite).
+  // quirks accepts self-closing <div/> silently; the default "standard" emits the
+  // same output but logs a rewrite warning for every such tag (~90 per build).
   USE_VIZE ? vize({ templateSyntax: "quirks" }) : vue(),
   Layouts({ layoutsDirs: "src/layouts", defaultLayout: "default" }),
   AutoImport({
