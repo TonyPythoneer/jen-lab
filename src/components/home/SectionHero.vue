@@ -29,8 +29,6 @@ withDefaults(
   },
 );
 
-const heroDotField = { opacity: 0.08, spacing: 28 };
-
 // #region Scroll-pinned exit animation
 // useScrollProgress drives the portraits off-screen (knows → left, liu → right).
 const pinWrapper = useTemplateRef<HTMLElement>("pinWrapper");
@@ -79,14 +77,14 @@ const liuStyle = computed(() => ({
 
           <!-- Portraits: scroll-driven, knows exits left / liu exits right -->
           <div class="flex flex-row flex-nowrap items-center justify-center">
-            <img
+            <SharedPicture
               :src="portraitKnowsSrc"
               :style="knowsStyle"
               width="270"
               height="938"
               class="h-[180px] md:h-[252px] w-auto will-change-transform"
             />
-            <img
+            <SharedPicture
               :src="portraitLiuSrc"
               :style="liuStyle"
               width="317"

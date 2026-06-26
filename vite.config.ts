@@ -112,6 +112,9 @@ export default defineConfig({
     // Every browser in the modern build target supports <link rel="modulepreload">
     // natively, so vite's injected polyfill is dead weight in the entry chunk.
     modulePreload: { polyfill: false },
+    // Per-route gzip sizes come from scripts/github/bundle-report.ts (the size
+    // budget source of truth); skip the bundler's redundant per-chunk gzip pass.
+    reportCompressedSize: false,
     rollupOptions: {
       // @vueuse/core ships two misplaced /* #__PURE__ */ comments that Rolldown
       // flags on every build. Mute the noise from deps; first-party code still warns.
@@ -145,5 +148,5 @@ export default defineConfig({
   ssgOptions: {
     includedRoutes: () => ["/", "/jen-knows", "/jen-liu", "/blogs", "/sydney-food-map"],
   },
-  staged: { "*.{ts,vue}": "vp check --fix" },
+  staged: { "*.{ts,tsx,vue}": "vp check --fix" },
 } as Parameters<typeof defineConfig>[0]);
