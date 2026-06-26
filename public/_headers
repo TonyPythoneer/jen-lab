@@ -1,4 +1,14 @@
 # Cloudflare Pages headers.
+# Baseline security headers for every response. The site is never framed, uses no
+# geolocation/camera/microphone, and trusts its own MIME types. No CSP: vite-ssg
+# inlines hydration state and Google Fonts load cross-origin, which a strict policy
+# can't cover without per-build nonces static hosting can't mint.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), camera=(), microphone=()
+
 # Build assets under /assets/* are content-hashed by Vite, so their URL changes
 # whenever the bytes change. That makes them safe to cache forever — the browser
 # never needs to revalidate, and a new deploy is picked up via the new hashed URL.
