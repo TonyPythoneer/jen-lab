@@ -29,7 +29,7 @@ sections:
         title: NextSteps 一站式職涯探索與管理工具
         brief: 解析職缺、找出技能缺口，獲得具體職涯建議
       - to: https://crossing.cw.com.tw/author/1204
-        icon: i-tdesign-copyright-filled
+        icon: i-lucide-copyright
         title: 榛知專欄
         brief: 澳洲觀點專欄，刊載於《Crossing》
   - id: videos
