@@ -48,7 +48,6 @@ const visible = computed(() =>
           variant="outline"
           size="md"
           :ui="{ base: 'rounded-button' }"
-          icon="fluent-emoji-high-contrast:bubble-tea"
         >
           {{ s.label }}
         </Button>
